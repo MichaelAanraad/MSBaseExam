@@ -25,6 +25,35 @@ simulation: 50 questions weighted by domain, 100 minutes, no hints, mark for
 review, review screen, and series and case study sections you cannot return
 to. Multi-part questions earn partial credit. Labs are not simulated.
 
+## A base for other exams
+
+This project is meant as a starting point for colleagues who want to build
+the same kind of practice exam for another Microsoft certification (AZ-104,
+AI-102, PL-200, ...). The app, the validator, the writing briefs and the skills
+do not depend on AI-500; only the objective map and the questions do.
+
+Example: you want to pass AZ-104 with at least 700 (the passing score on every
+role-based Microsoft exam, on a scale of 1 to 1000):
+
+1. Fork or copy this repository.
+2. Open it in Claude Code and ask: *"Rewrite objectives.py for AZ-104 from the
+   live study guide, 500 questions weighted by domain."* The skills fetch the
+   study guide through the Microsoft Learn MCP server.
+3. Replace the AI-500 parts: the exam name in `BRIEF.md`, the title and intro
+   text in `template.html`, and the `ai500.` storage keys in `template.html`
+   (otherwise progress mixes with this exam in the same browser).
+4. Empty `data/` and let Claude Code write questions per objective group,
+   following `BRIEF.md` and `DISTRACTORS.md`. Then run the conversion pass
+   (`CONVERT.md`) and an independent verification pass (`VERIFY.md`).
+5. `python validate.py` until 0 errors, then `python build.py`, and publish
+   `docs/` with GitHub Pages.
+6. Practice in exam simulation mode until you score clearly above 70% several
+   times. The results screen says when you are around passing level; the real
+   scaled score is not exactly 70% correct, so keep a margin.
+
+The `ai500-buddy` skill is a thin layer over `ms-cert-item-creator`; copy it,
+change the exam ID, and you have a chat buddy for your own exam.
+
 ## Claude Code skills
 
 Open this folder in Claude Code and the project skills load automatically:
