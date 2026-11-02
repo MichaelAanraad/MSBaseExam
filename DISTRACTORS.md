@@ -1,7 +1,7 @@
 # Distractor hardening brief
 
 Goal: a candidate must not be able to answer a question by common sense,
-elimination of nonsense, or wording tells. Only real knowledge of AI-500
+elimination of nonsense, or wording tells. Only real knowledge of the exam
 material should get them to the key. Read BRIEF.md (writing rules) first.
 
 For EVERY question in your assigned `data/<group>.json` files, check each

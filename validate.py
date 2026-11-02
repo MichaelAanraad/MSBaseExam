@@ -1,4 +1,4 @@
-"""Validate data/*.json against the AI-500 objective map. Exit 1 on any error.
+"""Validate data/*.json against the objective map in objectives.py. Exit 1 on any error.
 
 Usage: python validate.py [group ...]   (no args = all groups, plus exact-TOTAL check)
 """

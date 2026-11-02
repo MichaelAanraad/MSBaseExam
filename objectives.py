@@ -1,4 +1,9 @@
-# Source: https://learn.microsoft.com/credentials/certifications/resources/study-guides/ai-500 (fetched 2026-10-20)
+# Change these three lines (plus DOMAINS and GROUPS) to build a practice exam for another certification.
+EXAM = "AI-500"
+EXAM_TITLE = "Designing and Implementing Multi-Agent AI Solutions"
+STUDY_GUIDE = "https://learn.microsoft.com/credentials/certifications/resources/study-guides/ai-500"
+
+# Source: STUDY_GUIDE (fetched 2026-10-20)
 # Allocation: D1 90 (18%), D2 170 (34%), D3 120 (24%), D4 120 (24%) = 500,
 # midpoints of the official weight ranges, normalized.
 DOMAINS = {

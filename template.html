@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI-500 Exam Buddy</title>
+<title>__EXAM__ Exam Buddy</title>
 <style>
 :root {
   --bg: #f6f7f9; --card: #ffffff; --text: #1b1f24; --muted: #5b6573; --line: #dde1e6;
@@ -90,15 +90,17 @@ a { color: var(--accent); }
 <body>
 <main>
   <header>
-    <h1>AI-500 Exam Buddy</h1>
+    <h1>__EXAM__ Exam Buddy</h1>
     <button class="ghost" id="theme" type="button" aria-label="Toggle light/dark theme">Theme</button>
   </header>
   <div id="app"></div>
-  <p class="muted">Questions based on the official AI-500 study guide (Designing and Implementing Multi-Agent AI Solutions). Not real exam questions.</p>
+  <p class="muted">Questions based on the official __EXAM__ study guide (__EXAM_TITLE__). Not real exam questions.</p>
 </main>
 <script>
 const DATA = /*__DATA__*/;
 const Q = DATA.questions, DOMAINS = DATA.domains, OBJ = DATA.objectives, CASES = DATA.cases || {};
+// per-exam storage prefix ("ai500" for AI-500), so several exams on one site keep separate progress
+const KEY = DATA.exam.id.toLowerCase().replace(/[^a-z0-9]/g, "");
 const $app = document.getElementById("app");
 const $$ = s => [...$app.querySelectorAll(s)];
 
@@ -107,16 +109,16 @@ const store = {
   get(k, d) { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
 };
-let history = store.get("ai500.history", {}); // id -> true/false (last result fully correct)
+let history = store.get(KEY + ".history", {}); // id -> true/false (last result fully correct)
 
-const theme = store.get("ai500.theme", null);
+const theme = store.get(KEY + ".theme", null);
 if (theme) document.documentElement.dataset.theme = theme;
 document.getElementById("theme").onclick = () => {
   const dark = matchMedia("(prefers-color-scheme: dark)").matches;
   const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
   const next = cur === "dark" ? "light" : "dark";
   document.documentElement.dataset.theme = next;
-  store.set("ai500.theme", next);
+  store.set(KEY + ".theme", next);
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -169,7 +171,7 @@ window.onbeforeunload = () => (S && S.mode === "exam" && !S.done ? true : undefi
 function home() {
   clearInterval(tick); S = null;
   const seen = Object.keys(history).length, wrong = Object.values(history).filter(v => !v).length;
-  const cfg = { d: Object.keys(DOMAINS), lv: ["easy", "medium", "hard"], n: "25", mode: "practice", pool: "all", ...store.get("ai500.cfg", {}) };
+  const cfg = { d: Object.keys(DOMAINS), lv: ["easy", "medium", "hard"], n: "25", mode: "practice", pool: "all", ...store.get(KEY + ".cfg", {}) };
   const types = Object.entries(Q.reduce((a, q) => (a[q.case ? "case" : q.series ? "series" : q.type] = (a[q.case ? "case" : q.series ? "series" : q.type] || 0) + 1, a), {}));
   $app.innerHTML = `
   <div class="card">
@@ -211,7 +213,7 @@ function home() {
   };
   mode.onchange = sync; sync();
   document.getElementById("start").onclick = start;
-  document.getElementById("reset").onclick = () => { if (confirm("Reset all progress?")) { history = {}; store.set("ai500.history", history); home(); } };
+  document.getElementById("reset").onclick = () => { if (confirm("Reset all progress?")) { history = {}; store.set(KEY + ".history", history); home(); } };
 }
 
 function statsTable() {
@@ -248,12 +250,12 @@ function start() {
   const mode = document.getElementById("mode").value;
   let secs;
   if (mode === "sim") {
-    store.set("ai500.cfg", { ...store.get("ai500.cfg", {}), mode });
+    store.set(KEY + ".cfg", { ...store.get(KEY + ".cfg", {}), mode });
     secs = simSections();
   } else {
     const val = n => [...document.querySelectorAll(`input[name=${n}]:checked`)].map(i => i.value);
     const cfg = { d: val("d"), lv: val("lv"), pool: val("pool")[0], n: document.getElementById("n").value, mode };
-    store.set("ai500.cfg", cfg);
+    store.set(KEY + ".cfg", cfg);
     let pool = Q.filter(q => cfg.d.includes(dom(q)) && cfg.lv.includes(q.difficulty));
     if (cfg.pool === "new") pool = pool.filter(q => !(q.id in history));
     if (cfg.pool === "wrong") pool = pool.filter(q => history[q.id] === false);
@@ -431,7 +433,7 @@ function show(keep) {
   on("prev", () => { S.i--; S.sel = null; show(); });
   on("check", () => {
     it.score = grade(q, it.picked); it.checked = true;
-    history[q.id] = it.score === 1; store.set("ai500.history", history);
+    history[q.id] = it.score === 1; store.set(KEY + ".history", history);
     show(true);
   });
   on("next", () => {
@@ -502,7 +504,7 @@ function finish() {
     it.score = grade(it.q, it.picked); it.checked = true;
     if (answered(it)) history[it.q.id] = it.score === 1;
   });
-  store.set("ai500.history", history);
+  store.set(KEY + ".history", history);
   result();
 }
 

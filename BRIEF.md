@@ -1,11 +1,13 @@
-# AI-500 question-writing brief
+# Question-writing brief
 
-Project folder: the folder that contains this file. Objective map: `objectives.py`
-(source of truth: official AI-500 study guide,
-https://learn.microsoft.com/credentials/certifications/resources/study-guides/ai-500).
+Project folder: the folder that contains this file. Exam and objective map:
+`EXAM`, `EXAM_TITLE`, `STUDY_GUIDE` and `GROUPS` in `objectives.py` (source of
+truth: the official study guide at `STUDY_GUIDE`).
 
-Exam: **AI-500 Designing and Implementing Multi-Agent AI Solutions** (expert level).
-Audience: expert practitioner who designs, builds and runs production multi-agent
+For another exam, rewrite the audience paragraph below from the study guide's
+audience profile; the writing rules after it apply to every exam.
+
+Audience (AI-500, expert level): expert practitioner who designs, builds and runs production multi-agent
 systems on Microsoft Foundry; proficient in Python; knows Azure compute, network,
 storage and data services; familiar with Microsoft Agent Framework, MCP, RAG and
 LangGraph.

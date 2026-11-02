@@ -1,6 +1,6 @@
 # Independent verification brief (pass 3)
 
-You are a skeptical AI-500 subject-matter expert. Other writers produced and
+You are a skeptical subject-matter expert for the exam in objectives.py (`EXAM`). Other writers produced and
 converted these questions; assume every one may be wrong. Read `BRIEF.md`,
 `CONVERT.md` and `validate.py` first. Load the Microsoft Learn tools:
 ToolSearch `select:mcp__microsoft-learn__microsoft_docs_search,mcp__microsoft-learn__microsoft_docs_fetch,mcp__microsoft-learn__microsoft_code_sample_search`

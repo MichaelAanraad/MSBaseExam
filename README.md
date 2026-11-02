@@ -28,22 +28,28 @@ to. Multi-part questions earn partial credit. Labs are not simulated.
 ## A base for other exams
 
 This project is meant as a starting point for colleagues who want to build
-the same kind of practice exam for another Microsoft certification (AZ-104,
-AI-102, PL-200, ...). The app, the validator, the writing briefs and the skills
-do not depend on AI-500; only the objective map and the questions do.
+the same kind of practice exam for another Microsoft certification (AB-700,
+AZ-104, AI-102, PL-200, ...). The app, the validator, the briefs and the
+skills are exam-neutral. Everything exam-specific sits in `objectives.py`:
 
-Example: you want a bank of 700 questions for AZ-104:
+| Setting | AI-500 value | What it sets |
+|---|---|---|
+| `EXAM` | `"AI-500"` | page title, header, browser storage prefix (`ai500.`) |
+| `EXAM_TITLE` | `"Designing and Implementing Multi-Agent AI Solutions"` | subtitle on the page |
+| `STUDY_GUIDE` | Learn study guide URL | source for the objectives |
+| `DOMAINS`, `GROUPS`, `OVERRIDE` | 4 domains, 55 objectives | domains, weights, questions per objective |
+| `TOTAL` | `500` | bank size the validator and build check |
+
+Example: a practice exam for AB-700.
 
 1. Fork or copy this repository.
-2. Open it in Claude Code and ask: *"Rewrite objectives.py for AZ-104 from the
-   live study guide, TOTAL = 700, weighted by domain."* The skills fetch the
-   study guide through the Microsoft Learn MCP server. `TOTAL` in
-   `objectives.py` is the only place the bank size is set; the per-objective
-   counts (`GROUPS` and `OVERRIDE`) must add up to it, which
-   `python objectives.py` checks.
-3. Replace the AI-500 parts: the exam name in `BRIEF.md`, the title and intro
-   text in `template.html`, and the `ai500.` storage keys in `template.html`
-   (otherwise progress mixes with this exam in the same browser).
+2. Open it in Claude Code and ask: *"Set objectives.py up for AB-700 from the
+   live study guide: EXAM, EXAM_TITLE, STUDY_GUIDE, DOMAINS and GROUPS,
+   TOTAL = 500, weighted by domain."* The skills fetch the study guide through
+   the Microsoft Learn MCP server. `python objectives.py` checks that the
+   counts add up to `TOTAL`.
+3. Rewrite the audience paragraph at the top of `BRIEF.md` from the study
+   guide's audience profile. The writing rules below it stay.
 4. Empty `data/` and let Claude Code write questions per objective group,
    following `BRIEF.md` and `DISTRACTORS.md`. Then run the conversion pass
    (`CONVERT.md`) and an independent verification pass (`VERIFY.md`).
@@ -53,8 +59,13 @@ Example: you want a bank of 700 questions for AZ-104:
    times. The real exam passes at 700 on a scale of 1 to 1000; that scaled
    score is not exactly 70% correct, so keep a margin.
 
-The `ai500-buddy` skill is a thin layer over `ms-cert-item-creator`; copy it,
-change the exam ID, and you have a chat buddy for your own exam.
+Several exams on one site? Each one gets its own storage prefix from `EXAM`,
+so progress never mixes. The simulation (50 questions, 100 minutes) matches
+role-based exams; adjust it in `template.html` if your exam differs.
+
+The `ai500-buddy` skill is a thin layer over `ms-cert-item-creator`; copy the
+folder, rename it, change the exam ID, and you have a chat buddy for your own
+exam. `/cert-quiz exam=AB-700` works for any exam without changes.
 
 ## Claude Code skills
 

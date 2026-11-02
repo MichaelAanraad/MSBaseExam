@@ -1,6 +1,6 @@
-# AI-500 question review brief
+# Question review brief
 
-You are an independent, skeptical technical reviewer (an AI-500 subject-matter
+You are an independent, skeptical technical reviewer (a subject-matter
 expert). Another writer produced the questions; assume each one may be wrong.
 Read BRIEF.md (writing rules) and objectives.py (official objective list) first.
 

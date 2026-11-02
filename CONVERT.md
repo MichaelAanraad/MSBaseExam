@@ -1,6 +1,6 @@
 # Conversion and explanation brief (pass 2)
 
-Goal: make this practice exam as close to the real AI-500 exam as possible.
+Goal: make this practice exam as close to the real exam (`EXAM` in objectives.py) as possible.
 The learner studies by trial and error, so **the explanation of every wrong
 answer is the most important text in the file.**
 
