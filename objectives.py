@@ -77,7 +77,8 @@ GROUPS = {
         "Design and implement a strategy for testing, including unit tests, regression tests, integration tests, and automated evaluations",
         "Specify continuous integration and continuous deployment (CI/CD) requirements for integration and release, including infrastructure-as-code deployments and testing"]),
 }
-# Exceptions to the per-group count so the total is exactly 500.
+TOTAL = 500  # question bank size; validate.py and build.py check against it
+# Exceptions to the per-group count so the total is exactly TOTAL.
 OVERRIDE = {"2.4.8": 8, "4.3.4": 10}
 
 
@@ -95,6 +96,6 @@ if __name__ == "__main__":
     o = objectives()
     by_dom = {d: sum(n for k, (_, n) in o.items() if k[0] == d) for d in DOMAINS}
     print(len(o), "objectives,", sum(n for _, n in o.values()), "questions", by_dom)
-    assert sum(n for _, n in o.values()) == 500
+    assert sum(n for _, n in o.values()) == TOTAL
     for g, (title, n, objs) in GROUPS.items():
         print(g, title, [o[f"{g}.{i}"][1] for i in range(1, len(objs) + 1)])

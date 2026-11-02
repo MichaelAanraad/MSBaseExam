@@ -3,13 +3,13 @@ import json
 import os
 import sys
 
-from objectives import DOMAINS, GROUPS, objectives
+from objectives import DOMAINS, GROUPS, TOTAL, objectives
 from validate import check, load, load_cases
 
 partial = "--partial" in sys.argv  # preview with whatever groups exist so far
 qs = load(list(GROUPS))
 err = [] if partial else check(qs, list(GROUPS))
-if not partial and (err or len(qs) != 500):
+if not partial and (err or len(qs) != TOTAL):
     sys.exit(f"not building: {len(err)} validation errors, {len(qs)} questions (run validate.py)")
 
 data = {

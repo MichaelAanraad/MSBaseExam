@@ -1,6 +1,6 @@
 """Validate data/*.json against the AI-500 objective map. Exit 1 on any error.
 
-Usage: python validate.py [group ...]   (no args = all groups, plus exact-500 check)
+Usage: python validate.py [group ...]   (no args = all groups, plus exact-TOTAL check)
 """
 import glob
 import json
@@ -8,7 +8,7 @@ import re
 import sys
 from collections import Counter
 
-from objectives import GROUPS, objectives
+from objectives import GROUPS, TOTAL, objectives
 
 OBJ = objectives()
 DIFF = ("easy", "medium", "hard")
@@ -198,7 +198,7 @@ if __name__ == "__main__":
         print("ERROR", e)
     print(f"{len(qs)} questions, {len(err)} errors,",
           dict(Counter(q.get("difficulty") for q in qs)), dict(Counter(kind(q) for q in qs)))
-    if not sys.argv[1:] and len(qs) != 500:
-        print("ERROR total is", len(qs), "not 500")
+    if not sys.argv[1:] and len(qs) != TOTAL:
+        print("ERROR total is", len(qs), "not", TOTAL)
         sys.exit(1)
     sys.exit(1 if err else 0)
