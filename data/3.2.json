@@ -1,0 +1,936 @@
+[
+ {
+  "id": "3.2.1-01",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. runs a contract review solution in which an orchestrator calls a legal agent, a finance agent, and a compliance agent one after another. Each agent analyzes the same contract independently and none of them uses the output of another agent. End-to-end task duration is too long.\n\nWhich orchestration pattern should you use to reduce the task duration?",
+  "choices": [
+   "Concurrent orchestration",
+   "Sequential orchestration",
+   "Handoff orchestration",
+   "Group chat orchestration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Orchestration patterns differ in how they spend time. Sequential orchestration runs agents one after another, so the duration is the sum of every step; concurrent orchestration fans the same input out to independent agents and merges the results, so the duration approaches that of the slowest agent. Choose concurrent whenever agents do not depend on each other's output.",
+  "rationale": [
+   "Correct: the legal, finance, and compliance agents analyze the same contract and none needs another agent's output, so concurrent orchestration can run them at the same time and merge the results, which cuts the duration to roughly that of the slowest agent.",
+   "Incorrect: sequential orchestration is what the solution already does, so the duration stays the sum of all three agents. Use it when each agent builds on the output of the previous one, such as draft, review, and then polish.",
+   "Incorrect: handoff orchestration passes control to one specialist at a time based on the conversation, so the agents still run one after another. Use it when the right specialist is not known up front, such as triage in customer support.",
+   "Incorrect: group chat orchestration lets agents take turns in a shared conversation, usually under a chat manager, which adds turns instead of removing them. Use it when agents must debate or refine one answer together, such as a maker-checker review."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns#concurrent-orchestration"
+ },
+ {
+  "id": "3.2.1-02",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Fabrikam, Inc. has a planner agent that calls an Azure OpenAI deployment in Microsoft Foundry. During peak load, the deployment returns HTTP 429 responses. You are writing custom retry and throttling logic for the agent, and you review the response headers that the deployment returns.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "When a 429 response includes retry-after-ms, the retry logic should wait that number of milliseconds before the next attempt.",
+   "The agent can read x-ratelimit-remaining-tokens to slow down before the deployment starts to return 429 responses.",
+   "If x-ratelimit-limit-tokens is lower than the TPM assigned to the deployment, a quota increase request is the correct fix."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Azure OpenAI returns rate limit headers on every call: x-ratelimit-limit-* shows the current limit, x-ratelimit-remaining-* shows what is left before a 429, and retry-after-ms on a 429 says how long to wait. Use the remaining headers to throttle proactively and retry-after-ms to time retries. Compare the limit header with the configured TPM to tell a temporary adjustment from a real quota problem.",
+  "rationale": [
+   "Yes: retry-after-ms is sent with a 429 response and gives the recommended wait in milliseconds. Honoring it avoids retrying too early, because failed requests also count toward the rate limit. Fall back to exponential backoff with jitter only when the header is missing.",
+   "Yes: x-ratelimit-remaining-tokens and x-ratelimit-remaining-requests show what is left before a 429 occurs, so the agent can throttle proactively. They are not wait times; use retry-after-ms for that after a 429 has happened.",
+   "No: a limit header that is lower than the assigned TPM indicates a temporary rate limit adjustment on the shared Standard pool, which usually resolves within hours. Retry with retry-after-ms backoff; request more quota only when the 429 says the rate limit of your quota is exceeded."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/quota#understanding-rate-limits"
+ },
+ {
+  "id": "3.2.1-03",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Alpine Ski House has a booking agent that calls a chat completions deployment with n set to 5 so that the agent can pick the best of five drafts. Logs show that the agent always uses the first choice and discards the other four. Each call takes much longer than the team expects. You need to reduce the duration of each call without changing the model.\n\nWhat should you do?",
+  "choices": [
+   "Remove n from the request or set it to 1.",
+   "Set stream to true on each request.",
+   "Increase the TPM allocation of the deployment.",
+   "Raise max_tokens so each draft finishes in one call."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Generation time grows with the number of output tokens. Each extra completion requested through n or best_of multiplies the tokens that the model must generate and the tokens counted against the rate limit. Request only the completions you use, and cap output length, to shorten each call.",
+  "rationale": [
+   "Correct: with n set to 5 the model generates five full drafts, but the agent only uses the first one. Removing n or setting it to 1 cuts the generated tokens to a single draft, which shortens each call without changing the model.",
+   "Incorrect: streaming returns tokens as they are generated, which improves perceived latency for a user who watches the output, but the total generation time stays the same because five drafts are still produced. Use it for interactive chat front ends.",
+   "Incorrect: a higher TPM allocation reduces HTTP 429 throttling, but it does not make the model generate five drafts any faster. Increase TPM when requests are rejected by the rate limit, not when individual calls are slow.",
+   "Incorrect: raising max_tokens allows longer drafts, so calls can take even longer. Raise it only when responses are cut off with finish_reason set to length; to reduce duration, lower it to the size of the expected answer."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/latency"
+ },
+ {
+  "id": "3.2.1-04",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has a travel agent that calls a get_weather function. When a user asks for the weather in three cities, the agent makes three separate model round trips, one function call per round trip. You use a model deployment that supports multiple tool calls in one response.\n\nWhat should you use to reduce the number of round trips?",
+  "choices": [
+   "Parallel function calling",
+   "The tool_choice parameter set to required",
+   "Streaming with stream set to true",
+   "Strict mode on the get_weather function definition"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Parallel function calling lets a supported model return several tool calls in one response. The app runs those calls and sends all results back in one follow-up request, so N independent lookups take one model round trip instead of N. It applies only when the calls do not depend on each other.",
+  "rationale": [
+   "Correct: the three weather lookups are independent, and the deployment supports multiple tool calls in one response. With parallel function calling, the model returns all three get_weather calls at once, so the agent needs one round trip instead of three.",
+   "Incorrect: tool_choice set to required forces the model to call at least one tool, but it does not make the model return several calls together. Use it when the agent must always call a tool before it answers, for example to always look up data.",
+   "Incorrect: streaming delivers output tokens incrementally, but each tool call still needs its own model round trip. Use streaming to improve perceived latency for a user who reads the answer while it is generated.",
+   "Incorrect: strict mode makes the generated arguments follow the JSON schema of the function exactly, which improves reliability, not the number of round trips. Use it when malformed or missing arguments cause tool failures."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-foundry/openai/how-to/function-calling#function-calling-support"
+ },
+ {
+  "id": "3.2.1-05",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank runs a classification agent that sets max_tokens to 4000 on every request. Actual responses are about 150 tokens. Azure Monitor shows billed token usage at 40 percent of the deployment TPM limit, yet the agent receives frequent HTTP 429 responses. You must reduce the 429 responses without requesting more quota.\n\nWhat should you do?",
+  "choices": [
+   "Lower max_tokens to a value close to the expected response size.",
+   "Enable streaming on every request.",
+   "Increase the SDK max_retries value to 10.",
+   "Move the deployment to a different region in the same subscription."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The TPM rate limit is enforced on an estimate that is made when each request arrives: the prompt plus max_tokens (and best_of), not the tokens that are actually billed. A large max_tokens therefore consumes rate limit budget that is never used. Setting max_tokens close to the expected response size fits more requests into the same TPM.",
+  "rationale": [
+   "Correct: each request reserves about 4,000 tokens against the TPM limit even though responses are about 150 tokens, which explains 429 responses at 40 percent billed usage. Lowering max_tokens to near 150 lets many more requests fit in the same quota.",
+   "Incorrect: streaming changes how tokens are delivered, not how the rate limit estimate is computed, so each request still reserves the full max_tokens. Use streaming to show output to a waiting user sooner.",
+   "Incorrect: more SDK retries resend throttled requests, and failed requests also count toward the limit, so throttling can get worse. Raise retries only for occasional transient 429 responses, not for a structural overestimate.",
+   "Incorrect: a deployment in another region needs its own quota and adds routing work, and the inflated estimate per request stays the same. Add a region when the quota of one region is exhausted and you need more total capacity."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-foundry/openai/how-to/quota#understanding-rate-limits"
+ },
+ {
+  "id": "3.2.1-06",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has an orchestrator agent that fans out to 40 subagents at the same instant when a research task starts. The shared deployment has a 600 RPM limit, and the solution sends about 200 requests per minute in total. The subagents still receive HTTP 429 responses at the start of each task. The parallel design must be kept to minimize task duration.\n\nWhat should you do?",
+  "choices": [
+   "Cap concurrent subagent calls and spread the requests over each minute.",
+   "Convert the fan-out to a sequential chain of subagents that run one at a time.",
+   "Enable streaming on every subagent request.",
+   "Submit the subagent requests to a Global Batch deployment instead."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "RPM limits are evaluated over short windows of 1 or 10 seconds, so a burst of requests can be throttled even when the per-minute total is well below the limit. Cap concurrency and spread requests over the window to stay under the short-window rate while you keep parallel execution.",
+  "rationale": [
+   "Correct: 40 requests at the same instant exceed the short-window rate that a 600 RPM limit implies (about 10 per second), even though 200 per minute is below the limit. Capping concurrent calls and spreading them keeps the fan-out parallel without the burst.",
+   "Incorrect: a sequential chain removes the burst, but it gives up the parallel design that the stem requires and makes the task much slower. Use sequential execution when each subagent needs the result of the previous one.",
+   "Incorrect: streaming changes how responses are returned, not how many requests arrive per second, so the burst still triggers throttling. Use streaming when a user watches the output as it is generated.",
+   "Incorrect: Global Batch processes requests asynchronously with a target turnaround of up to 24 hours, which suits offline bulk jobs, not a research task that must finish quickly. Use Batch for large, latency-tolerant workloads at lower cost."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-foundry/openai/how-to/quota#understanding-rate-limits"
+ },
+ {
+  "id": "3.2.1-07",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank routes all model calls from its agents through Azure API Management. The agents use one Standard deployment in East US that is already assigned the full quota for the model in that region, and HTTP 429 responses still occur at peak load. You add a deployment of the same model in a second region. You need to increase the total throughput available to the agents by using both deployments at the same time.\n\nWhich API Management configuration should you use?",
+  "choices": [
+   "A backend pool that uses round-robin load balancing across both deployments",
+   "A backend pool that uses priority-based load balancing with East US as the top priority",
+   "A circuit breaker rule on the East US backend that trips on HTTP 429 responses",
+   "A retry policy that retries throttled requests against the East US backend"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Azure API Management backend pools distribute requests across several backends. Round-robin (optionally weighted) spreads load so that all backends add throughput at the same time, while priority-based routing sends traffic to lower priorities only when higher ones are unavailable. Circuit breakers and retries handle failures but do not add parallel capacity by themselves.",
+  "rationale": [
+   "Correct: a round-robin backend pool sends requests to both regional deployments at the same time, so the agents can use the combined quota of East US and the second region, which increases the total throughput.",
+   "Incorrect: priority-based load balancing uses the second region only when East US is unavailable or its circuit breaker has tripped, so both deployments are not used at the same time. Use it to prefer a primary deployment, such as a provisioned one, and fail over.",
+   "Incorrect: a circuit breaker stops sending traffic to East US after 429 responses, which protects the backend, but by itself it does not spread load across both deployments. Combine it with a pool for failover; it does not add parallel capacity.",
+   "Incorrect: retrying throttled requests against the same East US backend adds load to a deployment that already uses its full quota. Use a retry policy for occasional transient errors, preferably against another backend in a pool."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/backends"
+ },
+ {
+  "id": "3.2.1-08",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "case": "C-e",
+  "stem": "You need to complete the code of App1 so that it meets the reporting requirements.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nresponse = client.responses.create(\n    model=\"o3\",\n    input=report_request,\n    [[1]],\n)\n\nwhile response.status in {\"queued\", \"in_progress\"}:\n    sleep(10)\n    response = client.responses.[[2]](response.id)\n\nsave_report(response.output_text)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "background=True",
+     "stream=True",
+     "store=False"
+    ],
+    "why": [
+     "Correct: background=True queues the task and returns at once with a response ID and the queued status, so no connection stays open past the 100-second proxy limit, and the reasoning depth of o3 is unchanged.",
+     "Incorrect: stream=True without background mode keeps one long connection open while tokens arrive, so the proxy still closes it after 100 seconds and the stream cannot be resumed. Use streaming to show output to a waiting user.",
+     "Incorrect: store=False makes the request stateless, and background mode requires store set to true, so the response could not be retrieved later. Use store=False when the service must not retain response data."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "retrieve",
+     "cancel",
+     "delete"
+    ],
+    "why": [
+     "Correct: responses.retrieve(response.id) fetches the current state of the background response, so the loop polls until the status leaves queued and in_progress and output_text holds the finished report.",
+     "Incorrect: responses.cancel stops an in-progress background task and returns its final state, so the report would never finish. Use it when a user abandons a long-running request.",
+     "Incorrect: responses.delete removes a stored response, so there would be nothing left to poll. Use it to clean up stored responses after you have saved their output."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Background mode in the Responses API runs long reasoning tasks asynchronously: the create call returns immediately with a response ID and the queued status, and the client polls retrieve until the response reaches a terminal state. It requires store=true and avoids holding a connection open, which makes it the right pattern behind proxies or gateways with short connection timeouts.",
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/responses#background-tasks"
+ },
+ {
+  "id": "3.2.1-09",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. wraps every model call of its research agent in a custom retry library that retries up to five times with exponential backoff. The Azure OpenAI Python SDK client is created with default settings. During throttling events, the deployment receives far more requests than five attempts per call, and the throttling lasts longer.\n\nWhat should you do?",
+  "choices": [
+   "Set max_retries to 0 on the SDK client.",
+   "Increase max_retries on the SDK client to match the custom library.",
+   "Remove the random jitter from the custom backoff.",
+   "Increase the initial delay of the custom exponential backoff."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The openai Python SDK retries 429 responses and transient errors twice by default, with backoff that honors retry headers. A custom retry library on top multiplies the attempts: each custom attempt can become three requests. Use one retry layer: either configure max_retries on the SDK, or set max_retries=0 when you need custom retry logic.",
+  "rationale": [
+   "Correct: setting max_retries to 0 disables the two default SDK retries, so each of the five custom attempts sends one request instead of up to three. This stops the multiplication that prolongs throttling, while the custom library keeps its own backoff.",
+   "Incorrect: raising max_retries on the SDK makes every custom attempt fan out into even more requests, and failed requests count toward the limit. Increase max_retries only when the SDK is the single retry layer and no custom library is used.",
+   "Incorrect: removing jitter makes all clients retry at the same instant, which creates synchronized bursts and makes throttling worse. Random jitter is recommended in every backoff implementation.",
+   "Incorrect: a longer initial delay spaces the custom attempts out, but each attempt still triggers up to two SDK retries, so the request count stays multiplied. Tune the delay only after there is a single retry layer."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/quota#understanding-rate-limits"
+ },
+ {
+  "id": "3.2.1-10",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "A. Datum Corporation has a back-office workflow with five steps. Steps 2, 3, and 4 each call a separate agent that reads the output of step 1 and generates a long report. Step 5 merges the three reports. Today all steps run in sequence, and no user watches the output while it is generated. Results are needed within two minutes of the request.\n\nWhich two actions should you perform to reduce the end-to-end task duration? Each correct answer presents part of the solution.",
+  "choices": [
+   "Run steps 2, 3, and 4 concurrently and merge their results in step 5.",
+   "Reduce the generated output size by lowering max_tokens and adding stop sequences.",
+   "Enable streaming on the requests of steps 2, 3, and 4.",
+   "Submit steps 2, 3, and 4 to a Global Batch deployment.",
+   "Send steps 2, 3, and 4 as one request with n set to 3."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "The end-to-end duration of a workflow is driven by its critical path and by output length. Independent steps can run concurrently so that their durations overlap, and generation time scales with output tokens, so capping output shortens every call. Streaming only improves perceived latency for a user who watches, and batch processing trades latency for cost.",
+  "rationale": [
+   "Correct: steps 2, 3, and 4 only read the output of step 1 and do not depend on each other, so running them concurrently makes their durations overlap. Step 5 then merges the three reports, which shortens the critical path.",
+   "Correct: generation time grows with the number of output tokens, and these steps write long reports. Lowering max_tokens and adding stop sequences limits each report to what is needed, so every call finishes sooner.",
+   "Incorrect: streaming returns tokens as they are generated, which helps a user who reads along, but nobody watches this back-office workflow and the total generation time does not change. Use it for interactive chat.",
+   "Incorrect: Global Batch runs requests asynchronously with a target turnaround of up to 24 hours, which cannot meet the two-minute requirement. Use it for large offline workloads where lower cost matters more than latency.",
+   "Incorrect: n set to 3 returns three completions for the same prompt, but the three steps call different agents with different instructions, so one request cannot replace them. Use n to sample alternative answers to one prompt."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/latency#improve-performance"
+ },
+ {
+  "id": "3.2.1-11",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. has a Global Provisioned deployment named Deploy1 in a Foundry resource named Account1 in a resource group named RG1. Deploy1 serves several agents and returns HTTP 429 responses during traffic bursts. You plan to enable spillover for all requests on Deploy1 without changing agent code, and then confirm that spillover works. Account1 has no other deployments.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az cognitiveservices account deployment create --name Account1 --resource-group RG1 --deployment-name Std1 --model-name <model of Deploy1> --model-version <version of Deploy1> --model-format OpenAI --sku-name GlobalStandard --sku-capacity 50`.",
+   "Send a PUT request to the Deployments - Create Or Update REST API for Deploy1 that sets properties.spilloverDeploymentName to Std1.",
+   "Send test requests to Deploy1 and check the responses for the x-ms-spillover-from-deployment header.",
+   "In Azure Monitor metrics, apply the IsSpillover split to the Azure OpenAI Requests metric of Std1.",
+   "Run `az cognitiveservices account create --kind AIServices ...` to create a Foundry resource named Account2, and create Std1 in Account2.",
+   "Add the x-ms-spillover-deployment header with the value Std1 to every inference request that the agents send to Deploy1."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Spillover routes requests that a provisioned deployment cannot serve (for example 429, 500, or 503 responses) to a standard deployment of the same model and version in the same resource. Set spilloverDeploymentName on the provisioned deployment to cover all requests, or send the x-ms-spillover-deployment header per request. Confirm spillover with the x-ms-spillover-from-deployment response header and the IsSpillover metric split.",
+  "rationale": [
+   "Step 1: spillover needs a standard deployment of the same model and version in the same Foundry resource, so you create Std1 in Account1 first. The spilloverDeploymentName property can only point to a deployment that already exists.",
+   "Step 2: setting spilloverDeploymentName on Deploy1 enables spillover for all requests on the provisioned deployment, without changes to agent code. It needs Std1 to exist, and it must be set before any traffic can spill over.",
+   "Step 3: once spillover is enabled, requests that Deploy1 cannot serve are redirected to Std1, and those responses carry x-ms-spillover-from-deployment with the name of Deploy1, which confirms spillover per request.",
+   "Step 4: after test traffic has spilled over, the IsSpillover split on the standard deployment shows how many requests arrived through spillover. The metric only shows data after spilled requests have been processed.",
+   "Incorrect: the standard deployment must be in the same Foundry resource as the provisioned deployment, so a deployment in a new Account2 cannot be the spillover target. Create a second resource when you need capacity in another region behind a gateway.",
+   "Incorrect: the x-ms-spillover-deployment header enables spillover per request, which requires changes in every agent, and the deployment property takes precedence anyway. Use the header when only some workloads should spill over."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/spillover-traffic-management"
+ },
+ {
+  "id": "3.2.1-12",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wide World Importers routes six agent applications through Azure API Management to one Azure OpenAI deployment. All applications run in the same Azure Container Apps environment and reach API Management through one shared outbound IP address. Each application has its own API Management subscription. You must enforce a tokens-per-minute limit per application and reduce the requests that reach the backend after an application has already reached its limit. You start with the following policy.\n\n```xml\n<llm-token-limit\n    counter-key=\"KEY\"\n    tokens-per-minute=\"20000\"\n    estimate-prompt-tokens=\"ESTIMATE\" />\n```\n\nWhich values should you use for KEY and ESTIMATE?",
+  "choices": [
+   "KEY: @(context.Subscription.Id) -- ESTIMATE: true",
+   "KEY: @(context.Subscription.Id) -- ESTIMATE: false",
+   "KEY: @(context.Request.IpAddress) -- ESTIMATE: true",
+   "KEY: @(context.Request.IpAddress) -- ESTIMATE: false"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The llm-token-limit policy counts tokens per counter key, so the key must identify the consumer that you want to limit. With estimate-prompt-tokens set to true, the policy estimates prompt tokens from the prompt schema before it forwards the request, which reduces backend requests once the limit is already exceeded; with false, it relies on the token usage that the backend reports, so requests can still reach the backend until the overage is detected from a response.",
+  "rationale": [
+   "Correct: each application has its own subscription, so context.Subscription.Id gives one counter per application, and estimate-prompt-tokens set to true lets API Management reject requests of an application that has already reached its limit before they reach the backend.",
+   "Incorrect: the subscription key gives the per-application limit, but with estimate-prompt-tokens set to false the policy relies on usage that the backend reports, so requests can still reach the backend after the limit is exceeded, until the overage is detected from a response. Use false when exact counts matter more than early rejection.",
+   "Incorrect: all six applications share one outbound IP address, so an IP-based key makes them share one counter and one limit. Use an IP-based key when each caller has a distinct address and no subscription, such as public clients.",
+   "Incorrect: the IP-based key merges the six applications into one counter, and false also lets requests reach the backend after the limit is exceeded. This combination fits only distinct callers for which accurate backend counts are preferred over early rejection."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-token-limit-policy#considerations-for-token-counts-and-estimation"
+ },
+ {
+  "id": "3.2.2-01",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing has an editorial assistant built with Microsoft Agent Framework that keeps its own in-memory chat history. The agent uses SlidingWindowStrategy with keep_last_groups set to 20. In long sessions, the agent forgets the style rules that the user stated early in the conversation. You must keep the earlier context in condensed form while staying within the token budget.\n\nWhich compaction strategy should you use instead?",
+  "choices": [
+   "SummarizationStrategy",
+   "TruncationStrategy",
+   "SlidingWindowStrategy with keep_last_groups set to 10",
+   "SelectiveToolCallCompactionStrategy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Sliding-window amnesia happens when a strategy keeps only the newest turns, so early facts such as style rules fall out of the context. SummarizationStrategy replaces older messages with an LLM-written summary, so key facts survive in condensed form while the token count drops. Truncation and windows are cheaper but drop content outright.",
+  "rationale": [
+   "Correct: SummarizationStrategy condenses older messages into a summary that keeps key facts, decisions, and user preferences, so the early style rules stay available while the history stays within the token budget.",
+   "Incorrect: TruncationStrategy removes the oldest message groups until the budget is met, so the early style rules would still be lost. Use it as a hard token-budget backstop when losing old content is acceptable.",
+   "Incorrect: a smaller window keeps even fewer recent groups, so the style rules disappear sooner, which makes the amnesia worse. Use a sliding window when only recent turns matter and you want no extra model calls.",
+   "Incorrect: SelectiveToolCallCompactionStrategy removes older tool-call groups only and does not touch user messages, so it neither keeps nor condenses the style rules. Use it when tool chatter dominates the context."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-02",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "case": "C-e",
+  "stem": "You need to improve how Agent2 retrieves catalog pages for the dealer searches that are described in the business requirements.\n\nWhat should you use?",
+  "choices": [
+   "A hybrid query that combines full-text search and vector search",
+   "A vector query with a higher k value",
+   "Exhaustive KNN instead of HNSW for the vector field",
+   "Semantic ranking on the results of the vector query"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Vector search ranks documents by the semantic similarity of embeddings, which is weak for exact strings such as part numbers, codes, and names. A hybrid query runs full-text (BM25) and vector search in parallel and merges the results with Reciprocal Rank Fusion, so exact keyword matches and semantic matches both contribute.",
+  "rationale": [
+   "Correct: dealers search for exact part numbers such as AW-4471-RD and for technician names, which full-text search matches precisely. A hybrid query adds that keyword precision to the existing vector search of Agent2 and merges both result sets with RRF.",
+   "Incorrect: a higher k returns more nearest neighbors, but they are still ranked by semantic similarity, so exact part numbers stay poorly matched. Increase k when relevant documents sit just below the current cutoff, or to feed the semantic ranker.",
+   "Incorrect: exhaustive KNN scans all vectors instead of using the approximate HNSW graph, which improves nearest-neighbor recall, but the results are still semantic. Use it for small indexes or to measure the recall of HNSW.",
+   "Incorrect: semantic ranking reorders the results that the query already returned, so if the vector query never retrieves the exact part, reranking cannot add it. Use semantic ranking on top of hybrid results to improve their order."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/hybrid-search-overview"
+ },
+ {
+  "id": "3.2.2-03",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a code review agent built with Microsoft Agent Framework for Python. The agent keeps its own in-memory history and uses a TruncationStrategy with max_n=100_000, compact_to=80_000, and the CharacterEstimatorTokenizer. The model has a 128,000-token context window. Most content is source code and JSON.\n\nRequests intermittently fail because the context window is exceeded. The usage data shows that the actual prompt token counts are much higher than the estimates of the strategy. The agent must keep using as much of the context window as possible.\n\nWhat should you do?",
+  "choices": [
+   "Pass a tokenizer that implements TokenizerProtocol for the encoding of the model.",
+   "Lower max_n to 50_000 and compact_to to 40_000 in the TruncationStrategy.",
+   "Replace the TruncationStrategy with SlidingWindowStrategy(keep_last_groups=20).",
+   "Add a ToolResultCompactionStrategy before the TruncationStrategy."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Token-aware compaction strategies count tokens with a TokenizerProtocol implementation. The built-in CharacterEstimatorTokenizer assumes about four characters per token, which can underestimate dense content such as code and JSON. A tokenizer that matches the encoding of the model makes the thresholds accurate, so the strategy can use most of the context window safely.",
+  "rationale": [
+   "Correct: the failures come from the estimator underestimating tokens for code and JSON. A tokenizer that implements TokenizerProtocol for the encoding of the model gives real counts, so max_n and compact_to keep working close to the 128,000-token window.",
+   "Incorrect: lower thresholds would hide the estimation error behind a large safety margin, but they waste much of the context window, which the stem rules out. Lower thresholds when the model has a smaller window, not to fix bad estimates.",
+   "Incorrect: SlidingWindowStrategy keeps a fixed number of groups regardless of their token size, so large code files can still overflow the window. Use it to bound conversation length predictably.",
+   "Incorrect: ToolResultCompactionStrategy collapses older tool results, which helps when tool output dominates, but the truncation thresholds would still rely on underestimated counts. Use it as a gentle first pass in a pipeline."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-04",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a Python agent built with Microsoft Agent Framework that keeps its conversation history in memory and calls several tools. A custom function trims the history to the 30 most recent messages. Since the function was added, some model calls fail because a tool result message remains in the history without the assistant message that contains the matching function call.\n\nYou need a hard token-budget backstop that removes the oldest content first, keeps function calls and their results together, and does not require an extra LLM call.\n\nWhich compaction strategy should you use?",
+  "choices": [
+   "TruncationStrategy",
+   "SummarizationStrategy",
+   "ToolResultCompactionStrategy",
+   "SelectiveToolCallCompactionStrategy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Agent Framework compaction, an assistant message with function calls and its tool result messages form one atomic group. Built-in strategies keep or remove whole groups, which prevents orphaned tool results that cause API errors. TruncationStrategy removes the oldest groups first and needs no LLM call, which makes it the standard hard budget backstop.",
+  "rationale": [
+   "Correct: TruncationStrategy removes the oldest non-system groups until the target is met, keeps function calls and their results together as one group, and needs no extra LLM call, which matches every requirement.",
+   "Incorrect: SummarizationStrategy needs a separate LLM client to write the summary, which violates the requirement for no extra LLM call. Use it when older context must survive in condensed form.",
+   "Incorrect: ToolResultCompactionStrategy collapses only older tool results into short summaries and never removes user or assistant text, so it is not a hard budget backstop. Use it as a gentle first step to reclaim space from verbose tool output.",
+   "Incorrect: SelectiveToolCallCompactionStrategy removes older tool-call groups only, so long user and assistant text can still exceed the budget. Use it when tool history is no longer needed and tool chatter dominates."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction?pivots=programming-language-python"
+ },
+ {
+  "id": "3.2.2-05",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. has a negotiation agent that uses SummarizationStrategy with the default prompt. After several compaction cycles, the summary no longer contains the approved discount percentage and the contract ID, and later answers contradict earlier commitments. The agent must stay within the same token budget.\n\nWhat should you do to reduce this summary drift?",
+  "choices": [
+   "Provide a custom summarization prompt that preserves figures and IDs.",
+   "Replace SummarizationStrategy with a TruncationStrategy on the same budget.",
+   "Replace SummarizationStrategy with SelectiveToolCallCompactionStrategy.",
+   "Set max_summary_input_tokens to None to remove the summarizer input bound."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Summary drift occurs when repeated summarization cycles lose or distort facts, because each new summary is built on top of the previous one. The default prompt preserves key facts, decisions, and preferences, but you can supply a custom prompt that explicitly keeps exact figures, IDs, and commitments. Other strategies drop content instead of condensing it.",
+  "rationale": [
+   "Correct: a custom summarization prompt can instruct the summarizer to keep exact numbers, contract IDs, and commitments in every cycle, which counters the drift while the strategy still compacts to the same token budget.",
+   "Incorrect: TruncationStrategy removes the oldest groups outright, so the discount and the contract ID would be lost entirely instead of drifting. Use it as a cheap backstop when older details are not needed.",
+   "Incorrect: SelectiveToolCallCompactionStrategy only removes older tool-call groups and writes no summary, so facts stated in the conversation text are not protected. Use it when tool chatter dominates and tool history is not needed.",
+   "Incorrect: removing the summarizer input bound lets larger groups be summarized, but it does not tell the summarizer which facts to keep, so the drift continues. Raise or remove the bound when large groups are skipped."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-06",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses a Microsoft Agent Framework handoff workflow with an order agent and a refund agent. The order agent calls a lookup_order tool that returns the order number and purchase date, and then hands off to the refund agent. The refund agent asks the user for the order number again, even though the order agent already retrieved it.\n\nWhat should you do to maintain entity continuity across the handoff?",
+  "choices": [
+   "Have the order agent restate the order number and purchase date in its reply before the handoff.",
+   "Disable return-to-previous routing so user replies go through the start agent.",
+   "Increase keep_last_tool_call_groups in the compaction strategy of the refund agent.",
+   "Replace the handoff workflow with a concurrent orchestration of both agents."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Entity continuity issues arise when facts such as IDs are known to one agent but not visible to the next. In an Agent Framework handoff workflow, the conversation messages are shared between agents, but tool calls and tool results stay with the agent that made them, so a fact that exists only in a tool result must be restated in a message to survive the handoff.",
+  "rationale": [
+   "Correct: the lookup_order result stays private to the order agent, while conversation messages are shared with the other agents. Restating the order number and purchase date in the reply puts the entities into the shared conversation, so the refund agent can use them.",
+   "Incorrect: return-to-previous routing only decides which agent receives the next user message, and it does not share tool results between agents. Disable it when every new user message must go through the start agent first.",
+   "Incorrect: keep_last_tool_call_groups controls how many tool-call groups compaction keeps in one agent's own history, and the refund agent never had the tool call of the order agent. Use it to tune how much recent tool output an agent keeps.",
+   "Incorrect: concurrent orchestration runs both agents in parallel on the same input, so the refund agent would start before the order is looked up. Use it for independent analyses whose results are merged."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff#context-synchronization"
+ },
+ {
+  "id": "3.2.2-07",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fourth Coffee has an agent that uses a Foundry Agent Service memory store. At each turn, the agent calls search_memories with items set to the latest user message. When a user opens a new conversation with a short greeting, the agent fails to apply the stored language preference of the user.\n\nWhat should you do?",
+  "choices": [
+   "At conversation start, call search_memories with only the user scope.",
+   "Increase the default TTL of the memory store to keep memories longer.",
+   "Disable chat summary memory in the memory store configuration.",
+   "Store the language preference as procedural memory instead."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Foundry Agent Service memory store holds user profile memories (stable facts and preferences) and chat summary memories. Calling search_memories with items returns contextual memories that match those messages; calling it with only a scope and no items returns the user profile memories, which is how you inject static memories at the start of a conversation.",
+  "rationale": [
+   "Correct: a short greeting has little content to match the language preference against. Calling search_memories with only the user scope at conversation start returns the user profile memories, so the stored preference is applied from the first reply.",
+   "Incorrect: TTL controls how long memories are kept before they expire, but the preference is still stored, it is just not retrieved by a greeting. Change the TTL when memories expire too early or must be removed sooner.",
+   "Incorrect: chat summary memory stores condensed summaries of past conversations, and disabling it does not make a greeting retrieve the profile preference. Disable it when you only want stable user profile facts to be stored.",
+   "Incorrect: procedural memory is a separate store option, and moving the preference there does not change the retrieval problem, because a greeting still gives search_memories nothing relevant to match. The fix is how memories are searched at the start."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage#use-memories-via-apis"
+ },
+ {
+  "id": "3.2.2-08",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance configures a compaction strategy in Microsoft Agent Framework for an agent that runs as a Foundry agent with server-side conversation state. Long conversations still reach the context limit, and logs show that the compaction strategy has no effect.\n\nWhat should you conclude?",
+  "choices": [
+   "Compaction has no effect because the Foundry service manages the agent context.",
+   "The compaction trigger threshold is set too high for the conversation.",
+   "The CharacterEstimatorTokenizer underestimates the token count of each message.",
+   "The compaction strategy must be registered on each tool instead of the agent."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework compaction only acts on agents that keep their own in-memory message list and send the full history on each call. Foundry agents, the Responses API with store enabled, and Copilot Studio agents keep conversation state on the service side, so a configured compaction strategy has no effect on them.",
+  "rationale": [
+   "Correct: a Foundry agent with server-side conversation state has its context managed by the Foundry service, and Agent Framework compaction applies only to in-memory history, so the configured strategy never acts on that history.",
+   "Incorrect: a threshold that is too high would make compaction fire late, but it would still act at some point. Here it has no effect at all, which points to service-managed state. Tune thresholds for in-memory agents that compact too late.",
+   "Incorrect: an underestimating tokenizer makes compaction fire later than expected, which is a real failure mode for in-memory agents, but it does not explain a strategy that never acts. Fix it with a model-specific tokenizer.",
+   "Incorrect: compaction strategies are configured on the agent or chat client, or for one run, not on individual tools. Tools affect context size through their results, which ToolResultCompactionStrategy can collapse for in-memory agents."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-09",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Relecloud has a research agent built with Microsoft Agent Framework for Python that keeps its own in-memory history. Every older message group is a tool-call group of about 12,000 estimated tokens because the tools return full reports. With SummarizationStrategy(client=summarizer_client, target_count=4, threshold=2), the non-system message count is far above 6 in long sessions, but the history is never summarized and no error is raised. The summary must keep the tool trajectory, including tool arguments and results.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nsummarization = SummarizationStrategy(\n    client=summarizer_client,\n    target_count=4,\n    threshold=2,\n    [[1]],\n)\n\nagent = Agent(\n    client=client,\n    instructions=RESEARCH_INSTRUCTIONS,\n    [[2]]=summarization,\n    tokenizer=CharacterEstimatorTokenizer(),\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "max_summary_input_tokens=24_000",
+     "max_summary_input_tokens=8_000",
+     "prompt=\"Summarize the key decisions and user preferences only.\""
+    ],
+    "why": [
+     "Correct: the summarizer input is bounded to 8,000 estimated tokens by default and complete groups are never split, so 12,000-token groups never fit and summarization is skipped. A 24,000 bound lets them fit, and the transcript includes tool arguments and results.",
+     "Incorrect: 8,000 is the default bound, so setting it explicitly changes nothing, and every 12,000-token group is still too large to fit. Use a lower bound to keep summarizer requests small when message groups are small.",
+     "Incorrect: a custom prompt changes what the summary keeps, but the groups still do not fit the default input bound, so summarization stays skipped, and this prompt would also drop the tool trajectory. Use a custom prompt to counter summary drift."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "compaction_strategy",
+     "middleware",
+     "context_providers"
+    ],
+    "why": [
+     "Correct: compaction_strategy is the Agent parameter that applies a compaction strategy to the in-memory history of the agent, together with the tokenizer parameter, so the summarization runs before model calls.",
+     "Incorrect: middleware takes a list of agent, chat, or function middleware that intercepts runs or tool calls, not a compaction strategy. Use it for guardrails, logging, or policy checks around agent runs.",
+     "Incorrect: context_providers takes providers that add context, such as memories, to each run; a compaction strategy is configured through compaction_strategy instead. Use context providers to inject memories or retrieved knowledge."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "SummarizationStrategy triggers when the non-system message count exceeds target_count plus threshold, but it only summarizes complete message groups that fit the summarizer input budget, which is 8,000 estimated tokens by default. If no group fits, it skips summarization without an error. Raise max_summary_input_tokens (or set it to None) when groups are large, and attach the strategy through the compaction_strategy parameter of the agent.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-10",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Lamna Healthcare Company has a clinical knowledge agent that queries an Azure AI Search index with vector queries only. Clinicians search for drug codes, dates, and physician names, and the agent often misses exact matches. The team also wants the most relevant passages ranked at the top before they are passed to the model. You plan to change the query to the following request body.\n\n```json\n{\n  \"search\": \"DRX-20931\",\n  \"vectorQueries\": [\n    { \"kind\": \"text\", \"text\": \"DRX-20931\", \"fields\": \"contentVector\", \"k\": 50 }\n  ],\n  \"queryType\": \"semantic\",\n  \"semanticConfiguration\": \"clinical-semantic\",\n  \"top\": 10\n}\n```\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The full-text part of the query can return documents that contain the exact drug code even when their embeddings are not close to the query vector.",
+   "The full-text results and the vector results are merged by using Reciprocal Rank Fusion before semantic ranking is applied.",
+   "Lowering k to 10 so that it matches top gives the semantic ranker better input."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Hybrid search is one request that contains both search and vectorQueries: the full-text and vector queries run in parallel and RRF merges their results. Full-text search adds precision for codes, dates, and names, and semantic ranking reorders the merged set. The semantic ranker uses up to 50 results, so set k to 50 and use top to control how many results are returned.",
+  "rationale": [
+   "Yes: the search parameter runs a BM25 full-text query in parallel with the vector query, and full-text search matches exact strings such as drug codes, dates, and names that embeddings represent poorly. That is why hybrid queries fix exact-match misses.",
+   "Yes: a hybrid query merges the full-text and vector result sets into one ranked list with Reciprocal Rank Fusion, and queryType semantic then reranks that merged list. RRF scores look low, which is expected behavior.",
+   "No: the semantic ranker takes up to 50 results as input, and the guidance is to set k to 50 when you use semantic ranking. Lowering k to 10 deprives the ranker of input; use top to limit how many results are returned to the agent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/hybrid-search-how-to-query#troubleshoot-hybrid-queries"
+ },
+ {
+  "id": "3.2.2-11",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Alpine Ski House uses a TokenBudgetComposedStrategy in Python for an agent with a 16,000-token budget. You must apply compaction from the least aggressive to the most aggressive strategy so that context is lost only when gentler steps fail to meet the budget.\n\nYou plan to include the following strategies:\n\n1. SlidingWindowStrategy(keep_last_groups=20)\n2. ToolResultCompactionStrategy(keep_last_tool_call_groups=1)\n3. SummarizationStrategy(client=summarizer_client, target_count=4, threshold=2)\n\nWhich order should you use in the strategies list?",
+  "choices": [
+   "2, 3, 1",
+   "1, 3, 2",
+   "3, 2, 1",
+   "2, 1, 3"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "TokenBudgetComposedStrategy runs its child strategies in list order and stops as soon as the token budget is met, with a built-in oldest-first fallback. Put the gentlest strategy first: tool-result compaction (low aggressiveness, no LLM call), then summarization (medium, keeps condensed context), and then the sliding window (high, drops groups).",
+  "rationale": [
+   "Correct: ToolResultCompactionStrategy only collapses old tool results, SummarizationStrategy condenses older turns but keeps their facts, and SlidingWindowStrategy drops whole groups. The order 2, 3, 1 loses context only when the gentler steps cannot reach the budget.",
+   "Incorrect: starting with the sliding window drops older groups before anything gentler runs, and the pipeline stops early once the budget is met, so context is lost that summarization could have kept. Put a window first only for a hard group-count limit.",
+   "Incorrect: starting with summarization adds an LLM call and condenses conversation text even when collapsing tool results alone would have met the budget. Put summarization first only when there are no verbose tool results to reclaim.",
+   "Incorrect: placing the sliding window before summarization drops groups that summarization could have condensed, so facts are lost earlier than needed. This order fits only when avoiding LLM calls matters more than preserving context."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.2-12",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Blue Yonder Airlines creates a Python harness agent for long-running tool loops by using the following code.\n\n```python\nagent = create_harness_agent(\n    client,\n    max_context_window_tokens=128_000,\n)\n```\n\nDuring long runs, the requests exceed the model context window, and no compaction is observed. You must enable the default context-window compaction with the least configuration.\n\nWhat should you do?",
+  "choices": [
+   "Add the max_output_tokens parameter to the create_harness_agent call.",
+   "Add the disable_compaction parameter set to True.",
+   "Lower max_context_window_tokens to 64_000.",
+   "Pass a custom history_provider to the create_harness_agent call."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Harness Agent wires compaction into its per-service-call history pipeline, but compaction is off by default. It turns on when both max_context_window_tokens and max_output_tokens are set, which creates a default ContextWindowCompactionStrategy that runs before every model call in the tool loop and on persisted history after the run. You can also supply phase strategies or disable compaction.",
+  "rationale": [
+   "Correct: create_harness_agent enables compaction only when max_output_tokens is set together with max_context_window_tokens. Adding it creates the default ContextWindowCompactionStrategy with no other configuration, and it also supplies the default max_tokens.",
+   "Incorrect: disable_compaction set to True turns off both compaction phases, which is the opposite of the requirement. Use it when another component, such as service-side conversation state, already manages the context.",
+   "Incorrect: max_context_window_tokens alone does not enable compaction, so lowering it changes nothing while max_output_tokens is missing. Set it to the real context window of the model so that the default strategy knows its budget.",
+   "Incorrect: history_provider replaces the history store, but it does not turn on compaction, and a custom provider adds configuration. Use it when history must be persisted somewhere other than the default in-memory store."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction"
+ },
+ {
+  "id": "3.2.3-01",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Southridge Video is building a new support agent in Microsoft Foundry. The agent has not been released, so no production traces exist. You must create an evaluation dataset of question-and-answer pairs based on the agent instructions and a policy document.\n\nWhat should you use?",
+  "choices": [
+   "Synthetic data generation with the Simple QnA task type",
+   "Conversion of agent traces into an evaluation dataset",
+   "Continuous evaluation on live traffic",
+   "Evaluation of interactions by response ID"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Before launch there are no production traces, so evaluation data must be synthetic. The Foundry data generation service creates datasets from the agent definition and reference files: Simple QnA produces single-turn question-and-answer pairs, while multi-turn simulation seeds and trace conversion serve other needs.",
+  "rationale": [
+   "Correct: synthetic data generation with the Simple QnA task type creates question-and-answer pairs from the agent instructions and a reference document such as the policy, which works before any production traffic exists.",
+   "Incorrect: trace conversion turns real production traces into a dataset, and the unreleased agent has no traces yet. Use it after launch to build regression datasets that reflect real user behavior.",
+   "Incorrect: continuous evaluation scores sampled live responses as traffic occurs, so it needs a deployed agent with traffic and does not create a dataset. Use it to monitor quality in production.",
+   "Incorrect: evaluation by response ID scores interactions that already happened and are identified by their response IDs, which do not exist before launch. Use it to re-score specific stored responses."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/evaluation-dataset-synthetic"
+ },
+ {
+  "id": "3.2.3-02",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery wants an LLM judge to check whether each response of its sommelier agent uses a respectful, on-brand tone. The check must return a pass or fail result together with a reason, and it must be defined by a judge prompt that you write. You need to add the check to the evaluator catalog of the Foundry project.\n\nWhich type of evaluator should you create?",
+  "choices": [
+   "A prompt-based custom evaluator that uses binary scoring",
+   "A code-based custom evaluator that uses a grade() function",
+   "An endpoint-based custom evaluator hosted on your own service",
+   "A human evaluation template with a yes or no question"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry custom evaluators come in several forms: prompt-based evaluators score with an LLM judge that follows a prompt you write, code-based evaluators run deterministic Python logic, and endpoint-based evaluators call your own service. Prompt-based evaluators can use binary scoring that returns pass or fail with a reason, and they are added to the evaluator catalog of the project.",
+  "rationale": [
+   "Correct: a prompt-based custom evaluator runs an LLM judge with a prompt that you write, can use binary scoring that returns pass or fail with a reason, and is registered in the evaluator catalog of the Foundry project.",
+   "Incorrect: a code-based evaluator runs deterministic Python logic in a grade() function, which cannot judge subjective qualities such as a respectful, on-brand tone. Use it for rule checks such as JSON validity or length limits.",
+   "Incorrect: an endpoint-based evaluator calls a scoring service that you host, which adds infrastructure and is not defined by a judge prompt. Use it when the scoring logic already runs in your own service.",
+   "Incorrect: a human evaluation template collects ratings from human reviewers, not from an LLM judge, so it does not score every response automatically. Use it to gather expert labels or to calibrate an LLM judge."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/custom-evaluators"
+ },
+ {
+  "id": "3.2.3-03",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing wants an LLM judge to score its editorial agent against custom, weighted criteria such as house style, citation accuracy, and tone, with a reason for each criterion.\n\nWhich evaluator type should you use?",
+  "choices": [
+   "Rubric evaluator",
+   "Code-based custom evaluator",
+   "BLEU evaluator",
+   "F1 Score evaluator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A rubric evaluator is an LLM judge that scores responses against several custom, weighted criteria (dimensions) and returns a reason for each criterion. It suits domain quality bars such as house style or citation accuracy, which reference-based metrics such as BLEU or F1 cannot capture.",
+  "rationale": [
+   "Correct: a rubric evaluator lets you define custom dimensions such as house style, citation accuracy, and tone, weight them, and get an LLM judgment with a reason for each criterion, which is exactly the requirement.",
+   "Incorrect: a code-based evaluator runs deterministic Python logic, which suits format or length rules but cannot judge style or tone. Use it when a check can be expressed as code and must cost nothing per item.",
+   "Incorrect: BLEU measures n-gram overlap with a reference text, so it needs ground truth and cannot weigh style or tone criteria. Use it for translation-like tasks where a reference answer exists.",
+   "Incorrect: F1 Score measures token overlap between a response and a ground truth answer, so it needs a reference and returns no reason per criterion. Use it for extractive question answering."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rubric-evaluators"
+ },
+ {
+  "id": "3.2.3-04",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants to improve the instructions of a prompt agent automatically. The solution must evaluate the current version against a dataset, generate alternative instructions, score each alternative against the same dataset, and recommend the best one.\n\nWhich Foundry capability should you use?",
+  "choices": [
+   "Agent optimizer",
+   "Prompt Optimizer in the playground",
+   "Cluster analysis",
+   "Scheduled evaluation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Foundry agent optimizer runs a closed loop: it evaluates the baseline agent against a dataset, generates candidate configurations (instructions, tool descriptions, model selection), evaluates each candidate on the same dataset, and ranks them by composite score so that you can apply the best one.",
+  "rationale": [
+   "Correct: the agent optimizer scores the current version on a dataset, generates alternative instructions, scores each candidate on the same dataset, and recommends the best one by composite score, which matches every step of the requirement.",
+   "Incorrect: the Prompt Optimizer in the playground rewrites a prompt interactively, but it does not score candidates against an evaluation dataset. Use it to improve a draft prompt quickly while you author an agent.",
+   "Incorrect: cluster analysis groups evaluation results into themes to show where an agent struggles, but it does not generate or score new instructions. Use it to find failure patterns after an evaluation run.",
+   "Incorrect: a scheduled evaluation reruns the same evaluation on a recurring schedule to track quality over time, but it does not produce alternative configurations. Use it for regression monitoring."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview#how-the-agent-optimizer-works"
+ },
+ {
+  "id": "3.2.3-05",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys runs nightly evaluations of an order-extraction agent in Microsoft Foundry. You must add the following checks to the evaluator catalog of the project:\n\n- Check1: each response is valid JSON and stays under 500 characters, with deterministic results, no model inference costs, and no additional infrastructure to host.\n- Check2: each response uses a polite tone, scored as pass or fail with a reason, by a judge prompt that you write.\n- Check3: each response is scored against weighted criteria for field completeness, unit formatting, and tone, with a reason for each criterion.\n\nWhich evaluator type should you use for each check? To answer, drag the appropriate evaluator types to the correct checks. Each evaluator type may be used once, more than once, or not at all.",
+  "choices": [
+   "Code-based custom evaluator",
+   "Prompt-based custom evaluator",
+   "Rubric evaluator",
+   "Endpoint-based custom evaluator"
+  ],
+  "targets": [
+   "Check1: JSON validity and length limit",
+   "Check2: polite tone, pass or fail",
+   "Check3: weighted criteria with a reason each"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Pick the evaluator type by how a check is decided: deterministic rules belong in code-based evaluators, a single subjective judgment in a prompt-based LLM judge, multi-criteria quality bars in rubric evaluators, and existing external scoring logic in endpoint-based evaluators.",
+  "rationale": [
+   "Check1 needs deterministic results with no inference cost and no hosted infrastructure, which only a code-based evaluator provides: its Python grade() logic parses the JSON and checks the length without calling a model.",
+   "Check2 is a subjective tone judgment that is defined by your own judge prompt, with binary output and a reason, which is what a prompt-based custom evaluator does with an LLM judge.",
+   "Check3 needs several weighted criteria with a reason for each, which is the purpose of a rubric evaluator; a single prompt-based judge returns one verdict instead of a score per criterion."
+  ],
+  "notes": [
+   "Runs deterministic Python logic, such as a grade() function, with no LLM call and no inference cost. Use it for rule-based checks such as format validation, length limits, required fields, or exact matching.",
+   "Uses an LLM judge with a prompt that you write and can return binary or scaled scores with a reason. Use it for subjective, single-dimension judgments such as tone or brand voice.",
+   "An LLM judge that scores responses against several custom, weighted dimensions and returns a reason for each dimension. Use it when quality has multiple criteria that domain experts can describe.",
+   "Calls a scoring service that you host and operate. Use it when the scoring logic already exists in your own service or needs resources that do not run in Foundry; it adds infrastructure to maintain."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/custom-evaluators"
+ },
+ {
+  "id": "3.2.3-06",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Trey Research wants to fine-tune a model so that its procurement agent calls the purchasing APIs of the company more reliably. No production conversations exist yet. The only available source is a JSON file that contains an OpenAPI 3.1 specification of the purchasing APIs. You need to generate multi-turn training conversations that include tool calls by using the synthetic data generation feature in Microsoft Foundry.\n\nWhich generator should you use?",
+  "choices": [
+   "Tool use, with the OpenAPI specification as the reference file",
+   "Simple Q&A, with the OpenAPI specification as the reference file",
+   "Simulation seed (multi-turn), to create an evaluation dataset",
+   "Trace-to-dataset conversion of the agent traces"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The data generation feature for fine-tuning in Foundry offers generators for different shapes of training data. The tool use generator builds multi-turn conversations that include tool calls from a reference file such as an OpenAPI specification, while Simple Q&A creates single-turn pairs, and simulation seeds or trace conversion serve evaluation.",
+  "rationale": [
+   "Correct: the tool use generator creates multi-turn training conversations that include tool calls, and it takes the OpenAPI 3.1 specification as the reference file that describes the purchasing APIs, so no production data is needed.",
+   "Incorrect: Simple Q&A generates single-turn question-and-answer pairs from a reference file, so the output contains no tool calls and no multi-turn structure. Use it to fine-tune or evaluate factual answers over documents.",
+   "Incorrect: a simulation seed dataset drives multi-turn evaluation with a simulated user, so it is meant to evaluate an agent, not to produce fine-tuning data with tool calls. Use it for prelaunch conversation testing.",
+   "Incorrect: trace-to-dataset conversion needs production traces, and the procurement agent has none yet. Use it after launch to turn real interactions into evaluation datasets."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/data-generation"
+ },
+ {
+  "id": "3.2.3-07",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A. Datum Corporation has deployed a claims agent named Agent1 as a Foundry agent. You must score the responses of Agent1 automatically with the Task Adherence evaluator as live traffic occurs, and you must cap the number of evaluation runs per hour to control cost. You use the Python SDK from a new environment.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `pip install \"azure-ai-projects>=2.8.0\"`.",
+   "Create `AIProjectClient(endpoint=endpoint, credential=DefaultAzureCredential())` and call `project_client.get_openai_client()`.",
+   "Call `openai_client.evals.create(name=..., data_source_config={\"type\": \"azure_ai_source\", \"scenario\": \"responses\"}, testing_criteria=testing_criteria)` with the Task Adherence evaluator.",
+   "Call `project_client.evaluation_rules.create_or_update(...)` with `ContinuousEvaluationRuleAction(eval_id=eval_object.id, max_hourly_runs=100)` and `EvaluationRuleEventType.RESPONSE_COMPLETED`.",
+   "Call `project_client.beta.schedules.create_or_update(...)` with a `RecurrenceTrigger` that runs the evaluation every day at 9 AM.",
+   "Call `openai_client.evals.runs.create(eval_id=eval_object.id, data_source=...)` with a `file_id` source that points to a golden dataset."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Continuous evaluation in Foundry pairs an evaluation definition (a data source configuration plus testing criteria) with an evaluation rule that fires on agent events such as a completed response. The rule action references the evaluation ID and can cap max_hourly_runs to control cost. Schedules and one-off runs over datasets serve recurring batch and regression testing instead.",
+  "rationale": [
+   "Step 1: the azure-ai-projects package provides AIProjectClient and the evaluation rule models, so it must be installed before any of the later calls can be imported or run in the new environment.",
+   "Step 2: the project client authenticates to the Foundry project, and get_openai_client() returns the client that exposes the evals API. Both evals.create and the evaluation rule need these clients first.",
+   "Step 3: evals.create defines the evaluation with a responses data source and the Task Adherence testing criterion, and it returns eval_object.id. The continuous rule references that ID, so the evaluation must exist first.",
+   "Step 4: the evaluation rule runs the evaluation each time Agent1 completes a response, which scores live traffic automatically, and max_hourly_runs caps the runs per hour to control cost.",
+   "Incorrect: a schedule reruns the evaluation at fixed times, for example every day at 9 AM over a window of recent traces, so it does not score responses as live traffic occurs. Use a schedule for recurring batch evaluation of traces.",
+   "Incorrect: an evaluation run with a file_id source scores a fixed golden dataset once, which is a batch or regression test, not continuous scoring of live traffic. Use it before a release or in a CI quality gate."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard#set-up-continuous-evaluation"
+ },
+ {
+  "id": "3.2.3-08",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank auto-generates a rubric evaluator for its loan advisory agent. Before the rubric is used in continuous evaluation at scale, the team must confirm that the LLM judge distinguishes acceptable from unacceptable responses in the same way that the domain experts do.\n\nWhat should you do first?",
+  "choices": [
+   "Validate the rubric on a small sample against expert scores and refine the dimensions.",
+   "Run the rubric in continuous evaluation on a 5 percent sample of live traffic and review pass rates.",
+   "Replace the rubric with the built-in Task Adherence and Coherence evaluators.",
+   "Enable continuous evaluation now and review the scores after one month."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An LLM judge is only useful when it agrees with domain experts. Before you run a rubric at scale, validate it on a small sample that experts have scored, compare the verdicts of the judge with those of the experts, and refine dimensions and descriptions until they align; only then use it in continuous evaluation.",
+  "rationale": [
+   "Correct: comparing the scores of the auto-generated rubric with expert scores on a small sample shows whether the judge separates acceptable from unacceptable responses as the experts do, and refining the dimensions fixes disagreements before scale.",
+   "Incorrect: running the rubric on 5 percent of live traffic only produces pass rates, with no expert labels to compare against, so it cannot confirm that the judge agrees with the experts. Use sampled continuous evaluation after validation.",
+   "Incorrect: Task Adherence and Coherence are generic built-in evaluators that do not encode the loan advisory criteria of the experts, so they do not answer whether the rubric matches expert judgment. Use them as baseline quality signals.",
+   "Incorrect: enabling continuous evaluation now spends a month of evaluation cost on a judge that might be miscalibrated, and the scores still lack an expert comparison. Validate first, and then enable continuous evaluation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rubric-evaluators#review-and-adjust-the-rubric"
+ },
+ {
+  "id": "3.2.3-09",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. plans to run the agent optimizer on a hosted agent that calls a payment API and a CRM API that writes customer records. The evaluation dataset contains 500 tasks, and the optimizer will test four candidates. The team must avoid charges and state changes in production systems during optimization.\n\nWhat should you do before you start the optimization run?",
+  "choices": [
+   "Point the tools to test endpoints or mock them for the optimization run.",
+   "Reduce the number of candidates that the optimizer generates to one.",
+   "Disable the tool optimization target for the optimization run.",
+   "Set the evaluation model to a smaller model deployment."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "During an optimization run, the agent optimizer invokes the agent against every task in the dataset for the baseline and for each candidate, so real tool calls execute many times. Point tools to test endpoints or mock them to avoid charges, state changes, and rate limiting in production systems.",
+  "rationale": [
+   "Correct: with 500 tasks and four candidates plus the baseline, the payment and CRM tools would run thousands of times. Test endpoints or mocks prevent real charges and record changes, which is the guidance for tools during optimization.",
+   "Incorrect: with one candidate, the baseline and the candidate still each run all 500 tasks, so the payment and CRM tools still execute against production. Reduce candidates to lower cost and run time, not to avoid side effects.",
+   "Incorrect: the tool optimization target only controls whether tool descriptions are rewritten, and the agent still calls its tools while it is evaluated on each task. Disable it when you want to optimize instructions only.",
+   "Incorrect: the evaluation model scores the responses; a smaller one lowers scoring cost but does not stop the tool calls of the agent from reaching production. Choose the eval model for scoring quality and cost."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview#how-the-agent-optimizer-works"
+ },
+ {
+  "id": "3.2.3-10",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "case": "C-e",
+  "stem": "You are configuring the weekly data generation job that refreshes the regression dataset of Agent2 from its traces. You plan to use the following settings.\n\n```python\nsource = TracesDataGenerationJobSource(\n    agent_name=\"agent2\", agent_version=\"4\",\n    start_time=start_time, end_time=end_time)\nconfig = TracesDataGenerationJobConfiguration(\n    max_samples=200, redact_private_content=True)\noutput = EvaluationDataGenerationJobOutputConfiguration(\n    name=\"agent2-regression\",\n    write_mode=DataGenerationJobOutputWriteMode.OVERWRITE)\n```\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The agent_version setting prevents spans from version 3 of Agent2 from being added to the dataset.",
+   "The max_samples setting keeps near-duplicate prompts from being overrepresented in the generated rows.",
+   "The write_mode setting meets the requirement for how new rows are combined with the existing dataset."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "A trace-to-dataset job turns production traces into a versioned evaluation dataset. Pin agent_version to avoid mixing versions, set max_samples (1 through 1,000) to enable intelligent sampling for a representative, deduplicated subset, and choose write_mode: OVERWRITE writes only the new rows to the next version, while MERGE combines them with the latest version. Neither mode changes an existing version in place.",
+  "rationale": [
+   "Yes: without agent_version the job mixes spans from every active version, including version 3, which the case says is still active for dealers in Amsterdam. Pinning version 4 keeps stale behavior out of the regression dataset.",
+   "Yes: with max_samples set, intelligent sampling filters low-intent traces and uses MinHash to select a diverse subset, so near-identical prompts are not overrepresented. Omitting max_samples turns sampling off and processes every matching trace.",
+   "No: OVERWRITE, the default, creates the next dataset version with only the newly generated rows, so the rows from earlier weeks are not carried forward. MERGE combines the new rows with the latest existing version and deduplicates trace rows, which the case requires."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/traces-to-dataset#best-practices"
+ },
+ {
+  "id": "3.2.3-11",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Proseware, Inc. sets up an evaluation-driven optimization loop for a prompt agent by using the agent optimizer in Foundry Agent Service. The team starts the run from the optimization wizard in the Foundry portal and wants the winning configuration available as a new version of the prompt agent.\n\nWhich four actions should the loop perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Score the baseline agent version against the evaluation dataset.",
+   "Generate candidate configurations such as rewritten instructions and improved tool descriptions.",
+   "Score each candidate against the same evaluation dataset.",
+   "Rank the candidates by composite score and promote the best one to a new agent version.",
+   "Run `azd ai agent optimize apply --candidate <candidate-id>` and then `azd deploy`.",
+   "Add the optimization package and a baseline configuration to the agent code to make the agent optimizer-ready."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The agent optimizer runs a closed loop: evaluate the baseline, generate candidates, evaluate the candidates on the same dataset, and then rank them by composite score and apply the winner. Prompt agents are optimized from the portal wizard and promoted to a new version; hosted agents need optimizer-ready code, and their candidates are applied with azd and redeployed.",
+  "rationale": [
+   "Step 1: the optimizer first invokes the selected agent version on the dataset and scores it, which gives the baseline score that every candidate is compared against and the results that guide candidate generation.",
+   "Step 2: the optimization model analyzes the baseline results and produces candidate configurations, such as rewritten instructions and improved function-calling tool descriptions, which can be targeted only after weaknesses are known.",
+   "Step 3: each candidate is tested on the same dataset with the same evaluators, so its score is directly comparable to the baseline. Candidates must exist before they can be scored.",
+   "Step 4: the results are ranked by a composite score from 0.0 to 1.0, the best candidate is marked, and for a prompt agent you promote it to a new agent version from the completed run.",
+   "Incorrect: azd ai agent optimize apply writes a selected candidate into the local configuration of a hosted agent, and azd deploy redeploys it. A prompt agent is promoted to a new version from the run instead. Use these commands for hosted agents.",
+   "Incorrect: adding the optimization package and a baseline configuration is required only for hosted agents in the Azure Developer CLI workflow. Prompt agents need no code integration, so this step does not belong in the loop."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview#how-the-agent-optimizer-works"
+ },
+ {
+  "id": "3.2.3-12",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "City Power & Light logs thumbs-up and thumbs-down feedback from its outage agent as gen_ai.evaluation.result events. The events arrive in Application Insights, but they do not appear as annotations on the agent traces in Microsoft Foundry. Each event sets gen_ai.evaluation.name to task_completion, a score of 1.0 or 0.0, and the matching pass or fail label. The events are emitted from a background worker that runs after the request completes.\n\nWhat should you do to make the feedback appear on the correct traces?",
+  "choices": [
+   "Emit each feedback event in the trace context of the agent interaction.",
+   "Change gen_ai.evaluation.score.value to a 1 to 5 Likert value.",
+   "Set gen_ai.evaluation.name to relevance instead of task_completion.",
+   "Send the feedback as a custom Azure Monitor metric instead of an event."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "End-user feedback becomes a trace annotation when it is emitted as a gen_ai.evaluation.result event that is correlated with the trace of the agent interaction, that is, within the trace context of the interaction it rates. Events that a detached background worker emits arrive in Application Insights but carry no link to the original trace, so Foundry cannot attach them.",
+  "rationale": [
+   "Correct: the events already use the right event name, evaluation name, score, and label, but the background worker emits them outside the trace context. Emitting each event in the trace context of its interaction correlates it with that trace, so Foundry shows it as an annotation.",
+   "Incorrect: a 1 to 5 Likert value changes the scale of the score, but the events would still lack the trace correlation that attaches them to traces. Use a Likert scale when users rate quality on a graded scale.",
+   "Incorrect: renaming the evaluation from task_completion to relevance changes which metric the feedback represents, not whether it is linked to a trace. Choose the evaluation name that matches what users actually rate.",
+   "Incorrect: a custom Azure Monitor metric aggregates numbers over time and is never attached to individual traces as an annotation. Use custom metrics for dashboards and alerts on overall feedback rates."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations#log-end-user-feedback-as-trace-annotations"
+ }
+]

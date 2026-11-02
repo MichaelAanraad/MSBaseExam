@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-f",
+  "title": "Margie's Travel",
+  "sections": [
+   [
+    "Overview",
+    "Margie's Travel is a travel agency that has offices in Lisbon and Chicago. The company runs a multi-agent booking assistant that helps customers plan trips and book flights and hotels. About 4,000 travel advisers and partner agents use the assistant, and usage peaks during holiday sales campaigns in spring and autumn.\n\nThe company plans to add rail bookings next year and is evaluating two rail partners. Customer support is handled by a separate team that uses its own ticketing system and is out of scope for this project."
+   ],
+   [
+    "Existing environment",
+    "The booking assistant has three agents: an orchestrator agent, an itinerary agent, and a booking agent. All agents run in Foundry Agent Service in a Microsoft Foundry project named Project1. Project1 uses a Foundry resource named Foundry1 in West Europe that has a gpt-4.1 Data Zone Standard deployment and a gpt-5.5 reasoning model deployment.\n\nThe agents call the models through an Azure API Management instance named APIM1. APIM1 uses the llm-emit-token-metric policy with three custom dimensions: API ID, Cost Center, and User ID. APIM1 exposes three APIs, and the company has 40 cost centers.\n\nThe itinerary agent uses the gpt-5.5 deployment through the Responses API and declares 30 functions in each request. It often calls several functions in a row before it answers.\n\nA Python application named TripPlanner calls the agents. TripPlanner is instrumented with the Microsoft Foundry SDK and sends traces to the Application Insights resource that is connected to Project1. The developers configured the global tracer provider at startup.\n\nBooking records are stored in Azure Cosmos DB. Partner API keys are stored in Azure Key Vault. All users sign in by using Microsoft Entra ID.\n\nThe orchestrator agent routes each request to the itinerary agent or the booking agent. The booking agent calls partner booking APIs through tools and writes confirmed bookings to Azure Cosmos DB. The marketing team exports destination statistics from Azure Cosmos DB to a spreadsheet every Friday."
+   ],
+   [
+    "Problem statements",
+    "- Customers report that the booking agent books flights that do not match the requested travel dates. The Agent Monitoring Dashboard shows a run success rate of 99 percent and latency below three seconds.\n- The monthly chargeback report sums token metrics by Cost Center, but the totals from newer users are missing, and the gap grows each week. No errors are returned to callers.\n- Input and reasoning tokens of the itinerary agent are 40 percent above budget.\n- Engineers cannot group the spans of one customer session in Application Insights, because spans carry no session identifier."
+   ],
+   [
+    "Requirements",
+    "**Business requirements**\n\n- The booking assistant must keep working during a regional outage of the Azure OpenAI endpoint, with minimal disruption to consuming applications.\n- Monthly chargeback must be complete for every cost center.\n- Marketing wants a weekly report of the most requested destinations.\n\n**Technical requirements**\n\n- Quality monitoring: wrong outcomes, such as bookings that do not match the request, must be detected automatically in production.\n- Token budget: the itinerary agent must use fewer input and reasoning tokens without removing any functions.\n- Session correlation: every span that TripPlanner emits, including spans created by the Foundry SDK instrumentation, must carry the current session identifier as a session.id attribute. Developers must not modify each traced function.\n- Availability improvements must not require code changes to the agents."
+   ],
+   [
+    "Constraints",
+    "- Customer data must stay in the European Union.\n- The security team must approve every new public endpoint.\n- The operations team has two engineers and prefers managed services over custom components.\n- The finance team closes the books on the fifth working day of each month."
+   ]
+  ]
+ }
+]

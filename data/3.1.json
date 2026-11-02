@@ -1,0 +1,653 @@
+[
+ {
+  "id": "3.1.1-01",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a claims-triage agent in a Microsoft Foundry project. The compliance team wants to review agent responses by answering a fixed set of questions for each response, including a 1-5 helpfulness slider, a multiple-choice correctness rating, and a free-form comment.\n\nWhich Foundry feature should you configure?",
+  "choices": [
+   "A human evaluation template for the agent",
+   "Thumbs up or thumbs down trace annotations",
+   "A continuous evaluation rule for the agent",
+   "A custom prompt-based evaluator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry offers two human review mechanisms: human evaluation templates, with structured questions of several types answered in the agent preview web app, and trace annotations, with quick thumbs up or thumbs down on traces. Automated evaluators, built in or custom, score responses without humans.",
+  "rationale": [
+   "Correct: a human evaluation template defines the questions that reviewers answer for each agent response, and it supports thumbs up or down, slider, multiple choice, and free-form text questions, which covers the slider, the correctness rating, and the comment.",
+   "Incorrect: trace annotations use the preseeded binary thumbs up or thumbs down template, so they cannot capture a 1-5 slider or a multiple-choice rating. Use them for quick pass or fail feedback on existing traces.",
+   "Incorrect: a continuous evaluation rule runs automated evaluators on sampled production responses, so no human answers any questions. Use it to monitor the quality and safety of live traffic with LLM judges.",
+   "Incorrect: a custom prompt-based evaluator uses an LLM as the judge with your own rubric, which automates scoring but removes the human reviewer. Use it when a quality criterion is not covered by the built-in evaluators."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-02",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. created an active human evaluation template for Agent1 in a Microsoft Foundry project. User1 is a data scientist who must open the agent preview web app and submit feedback. You must follow the principle of least privilege.\n\nWhich role should you assign to User1 on the Foundry project?",
+  "choices": [
+   "Foundry User",
+   "Foundry Owner",
+   "Foundry Project Manager",
+   "Monitoring Metrics Publisher"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Human evaluation uses separate roles: the agent builder needs Foundry Project Manager to create and manage templates, reviewers need Foundry User on the project and Reader on the account to submit feedback, and identities that emit telemetry through Microsoft Entra ID need Monitoring Metrics Publisher.",
+  "rationale": [
+   "Correct: reviewers need the Foundry User role on the Foundry project, plus Reader on the account, to open the preview web app and submit feedback. It is the minimum role for this task, so it follows least privilege.",
+   "Incorrect: Foundry Owner grants full control of the project, including role assignments and resource management, which is far more than a reviewer needs. Assign it to project administrators.",
+   "Incorrect: Foundry Project Manager is the role that the agent builder needs to create and manage evaluation templates. User1 only submits feedback, so this role grants more than needed.",
+   "Incorrect: Monitoring Metrics Publisher lets an identity write telemetry to Application Insights with Microsoft Entra authentication, which apps that emit annotations need. It does not grant access to the preview web app."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-03",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has set a human evaluation template as active for a support agent in Microsoft Foundry. Reviewers must chat with the agent and complete the template questions for each response they receive during the chat.\n\nWhich experience should the reviewers use to perform the evaluation?",
+  "choices": [
+   "The preview web app, by selecting Feedback after each response",
+   "The trace detail page, by selecting Annotate on each trace",
+   "The Evaluation page, by creating an evaluation run for the agent",
+   "The Application Insights Logs blade, by running a KQL query"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Human evaluation in Foundry happens in the agent preview web app: reviewers chat, select Feedback after a response, and answer the active template in a side panel. The results are stored in Application Insights and can be viewed or downloaded from the Human Evaluation tab.",
+  "rationale": [
+   "Correct: reviewers open the preview web app from the agent builder, chat with the agent, and select Feedback after each response; a side panel shows the active template, so chatting and answering happen together.",
+   "Incorrect: Annotate on the trace detail page adds a thumbs up or thumbs down annotation to an existing trace. It does not show the template questions during a chat. Use it to rate historical interactions.",
+   "Incorrect: an evaluation run created on the Evaluation page scores a dataset or traces with automated evaluators, so no human chats with the agent or answers template questions. Use it for batch quality measurement.",
+   "Incorrect: a KQL query in Application Insights Logs reads stored telemetry, such as feedback that was already submitted. It cannot collect new feedback. Use it to analyze results, build dashboards, or create alerts."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-04",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has a multi-agent travel solution that sends traces to Application Insights connected to a Microsoft Foundry project. Domain experts want to mark individual historical agent interactions as helpful or unhelpful starting today, without creating any configuration first.\n\nWhat should the domain experts use?",
+  "choices": [
+   "The Annotate button on the trace detail page",
+   "A new human evaluation template in the agent builder",
+   "A gen_ai.evaluation.result event emitted from application code",
+   "A Task Completion evaluator run over the existing traces"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Trace annotations capture human quality signals directly on traces. Builders annotate in the portal by using the preseeded thumbs up or thumbs down template, and applications log end-user feedback as gen_ai.evaluation.result events. Both are appended to the trace with a source attribute.",
+  "rationale": [
+   "Correct: every Foundry project has a preseeded thumbs up or thumbs down scoring template, so domain experts can open a trace and select Annotate immediately, on historical interactions, without any configuration.",
+   "Incorrect: a human evaluation template must be created and set as active first, and reviewers then rate new responses in the preview web app, not historical traces. Use templates for structured, multi-question reviews.",
+   "Incorrect: emitting gen_ai.evaluation.result events from code is how an application logs end-user feedback. It needs code changes and is meant for app users, not for experts reviewing traces in the portal.",
+   "Incorrect: Task Completion is an automated LLM-judge evaluator that scores whether the agent finished the task. It is not human feedback. Use it to measure task success at scale on datasets or traces."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations"
+ },
+ {
+  "id": "3.1.1-05",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank created two human evaluation templates for Agent1 in Microsoft Foundry: Template1 contains accuracy questions and Template2 contains compliance questions. After you set Template2 as active, reviewers report that the accuracy questions no longer appear. Reviewers must answer both sets of questions for every response in the same session.\n\nWhat should you do?",
+  "choices": [
+   "Merge both sets of questions into one template and set it as active",
+   "Set both Template1 and Template2 as active for Agent1",
+   "Assign the reviewers the Foundry Project Manager role on the project",
+   "Create a second agent version and assign Template1 to that version"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A human evaluation template is the unit that reviewers see, and only one template can be active at any given time. When reviewers need several groups of questions together, design one combined template; use separate templates for separate review rounds.",
+  "rationale": [
+   "Correct: only one template can be active at a time, so putting the accuracy and compliance questions into one template and setting it as active shows both sets to reviewers for every response in the same session.",
+   "Incorrect: activating a template automatically deactivates the previous one, so Template1 and Template2 cannot both be active. Multiple templates fit when you switch the review focus between rounds.",
+   "Incorrect: Foundry Project Manager lets users create and manage templates, but roles do not change how many templates can be active. The limit of one active template applies to everyone.",
+   "Incorrect: a second agent version with Template1 splits the review across two versions, so reviewers cannot answer both sets for the same response in one session. Agent versions fit comparing agent changes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-06",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. runs a human evaluation program for a contract-review agent in Microsoft Foundry. Auditors require that all reviewer answers be kept for three years. The connected Application Insights resource and its Log Analytics workspace are shared with other teams, and you must not change any retention setting on either of them, including table-level retention.\n\nWhat should you do?",
+  "choices": [
+   "Use Download Results for each template and store the CSV files in Azure Blob Storage",
+   "Increase the data retention period of the Application Insights resource",
+   "Increase the retention of the Log Analytics table that stores the evaluation data",
+   "Export the template definition and store it in Azure Blob Storage"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Human evaluation results are stored in Application Insights and follow its retention policy. To keep them longer without changing that policy, download the results as CSV and store them elsewhere, such as Azure Blob Storage with its own retention and immutability rules.",
+  "rationale": [
+   "Correct: Download Results exports all evaluation instances of a template as a CSV file with the prompt, response, questions, and answers. Storing the files in Blob Storage keeps them for three years without changing the shared Application Insights retention.",
+   "Incorrect: raising the Application Insights retention would keep the data longer, but the resource is shared and its retention must not change. Changing the retention fits when you own the resource.",
+   "Incorrect: table-level retention in Log Analytics would keep only the evaluation table longer, but it is still a retention change on the shared workspace, which the stem forbids. Use it when you may adjust retention for specific tables without affecting the rest of the workspace.",
+   "Incorrect: a template definition contains only the questions, not the reviewers' answers, so exporting it keeps nothing that auditors need. Export a template to reuse it, not to retain results."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-07",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders has a customer-facing web app that calls a Foundry agent and has OpenTelemetry tracing to Application Insights. End users can select thumbs up or thumbs down on each answer. The feedback must appear as annotations on the matching trace in the Foundry portal, next to builder annotations, and must be filterable by source.\n\nWhat should you do?",
+  "choices": [
+   "Emit a gen_ai.evaluation.result event in the same trace context, with the source set to end_user",
+   "Create a human evaluation template and embed the preview web app in the customer-facing app",
+   "Store the feedback in Azure Cosmos DB and join it to the traces by using the conversation ID",
+   "Emit a gen_ai.evaluation.result event in a new trace, with the source set to end_user"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "End-user feedback becomes a trace annotation when the application emits a gen_ai.evaluation.result OpenTelemetry event in the same trace context as the agent interaction. The microsoft.gen_ai.human_evaluation.source attribute separates end_user feedback from builder annotations for filtering.",
+  "rationale": [
+   "Correct: a gen_ai.evaluation.result event emitted in the same trace context as the agent interaction attaches the feedback to the matching trace, and setting the source to end_user makes it filterable next to builder annotations.",
+   "Incorrect: the preview web app is an internal review tool for people with a Foundry role, and its results come from human evaluation templates, not trace annotations from end users. Use it for internal reviewers.",
+   "Incorrect: storing feedback in Azure Cosmos DB keeps it, but it never appears as an annotation on traces in the Foundry portal. A separate store fits when the feedback must feed another system.",
+   "Incorrect: the event and source are right, but emitting the event in a new trace breaks the correlation with the original interaction, so the annotation does not appear on the matching trace. A new trace fits standalone telemetry."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations"
+ },
+ {
+  "id": "3.1.1-08",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A. Datum Corporation logs end-user feedback from App1 as trace annotations. App1 runs in Azure App Service in a resource group named rg1 and does not have a managed identity yet. The connected Application Insights resource accepts only Microsoft Entra ID authenticated ingestion, and you know its resource ID. App1 must emit annotations by using a system-assigned managed identity, and you must confirm that the required permission is in place.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az webapp identity assign --name app1 --resource-group rg1` and note the principalId in the output.",
+   "Run `az role assignment create --assignee <principalId> --role \"Monitoring Metrics Publisher\" --scope <appinsights-resource-id>`.",
+   "Run `az role assignment list --assignee <principalId> --scope <appinsights-resource-id> --output table`.",
+   "Run `az role assignment create --assignee <principalId> --role \"Log Analytics Reader\" --scope <appinsights-resource-id>`.",
+   "Run `az identity create --name id1 --resource-group rg1`."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Viewing telemetry and writing telemetry are separate permissions. When Application Insights requires Microsoft Entra authentication for ingestion, the identity that emits annotations needs the Monitoring Metrics Publisher role on that resource. Enable the identity first, then assign the role, then verify the assignment.",
+  "rationale": [
+   "Step 1: az webapp identity assign enables the system-assigned managed identity of App1 and returns its principalId. The identity must exist before any role can be assigned to it.",
+   "Step 2: Entra-authenticated ingestion requires the identity that emits telemetry to have Monitoring Metrics Publisher on the connected Application Insights resource, which allows App1 to write annotation events.",
+   "Step 3: az role assignment list, filtered by the principal and the Application Insights scope, shows the new assignment, which confirms the permission before App1 sends annotations.",
+   "Incorrect: Log Analytics Reader grants read access to logs and traces. Annotation ingestion is a write operation, and another reader role does not grant telemetry write access. Assign it to people who analyze telemetry.",
+   "Incorrect: az identity create makes a user-assigned managed identity, which you use when several apps must share one identity. App1 must use a system-assigned identity, so this step is not needed."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations"
+ },
+ {
+  "id": "3.1.1-09",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-a",
+  "stem": "You need to resolve the issues that User1 and User2 report during the human evaluation pilot. You must follow the principle of least privilege.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Assign User1 the Foundry User role on the Foundry project.",
+   "Select Set as active for Template1 in the template table.",
+   "Assign User1 the Monitoring Metrics Publisher role on the Application Insights resource.",
+   "Assign User2 the Log Analytics Reader role on the Application Insights resource.",
+   "Increase the data retention period of the Application Insights resource."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Human evaluation problems usually have one of two causes: missing reviewer roles (Foundry User on the project and Reader on the account) or no active template (new templates are Inactive). Telemetry roles and retention settings affect how data is written and stored, not the review experience.",
+  "rationale": [
+   "Correct: User1 already has Reader on the Foundry resource but no role on Project1, and reviewers need at least the Foundry User role on the project to open the preview web app and submit feedback. It is the least-privileged role that fixes the issue.",
+   "Correct: a new template appears in the template table with Inactive status. User2 can chat but sees no Feedback button because no template is active, and selecting Set as active for Template1 makes the button appear.",
+   "Incorrect: Monitoring Metrics Publisher lets an identity write telemetry to Application Insights through Microsoft Entra ID, which apps that emit annotations need. It does not grant access to the preview web app.",
+   "Incorrect: Log Analytics Reader lets User2 query logs and view traces, but the missing Feedback button is caused by the template not being active, not by missing read access.",
+   "Incorrect: data retention controls how long evaluation data stays in Application Insights. It has no effect on access to the preview web app or on whether the Feedback button appears."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/troubleshooting"
+ },
+ {
+  "id": "3.1.1-10",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. is setting up a new Foundry project for a procurement agent. Compliance team members must review agent responses by using structured questions, and the results must be exported for offline analysis. Application Insights is not yet connected to the project.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Connect an Application Insights resource to the Foundry project.",
+   "In the Human Evaluation tab of the agent, create a template that contains the structured questions.",
+   "Select Set as active for the template in the template table.",
+   "Have the reviewers chat in the preview web app and select Feedback after each response.",
+   "Select Download Results for the template in the Human Evaluation tab.",
+   "Create a continuous evaluation rule for the procurement agent.",
+   "Select Annotate on the trace detail page of each agent response."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The human evaluation workflow in Foundry has fixed dependencies: Application Insights stores the results, a template defines the questions, activation exposes the template to reviewers, reviewers submit feedback in the preview web app, and Download Results exports the data.",
+  "rationale": [
+   "Step 1: human evaluation requires Application Insights to be configured for the project, because the reviewer answers are stored there. Without it, no results are captured to review or download.",
+   "Step 2: the template in the Human Evaluation tab defines the structured questions, such as sliders and multiple choice, that reviewers answer for each response.",
+   "Step 3: a new template appears with Inactive status, and reviewers see the Feedback button only when a template is active, so you must select Set as active before reviews start.",
+   "Step 4: reviewers open the preview web app, chat with the agent, and select Feedback after each response to answer the active template in a side panel.",
+   "Step 5: Download Results exports all evaluation instances for the template as a CSV file, which the compliance team can analyze offline.",
+   "Incorrect: a continuous evaluation rule runs automated evaluators on sampled production responses. It involves no human reviewers and no structured questions. Use it to monitor live quality and safety.",
+   "Incorrect: Annotate adds a thumbs up or thumbs down to a trace by using the default scoring template. It does not use structured questions, and its results are not exported through Download Results. Use it for quick signals on traces."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/human-evaluation"
+ },
+ {
+  "id": "3.1.1-11",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Tailspin Toys emits end-user thumbs-down feedback from App1 by using the following event attributes.\n\n```json\n{\n  \"gen_ai.evaluation.name\": \"task_completion\",\n  \"gen_ai.evaluation.score.value\": 0.0,\n  \"gen_ai.evaluation.score.label\": \"fail\",\n  \"microsoft.gen_ai.human_evaluation.source\": \"end_user\",\n  \"microsoft.gen_ai.evaluation.actor.type\": \"human\",\n  \"gen_ai.response.id\": \"<response id>\",\n  \"operation_Id\": \"<span ID of the annotated span>\",\n  \"operation_ParentId\": \"<trace ID of the interaction>\"\n}\n```\n\nThe events are ingested, but the annotations appear on unrelated traces in the Foundry portal.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Swapping the values so that operation_Id contains the trace ID and operation_ParentId contains the span ID correlates the annotations with the correct traces.",
+   "Changing microsoft.gen_ai.human_evaluation.source to builder makes the annotations appear on the correct traces.",
+   "A gen_ai.evaluation.score.value of 0.0 with the label fail records a thumbs-down annotation."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "A trace annotation is a gen_ai.evaluation.result event whose correlation fields decide where it appears: operation_Id is the trace ID, operation_ParentId is the span ID, and gen_ai.response.id identifies the response. The score, label, and source attributes describe the feedback itself.",
+  "rationale": [
+   "Yes: in the annotation attribute schema, operation_Id holds the trace ID that links the annotation to the original request, and operation_ParentId holds the span ID of the annotated span. The values in the event are reversed, which explains the wrong traces.",
+   "No: the source attribute only labels who gave the feedback, builder or end_user, so that annotations can be filtered. It has no effect on which trace an annotation attaches to, and end-user feedback should keep the end_user source.",
+   "Yes: the default scoring template maps thumbs down to score 0.0 with label fail and thumbs up to 1.0 with label pass, under gen_ai.evaluation.name task_completion, so these values correctly record a thumbs down."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations"
+ },
+ {
+  "id": "3.1.1-12",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank collects thumbs up or thumbs down annotations from both builders in the Foundry portal and end users in App1. The quality lead needs an hourly pass rate split by feedback source, displayed on an Azure dashboard, and an automated alert when the end-user pass rate drops. Reviewers must not perform manual exports.\n\nWhat should you do?",
+  "choices": [
+   "Run a KQL query on gen_ai.evaluation.result events in Application Insights, grouped by source",
+   "Select Download Results in the Human Evaluation tab every hour and load the CSV into the dashboard",
+   "Configure continuous evaluation for the agent and view the results in the monitoring dashboard",
+   "Run a Customer Satisfaction evaluator every hour over the traces of the agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Human annotations land in Application Insights as gen_ai.evaluation.result events with score, label, and source attributes. Because they are regular telemetry, you can aggregate them with KQL, pin the results to dashboards, and create alerts, which automates feedback monitoring.",
+  "rationale": [
+   "Correct: annotations are stored as gen_ai.evaluation.result events in Application Insights, so a KQL query can compute an hourly pass rate grouped by source, feed an Azure dashboard, and drive an alert rule without manual exports.",
+   "Incorrect: Download Results exports human evaluation template results, not trace annotations, and an hourly manual download violates the no-manual-export requirement. Use it for periodic offline analysis of template reviews.",
+   "Incorrect: continuous evaluation scores sampled production responses with automated evaluators, so it measures LLM-judge scores, not the human thumbs up or down, and it cannot split by feedback source. Use it for automated live monitoring.",
+   "Incorrect: Customer Satisfaction is an LLM-judge evaluator that predicts how satisfied a user would be. It does not measure the actual feedback that builders and end users gave. Use it when no human feedback exists."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-annotations"
+ },
+ {
+  "id": "3.1.2-01",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Litware, Inc. has a payments agent that calls a function tool to create refunds. Before each release, a test must confirm that every tool call parameter is grounded, has the correct type and format, includes the required parameters, and contains no unexpected parameters. You run the test from Python against a prepared dataset. An AIProjectClient named project_client, a data_source_config, a data_source, and a testing_criteria list that contains the Tool Input Accuracy evaluator already exist.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Call `openai_client = project_client.get_openai_client()`.",
+   "Call `eval_object = openai_client.evals.create(name=\"refund-tools\", data_source_config=data_source_config, testing_criteria=testing_criteria)`.",
+   "Call `eval_run = openai_client.evals.runs.create(eval_id=eval_object.id, name=\"release-check\", data_source=data_source)`.",
+   "Poll `openai_client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)` until the status is completed.",
+   "Call `openai_client.evals.runs.output_items.list(run_id=eval_run.id, eval_id=eval_object.id)` and check each result.",
+   "Call `project_client.evaluation_rules.create_or_update(...)` with a ContinuousEvaluationRuleAction for the agent.",
+   "Call `project_client.beta.schedules.create_or_update(...)` with a daily RecurrenceTrigger."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Foundry cloud evaluations follow one pattern in Python: get the OpenAI client from the project, create an evaluation with testing criteria, start a run against a data source, poll until it completes, and read the output items. Evaluation rules and schedules reuse the same evaluation for continuous or recurring monitoring.",
+  "rationale": [
+   "Step 1: evaluations are created and run through the OpenAI-compatible client of the project, so you get that client from the AIProjectClient before any evals call.",
+   "Step 2: evals.create defines the evaluation with the testing_criteria list, which contains Tool Input Accuracy. That evaluator checks groundedness, type and format compliance, required parameters, no unexpected parameters, and value appropriateness, which matches the release check.",
+   "Step 3: evals.runs.create starts a run of the evaluation against the prepared data source. It needs eval_object.id from the previous step.",
+   "Step 4: runs execute asynchronously, so you poll evals.runs.retrieve until the status is completed, failed, or canceled before you read any results.",
+   "Step 5: evals.runs.output_items.list returns the per-item results with pass or fail for Tool Input Accuracy, which tells you whether the release check passed.",
+   "Incorrect: an evaluation rule with ContinuousEvaluationRuleAction runs the evaluation on production responses as they complete. That monitors live traffic, but it is not a pre-release test on a prepared dataset.",
+   "Incorrect: a schedule runs an evaluation on a recurring trigger, for example daily against recent traces. That fits ongoing monitoring, not a check that runs once before each release."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/cloud-evaluation-results"
+ },
+ {
+  "id": "3.1.2-02",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud has an inventory agent that calls an MCP tool to get stock levels. Traces show that the tool calls succeed with correct parameters, but the final answers often state stock numbers that differ from the values returned by the tool. You need an evaluator that detects this specific failure.\n\nWhich evaluator should you use?",
+  "choices": [
+   "Tool Output Utilization",
+   "Tool Call Success",
+   "Tool Input Accuracy",
+   "Intent Resolution"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tool evaluators each cover one stage of a tool call: Tool Selection (right tool), Tool Input Accuracy (right parameters), Tool Call Success (no technical errors), and Tool Output Utilization (results used correctly). Diagnose which stage fails, and then pick the evaluator for that stage.",
+  "rationale": [
+   "Correct: Tool Output Utilization checks whether the agent correctly understood and used tool results in its reasoning and final response. Stock numbers that differ from the values the tool returned are exactly that failure.",
+   "Incorrect: Tool Call Success detects technical failures such as API errors or timeouts during tool execution. The calls here succeed, so this evaluator would pass. Use it to monitor tool reliability.",
+   "Incorrect: Tool Input Accuracy validates the parameters that the agent sends to the tool. The parameters here are correct, so it would pass and miss the problem. Use it for strict parameter validation.",
+   "Incorrect: Intent Resolution checks whether the agent identified what the user wanted. The agent understood the stock question; it misused the tool output. Use it for conversational and FAQ scenarios."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/agent-evaluators"
+ },
+ {
+  "id": "3.1.2-03",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys has a booking orchestrator agent. A regression test must confirm that the agent calls search_flights before book_flight. Extra calls such as get_weather between or around them are acceptable. You configure the following testing criteria.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\n{\n    \"type\": \"azure_ai_evaluator\",\n    \"name\": \"booking_path\",\n    \"evaluator_name\": [[1]],\n    \"initialization_parameters\": {\n        \"matching_mode\": [[2]]\n    },\n    \"data_mapping\": {\n        \"actions\": \"{{item.actions}}\",\n        \"expected_actions\": \"{{item.expected_actions}}\"\n    },\n}\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"builtin.task_navigation_efficiency\"",
+     "\"builtin.tool_selection\"",
+     "\"builtin.tool_call_accuracy\""
+    ],
+    "why": [
+     "Correct: Task Navigation Efficiency compares the agent's actions with expected_actions as ground truth, and it is the evaluator that accepts the matching_mode parameter and the actions mapping used here.",
+     "Incorrect: Tool Selection checks whether the agent picked the necessary tools without unnecessary ones. It has no expected sequence or matching_mode, so it cannot verify order. Use it to catch wrong or redundant tool choices.",
+     "Incorrect: Tool Call Accuracy uses an LLM judge to score whether tool calls and parameters were right for the task on a 1-5 scale. It does not compare against an expected order. Use it for overall tool call quality."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"in_order_match\"",
+     "\"exact_match\"",
+     "\"any_order_match\""
+    ],
+    "why": [
+     "Correct: in_order_match requires all expected steps to appear in the agent's trajectory in the correct order and allows extra steps, so search_flights before book_flight passes even with get_weather calls in between.",
+     "Incorrect: exact_match requires the trajectory to match the expected actions exactly in order and content, so an extra get_weather call fails the test. Use it when no extra steps are acceptable.",
+     "Incorrect: any_order_match checks that all expected steps appear but ignores their order, so book_flight before search_flights would also pass. Use it when only the presence of the steps matters."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Task Navigation Efficiency compares an agent's trajectory with expected actions and supports three matching modes: exact_match (same steps, same order, no extras), in_order_match (order enforced, extras allowed), and any_order_match (presence only). It also reports precision, recall, and F1 scores.",
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/agent-evaluators"
+ },
+ {
+  "id": "3.1.2-04",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a Foundry agent that uses the built-in Azure AI Search tool to retrieve policy documents. You plan to add Tool Call Accuracy and Groundedness evaluators to the evaluation runs. The evaluation results for the retrieval step must be reliable, and the agent must keep querying the same Azure AI Search index.\n\nWhat should you do?",
+  "choices": [
+   "Call the index through a function tool instead of the built-in Azure AI Search tool",
+   "Keep the built-in Azure AI Search tool and use a reasoning model as the LLM judge",
+   "Keep the built-in Azure AI Search tool and replace Tool Call Accuracy with Tool Call Success",
+   "Keep the built-in Azure AI Search tool and use Tool Selection instead of Tool Call Accuracy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent evaluators fully support File Search, function tools, MCP, and knowledge-based MCP, but have limited support for built-in tools such as Azure AI Search, Bing grounding, and Code Interpreter. When reliable tool evaluation matters, expose the same capability through a supported tool type.",
+  "rationale": [
+   "Correct: agent evaluators fully support function tools, while Tool Call Accuracy and Groundedness should be avoided for conversations with the built-in Azure AI Search tool. Wrapping the same index in a function tool keeps the data source and makes both evaluations reliable.",
+   "Incorrect: a reasoning model as the LLM judge can improve scoring of complex cases, but the limitation is the tool support for Azure AI Search conversations, not the judge. Use a reasoning judge when scores are inconsistent.",
+   "Incorrect: Tool Call Success is also on the list of evaluators to avoid with Azure AI Search, and Groundedness stays unreliable while the built-in tool is used. Use Tool Call Success to detect technical tool failures.",
+   "Incorrect: Tool Selection is not on the avoid list, but it measures only which tools were chosen, not parameter correctness, and Groundedness remains unreliable with the built-in Azure AI Search tool. Use it to check tool choice."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/agent-evaluators"
+ },
+ {
+  "id": "3.1.2-05",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank has a knowledge agent that retrieves documents from a vector index. Subject matter experts have labeled the relevance of each document for every test query. You need search quality metrics such as NDCG and Fidelity.\n\nWhich evaluator should you use?",
+  "choices": [
+   "Document Retrieval",
+   "Retrieval",
+   "Groundedness",
+   "Relevance"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "RAG evaluation separates retrieval from generation. Document Retrieval (with relevance labels) and Retrieval (LLM judge, no labels) score the retrieved content, while Groundedness, Relevance, and Response Completeness score the final answer. Labeled data enables classic search metrics such as NDCG.",
+  "rationale": [
+   "Correct: Document Retrieval compares retrieved documents with labeled relevance (retrieval_ground_truth) and computes search metrics such as NDCG, XDCG, Fidelity, Max Relevance, and Holes, which matches the labeled data and the requested metrics.",
+   "Incorrect: Retrieval uses an LLM judge to rate how relevant the retrieved chunks are to the query, without ground truth, and it does not compute NDCG or Fidelity. Use it when no relevance labels exist.",
+   "Incorrect: Groundedness checks whether the final response is supported by the retrieved context, which catches fabrication. It does not measure ranking quality. Use it to evaluate answers, not search results.",
+   "Incorrect: Relevance checks whether the final response addresses the user's query. It does not look at the retrieved documents or their ranking. Use it to evaluate whether answers stay on topic."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rag-evaluators"
+ },
+ {
+  "id": "3.1.2-06",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Contoso, Ltd. runs three subagents that use a knowledge base. No relevance labels exist for the test queries. You must choose an evaluator for each requirement.\n\nWhich evaluator should you use for each requirement? To answer, drag the appropriate evaluators to the correct requirements. Each evaluator may be used once, more than once, or not at all.",
+  "choices": [
+   "Retrieval",
+   "Document Retrieval",
+   "Groundedness",
+   "Response Completeness",
+   "Relevance"
+  ],
+  "targets": [
+   "ResearchAgent: assess whether the retrieved chunks are relevant to each query before the response is generated",
+   "PolicyAgent: detect statements in responses that are not supported by the retrieved chunks",
+   "FaqAgent: detect responses that omit information that appears in expected answers written by experts"
+  ],
+  "answer": [
+   0,
+   2,
+   3
+  ],
+  "explanation": "Choose RAG evaluators by what you inspect and which data you have. For retrieved content, use Retrieval without labels or Document Retrieval with labels. For the answer, use Groundedness for support by the context, Relevance for addressing the query, and Response Completeness when expected answers exist.",
+  "rationale": [
+   "The requirement targets the retrieved chunks before generation, and no relevance labels exist, so Retrieval fits: its LLM judge rates chunk relevance by using only the query and the context.",
+   "Unsupported statements are a precision problem of the response relative to its context, which is exactly what Groundedness measures.",
+   "Missing information compared with an expert-written expected answer is a recall problem, which Response Completeness measures by comparing the response with the ground truth."
+  ],
+  "notes": [
+   "Retrieval: an LLM judge rates how relevant the retrieved context is to the query, without ground truth. Use it to assess retrieval quality when no relevance labels exist.",
+   "Document Retrieval: compares retrieved documents with labeled relevance and computes NDCG, Fidelity, and similar metrics. Use it when relevance labels exist, which is not the case here.",
+   "Groundedness: checks whether the response is supported by the provided context. Use it to detect fabricated or unsupported claims in RAG answers.",
+   "Response Completeness: compares the response with a ground truth answer and detects missing critical information. Use it when expected answers exist.",
+   "Relevance: checks whether the response addresses the user's query. Use it to catch off-topic answers; it does not check support by the context or completeness."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rag-evaluators"
+ },
+ {
+  "id": "3.1.2-07",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-a",
+  "stem": "You need to add an evaluator for PolicyQA that detects the issue that the adjusters report.\n\nWhich evaluator should you add?",
+  "choices": [
+   "Response Completeness",
+   "Retrieval",
+   "Coherence",
+   "Relevance"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Groundedness and Response Completeness measure two sides of answer quality: groundedness is precision (no unsupported content), and completeness is recall (no missing critical information compared with ground truth). High groundedness combined with incomplete answers calls for Response Completeness with expected answers.",
+  "rationale": [
+   "Correct: the high Groundedness score shows that PolicyQA does not invent content, but adjusters report missing deductibles and exclusions. Response Completeness compares each answer with the expected answers that the claims team wrote and detects missing information.",
+   "Incorrect: Retrieval rates whether the retrieved chunks are relevant to the query, which helps when search returns the wrong policy text. It does not compare the final answer with an expected answer, so it cannot flag omitted conditions.",
+   "Incorrect: Coherence measures whether a response is logically organized and easy to follow. An answer can be perfectly coherent and still omit a deductible. Use it when answers are confusing or badly structured.",
+   "Incorrect: Relevance checks whether the answer addresses the question, and an on-topic answer can still omit exclusions. Use it when answers drift away from what the user asked."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rag-evaluators"
+ },
+ {
+  "id": "3.1.2-08",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Northwind Traders wants to choose the chunk size, top_k value, and search algorithm for the knowledge source used by its multi-agent support solution. You have a test set with human-labeled document relevance for each query. The decision must use the most precise retrieval quality measurement and must show whether differences from the current configuration are statistically significant.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Generate retrieval results for each configuration and run the Document Retrieval evaluator with the labeled data as retrieval_ground_truth.",
+   "Select the evaluation runs in the Foundry portal, select Compare, and set the run of the current configuration as the baseline.",
+   "Run the Groundedness Pro evaluator on the responses of each configuration.",
+   "Run the Task Navigation Efficiency evaluator for each configuration.",
+   "Run the Retrieval evaluator on the retrieved chunks of each configuration."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "A retrieval parameter sweep needs a precise retrieval metric and a statistical comparison. Labeled relevance data makes Document Retrieval the most precise option, and the Compare view with a baseline run shows whether metric changes are statistically significant rather than random variation.",
+  "rationale": [
+   "Correct: with human-labeled relevance available, Document Retrieval with the labels as retrieval_ground_truth gives the most precise retrieval metrics, such as NDCG, for each combination of chunk size, top_k, and search algorithm.",
+   "Correct: Compare in the Foundry portal, with the run of the current configuration as the baseline, shows per-evaluator differences with statistical tests, so you see whether improvements or regressions are significant.",
+   "Incorrect: Groundedness Pro checks whether responses are strictly consistent with the context, which evaluates generation, not retrieval quality. Use it to detect ungrounded answers through Azure AI Content Safety.",
+   "Incorrect: Task Navigation Efficiency compares an agent's tool-call path with expected actions. It says nothing about the quality of search results. Use it for workflow and trajectory regression tests.",
+   "Incorrect: Retrieval uses an LLM judge without ground truth, which is useful when no labels exist. Labeled relevance is available here, so Document Retrieval is the more precise measurement."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/rag-evaluators"
+ },
+ {
+  "id": "3.1.2-09",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Relecloud builds a concierge agent by using Microsoft Agent Framework. The agent calls a retrieve_memory function tool to load stored user preferences. You need to evaluate only the agent behavior from the memory retrieval onward, while all earlier messages serve as query context. The evaluation must also check, without an LLM judge, that retrieve_memory was called. A function named split_before_memory returns the messages before the retrieve_memory function call as the query and the messages from that call onward as the response.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nresults = await evaluate_agent(\n    agent=agent,\n    queries=queries,\n    evaluators=[[1]],\n    conversation_split=[[2]],\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "LocalEvaluator(tool_called_check(\"retrieve_memory\"))",
+     "LocalEvaluator(keyword_check(\"retrieve_memory\"))",
+     "FoundryEvals(project_client=project_client, model=\"gpt-4o\", evaluators=[FoundryEvals.RELEVANCE])"
+    ],
+    "why": [
+     "Correct: LocalEvaluator runs checks locally without API or LLM calls, and tool_called_check(\"retrieve_memory\") passes only when the agent called that tool, which meets the no-judge requirement.",
+     "Incorrect: keyword_check() requires the response text to contain the keywords. The tool name rarely appears in the response text, and a mention is not proof of a call. Use it to require specific terms in answers.",
+     "Incorrect: FoundryEvals sends items to Foundry's cloud evaluators, which use an LLM judge, and Relevance scores whether the response addresses the query, not whether a tool was called. Use it for production-grade quality scoring."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "split_before_memory",
+     "ConversationSplit.FULL"
+    ],
+    "why": [
+     "Correct: conversation_split accepts any callable that returns query messages and response messages. split_before_memory makes everything before retrieve_memory the query context, so only behavior from the memory call onward is scored.",
+     "Incorrect: ConversationSplit.FULL uses the first user message as the query and the entire remainder as the response, so turns before the memory call are scored too. Use it to evaluate task completion over the whole trajectory."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Agent Framework evaluation turns conversations into EvalItems through a split strategy: the last turn by default, FULL for whole trajectories, per-turn for fine-grained analysis, or a custom callable. Combine local checks such as tool_called_check for cheap, deterministic assertions with FoundryEvals for LLM-judged quality.",
+  "ref": "https://learn.microsoft.com/agent-framework/agents/evaluation"
+ },
+ {
+  "id": "3.1.2-10",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. has an onboarding agent that must remember facts the user provides early in a multi-turn chat and use them later in the same chat. You plan an evaluation in the Foundry portal that scores the complete interaction from start to finish.\n\nWhich evaluation scope should you select?",
+  "choices": [
+   "Full conversations",
+   "Individual turns",
+   "Individual turns with existing traces",
+   "Individual turns with synthetic data"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Evaluation scope decides what an evaluator sees. Turn-level evaluation scores one response with its preceding context, while conversation-level evaluation scores the whole interaction and is needed for behavior that spans turns, such as remembering and reusing information given earlier.",
+  "rationale": [
+   "Correct: the Full conversations scope evaluates the complete multi-turn interaction from start to finish, so evaluators can see whether facts the user gave early are used correctly later in the same chat.",
+   "Incorrect: Individual turns scores each response separately, which is useful for debugging specific answers, but it cannot see whether information from early turns is used later. Use it for single-turn quality.",
+   "Incorrect: existing traces are a data source within the Individual turns scope, so each response is still scored on its own. Use it to evaluate real production turns without building a dataset.",
+   "Incorrect: synthetic data within Individual turns generates single-turn test queries, which cannot test memory across a multi-turn chat. Use it when you lack test data for single-turn behavior."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/evaluate-generative-ai-app"
+ },
+ {
+  "id": "3.1.2-11",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys rewrote the system prompt of a sales agent and ran the same evaluation dataset against the old and the new agent versions. You must determine whether the new prompt produced a statistically significant change for each evaluator.\n\nWhat should you do?",
+  "choices": [
+   "Select both runs, select Compare, and set the old run as the baseline",
+   "Create a human evaluation template and ask reviewers to rate both versions",
+   "Enable continuous evaluation on the new agent version",
+   "Annotate the traces of both versions with thumbs up or thumbs down"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When you change a prompt, run the same dataset and evaluators against both versions and compare the runs. The Foundry Compare view uses the baseline run and statistical tests to show which evaluator changes are significant, which keeps you from reacting to random variation.",
+  "rationale": [
+   "Correct: selecting both runs and Compare, with the old run as the baseline, shows per-evaluator differences with statistical t-tests, so you see whether the new prompt produced a significant change for each evaluator.",
+   "Incorrect: a human evaluation template collects reviewer judgments on responses in the preview web app, which adds qualitative insight but no statistical comparison of the two runs. Use it for structured human review.",
+   "Incorrect: continuous evaluation scores sampled production responses of a live agent over time. It does not compare two versions on the same dataset. Use it to monitor quality after release.",
+   "Incorrect: thumbs up or thumbs down annotations capture individual human signals on traces, not a statistical comparison of runs per evaluator. Use them to flag good or bad interactions."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/evaluate-results"
+ },
+ {
+  "id": "3.1.2-12",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Woodgrove Bank has an advisor agent whose system prompt forbids recommending specific stocks and requires a referral to a licensed advisor for investment questions. Before each prompt change is released, you run built-in evaluators on a test dataset that includes the system message.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Task Adherence can detect responses that recommend a specific stock despite the system prompt.",
+   "A high Relevance score shows that a response followed the referral rule in the system prompt.",
+   "Intent Resolution measures whether the agent's actions comply with the rules in its system message."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "System evaluators answer different questions: Task Adherence (did the agent follow its instructions and constraints), Intent Resolution (did it understand the user), Task Completion (did it finish the task), and Customer Satisfaction (would the user be satisfied). Include the system message in the dataset for adherence checks.",
+  "rationale": [
+   "Yes: Task Adherence measures whether the agent's actions follow its assigned tasks, rules, and policy constraints based on the system message, and it is meant for compliance checks in regulated environments, so it flags forbidden stock recommendations.",
+   "No: Relevance measures whether a response addresses the user's question. A response that recommends a stock is still relevant to an investment question, so a high score says nothing about the referral rule. Use Relevance to catch off-topic answers.",
+   "No: Intent Resolution measures whether the agent correctly identified the user's intent, for example in customer support or FAQ scenarios. Compliance with the rules in the system message is what Task Adherence measures."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/agent-evaluators"
+ }
+]

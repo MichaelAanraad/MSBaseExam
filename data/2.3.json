@@ -1,0 +1,967 @@
+[
+ {
+  "id": "2.3.1-01",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. is building Agent1 in Foundry Agent Service. Agent1 must look up order status in an internal order system. The order system is reachable from the Fabrikam application code that runs in a private network, and the application must run the lookup logic itself.\n\nWhich tool type should you configure for Agent1?",
+  "choices": [
+   "Function calling",
+   "Code Interpreter",
+   "File Search",
+   "Grounding with Bing Search"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry Agent Service tools split into tools that the service runs, such as Code Interpreter, File Search and Grounding with Bing Search, and function calling, which your application runs. Choose function calling when your own code must execute the action, for example because only it can reach a private system.",
+  "rationale": [
+   "Correct: with function calling, the model returns the function name and arguments, and the Fabrikam application runs the lookup itself inside the private network and sends the output back to the agent.",
+   "Incorrect: Code Interpreter runs Python in a sandbox that the service manages, which cannot reach the private order system and does not run your application logic. Use it for calculations, data analysis or file processing.",
+   "Incorrect: File Search retrieves content from uploaded files in a vector store, not live records from an internal system. Use it to ground answers on documents.",
+   "Incorrect: Grounding with Bing Search retrieves public web content, so it cannot return internal order status. Use it when answers need current public information."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling"
+ },
+ {
+  "id": "2.3.1-02",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank has a compliance agent named Agent2 that has three tools: check_sanctions, check_pep, and check_adverse_media. Every response from Agent2 must be based on at least one tool call, but the model must decide which of the three tools fits the request.\n\nWhich tool_choice value should you use?",
+  "choices": [
+   "auto",
+   "required",
+   "none",
+   "{\"type\": \"function\", \"name\": \"check_sanctions\"}"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "tool_choice controls tool use deterministically: auto leaves the decision to the model, required forces at least one tool call, none disables tools, and a named function forces that function. Pick the least restrictive value that still meets the requirement.",
+  "rationale": [
+   "Incorrect: auto lets the model decide whether to call a tool at all, so it can answer without any tool call, which breaks the requirement. Use auto as the default when tool use is optional.",
+   "Correct: required forces the model to call at least one tool while leaving the choice of tool to the model, so every response is based on one of the three checks.",
+   "Incorrect: none prevents the model from calling tools, so no response would be based on a check. Use none when a turn must be answered from the conversation only, such as a final summary.",
+   "Incorrect: naming a specific function forces check_sanctions on every request, so the model can no longer choose between the three tools. Use it when one specific tool must always run."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/tool-best-practice"
+ },
+ {
+  "id": "2.3.1-03",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has an HTTP API that is described by an OpenAPI 3.0 specification and protected by Microsoft Entra ID. A Foundry Agent Service agent must call operations of the API server-side, and you must avoid writing application code that executes the calls.\n\nWhich tool should you add to the agent?",
+  "choices": [
+   "OpenAPI tool",
+   "Function calling",
+   "Code Interpreter",
+   "Browser Automation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The OpenAPI tool turns a specification into operations that Foundry Agent Service calls itself, with anonymous, API key or managed identity authentication. Prefer it over function calling when the service can reach the API and no custom logic is needed around the call.",
+  "rationale": [
+   "Correct: the OpenAPI tool reads the OpenAPI 3.0 specification and calls the operations server-side, and it supports managed identity authentication for APIs protected by Microsoft Entra ID, so no application code executes the calls.",
+   "Incorrect: function calling returns each call to your application, which must execute the HTTP request itself, so it breaks the no-code requirement. Use it when only your code can reach the API or must add logic around it.",
+   "Incorrect: Code Interpreter runs Python in a sandbox for analysis and file work and is not the mechanism to integrate a described REST API with authentication. Use it for calculations and data processing.",
+   "Incorrect: Browser Automation performs tasks in a web browser from natural language instructions, not structured operations from an OpenAPI specification. Use it for websites that offer no API."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi"
+ },
+ {
+  "id": "2.3.1-04",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. builds an agent by using Microsoft Agent Framework for Python. The agent has 60 function tools. Tests show that tool-selection accuracy drops and token costs rise because every request sends all 60 tool schemas to the model. You need the agent to start each run with a small set of tools and to add more tools on demand during the same run, based on earlier tool results.\n\nWhat should you do?",
+  "choices": [
+   "Register a loader tool that calls add_tools on the FunctionInvocationContext.",
+   "Pass the complete list of 60 tools to agent.run by using the tools parameter for each request.",
+   "Set tool_choice to required and set required_function_name for each tool.",
+   "Set max_function_calls in the function invocation configuration of the chat client."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Dynamic tool use in Agent Framework lets a run start small and grow: tools added through add_tools on the invocation context become visible in the next iteration of the function-calling loop. This progressive exposure improves tool selection and lowers token cost for agents that have many tools.",
+  "rationale": [
+   "Correct: a loader tool that calls add_tools on the FunctionInvocationContext adds tools during the run, so the first request sends only a small tool set and more schemas appear in the next iteration when earlier results show they are needed.",
+   "Incorrect: passing tools to agent.run() sets the tool list at the start of the run, so all 60 schemas are still sent with every request. Use run-level tools to vary the set between requests, not within one run.",
+   "Incorrect: required_function_name forces one specific function as the first call and does not reduce how many schemas the model receives. Use it when a run must start with a known tool.",
+   "Incorrect: max_function_calls caps how many tool calls the loop makes, but every request still carries all 60 schemas. Use it to stop runaway tool loops."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/controlling-tool-availability"
+ },
+ {
+  "id": "2.3.1-05",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders builds an agent by using Microsoft Agent Framework for Python. The agent has two tools named get_record and update_record. The model must not be offered the update_record tool schema until get_record has run successfully in the current run. You must implement the requirement without adding a workflow.\n\nWhich technique should you use?",
+  "choices": [
+   "Register get_record at agent creation, and call add_tools from inside get_record to expose update_record.",
+   "Add function middleware that rejects update_record calls when the record was not fetched first.",
+   "Build a sequential workflow that has one executor for get_record and one for update_record.",
+   "Add an agent instruction that tells the model to fetch a record before it updates the record."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tool availability can be controlled at run start with the tools parameter, dynamically within a run with add_tools, or for the first call with tool_choice. Gating one tool behind the success of another is a lightweight way to enforce an order without building a workflow.",
+  "rationale": [
+   "Correct: registering only get_record and calling add_tools from inside it after a successful fetch means the model never sees the update_record schema before the read succeeds, and because the tool list resets for each run, the gate applies again every turn.",
+   "Incorrect: middleware can reject an update_record call, but the model sees the schema from the start, may attempt the call and wastes a turn on the rejection. Use middleware checks when a tool must stay visible but needs runtime validation.",
+   "Incorrect: a sequential workflow enforces the order, but the stem rules out adding a workflow, and a simple pairwise dependency does not need one. Use a workflow when several steps, agents or checkpoints must be orchestrated.",
+   "Incorrect: an instruction is a request to the model, not a guarantee, and the update_record schema stays visible. Use instructions to guide preferences, not to enforce a mandatory order."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/controlling-tool-availability"
+ },
+ {
+  "id": "2.3.1-06",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. has a Foundry Agent Service agent that uses function calling. A function named start_reconciliation calls a back-office job that runs for up to 25 minutes. Tests show that the agent runs that call start_reconciliation fail before the job completes. The agent must still report the job outcome to the user.\n\nWhat should you do?",
+  "choices": [
+   "Return a job status immediately, and add a status function that the agent can poll.",
+   "Run the job in a background thread, and submit the function_call_output when the job completes.",
+   "Increase the timeout of the HTTP client that start_reconciliation uses to 30 minutes.",
+   "Submit the function output in a new conversation after the job completes, and reference the original call_id."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Function outputs must be submitted before the run expires, 10 minutes after it was created, and that limit covers the total elapsed time. For long back-office jobs, start the job, return an ID or status immediately, and expose a status function that the agent can call later.",
+  "rationale": [
+   "Correct: runs expire 10 minutes after creation, so returning a job status immediately keeps the run within the limit, and a status function lets the agent check later and report the outcome to the user.",
+   "Incorrect: a background thread does not stop the run from waiting for the output, and the run expires after 10 minutes, long before the 25-minute job finishes. A delayed function_call_output works only when the result arrives well within the run expiration.",
+   "Incorrect: the HTTP client timeout is not what fails; the run itself expires 10 minutes after creation regardless of the client timeout. Raise a client timeout only when calls fail well before the run limit.",
+   "Incorrect: a new conversation does not contain the original function_call, so the call_id cannot be resolved there, and the original run has expired anyway. Submit outputs in the same response chain that requested them."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling"
+ },
+ {
+  "id": "2.3.1-07",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys uses Microsoft Agent Framework for Python. An agent has two tools named get_record and update_record. For a specific request, the first action of the model must be a call to get_record. After that first call, the model must be free to choose its next action.\n\nYou write the following code:\n\n```python\nresult = await agent.run(\n    \"Update record REC-42 to status 'in-progress'.\",\n    options={\"tool_choice\": <value>},\n)\n```\n\nWhich value should you use for <value>?",
+  "choices": [
+   "{\"mode\": \"required\", \"required_function_name\": \"get_record\"}",
+   "{\"mode\": \"required\"}",
+   "{\"mode\": \"auto\"}",
+   "{\"mode\": \"none\"}"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Agent Framework, tool_choice can be a mode or a dict that names a required function. Forcing a specific function applies to the first iteration only, which gives a deterministic first step without locking the rest of the run.",
+  "rationale": [
+   "Correct: mode required with required_function_name forces get_record as the first call, and the framework then resets tool_choice after the first iteration, so the model can choose freely afterward.",
+   "Incorrect: mode required forces some tool call, but the model may choose update_record first, so get_record is not guaranteed. Use it when any tool call is acceptable as long as one happens.",
+   "Incorrect: mode auto lets the model decide whether and which tool to call, so get_record is not guaranteed to come first. Use auto for normal, flexible tool use.",
+   "Incorrect: mode none prevents tool calls entirely, so get_record cannot run. Use none when a response must come from the model without tools."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/controlling-tool-availability"
+ },
+ {
+  "id": "2.3.1-08",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "You evaluate how to meet the technical requirements for update_claim_address.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Because strict is set to true, update_claim_address can write the arguments to ClaimsDB without further validation.",
+   "Granting the identity that DefaultAzureCredential uses only the permissions that the address update needs limits the impact if the identity is misused.",
+   "update_claim_address should treat the arguments that Agent1 supplies as untrusted input, even when the arguments match the JSON schema."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Function calling hands model-generated arguments to your code, so the security guidance is to validate and sanitize those arguments and to apply least privilege to the identity the function uses. Strict mode improves the shape of arguments but is not a security control for their values.",
+  "rationale": [
+   "No: strict mode makes the arguments match the shape of the schema, but schema-valid values can still be wrong or malicious, for example an injected string in an address field. Strict mode helps parsing; validation in code is still required before a write.",
+   "Yes: least privilege on the identity resolved by DefaultAzureCredential limits what an attacker can do if Agent1 is manipulated into misusing the function, which meets the requirement to limit impact.",
+   "Yes: tool arguments are produced by the model and can be influenced by user input, so the function must validate and sanitize them before it writes to ClaimsDB, which keeps malformed or malicious values out."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling",
+  "case": "C-c"
+ },
+ {
+  "id": "2.3.1-09",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Proseware, Inc. creates a prompt agent in Foundry Agent Service that uses function calling to return live delivery estimates from an internal service. The azure-ai-projects package is installed, and an AIProjectClient named project exists. You need to implement the function calling flow in Python and return the final answer to the user.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`func_tool = FunctionTool(name=\"get_delivery_estimate\", parameters=schema, description=\"Get the delivery estimate for an order.\", strict=True)`",
+   "`agent = project.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-4.1-mini\", instructions=instructions, tools=[func_tool]))`",
+   "`openai = project.get_openai_client(agent_name=agent.name)`, and then `conversation = openai.conversations.create()`",
+   "`response = openai.responses.create(input=\"When will order 1234 arrive?\", conversation=conversation.id)`",
+   "For each function_call item in response.output, run the function and call `openai.responses.create(input=[FunctionCallOutput(type=\"function_call_output\", call_id=item.call_id, output=result)], conversation=conversation.id)`",
+   "Add get_delivery_estimate to the agent on the Tools page of the agent in the Foundry portal.",
+   "Create `new_conversation = openai.conversations.create()`, and submit the FunctionCallOutput items to new_conversation."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Function calling is a round trip: the agent definition declares the function, a response returns a function_call item with arguments, your code runs the function, and a follow-up response in the same conversation submits a function_call_output that references the call_id. The model then writes the final answer.",
+  "rationale": [
+   "Step 1: the FunctionTool definition describes the name, parameters and purpose of the function, and it must exist before it can be added to an agent definition.",
+   "Step 2: the agent version registers the function definition, so the model can return function_call items for get_delivery_estimate.",
+   "Step 3: an OpenAI client bound to the agent and a conversation are needed before you send a prompt; the conversation ID links the prompt and the later function output.",
+   "Step 4: the prompt makes the model decide to call the function, and the response contains a function_call item with the call_id and the arguments.",
+   "Step 5: your code runs the function with the returned arguments and submits a function_call_output with the same call_id in the same conversation, so the agent can write the final answer.",
+   "Incorrect: the Foundry portal can run agents that have function tools, but it does not support adding, removing or updating function definitions. Use the SDK or REST API to configure function tools.",
+   "Incorrect: a new conversation does not contain the function_call that the call_id refers to, so the output cannot be matched to the request. Start a new conversation only for an unrelated interaction."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling"
+ },
+ {
+  "id": "2.3.2-01",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Wide World Importers has a REST API named Orders API that is described by an OpenAPI specification at https://orders.wideworldimporters.com/openapi.json. No Azure API Management instance exists yet. The solution is a proof of concept, and cost must be minimized. You need to expose selected operations of Orders API as tools that a Foundry Agent Service agent can call, without writing or hosting new server code.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az apim create --name apim1 --resource-group RG1 --publisher-name \"Wide World Importers\" --publisher-email admin@wideworldimporters.com --sku-name Developer`",
+   "`az apim api import --resource-group RG1 --service-name apim1 --api-id orders-api --path orders --specification-format OpenAPI --specification-url https://orders.wideworldimporters.com/openapi.json`",
+   "In apim1, select MCP Servers > Create MCP server > Expose an API as an MCP server, and select the Orders API operations to expose as tools.",
+   "Add an MCP tool to the agent that uses the Server URL of the new MCP server.",
+   "In apim1, select MCP Servers > Create MCP server > Expose an existing MCP server, and enter the base URL of Orders API.",
+   "`azd init --template remote-mcp-functions-python -e orders-mcp`",
+   "`az apim create --name apim1 --resource-group RG1 --publisher-name \"Wide World Importers\" --publisher-email admin@wideworldimporters.com --sku-name Consumption`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "API Management can turn any HTTP-compatible API that it manages into a remote MCP server, with selected operations as tools and API Management policies for access control. The instance must be in a tier that supports MCP servers (classic Developer, Basic, Standard or Premium, or a v2 tier, not Consumption), the API must be imported first, and MCP clients, including Foundry agents, connect to the MCP server URL.",
+  "rationale": [
+   "Step 1: the API Management instance must exist before you can import APIs into it. The Developer tier, the default of az apim create, supports MCP servers and is the economical tier for a nonproduction proof of concept.",
+   "Step 2: az apim api import creates Orders API from the OpenAPI specification, so API Management manages the operations that you can expose as tools.",
+   "Step 3: Expose an API as an MCP server turns the selected operations of a managed REST API into MCP tools, with no server code to write or host.",
+   "Step 4: the MCP Servers page lists the Server URL of the new server, and the agent connects to that URL to discover and call the tools.",
+   "Incorrect: Expose an existing MCP server fronts a server that already speaks MCP, but Orders API is a REST API, not an MCP server. Use this option to add governance to an MCP server hosted elsewhere.",
+   "Incorrect: the Functions MCP template creates new MCP server code that you must maintain and host, which the stem rules out. Use it when you need custom tool logic that no existing API provides.",
+   "Incorrect: the Consumption tier is a serverless, pay-per-call gateway, but MCP server features are available only in the Developer, Basic, Standard and Premium tiers and the v2 tiers. Use Consumption for serverless APIs that do not need MCP servers."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/export-rest-mcp-server"
+ },
+ {
+  "id": "2.3.2-02",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery builds a remote MCP server by using the Azure Functions MCP extension. A function must run each time an MCP client calls a tool named get_vintage.\n\nWhich binding should you use for the function?",
+  "choices": [
+   "MCP tool trigger",
+   "MCP resource trigger",
+   "MCP prompt trigger",
+   "HTTP trigger"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Azure Functions MCP extension maps MCP primitives to triggers: the tool trigger for tools, the resource trigger for resources and the prompt trigger for prompts. The extension serves them at the /runtime/webhooks/mcp endpoint, while a self-hosted MCP server uses an MCP SDK behind an HTTP endpoint instead.",
+  "rationale": [
+   "Correct: the MCP tool trigger runs the function whenever an MCP client calls the tool that it defines, such as get_vintage, and the extension handles the MCP protocol.",
+   "Incorrect: the MCP resource trigger exposes a function as an MCP resource that clients read for context, not as a callable tool. Use it to publish data such as documents or configuration to MCP clients.",
+   "Incorrect: the MCP prompt trigger exposes a reusable prompt template that clients can list and fetch, not a tool. Use it to share standard prompts with MCP clients.",
+   "Incorrect: a plain HTTP trigger receives HTTP requests, but the MCP extension does not register it as an MCP tool, so you would have to implement the protocol yourself. Use HTTP triggers for REST endpoints or a self-hosted MCP server."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-functions/functions-bindings-mcp"
+ },
+ {
+  "id": "2.3.2-03",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Fourth Coffee builds an agent by using Microsoft Agent Framework for Python. The agent must use a filesystem MCP server that the application starts as a local child process and communicates with over standard input and output.\n\nWhich class should you use to connect the agent to the MCP server?",
+  "choices": [
+   "MCPStdioTool",
+   "MCPStreamableHTTPTool",
+   "FunctionTool",
+   "MCPTool from azure.ai.projects.models"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework provides client-side MCP tools by transport, such as MCPStdioTool for local processes and MCPStreamableHTTPTool for HTTP servers. Foundry Agent Service, by contrast, calls only remote MCP endpoints through its own MCP tool, so local stdio servers work only with client-side tools.",
+  "rationale": [
+   "Correct: MCPStdioTool starts the MCP server as a local child process from a command and arguments and talks to it over standard input and output, which is exactly this setup.",
+   "Incorrect: MCPStreamableHTTPTool connects to an MCP server at an HTTP URL, not to a child process over stdin and stdout. Use it for remote or locally hosted HTTP MCP servers.",
+   "Incorrect: FunctionTool wraps a Python function as a tool and does not speak the MCP protocol, so it cannot connect to an MCP server. Use it to expose your own code as a tool.",
+   "Incorrect: MCPTool from azure.ai.projects.models configures a remote MCP server that Foundry Agent Service calls from the cloud, so it cannot reach a local child process. Use it for prompt agents in Foundry Agent Service."
+  ],
+  "ref": "https://learn.microsoft.com/python/api/agent-framework-core/agent_framework.mcpstdiotool?view=agent-framework-python-latest"
+ },
+ {
+  "id": "2.3.2-04",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Alpine Ski House has Azure Logic Apps workflows that use connectors to create IT tickets. The workflows run in a Consumption logic app and start with a Recurrence trigger. You need to expose the ticket workflows as tools on a remote MCP server that MCP clients can discover over Streamable HTTP. The MCP server must use key-based authentication, and you want to reuse the existing workflow logic.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a Standard logic app that uses a Workflow Service Plan.",
+   "Re-create the ticket workflows in the Standard logic app so that each one starts with the When an HTTP request is received trigger, describes its inputs in the Request Body JSON Schema, and ends with a Response action.",
+   "On the MCP servers page of the Standard logic app, create an MCP server and select the ticket workflows.",
+   "Set the authentication method of the MCP server to Key-based, and generate an MCP API key.",
+   "Add the MCP server URL and the API key to the MCP client.",
+   "In the Consumption logic app, replace the Recurrence trigger with a Request trigger, and add a Response action.",
+   "In host.json, set Runtime.Backend.EdgeWorkflowRuntimeTriggerListener.AllowCrossWorkerCommunication to true."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Logic Apps can host remote MCP servers only in Standard logic apps on a Workflow Service Plan or App Service Environment v3, and only workflows that start with the Request trigger and end with a Response action qualify as tools. Trigger and parameter descriptions become the tool metadata that agents use to pick and call tools.",
+  "rationale": [
+   "Step 1: the MCP server feature requires a Standard logic app on a Workflow Service Plan or App Service Environment v3, so the workflows need a new home first.",
+   "Step 2: only workflows that start with the When an HTTP request is received trigger and end with a Response action appear in the MCP server workflow list, and the schema descriptions help agents pass correct inputs.",
+   "Step 3: the MCP servers page groups the qualifying workflows into an MCP server, which can only happen after the workflows exist.",
+   "Step 4: after the server exists, the Authentication section lets you choose Key-based and generate the MCP API key; copy it right away because it cannot be viewed later.",
+   "Step 5: the MCP client needs both the server URL, copied from the Servers section, and the generated key to connect, so this comes last, after the key is generated.",
+   "Incorrect: Consumption logic apps do not support the MCP server feature, even when a workflow has a Request trigger and a Response action. Changing triggers there fits plain HTTP-callable workflows, not MCP tools.",
+   "Incorrect: AllowCrossWorkerCommunication is needed only for the SSE transport together with virtual network integration; Streamable HTTP has no extra requirements. Set it when MCP clients must use SSE."
+  ],
+  "ref": "https://learn.microsoft.com/azure/logic-apps/create-model-context-protocol-server-standard"
+ },
+ {
+  "id": "2.3.2-05",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Adventure Works Cycles wants a Foundry Agent Service agent to use an open-source MCP server that developers currently run locally with an npx command. The server depends on Playwright, which requires OS-level dependencies. The repository contains a Dockerfile that installs these dependencies, and the server listens on port 8080 at the /mcp path. Foundry Agent Service accepts only remote MCP server endpoints. A resource group named RG1, an Azure Container Apps environment named Env1, and a user-assigned managed identity named id1 already exist.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az acr create --resource-group RG1 --name acr1 --sku Basic`",
+   "`az acr build --registry acr1 --image mcp-playwright .`",
+   "`az containerapp create --name mcp1 --resource-group RG1 --environment Env1 --image acr1.azurecr.io/mcp-playwright --target-port 8080 --ingress external --registry-server acr1.azurecr.io --user-assigned <id1-resource-id> --registry-identity <id1-resource-id>`",
+   "Add an MCP tool to the agent with the server URL https://<container-app-fqdn>/mcp.",
+   "`azd init --template remote-mcp-functions-python -e mcp-playwright`",
+   "`az acr login --name acr1`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "An MCP server with OS-level dependencies fits a container: build the image, host it in Azure Container Apps with ingress on the server port, and point the agent at the public /mcp endpoint. Azure Functions hosting fits MCP servers built on the Functions MCP extension or SDK servers without OS-level dependencies.",
+  "rationale": [
+   "Step 1: the container registry must exist before an image can be built into it or pulled from it; the Basic SKU is enough for a single MCP server image that one container app pulls.",
+   "Step 2: az acr build uses ACR Tasks to build the Dockerfile in the cloud and push the image to acr1, including Playwright and its OS-level dependencies.",
+   "Step 3: az containerapp create pulls the image with the identity id1, gives it the AcrPull role, and exposes port 8080 through external ingress, which makes the server a remote endpoint.",
+   "Step 4: the agent can connect only after the container app has a public FQDN, so the MCP tool that uses https://<fqdn>/mcp comes last.",
+   "Incorrect: the Functions MCP template creates a new Python MCP server for the Azure Functions MCP extension, which does not run this npx-based server or its OS-level dependencies. Use it to build new tools on Functions.",
+   "Incorrect: az acr login signs in a local Docker client before docker push, but az acr build runs the build and push in Azure, so the login is not needed. Use it when you build images locally with Docker."
+  ],
+  "ref": "https://learn.microsoft.com/azure/container-apps/tutorial-code-to-cloud"
+ },
+ {
+  "id": "2.3.2-06",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel exposes an existing MCP server through Azure API Management. MCP clients send access tokens that are issued by Microsoft Entra ID in the Authorization header. API Management must return a 401 response for requests that have a missing or invalid token before any tool is called, and it must accept tokens for one specific client application.\n\nWhich policy should you add to the inbound section?",
+  "choices": [
+   "validate-azure-ad-token",
+   "get-authorization-context",
+   "set-backend-service",
+   "rate-limit-by-key"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "API Management secures MCP servers with the same policies as APIs: inbound validation of client tokens with validate-azure-ad-token, outbound credentials through credential manager, and throttling with rate-limit policies. Inbound validation is what blocks unauthenticated tool calls.",
+  "rationale": [
+   "Correct: validate-azure-ad-token in the inbound section validates Microsoft Entra tokens from the Authorization header, can restrict the accepted client application IDs, and rejects missing or invalid tokens with 401 before any tool runs.",
+   "Incorrect: get-authorization-context retrieves a token from credential manager for outbound calls to a backend; it does not validate tokens that clients send. Use it when API Management must call a backend with an OAuth token.",
+   "Incorrect: set-backend-service redirects the request to another backend or backend pool and performs no authentication. Use it to route traffic, for example to a load-balanced pool.",
+   "Incorrect: rate-limit-by-key caps calls per key in a time window and returns 429, but it accepts requests without tokens. Use it to protect the MCP server from overuse by a single client."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/secure-mcp-servers"
+ },
+ {
+  "id": "2.3.2-07",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Trey Research exposes a REST API as an MCP server in Azure API Management. After two changes, MCP clients report that tool calls fail and responses no longer stream. The changes are:\n\n- Diagnostic logging to Application Insights was enabled at the All APIs scope, including frontend response payloads.\n- An MCP server policy was added that reads context.Response.Body to log tool output.\n\nYou need to restore MCP server functionality and keep diagnostic logging for the other APIs.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set Number of payload bytes to log for Frontend Response to 0 at the All APIs scope.",
+   "Remove the access to context.Response.Body from the MCP server policy.",
+   "Change the MCP server transport from Streamable HTTP to SSE.",
+   "Add a retry policy that wraps forward-request in the MCP server policy.",
+   "Associate the MCP server with an additional API Management product."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "MCP servers in API Management depend on streamed responses. Anything that buffers the response body, such as payload logging at the All APIs scope or a policy that reads the body, breaks them, so scope payload logging to specific APIs instead.",
+  "rationale": [
+   "Correct: logging frontend response payloads at the All APIs scope buffers response bodies, which breaks MCP streaming; setting the bytes to log to 0 at that scope fixes the MCP server, and you can still log payloads per API for the other APIs.",
+   "Correct: reading context.Response.Body in an MCP server policy triggers response buffering, which interferes with the streaming that MCP servers need, so the access must be removed.",
+   "Incorrect: SSE is the older MCP transport and is affected by the same buffering, so switching does not fix the problem. Choose a transport based on client support, not to work around buffering.",
+   "Incorrect: a retry repeats the request through the same buffering configuration, so it fails again and adds load. Use retry for transient backend failures such as intermittent 5xx responses.",
+   "Incorrect: products control access and subscriptions for the MCP server, not how responses are streamed. Associate products to manage who can call the server."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/export-rest-mcp-server"
+ },
+ {
+  "id": "2.3.2-08",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "You need to configure the MCP tool for Agent4 to meet the requirements for claim data.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\ntool = MCPTool(\n    server_label=\"claims\",\n    server_url=\"https://mcp.humongousinsurance.com/claims/mcp\",\n    allowed_tools=[[1]],\n    require_approval=[[2]],\n    project_connection_id=\"ClaimsMcpConn\",\n)\n```",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The MCP tool in Foundry Agent Service has two separate controls: allowed_tools limits which server tools the agent can use at all, and require_approval decides which calls need human approval first. Combine a tight allow list with approval for any remaining high-risk tools.",
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol",
+  "case": "C-c",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[\"get_policy\", \"list_claims\"]",
+     "None",
+     "[\"claims\"]"
+    ],
+    "why": [
+     "Correct: allowed_tools is an allow list, so only get_policy and list_claims are available to Agent4, and the six tools that create, change, pay, close, export or delete data are not.",
+     "Incorrect: without an allow list, the default includes every tool on the server, so Agent4 could call issue_payment or delete_attachment. Leave allowed_tools unset only when the agent may use all tools of a trusted server.",
+     "Incorrect: claims is the server_label, not a tool name, so it matches no tool and Agent4 cannot call get_policy or list_claims. Tool names in allowed_tools must match the names that the server exposes."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"never\"",
+     "\"always\"",
+     "{\"always\": [\"get_policy\", \"list_claims\"]}"
+    ],
+    "why": [
+     "Correct: never removes the approval step, so the read-only lookups run without waiting for a person, and the allow list already keeps every write tool unavailable.",
+     "Incorrect: always is the default and makes every call return an mcp_approval_request that a person must approve, so read-only lookups wait for approval. Use always for tools that write data or change resources.",
+     "Incorrect: this requires approval for exactly the two read-only tools, so every lookup waits for a person. Use a per-tool always list for the risky tools when an agent mixes read and write tools."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.3.2-09",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Graphic Design Institute builds MCP tools in Python by using the Azure Functions MCP extension, starting from the remote-mcp-functions-python template. You need to deploy the MCP server to Azure and make its tools available to an existing Foundry Agent Service agent by using key-based authentication.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`azd init --template remote-mcp-functions-python -e mcpserver-python`",
+   "`azd up`",
+   "`az functionapp keys list --resource-group <resource-group> --name <function-app> --query systemKeys.mcp_extension --output tsv`",
+   "In the Foundry portal, add an MCP tool to the agent with the function app endpoint URL that ends in /runtime/webhooks/mcp, Key-based authentication, and an x-functions-key credential.",
+   "`az functionapp keys list --resource-group <resource-group> --name <function-app> --query functionKeys.default --output tsv`",
+   "In host.json, set the system.webhookAuthorizationLevel property to Anonymous."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "An MCP server built on the Functions MCP extension is served at /runtime/webhooks/mcp and protected by the mcp_extension system key by default. A self-hosted MCP server uses the default host key instead, and Microsoft Entra or OAuth authentication replaces keys in production.",
+  "rationale": [
+   "Step 1: azd init creates the project from the template, including the MCP tool sample and the infrastructure files that azd up needs.",
+   "Step 2: azd up provisions the function app and its supporting resources and deploys the MCP server code, so the endpoint and its keys exist only after this step.",
+   "Step 3: the MCP extension endpoint requires the mcp_extension system key, which exists only after deployment; az functionapp keys list with the systemKeys.mcp_extension query returns it from the deployed function app.",
+   "Step 4: the agent connects to the /runtime/webhooks/mcp endpoint and sends the key in the x-functions-key header, so this step needs the deployed URL and the key.",
+   "Incorrect: functionKeys.default returns the default host key, which a self-hosted MCP server on Functions expects, not the mcp_extension system key that an MCP extension-based server requires. Use the default host key when you host an MCP SDK server behind a custom handler.",
+   "Incorrect: setting system.webhookAuthorizationLevel to Anonymous removes the key requirement, so the endpoint accepts calls without x-functions-key, which defeats key-based authentication. Use it only for local tests or when another layer, such as built-in Microsoft Entra authentication, protects the endpoint."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/mcp/build-your-own-mcp-server"
+ },
+ {
+  "id": "2.3.3-01",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. builds a Python agent by using Microsoft Agent Framework. The agent uses a Mistral model that is deployed in Microsoft Foundry. The model sometimes passes a string where a tool expects an integer. When the call fails, the model receives only a generic error message and repeats the same mistake. Tool results stay on a trusted channel.\n\nYou need the model to see what went wrong so that it can self-correct. You must not write custom error-handling code.\n\nWhat should you do?",
+  "choices": [
+   "Set include_detailed_errors to True in function_invocation_configuration.",
+   "Add function middleware that catches the exception and sets the result to the error text.",
+   "Set terminate_on_unknown_calls to True in function_invocation_configuration.",
+   "Increase max_consecutive_errors_per_request in function_invocation_configuration."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Function invocation configuration controls how Agent Framework reports tool failures and limits the loop. Detailed errors help the model self-correct, but exception text can contain sensitive data, so enable them only where tool results stay on a trusted channel.",
+  "rationale": [
+   "Correct: include_detailed_errors set to True adds the exception type and message to the function result, so the model sees that it passed a string instead of an integer and can retry with corrected input, without custom code.",
+   "Incorrect: middleware that catches the exception and returns the error text works, but it is custom error-handling code, which the stem rules out. Use middleware when you need custom formatting, redaction or fallback logic.",
+   "Incorrect: terminate_on_unknown_calls controls what happens when the model calls a tool that the client does not know, not failures of known tools. Set it when unknown tool calls must end the loop instead of returning an error.",
+   "Incorrect: allowing more consecutive errors gives the model more attempts but no extra information about what went wrong, so it repeats the mistake. Raise the limit only when errors are transient and retries help."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools?pivots=programming-language-python"
+ },
+ {
+  "id": "2.3.3-02",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. exposes a Standard logic app workflow as an MCP tool. The workflow calls an HTTP endpoint that sometimes returns 429 and 503 responses. The HTTP action must resend failed requests six times, and it must wait a random interval that is selected from an exponentially growing range, with a custom maximum interval.\n\nWhich retry policy type should you configure on the HTTP action?",
+  "choices": [
+   "Exponential Interval",
+   "Fixed Interval",
+   "Default",
+   "None (do not retry)"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Logic Apps actions support the Default, None, Fixed Interval and Exponential Interval retry policies. For throttling and transient errors, exponential backoff with a random interval spreads retries and gives the endpoint time to recover.",
+  "rationale": [
+   "Correct: the Exponential Interval policy waits a random interval from an exponentially growing range and lets you set the count, a minimum interval and a custom maximum interval, which meets six retries with a custom maximum.",
+   "Incorrect: Fixed Interval waits the same interval between every attempt, so the wait does not grow exponentially. Use it when the endpoint recovers on a predictable schedule.",
+   "Incorrect: Default uses an exponential policy with fixed settings of up to four retries, so you cannot set six retries or a custom maximum interval. Keep Default when its built-in behavior is good enough.",
+   "Incorrect: None does not resend failed requests, so 429 and 503 responses fail the action immediately. Choose None when the workflow handles failures itself, for example with run-after branches."
+  ],
+  "ref": "https://learn.microsoft.com/azure/logic-apps/error-exception-handling"
+ },
+ {
+  "id": "2.3.3-03",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Wingtip Toys routes agent tool calls through Azure API Management to several backends. You need to configure resilience for each backend.\n\nWhich feature should you use for each backend? To answer, drag the appropriate features to the correct backends. Each feature may be used once, more than once, or not at all.",
+  "choices": [
+   "a circuit breaker rule on the backend resource",
+   "a retry policy that wraps forward-request",
+   "a load-balanced backend pool",
+   "a limit-concurrency policy around forward-request",
+   "a rate-limit-by-key policy"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "API Management offers complementary resilience features: retries for transient failures, circuit breakers for failing backends, load-balanced pools for redundancy, and concurrency or rate limits to protect capacity. Combine them per backend based on its failure mode.",
+  "rationale": [
+   "The circuit breaker on the backend resource trips on failure conditions such as repeated 5xx responses, stops forwarding requests for the trip duration, and returns 503 so that the backend can recover.",
+   "A retry policy around forward-request resends the failed request according to its condition and count, which handles occasional transient failures.",
+   "A load-balanced backend pool distributes requests across several backends, for example with round-robin, weighted or priority-based balancing across regions.",
+   "limit-concurrency allows only the configured number of requests inside the enclosed policies at a time, so the quote backend never sees more than five concurrent calls."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/backends",
+  "targets": [
+   "Pricing backend: after repeated 5xx responses, API Management must stop sending requests to it for a defined period and return 503 Service Unavailable to callers",
+   "Inventory backend: occasionally fails a single request, and API Management must resend the same request automatically up to three times",
+   "Shipping backend: runs in two regions, and API Management must distribute calls across both deployments",
+   "Quote backend: must never receive more than five simultaneous requests"
+  ],
+  "notes": [
+   "A rule on a backend resource that trips after a number or rate of failures and pauses traffic to that backend. Use it to let an overloaded or failing backend recover.",
+   "A policy that repeats the enclosed policies, usually forward-request, while a condition holds. Use it for transient errors that a second attempt can fix.",
+   "A backend resource that groups several backends and spreads traffic across them. Use it for regional redundancy or to prefer provisioned capacity.",
+   "A policy that caps the number of requests running inside it at the same time and rejects extra requests with 429. Use it to protect backends that cannot handle parallel load.",
+   "A policy that caps the number of calls per key, such as per subscription or IP address, in a time window. Use it to enforce fair use per client, not to protect against backend failures."
+  ]
+ },
+ {
+  "id": "2.3.3-04",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles connects a Foundry Agent Service agent to a remote MCP server by using the MCP tool without streaming. A tool named generate_report takes three to four minutes to finish. Every call to generate_report fails after about 100 seconds, while other tools on the same server succeed. The MCP server implements the MCP tasks capability and returns a task reference for long-running tool calls. You must keep the report generation logic unchanged, and the agent must still return the finished report to the user.\n\nSolution: You configure the agent to use a model that supports background mode, and you run the agent in background mode.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Background mode runs a response asynchronously, so an MCP tool call can continue without an open connection, and you poll for the response status. It requires a model that supports background mode and an MCP server that implements the MCP tasks capability; then MCP tool calls can exceed the 100-second non-streaming timeout.",
+  "rationale": [
+   "Correct: background mode runs the response asynchronously, and because the server supports MCP tasks, the runtime collects the result when the task finishes, so the call is not bound by the 100-second non-streaming timeout, the report logic stays unchanged, and you poll until the finished report is returned.",
+   "Incorrect: the solution does meet the goal. No would be right if the model did not support background mode or the server did not implement MCP tasks, because then MCP tool calls run synchronously and time out after 100 seconds."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol",
+  "series": "S-c"
+ },
+ {
+  "id": "2.3.3-05",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud builds an agent by using Microsoft Agent Framework for Python. When a dependency is down, the model calls the failing tool repeatedly within one request, which consumes tokens and the rate limit of the tool. You need automatic tool invocation to stop after 20 function calls or 30 seconds, after which the model must produce a final text response.\n\nWhat should you configure on the chat client?",
+  "choices": [
+   "max_function_calls and max_duration_seconds in function_invocation_configuration",
+   "allow_concurrent_invocation set to False in function_invocation_configuration",
+   "include_detailed_errors set to True in function_invocation_configuration",
+   "tool_choice set to required in the run options"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework caps the automatic function-calling loop with iteration, call count and duration limits. When a limit is reached, the client stops calling tools and the model must answer in text, which prevents runaway loops against a failing dependency.",
+  "rationale": [
+   "Correct: max_function_calls and max_duration_seconds in function_invocation_configuration stop automatic tool invocation after 20 calls or 30 seconds, and the client then asks the model for a final text response.",
+   "Incorrect: allow_concurrent_invocation only controls whether the tool calls of one batch run in parallel or one after another, and it does not cap the loop. Set it to False when tools must not run at the same time.",
+   "Incorrect: include_detailed_errors adds exception details to tool results so the model can correct its input, but it does not stop repeated calls to a dependency that is down. Enable it on trusted channels for input errors.",
+   "Incorrect: tool_choice set to required forces tool calls, which makes the repeated calling worse instead of ending it. Use required when every response must be based on a tool call."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "2.3.3-06",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles connects a Foundry Agent Service agent to a remote MCP server by using the MCP tool without streaming. A tool named generate_report takes three to four minutes to finish. Every call to generate_report fails after about 100 seconds, while other tools on the same server succeed. The MCP server implements the MCP tasks capability and returns a task reference for long-running tool calls. You must keep the report generation logic unchanged, and the agent must still return the finished report to the user.\n\nSolution: You set require_approval to never for generate_report.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Approval settings decide whether a person must approve an MCP tool call before it runs; they do not change how long the call may take. The 100-second limit for non-streaming MCP calls is addressed by background mode or by splitting the work into shorter calls.",
+  "rationale": [
+   "Incorrect: removing the approval step only skips the human confirmation before the call; the call itself still runs synchronously and fails at the 100-second timeout.",
+   "Correct: the solution does not meet the goal. require_approval set to never is the right setting when trusted read-only tools must run without waiting for a person, not to extend a timeout."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol",
+  "series": "S-c"
+ },
+ {
+  "id": "2.3.3-07",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adventure Works Cycles connects a Foundry Agent Service agent to a remote MCP server by using the MCP tool without streaming. A tool named generate_report takes three to four minutes to finish. Every call to generate_report fails after about 100 seconds, while other tools on the same server succeed. The MCP server implements the MCP tasks capability and returns a task reference for long-running tool calls. You must keep the report generation logic unchanged, and the agent must still return the finished report to the user.\n\nSolution: You split generate_report into a start tool that returns a job ID and a status tool that returns the report when the job is done.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Non-streaming MCP tool calls in Foundry Agent Service time out after 100 seconds. Break long operations into short steps, run the agent in background mode with a supported model, or optimize the server so each call returns within the limit.",
+  "rationale": [
+   "Correct: each call now returns quickly, so no call reaches the 100-second timeout, the report logic itself is unchanged, and the agent can call the status tool until the report is ready and return it.",
+   "Incorrect: the solution does meet the goal. No would be right if the status tool also had to wait for the full report generation in a single call, which would hit the same 100-second timeout."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol",
+  "series": "S-c"
+ },
+ {
+  "id": "2.3.3-08",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to resolve the problems in the production traces for Agent5.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set a timeout on the tool call and a time budget for the whole turn.",
+   "Handle 429 and 503 responses in the tool code, honor Retry-After, and cap the attempts.",
+   "Return failures to the model as clear results that state what failed and whether a retry makes sense.",
+   "Return the raw exception to the model so that the model decides when to retry.",
+   "Catch the error and return an empty string so that the conversation continues."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Resilient tools combine bounded waiting, deterministic retries in code and explicit failure results. The model should receive clear outcomes, not raw exceptions or silent empty results, so it does not loop on retries and can explain failures honestly.",
+  "rationale": [
+   "Correct: a timeout on each tool call stops Agent5 from waiting indefinitely when RepairQuote hangs, and a time budget for the whole turn keeps the response within the 30-second limit for users.",
+   "Correct: handling 429 and 503 responses in the tool code, honoring Retry-After and capping attempts takes the retry decision away from the model, which stops the repeated calls after throttling.",
+   "Correct: a clear failure result that states what failed and whether a retry makes sense lets the model tell the user that no estimate was retrieved, instead of answering as if the call succeeded.",
+   "Incorrect: a raw exception leaves the retry decision to the model, which causes the repeated calls in the traces, and it can leak internal details. Return raw errors only in trusted development scenarios to debug a tool.",
+   "Incorrect: an empty string hides the failure, so the model can answer as if the call succeeded, which is the third problem. Return an empty result only when no data is a valid, expected outcome."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures",
+  "case": "C-c"
+ },
+ {
+  "id": "2.3.3-09",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Northwind Traders uses function middleware in Microsoft Agent Framework for Python. When the inventory tool raises a TimeoutError, the user must receive a friendly message, the middleware must not call the tool again, and the run must continue. Other exceptions must still propagate to the caller.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nasync def exception_handling_middleware(\n    context: FunctionInvocationContext,\n    call_next: Callable[[], Awaitable[None]],\n) -> None:\n    try:\n        await call_next()\n    except [[1]]:\n        [[2]]\n```",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Function middleware wraps each tool call, so it is the central place for error handling: catch specific exceptions around await call_next() and set context.result to a fallback that the model can use. Narrow exception types keep unexpected failures visible.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/exception-handling",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "TimeoutError",
+     "Exception",
+     "ValueError"
+    ],
+    "why": [
+     "Correct: catching TimeoutError handles only the timeout case, so every other exception still propagates to the caller as required.",
+     "Incorrect: Exception catches every error, including ones that must propagate, so real failures would be hidden behind the timeout message. Catch Exception only in a last-resort handler that must never fail the run.",
+     "Incorrect: ValueError does not match a TimeoutError, so the timeout would propagate and the user would not get the friendly message. Catch ValueError for invalid input, such as failed argument parsing."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "context.result = \"Inventory service timed out. Tell the user to try again later.\"",
+     "raise RuntimeError(\"Inventory service timed out.\")",
+     "await call_next()",
+     "return"
+    ],
+    "why": [
+     "Correct: overriding context.result gives the model a friendly fallback as the tool result, the tool is not called again, and the run continues with that message.",
+     "Incorrect: raising a new exception lets the error propagate and can end the run, so the model never receives a friendly message as the tool result. Raise when the caller must handle the failure explicitly.",
+     "Incorrect: calling call_next again retries the failing tool, which the stem forbids. Call it again only in a retry middleware with a bounded attempt count.",
+     "Incorrect: returning without a result leaves context.result empty, so the model gets no usable message for the user. Return early only after you set context.result or when an empty result is acceptable."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.3.4-01",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research has a Foundry Agent Service agent that calls a non-Microsoft OpenAPI tool that returns JSON. The agent uses values from the JSON to update records in an internal system. You need to follow the Foundry Agent Service best practices for handling the tool output. Malformed values must not reach the internal system, and a person must confirm each update.\n\nWhat should you do?",
+  "choices": [
+   "Validate the output against an expected schema, and require user approval before updates.",
+   "Validate the output against an expected schema, and apply updates automatically when validation passes.",
+   "Add an agent instruction that asks the model to confirm that the output looks correct.",
+   "Screen the output with Prompt Shields in Azure AI Content Safety, and apply updates when no attack is found."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tool output is untrusted input. Validate structured output against an expected schema in code, allow only known fields and operations, and require user approval for impactful actions such as writes to internal systems.",
+  "rationale": [
+   "Correct: validating the output against an expected schema stops malformed values before they reach the internal system, and user approval before each update gives the person confirmation that the stem requires.",
+   "Incorrect: schema validation stops malformed values, but applying updates automatically skips the human confirmation that the stem requires. Automatic updates fit low-impact writes where validation alone is enough.",
+   "Incorrect: asking the model to check the output is not deterministic and cannot guarantee that malformed values are caught, and no person confirms the update. Use instructions to shape answers, not as a validation control.",
+   "Incorrect: Prompt Shields detects prompt injection attempts in content, but it does not validate the structure of the values or add a human confirmation step. Use it to screen untrusted tool output for injected instructions."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/tool-best-practice"
+ },
+ {
+  "id": "2.3.4-02",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. reports that its Foundry Agent Service agent sometimes answers without using data from an attached tool. You need to confirm whether the agent called the tool and inspect the tool inputs and outputs for a specific conversation.\n\nWhat should you use?",
+  "choices": [
+   "Traces for the agent in Foundry",
+   "API Management logs for the connected AI gateway",
+   "Azure Monitor metrics for the model deployment",
+   "The version history of the agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Per-conversation traces are the primary tool for validating tool use: they record each tool call with its arguments and results. Metrics and gateway logs complement traces for aggregate health but do not show what happened in an individual run.",
+  "rationale": [
+   "Correct: traces in Foundry show for each conversation whether the agent called the tool and include the tool inputs and outputs, so you can confirm whether the answer used the tool data.",
+   "Incorrect: API Management logs show the traffic that passes through the gateway, not whether the model produced a tool call in a specific conversation or how it used the result. Use them to diagnose gateway errors or latency.",
+   "Incorrect: Azure Monitor metrics for the model deployment are aggregated, such as token counts and latency, and show no tool inputs or outputs per conversation. Use them to watch capacity, throttling and cost.",
+   "Incorrect: the version history of the agent shows how its definition changed, not what happened at run time. Use it to compare or roll back agent configurations."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/tool-best-practice"
+ },
+ {
+  "id": "2.3.4-03",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing builds an agent that uses a local MCP tool in Microsoft Agent Framework for Python. Some tool results contain both content and structuredContent. The model must receive structuredContent when it is present and receive content when structuredContent is absent.\n\nWhich tool_result_content value should you use?",
+  "choices": [
+   "structured_first",
+   "content_first",
+   "content_only",
+   "both"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "MCP tool results can carry unstructured content blocks and typed structuredContent. In Agent Framework, tool_result_content chooses which form the model receives, which affects token use and how reliably the model reads the data.",
+  "rationale": [
+   "Correct: structured_first, the default, passes structuredContent to the model when the result contains it and falls back to content when it does not, which is the required behavior.",
+   "Incorrect: content_first passes the content blocks when they are not empty and falls back to structuredContent only otherwise, so structured data is ignored whenever text is present. Use it when the text form is the better input for the model.",
+   "Incorrect: content_only ignores structuredContent entirely, even when it is present. Use it when structured output must never reach the model.",
+   "Incorrect: both appends the serialized structuredContent after the content blocks, so the model receives both forms. Use it when the model benefits from seeing both representations."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/local-mcp-tools"
+ },
+ {
+  "id": "2.3.4-04",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House defines a function tool by using the @tool decorator in Microsoft Agent Framework for Python. The tool returns a raw object from a lift status API. You need to convert each return value into a list of Content items before the model receives it. If the conversion fails during automatic function invocation, the model must receive a normal tool-error result instead of the raw value.\n\nWhat should you do?",
+  "choices": [
+   "Set result_parser on the @tool decorator.",
+   "Pass a Pydantic model to the schema parameter of the @tool decorator.",
+   "Declare the tool by using FunctionTool with func set to None.",
+   "Read the return value from the kwargs of the FunctionInvocationContext inside the tool."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework lets you control both sides of a function tool: the input schema that the model sees and how the return value is converted for the model. A result parser centralizes the conversion and turns conversion failures into normal tool errors.",
+  "rationale": [
+   "Correct: result_parser on @tool converts each raw return value into a string or a list of Content items, and when the parser fails during automatic invocation, the model receives a normal tool-error result instead of the raw value.",
+   "Incorrect: the schema parameter describes the input arguments of the tool, not how its return value is converted. Pass a Pydantic model to schema when you want precise argument validation.",
+   "Incorrect: FunctionTool with func set to None declares a tool without an implementation, so your application must supply the results itself. Use declaration-only tools when another component executes the call.",
+   "Incorrect: kwargs on the FunctionInvocationContext carry runtime-only input values for the tool, not a converted result. Use them to pass data, such as user IDs, that the model must not supply."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "2.3.4-05",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wide World Importers has an agent that uses four price lookup tools. Sometimes a tool returns a negative price or omits the currency. You need to check every price tool result in one place and replace an invalid result with a corrective message before the model uses the result.\n\nWhat should you implement?",
+  "choices": [
+   "Function middleware that awaits call_next and then validates and overrides context.result",
+   "Agent middleware that validates the final agent response after the run completes",
+   "An agent instruction that tells the model to ignore negative prices",
+   "A context provider that adds the pricing rules to the prompt"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Function middleware is the central, deterministic place to validate tool results in Agent Framework. It runs around each tool call, can inspect and override context.result, and applies to every tool without changing the tools themselves.",
+  "rationale": [
+   "Correct: function middleware wraps every tool call, and after await call_next() the result is in context.result, so one middleware can check all four price tools and replace an invalid result before the model uses it.",
+   "Incorrect: agent middleware that checks the final response runs after the model has already used the invalid price, so the answer is already wrong. Use agent middleware to filter, log or block complete runs.",
+   "Incorrect: an instruction asks the model to ignore negative prices but cannot guarantee it, and it does not catch a missing currency. Use instructions to guide behavior, not as validation.",
+   "Incorrect: a context provider adds the pricing rules to the prompt, but rules in the prompt do not validate the actual tool results. Use context providers to inject dynamic context before a run."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/exception-handling"
+ },
+ {
+  "id": "2.3.4-06",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a normalizer agent that converts tool results into JSON for a downstream agent. The normalizer uses an Azure OpenAI deployment that supports structured outputs. The JSON must strictly match a schema, and the discount_percent value must be between 0 and 30.\n\nWhat should you do?",
+  "choices": [
+   "Use structured outputs with strict set to true, and check the discount_percent range in application code.",
+   "Use structured outputs with strict set to true, and add minimum and maximum keywords to the schema.",
+   "Use JSON mode, and add minimum and maximum keywords to the schema.",
+   "Use JSON mode, and add an instruction that keeps discount_percent between 0 and 30."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Structured outputs constrain the model to a JSON Schema but support only a subset of schema keywords. Combine a strict schema for structure with deterministic checks in code for business rules such as numeric ranges.",
+  "rationale": [
+   "Correct: structured outputs with strict set to true make the JSON match the schema, and because minimum and maximum are not supported in strict mode, a range check in code enforces the 0 to 30 rule deterministically.",
+   "Incorrect: strict structured outputs support only a subset of JSON Schema, and minimum and maximum for numbers are among the unsupported keywords, so the range is not enforced. Use supported keywords, such as enum, for constraints in the schema.",
+   "Incorrect: JSON mode guarantees only syntactically valid JSON, not conformance to a schema, so neither the structure nor the range is enforced. Use JSON mode with models that do not support structured outputs.",
+   "Incorrect: JSON mode does not enforce a schema, and an instruction does not guarantee the range. This fits only prototypes in which occasional invalid values are acceptable."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/structured-outputs"
+ },
+ {
+  "id": "2.3.4-07",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys has a Foundry toolbox named toolbox1. Version 2 is the default version, and several production agents connect to the consumer endpoint of toolbox1. You need to add a remote MCP server that uses key-based authentication in a new version 3, confirm that tools/list returns the expected tools for version 3, and then make version 3 active without changing the code of the agents.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`azd ai connection create inv-conn --kind remote-tool --target https://mcp.tailspintoys.com/inventory/mcp --auth-type custom-keys --custom-key \"Authorization=Bearer $TOKEN\"`",
+   "`project.toolboxes.create_version(name=\"toolbox1\", description=\"Adds inventory MCP server\", tools=[...])` with tools that reference inv-conn",
+   "Call `session.list_tools()` with an MCP client against `{project_endpoint}/toolboxes/toolbox1/versions/3/mcp?api-version=v1`",
+   "`project.toolboxes.update(toolbox_name=\"toolbox1\", default_version=\"3\")`",
+   "Call `session.list_tools()` with an MCP client against `{project_endpoint}/toolboxes/toolbox1/mcp?api-version=v1`",
+   "Change each agent to connect to `{project_endpoint}/toolboxes/toolbox1/versions/3/mcp?api-version=v1`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Toolbox versions are immutable snapshots, and creating a version does not promote it. Validate a new version through its version-specific endpoint, for example by checking tools/list, and only then update default_version; agents on the consumer endpoint pick up the change without code changes.",
+  "rationale": [
+   "Step 1: a toolbox references project connections by name and never embeds credentials, so the remote-tool connection with the key must exist before the new version can use it.",
+   "Step 2: create_version produces version 3 with the MCP server tool that references inv-conn; it does not change default_version, so production agents stay on version 2.",
+   "Step 3: the version-specific endpoint serves version 3 before promotion, so tools/list there confirms that the version is provisioned and its credentials work.",
+   "Step 4: updating default_version to 3 makes the consumer endpoint serve version 3, so the agents use the new tools without code changes.",
+   "Incorrect: the consumer endpoint always serves the default version, which is still version 2, so this check does not validate version 3. Use the consumer endpoint to verify what production agents currently see.",
+   "Incorrect: pointing agents at a version-specific endpoint changes agent configuration and pins them to version 3, so later promotions would need another change. Use version-specific endpoints only for testing before promotion."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox"
+ },
+ {
+  "id": "2.3.4-08",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Litware, Inc. uses an MCP client in a custom agent. A tool named shipment_status on a remote MCP server declares an output schema. Incidents show agent answers that are based on malformed tool data and on failed tool calls. You plan how to prevent the agent from basing answers on malformed or failed tool results.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Validating the structured result against the output schema of shipment_status before the result reaches the model keeps malformed data out of the answers.",
+   "A tool result that has isError set to true can be passed to the model as valid shipment data when its content block contains text.",
+   "Asking the model to repair a malformed result before it answers is a deterministic way to prevent answers based on malformed data."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Validate tool results in code before the model uses them: check isError to separate execution failures from data, and validate structuredContent against the declared output schema. Deterministic checks belong in the client, not in instructions to the model.",
+  "rationale": [
+   "Yes: when a tool declares an output schema, validating structuredContent against it in the client rejects malformed data before it enters the context of the model.",
+   "No: isError marks a tool execution error, so the content describes the failure, not shipment data; the client should treat it as a failure and tell the user what did not work. Text content is valid data only when isError is not set.",
+   "No: a model repair is not deterministic and can invent plausible but wrong values, which hides the malformed data instead of rejecting it. Model-based repair fits only non-critical formatting fixes after deterministic validation."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures"
+ },
+ {
+  "id": "2.3.4-09",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Coho Winery adds the following function middleware in Microsoft Agent Framework for Python. The middleware must run the get_stock tool and then replace an empty result with a corrective message.\n\n```python\nasync def check_stock_result(\n    context: FunctionInvocationContext,\n    call_next: Callable[[], Awaitable[None]],\n) -> None:\n    <code>\n    if context.function.name == \"get_stock\" and not context.result:\n        context.result = \"Error: get_stock returned no data. Tell the user that the stock level is unavailable.\"\n```\n\nWhich code should you use for <code>?",
+  "choices": [
+   "await call_next()",
+   "context.result = await call_next()",
+   "call_next()",
+   "return"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework middleware follows a pipeline: code before await call_next() runs on the way in, and code after it runs on the way out with the result available in the context. call_next takes no arguments and returns nothing; the shared context object carries the data.",
+  "rationale": [
+   "Correct: await call_next() runs the get_stock tool and fills context.result, so the check that follows can see an empty result and replace it with the corrective message.",
+   "Incorrect: call_next() returns None, so assigning its return value overwrites context.result with None and loses the real tool result. Read the result from context.result after you await call_next().",
+   "Incorrect: calling call_next() without await only creates a coroutine that never runs, so the tool does not execute and context.result stays empty. Always await asynchronous calls in middleware.",
+   "Incorrect: return ends the middleware before the tool runs, which short-circuits the call. Return early on purpose when a guard must block a tool, usually after setting context.result."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/"
+ }
+]

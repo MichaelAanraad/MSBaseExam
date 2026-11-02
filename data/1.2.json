@@ -1,0 +1,1136 @@
+[
+ {
+  "id": "1.2.1-01",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research has prompt agents in Foundry Agent Service that use MCP tools to call MCP servers that are hosted by several teams. The security team requires one governed entry point for all agent-to-tool traffic, with rate limits, IP restrictions, and audit logging. The MCP servers and the agent code must not be modified.\n\nWhat should you do?",
+  "choices": [
+   "Connect an AI gateway to the Foundry resource, and then create the MCP tools.",
+   "Import each MCP server as an A2A agent API in Azure API Management, and use the A2A tool.",
+   "Replace the MCP tools with OpenAPI tools that call the MCP servers directly.",
+   "Add each MCP server as a knowledge source in a Foundry IQ knowledge base."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Routing MCP traffic through an AI gateway in Microsoft Foundry gives you a central point for authentication, rate limits, IP restrictions, and logging without changing the MCP servers or the agent code. The routing is applied when the tool is created, so existing tools must be recreated after the gateway is connected.",
+  "rationale": [
+   "Correct: connecting an AI gateway (Azure API Management) to the Foundry resource routes MCP tool traffic through one governed entry point, where you apply rate limits, IP restrictions, and audit logging without changing the MCP servers or the agent code.",
+   "Incorrect: an A2A agent API in API Management mediates agent-to-agent JSON-RPC traffic with agent cards and tasks. The MCP servers expose tools, not agents, so the agents would have to change. Use it when agents delegate work to remote A2A agents.",
+   "Incorrect: an OpenAPI tool calls REST operations described by an OpenAPI spec. MCP servers speak MCP, so the agent definitions would change and there is still no central gateway. Use OpenAPI tools when the backend is a plain REST API with a spec.",
+   "Incorrect: a Foundry IQ knowledge source grounds agents on indexed or remote content for retrieval. It does not proxy tool calls to MCP servers or apply rate limits to them. Use a knowledge base when agents need governed access to enterprise documents."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/governance"
+ },
+ {
+  "id": "1.2.1-02",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank has a Foundry Agent Service agent named Agent1. Agent1 must delegate loan pre-screening to a remote agent that another team built with LangGraph. The remote agent publishes an agent card and a JSON-RPC endpoint that implements Agent2Agent (A2A) protocol version 1.0. The integration will run in production.\n\nWhich tool type should you add to Agent1?",
+  "choices": [
+   "the A2A tool (a2a)",
+   "the A2A preview tool (a2a_preview)",
+   "the MCP tool",
+   "the OpenAPI tool"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The generally available a2a tool type supports A2A protocol version 1.0 and is intended for new and production integrations with remote agents. The remote agent manages its own tools; Agent1 keeps directing the conversation.",
+  "rationale": [
+   "Correct: the generally available a2a tool type implements A2A protocol version 1.0, which the remote agent publishes, and it is intended for production. Agent1 reads the agent card, sends tasks to the JSON-RPC endpoint, and keeps directing the conversation.",
+   "Incorrect: a2a_preview targets the earlier A2A 0.3 protocol and is a preview tool type that is not recommended for production. Use it only for existing integrations or remote agents that still implement A2A 0.3.",
+   "Incorrect: the MCP tool calls tools that an MCP server exposes; it does not read an agent card or delegate tasks to a remote agent. Use it when the other team publishes its capabilities as MCP tools instead of as an agent.",
+   "Incorrect: the OpenAPI tool calls individual REST operations from an OpenAPI spec and has no notion of agent cards, tasks, or delegation. Use it when the remote system is a plain HTTP API with an OpenAPI description."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent"
+ },
+ {
+  "id": "1.2.1-03",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals is building five agents in Foundry Agent Service. Each agent must be grounded on content in SharePoint, Azure Blob Storage, and OneLake. The architects want to avoid connecting every agent to every data source individually. Responses must include citations and must honor source access control lists and Microsoft Purview sensitivity labels for the calling user.\n\nWhich component should you specify for agent-to-knowledge-source routing?",
+  "choices": [
+   "a Foundry IQ knowledge base that contains one knowledge source per data store",
+   "a separate Azure AI Search index for each agent that is queried by the Azure AI Search tool",
+   "a Foundry Agent Service memory store that is scoped to each user",
+   "a file search vector store that is attached to each agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Foundry IQ knowledge base bundles multiple knowledge sources, can be shared by multiple agents, and uses agentic retrieval to choose sources. It synchronizes ACLs, respects Purview sensitivity labels, and returns answers with citations.",
+  "rationale": [
+   "Correct: one Foundry IQ knowledge base groups SharePoint, Blob Storage, and OneLake knowledge sources behind one endpoint that all five agents share. Agentic retrieval selects the sources, returns citations, and filters results by the synchronized permissions of the caller.",
+   "Incorrect: a separate Azure AI Search index per agent recreates the per-agent, per-source wiring that the architects want to avoid, and it adds no agentic source selection. Use the Azure AI Search tool when one agent queries one index that you manage yourself.",
+   "Incorrect: a memory store holds facts and preferences extracted from conversations, scoped per user. It does not index enterprise documents or enforce source ACLs. Use it for long-term personalization across sessions.",
+   "Incorrect: a file search vector store holds copies of files uploaded for one agent, so content is duplicated per agent and source ACLs and sensitivity labels are not synchronized. Use it for a small, static file set owned by a single agent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-foundry-iq"
+ },
+ {
+  "id": "1.2.1-04",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys runs A2A-compatible agents in three business units. The agents are hosted outside Foundry. The company needs to govern agent-to-agent traffic centrally by requiring subscription keys and applying rate-limit policies. Operations also needs telemetry in Application Insights that includes the agent ID attribute defined by the OpenTelemetry GenAI semantic conventions.\n\nWhat should you do?",
+  "choices": [
+   "Expose each agent as an MCP server in Azure API Management.",
+   "Import each agent as an A2A agent API in Azure API Management.",
+   "Place Azure Front Door in front of each agent endpoint.",
+   "Register each agent in Azure API Center."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "API Management can import A2A agent APIs: it mediates the JSON-RPC operations, applies policies, rewrites the agent card with the subscription key requirement, and adds the attributes genai.agent.id and genai.agent.name to Application Insights. This covers governance and observability for agent-to-agent traffic.",
+  "rationale": [
+   "Incorrect: exposing an API as an MCP server in API Management turns REST operations into MCP tools for agents. The business-unit agents speak A2A with agent cards and tasks, so an MCP facade would change the protocol. Use it to give agents governed tool access to existing APIs.",
+   "Correct: importing each agent as an A2A agent API lets API Management mediate the JSON-RPC operations, require subscription keys, apply rate-limit policies, and emit the GenAI agent ID and name attributes to Application Insights.",
+   "Incorrect: Azure Front Door provides global HTTP load balancing, caching, and a web application firewall at the edge. It has no A2A-aware policies and does not add GenAI agent attributes to telemetry. Use it to accelerate and protect public web endpoints.",
+   "Incorrect: Azure API Center is a design-time inventory for discovering and cataloging APIs. It is not in the request path, so it cannot require subscription keys or enforce rate limits. Use it to govern and discover the API portfolio."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/agent-to-agent-api"
+ },
+ {
+  "id": "1.2.1-05",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Relecloud uses a Foundry IQ knowledge base that contains two indexed knowledge sources: an employee handbook index and a health insurance index. The retrieval reasoning effort of the knowledge base is set to minimal. Users report that questions about medical coverage are often answered from the employee handbook, and that multi-part questions are processed as a single query instead of focused subqueries.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Adding a description to each knowledge source and retrieval instructions to the knowledge base influences which source is selected for medical coverage questions.",
+   "If the retrieval reasoning effort stays at minimal, the knowledge base breaks multi-part questions into focused subqueries.",
+   "If the retrieval reasoning effort is set to low, the knowledge base uses an LLM for query planning and can run up to three subqueries per request."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Agentic retrieval selects knowledge sources by using the descriptions of the sources and the retrieval instructions of the knowledge base. Query planning, in which an LLM splits a complex question into subqueries, runs only at the low and medium retrieval reasoning efforts. Minimal effort merges results from the sources without LLM processing, so it cannot decompose questions.",
+  "rationale": [
+   "Yes: query planning selects sources by using knowledge source descriptions and knowledge base retrieval instructions, for example 'use the health-insurance-index for questions about medical coverage'.",
+   "No: minimal effort uses no LLM, no query planning, and no answer synthesis; it only merges results across sources. Minimal is right when you want the lowest cost and latency and questions are simple.",
+   "Yes: low effort invokes LLM query planning with up to three knowledge sources and three subqueries. Use medium instead when you also need iterative search and up to five subqueries."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/foundry-iq-faq"
+ },
+ {
+  "id": "1.2.1-06",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders operates 12 agents: some are Foundry prompt agents and some are hosted agents built with LangGraph. All agents use the same MCP server, the same OpenAPI tool, and the same A2A tool. Today each agent stores its own tool credentials, and every tool change requires redeploying each agent.\n\nThe new design must meet the following requirements:\n\n- Define the tools once and expose them through one MCP-compatible endpoint.\n- Centralize credential injection and apply guardrails to tool inputs and outputs.\n- Release a new tool configuration by promoting a version, without changing agent code.\n\nWhich component should you specify?",
+  "choices": [
+   "a shared agent that owns the tools and that each agent calls through the A2A tool",
+   "an Azure API Center inventory that lists the tools",
+   "a Foundry toolbox",
+   "an MCP-enabled session pool in Azure Container Apps dynamic sessions"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A Foundry toolbox groups MCP, OpenAPI, and A2A tools behind a managed MCP-compatible endpoint that any framework can use. It centralizes authentication, applies guardrails to tool input and output, and supports versions that you promote to default without changing agent code.",
+  "rationale": [
+   "Incorrect: a shared tool-owning agent adds an extra model hop, and each agent still configures its own A2A connection and credentials. It offers no shared MCP endpoint, guardrails, or version promotion. Use A2A delegation when the remote agent must reason over the task.",
+   "Incorrect: API Center catalogs tools and APIs so that teams can discover them, but it is not a runtime endpoint. It does not inject credentials, apply guardrails, or promote versions. Use it alongside a runtime gateway for inventory and governance.",
+   "Correct: a Foundry toolbox defines MCP, OpenAPI, and A2A tools once behind a managed MCP-compatible endpoint that prompt agents and LangGraph agents can call. It injects credentials centrally, applies guardrails to tool input and output, and promotes versions without agent code changes.",
+   "Incorrect: an MCP-enabled session pool exposes built-in shell and Python execution tools in sandboxed sessions. It does not federate existing MCP, OpenAPI, and A2A tools. Use it when agents must run generated code in isolation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/toolbox-overview"
+ },
+ {
+  "id": "1.2.2-01",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lamna Healthcare Company built Agent1 in a Foundry project. During development, Agent1 used the shared project agent identity. Before Agent1 moves to production, the security team requires that Agent1 has its own permission set and an independent audit trail in Microsoft Entra ID.\n\nWhat should you do?",
+  "choices": [
+   "Assign the required roles to the project managed identity.",
+   "Scope the roles of the shared project agent identity to the resources of Agent1.",
+   "Give Agent1 a distinct agent identity and assign roles to that identity.",
+   "Configure the MCP tools of Agent1 to use OAuth identity passthrough."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A shared project agent identity gives a larger blast radius and no separate audit trail. Agent1 must therefore run under its own (distinct) agent identity with its own least-privilege roles. How you get one depends on the model: in the legacy Agent Application model by publishing, in the new agent object model by creating a new agent (which receives a unique identity when it is created). Roles do not carry over, so assign them again.",
+  "rationale": [
+   "Incorrect: the project managed identity is shared at project level, for example to authenticate the agent identity blueprint. Granting it roles widens access for everything in the project and gives no per-agent audit trail. Use it for project-level resource access.",
+   "Incorrect: narrowing the role scope of the shared project agent identity still leaves one principal for every agent in the project, so Agent1 gets neither its own permission set nor a separate audit trail. The shared identity fits development and experimentation.",
+   "Correct: a distinct agent identity is a separate Microsoft Entra principal, so roles assigned to it apply only to Agent1 and its access is audited as Agent1. Roles do not carry over from the shared identity, so you assign them again.",
+   "Incorrect: OAuth identity passthrough calls the tool with the signed-in user's permissions, so actions are audited as the user, not as Agent1. Use it when each user may reach only the data that the user can access directly."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "1.2.2-02",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance has hundreds of Microsoft Entra agent identities across development, test, and production environments. The security team must prevent non-production agents from accessing production resources and wants to manage this control at scale. Agents cannot complete interactive controls such as multifactor authentication.\n\nWhat should you do?",
+  "choices": [
+   "Add the agent identities to the existing Conditional Access policy that requires multifactor authentication for all users.",
+   "Assign custom security attributes such as Environment to the agent identities and use them in a Conditional Access policy for agents.",
+   "Create an Azure Policy assignment that denies resource creation in production subscriptions.",
+   "Configure Microsoft Entra Privileged Identity Management for each agent identity."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Microsoft Entra Agent ID recommends segmenting agents with custom security attributes (such as Environment) and using them in agent-specific Conditional Access policies. This blocks non-production agents from production at scale, without interactive controls that agents cannot perform.",
+  "rationale": [
+   "Incorrect: agents cannot satisfy interactive controls such as MFA, so adding them to a user MFA policy breaks their token requests, and the policy still does not distinguish environments. User-targeted MFA policies remain right for human sign-ins.",
+   "Correct: custom security attributes such as Environment tag each agent identity, and one Conditional Access policy for agents can block identities tagged as non-production from production resources. It scales to hundreds of identities and needs no interactive control.",
+   "Incorrect: Azure Policy evaluates resource configuration, such as denying resource creation, not which identity can get tokens for existing resources. Use it to enforce configuration standards such as private endpoints or allowed SKUs.",
+   "Incorrect: Privileged Identity Management gives just-in-time, time-bound activation of privileged roles. It does not segment identities by environment, and configuring it per identity does not scale. Use PIM to remove standing privilege for powerful roles."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/best-practices-agent-id"
+ },
+ {
+  "id": "1.2.2-03",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-b",
+  "stem": "You need to complete the network design for the agent workloads.\n\nWhat else should you include in the design?",
+  "choices": [
+   "the Enabled from selected IP addresses setting on the Foundry account",
+   "a second private endpoint for the Foundry account in another subnet",
+   "virtual network injection, with egress routed through Azure Firewall",
+   "the Basic setup with platform-managed storage for agent data"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A private endpoint secures only the inbound path to the Foundry account; outbound agent traffic still leaves from the platform. Virtual network injection places agent compute in a delegated subnet of your virtual network, so traffic to Cosmos DB, Azure AI Search, and Storage stays on private endpoints, and routing through a hub firewall inspects internet egress. Together they block lateral movement and data exfiltration paths.",
+  "rationale": [
+   "Incorrect: an IP allow list restricts who can call the Foundry endpoint inbound and is meant for scenarios without private networking. It does nothing for agent egress, and public access is being disabled anyway.",
+   "Incorrect: a second private endpoint adds another inbound path, for example for clients in a different virtual network. It does not change how agents reach Cosmos DB, Azure AI Search, Storage, or the internet.",
+   "Correct: virtual network injection runs agent traffic inside the Lamna virtual network, so calls to Cosmos DB, Azure AI Search, and Storage use private endpoints, and the route through the hub Azure Firewall inspects all outbound internet traffic.",
+   "Incorrect: the Basic setup stores agent data in platform-managed resources instead of the Lamna-owned Cosmos DB, Azure AI Search, and Storage, which breaks the data ownership requirement and does not isolate egress. Use it for quick, non-regulated prototypes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/configure-private-link"
+ },
+ {
+  "id": "1.2.2-04",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. runs a claims triage agent type in many business units. All 40 agent identities of this type were created from one agent identity blueprint in Microsoft Entra ID, and new instances are created automatically during peak load. A security incident affects this agent type. You must meet the following requirements:\n\n- Block every existing identity of this agent type from authenticating immediately.\n- Prevent new identities of this agent type from being created during the incident.\n- Leave other agents in the tenant unaffected.\n- Restore access after the incident without re-creating identities.\n\nWhat should you do?",
+  "choices": [
+   "Disable the agent identity blueprint of the claims triage agent type.",
+   "Disable each of the 40 agent identities in the Microsoft Entra admin center.",
+   "Create a Conditional Access policy that blocks every agent identity in the tenant.",
+   "Delete the blueprint by using the Remove-EntraAgentIdentityBlueprint cmdlet."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An agent identity blueprint is the management object for all agent identities of an agent type. If you disable the blueprint, existing identities can no longer authenticate and no new ones can be created; enabling it again restores access. This limits the incident to this one agent type.",
+  "rationale": [
+   "Correct: the agent identity blueprint governs every agent identity created from it. Disabling it blocks authentication for all 40 identities, prevents new ones during the incident, leaves other agent types untouched, and is reversed by enabling the blueprint again.",
+   "Incorrect: disabling 40 identities one by one is slow and error-prone, and instances that are created automatically during peak load would still authenticate. Disable an individual identity when only one agent instance is compromised.",
+   "Incorrect: a tenant-wide Conditional Access block stops every agent identity, which breaks the requirement to leave other agents unaffected. A Conditional Access policy for agents fits when it targets a specific set of identities, for example by custom security attribute.",
+   "Incorrect: Remove-EntraAgentIdentityBlueprint deletes the blueprint and cascades to its agent identities, so access cannot simply be re-enabled after the incident. Use deletion when an agent type is permanently decommissioned."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/manage-agent-identities-admin"
+ },
+ {
+  "id": "1.2.2-05",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Woodgrove Bank is deploying a remediation agent that runs scripts and runbooks to fix misconfigured resources in a regulated environment. The agent has a dedicated Microsoft Entra agent identity. The agent needs write access to the resources that it fixes. The security team requires Zero Trust controls on the Azure role assignments of the agent that minimize standing privilege and limit the blast radius if the agent is compromised.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Use Microsoft Entra Privileged Identity Management for approval-based, time-bound elevation of the agent.",
+   "Scope the role assignments of the agent to specific resource groups instead of the subscription.",
+   "Assign a custom role that has only the required actions as an active assignment at the subscription scope.",
+   "Add the agent identity to a security group that has the Contributor role at the management group scope.",
+   "Assign the Reader role at the subscription scope and the Contributor role on each target resource."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "For remediation agents, the least-privilege guidance recommends JIT elevation or approval gates (PIM) and scoping to specific resource groups instead of subscription-wide permissions. This limits both standing privileges and lateral movement.",
+  "rationale": [
+   "Correct: PIM gives the remediation agent approval-based, time-bound elevation, so write permissions exist only while a fix runs. This removes the standing privilege that a compromised agent would otherwise abuse.",
+   "Correct: scoping the role assignments to the resource groups that the agent fixes limits what a compromised agent can reach, compared with a subscription-wide assignment. Narrow scope plus just-in-time elevation is the least-privilege pattern for remediation agents.",
+   "Incorrect: a custom role with only the required actions narrows the permissions, but an active assignment at subscription scope is standing privilege across every resource group. A narrow custom role is right when it is combined with a narrow scope and just-in-time activation.",
+   "Incorrect: group-based assignment eases administration, but Contributor at management group scope grants write access to every subscription below it, which maximizes the blast radius. Group assignment fits when many principals need the same narrowly scoped role.",
+   "Incorrect: Contributor on each target resource is still permanent standing privilege, and Reader at subscription scope exposes the configuration of every resource. Per-resource assignments fit tightly bounded tasks that need no elevation workflow."
+  ],
+  "ref": "https://learn.microsoft.com/security/zero-trust/sfi/least-privilege-for-ai-agents"
+ },
+ {
+  "id": "1.2.2-06",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery runs a multi-agent solution on Azure that processes card payments for its online store. Auditors require continuous automated assessment of the Azure resources against the Payment Card Industry Data Security Standard (PCI DSS) v4, with a view of passed and failed compliance controls.\n\nWhich component should you use?",
+  "choices": [
+   "Azure Advisor recommendations for the subscription",
+   "Microsoft Entra audit logs in a Log Analytics workspace",
+   "the Defender for Cloud secure score for the subscription",
+   "the Defender for Cloud regulatory compliance dashboard"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The regulatory compliance dashboard in Defender for Cloud continuously assesses resources against standards such as PCI DSS and shows per control whether resources are compliant. The data also flows to Microsoft Purview Compliance Manager for central compliance management.",
+  "rationale": [
+   "Incorrect: Azure Advisor gives best-practice recommendations for cost, reliability, performance, and security, but it does not map findings to PCI DSS v4 controls. Use Advisor for general optimization of a subscription.",
+   "Incorrect: Microsoft Entra audit logs record directory changes, such as role and application updates. They are evidence for investigations, not a continuous assessment of Azure resources against compliance controls. Use them for identity change auditing.",
+   "Incorrect: secure score summarizes posture against the Microsoft cloud security benchmark as one score with recommendations. It does not show passed and failed controls of PCI DSS v4. Use it to prioritize general security hardening.",
+   "Correct: the regulatory compliance dashboard in Defender for Cloud continuously assesses resources against an assigned standard such as PCI DSS v4 and shows the passed and failed controls, which is what the auditors require."
+  ],
+  "ref": "https://learn.microsoft.com/azure/defender-for-cloud/concept-regulatory-compliance-standards"
+ },
+ {
+  "id": "1.2.3-01",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Bellows College deploys Foundry Agent Service by using the Standard setup with bring-your-own resources. Compliance requires that all agent data stays in resources that the college owns. You must document which resource stores each type of agent data.\n\nWhich resource should you specify for each type of data? To answer, drag the appropriate resources to the correct data types. Each resource may be used once, more than once, or not at all.",
+  "choices": [
+   "Azure Cosmos DB for NoSQL",
+   "Azure Storage",
+   "Azure AI Search",
+   "Azure Managed Redis",
+   "Azure SQL Database"
+  ],
+  "targets": [
+   "Messages and conversation history",
+   "Files uploaded by developers and users",
+   "Vector stores created by agents"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Messages, conversation history, and agent metadata are stored in the Azure Cosmos DB for NoSQL account that you bring as thread storage in the Standard setup.",
+   "Files that developers and users upload to agents are stored in the Azure Storage account that you bring in the Standard setup.",
+   "Vector stores that agents create, for example for file search, are stored in the Azure AI Search resource that you bring in the Standard setup."
+  ],
+  "notes": [
+   "Globally distributed NoSQL database. In the Standard setup it is the bring-your-own thread storage for messages, conversation history, and agent metadata.",
+   "Object and file storage. In the Standard setup it holds the files that developers and users upload to agents, so the files stay in your subscription.",
+   "Search and vector index service. In the Standard setup it holds the vector stores that agents create for retrieval over uploaded files.",
+   "In-memory cache with optional vector modules. It is not part of the Standard setup; use it for custom low-latency session memory in your own agent code.",
+   "Managed relational database. It is not used by Foundry Agent Service setups; use it for relational business data that agents query through tools."
+  ],
+  "explanation": "The Standard setup with bring-your-own resources keeps all agent data in resources that you own: Cosmos DB for threads and messages, Storage for files, and Azure AI Search for vector stores. This gives you control over data residency, encryption, and network isolation. The Basic setup stores the same data in platform-managed resources instead.",
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/standard-agent-setup"
+ },
+ {
+  "id": "1.2.3-02",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee is building session memory for a custom agent. For each session, the agent stores the most recent chat turns, the current plan, and references to tool outputs. Reads and writes must have low latency, and inactive sessions must age out automatically. Vector search is not required for session memory.\n\nWhich component should you use?",
+  "choices": [
+   "Azure Managed Redis with TTL-based keys",
+   "a Foundry Agent Service memory store",
+   "an Azure AI Search vector index",
+   "Azure Blob Storage with lifecycle management policies"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Azure Managed Redis is suitable for bounded short-term session memory: lists for recent turns, hashes for state, and TTL plus trimming so that inactive sessions expire automatically. No modules are needed for this.",
+  "rationale": [
+   "Correct: Azure Managed Redis serves session reads and writes with low latency, keeps recent turns in lists and state in hashes, and key TTLs make inactive sessions expire automatically. No modules are needed because vector search is not required.",
+   "Incorrect: a Foundry Agent Service memory store is managed long-term memory that extracts and recalls facts across sessions. It is not a low-latency store for raw turns and plan state within one session. Use it for preferences that must survive across sessions.",
+   "Incorrect: an Azure AI Search vector index serves semantic and hybrid retrieval, which session memory explicitly does not need, and it is not designed for frequent small state writes. Use it for long-term knowledge retrieval.",
+   "Incorrect: Blob Storage lifecycle policies act on days since modification, and blob access is slower than an in-memory cache, so both the latency and the aging requirement fail. Use Blob Storage to archive transcripts cheaply."
+  ],
+  "ref": "https://learn.microsoft.com/azure/redis/tutorial-agent-memory"
+ },
+ {
+  "id": "1.2.3-03",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "case": "C-b",
+  "stem": "You need to create the Azure Cosmos DB container that stores the conversation turns of the scheduling agent.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\ncontainer = database.create_container(\n    id=\"conversations\",\n    partition_key=PartitionKey(path=[[1]], kind=[[2]]),\n    default_ttl=[[3]],\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[\"/clinicId\", \"/threadId\"]",
+     "\"/clinicId\"",
+     "\"/threadId\""
+    ],
+    "why": [
+     "Correct: a hierarchical key of clinicId and then threadId keeps each thread together, lets clinic-level queries target one clinic's partitions, and lets large clinics grow beyond the 20 GB logical partition limit.",
+     "Incorrect: clinicId alone puts all of a clinic's data in one logical partition, and the largest clinics already exceed the 20 GB limit. A single tenant key fits when every tenant stays well below 20 GB.",
+     "Incorrect: threadId alone spreads data well, but every clinic-level query becomes a cross-partition query, which the requirements forbid. Use it when queries are almost always per thread."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"MultiHash\"",
+     "\"Hash\""
+    ],
+    "why": [
+     "Correct: MultiHash is the partition key kind for hierarchical partition keys, which take a list of up to three paths, here clinicId and then threadId. It must match the list in Box 1.",
+     "Incorrect: Hash is the kind for a single partition key path. It is right for a key such as \"/clinicId\" alone, not for a list of paths."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "2592000",
+     "-1",
+     "30"
+    ],
+    "why": [
+     "Correct: TTL is set in seconds and counts from each item's last modification, so 2592000 seconds (30 days) deletes conversation turns 30 days after their last update.",
+     "Incorrect: -1 turns TTL on without a default expiry, so items never expire unless each item sets its own ttl. Use -1 when only some items in a container should expire.",
+     "Incorrect: TTL values are seconds, not days, so 30 would delete turns 30 seconds after they are written. Use small values only for very short-lived data such as locks."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "For a multitenant agent store, a hierarchical partition key with the tenant first and the conversation thread second gives tenant-scoped queries, thread locality, and scale beyond the 20 GB logical partition limit. In the Python SDK this is a PartitionKey with a list of paths and kind MultiHash. Container-level default_ttl is in seconds and counts from each item's last modification time.",
+  "ref": "https://learn.microsoft.com/azure/cosmos-db/hierarchical-partition-keys"
+ },
+ {
+  "id": "1.2.3-04",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel has a Foundry agent that plans trips. The agent must remember each user's travel preferences across sessions and devices. Memories must be isolated per user, managed by the platform, and users must be able to ask the agent to forget specific information immediately.\n\nWhich component should you use?",
+  "choices": [
+   "a Foundry Agent Service memory store with the scope set to the user ID",
+   "the Cosmos DB chat history provider in Microsoft Agent Framework",
+   "Microsoft Agent Framework workflow checkpoints",
+   "a Foundry IQ knowledge base"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Memory in Foundry Agent Service is managed long-term memory that provides continuity across sessions and devices. The scope parameter segments memory per user, and direct remember-or-forget commands support explicit erasure requests.",
+  "rationale": [
+   "Correct: a Foundry Agent Service memory store is platform-managed long-term memory. Setting the scope to the user ID isolates each user's memories across sessions and devices, and users can ask the agent to forget specific information.",
+   "Incorrect: the Cosmos DB chat history provider stores the exact message transcript of a session, not extracted preferences, and you manage the database and deletion yourself. Use it when you need durable, exact conversation history.",
+   "Incorrect: workflow checkpoints capture executor and message state at superstep boundaries so that a workflow can resume or be replayed. They are not user memory. Use them for long-running or human-in-the-loop workflows.",
+   "Incorrect: a Foundry IQ knowledge base grounds agents on shared enterprise content with citations; it is not personal, per-user memory that a user can ask to forget. Use it for documents such as policies and manuals."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "1.2.3-05",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. stores two tiers of agent state in one Azure Cosmos DB for NoSQL container:\n\n- Session state items, which must be deleted 24 hours after their last update. The application writes each session item with a ttl property of 86400.\n- Shared team state items, which have no ttl property and must be kept until the application deletes them.\n\nThe DefaultTimeToLive property of the container is not set. After a week, none of the session state items have been deleted. You must not modify the shared team state items.\n\nWhat should you do?",
+  "choices": [
+   "Set DefaultTimeToLive on the container to -1.",
+   "Set DefaultTimeToLive on the container to 86400.",
+   "Remove the ttl property from the session state items.",
+   "Set the ttl property of the shared team state items to -1."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An item-level ttl works only if DefaultTimeToLive is present on the container and is not null. With DefaultTimeToLive set to -1, items do not expire by default, but items with their own ttl expire after that value. This way the session items disappear after 24 hours and the team state is kept without any change.",
+  "rationale": [
+   "Correct: DefaultTimeToLive = -1 turns TTL on for the container without a default expiry. Items without a ttl property never expire, and items with their own ttl, such as the 86400 session items, expire that many seconds after their last update.",
+   "Incorrect: a container default of 86400 applies to every item without its own ttl, so the shared team state would expire after 24 hours unless you modify those items. Use a positive default when every item in the container should expire.",
+   "Incorrect: removing the item ttl does not help, because TTL stays off while DefaultTimeToLive is not set, and the session items would then never expire. An item ttl is useful only after container TTL is enabled.",
+   "Incorrect: this modifies the shared team state items, which is not allowed, and an item ttl has no effect while DefaultTimeToLive is not set. An item ttl of -1 exempts an item when the container has a positive default."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cosmos-db/time-to-live"
+ },
+ {
+  "id": "1.2.3-06",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute uses an existing Azure Managed Redis instance for short-term agent session memory. The instance was created without Redis modules. The team now needs long-term semantic memory in the same data platform, storing extracted facts as JSON documents with embeddings and retrieving them by vector similarity with metadata filters.\n\nWhat should you do?",
+  "choices": [
+   "Enable the RediSearch and RedisJSON modules on the existing instance.",
+   "Scale the existing instance to a larger SKU.",
+   "Create a new instance with RediSearch and RedisJSON, and migrate the data.",
+   "Store the embeddings in Redis Streams that are capped by MAXLEN."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Long-term semantic memory requires RediSearch for vectors and RedisJSON for JSON documents. Modules can be enabled only when an Azure Managed Redis instance is created and cannot be added later, so a new instance is needed.",
+  "rationale": [
+   "Incorrect: modules such as RediSearch and RedisJSON can be selected only when an Azure Managed Redis instance is created; they cannot be added to an existing instance. Selecting modules is right at creation time.",
+   "Incorrect: scaling to a larger SKU adds memory and throughput but does not add modules, so vector search and JSON documents remain unavailable. Scale when the instance runs short of memory or throughput.",
+   "Correct: a new instance created with RediSearch and RedisJSON stores JSON documents with embeddings and supports vector similarity search with metadata filters. Migrate the session data or run both instances side by side.",
+   "Incorrect: Redis Streams are append-only logs, capped with MAXLEN, that suit ordered events such as tool-call history. They offer no vector similarity search. Use Streams to record and replay event sequences."
+  ],
+  "ref": "https://learn.microsoft.com/azure/redis/tutorial-agent-memory"
+ },
+ {
+  "id": "1.2.4-01",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Alpine Ski House has an agent that generates Python code to analyze files that users upload. The generated code is untrusted. The agent app runs with a managed identity and must run each code snippet in a Hyper-V isolated session from a prewarmed Azure Container Apps session pool. Sessions must not have outbound network access. The Azure CLI is installed, and the resource group RG1 exists.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az extension add --name containerapp --upgrade --allow-preview true -y`",
+   "`az containerapp sessionpool create --name pool1 --resource-group RG1 --location westus2 --container-type PythonLTS --max-sessions 100 --cooldown-period 300 --network-status EgressDisabled`",
+   "`az role assignment create --role \"Azure ContainerApps Session Executor\" --assignee <PRINCIPAL_ID> --scope <SESSION_POOL_RESOURCE_ID>`",
+   "Send the code with a bearer token to `<POOL_MANAGEMENT_ENDPOINT>/code/execute?api-version=2024-02-02-preview&identifier=<SESSION_ID>`.",
+   "`az containerapp sessionpool create --name pool1 --resource-group RG1 --location westus2 --container-type PythonLTS --max-sessions 100 --cooldown-period 300 --network-status EgressEnabled`",
+   "`az containerapp env create -n env1 -g RG1 --location westus2`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Dynamic sessions run untrusted code in Hyper-V isolated sandboxes that are allocated from a prewarmed session pool. A code interpreter pool needs no Container Apps environment, and EgressDisabled is the default network setting. Callers need the Azure ContainerApps Session Executor role on the pool before they can call the pool management endpoint.",
+  "rationale": [
+   "Step 1: the az containerapp sessionpool commands come from the containerapp CLI extension, so you install or upgrade it, with preview commands allowed, before you can create a pool.",
+   "Step 2: this creates a PythonLTS code interpreter pool with EgressDisabled, so sessions start from a prewarmed pool and cannot reach the network. The pool must exist before you can assign a role on its resource ID.",
+   "Step 3: the managed identity needs the Azure ContainerApps Session Executor role scoped to the pool before it can call the management API. The role assignment needs the pool resource ID from step 2.",
+   "Step 4: with the pool and the role in place, the app sends each snippet to code/execute with a session identifier, and the session runs it in isolation.",
+   "Incorrect: EgressEnabled lets code in the session reach the internet, which violates the no-outbound-access requirement for untrusted code. Use it only when sessions must call external APIs and the risk is acceptable.",
+   "Incorrect: a Container Apps environment is required for custom container session pools, not for built-in code interpreter pools such as PythonLTS. Create it when you run your own container image in sessions."
+  ],
+  "ref": "https://learn.microsoft.com/azure/container-apps/session-pool"
+ },
+ {
+  "id": "1.2.4-02",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research has agent orchestration code written with LangGraph. The team wants to run it on a Microsoft-managed platform without configuring containers, web servers, or scaling rules. Each deployed agent must receive a dedicated Microsoft Entra identity, and files written during a session must survive idle periods.\n\nWhich compute option should you use?",
+  "choices": [
+   "a prompt agent in Foundry Agent Service",
+   "a hosted agent in Foundry Agent Service",
+   "Azure App Service",
+   "Azure Kubernetes Service (AKS)"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Hosted agents run your own framework code (such as LangGraph) as a container on managed infrastructure. The platform handles scaling, a dedicated Entra agent identity, and persistent session state in $HOME across idle periods.",
+  "rationale": [
+   "Incorrect: a prompt agent is defined by instructions, a model, and tool configuration in Foundry, so you cannot run your own LangGraph orchestration code in it. Use a prompt agent when no custom code is needed.",
+   "Correct: a hosted agent runs your own framework code, such as LangGraph, on Microsoft-managed infrastructure. The platform handles scaling, assigns a dedicated Microsoft Entra agent identity, and persists session files across idle periods.",
+   "Incorrect: App Service runs your web app, but you provide the web server, configure scaling, and manage identity yourself, and there is no agent identity or agent session persistence. Use it for conventional web APIs and sites.",
+   "Incorrect: AKS gives full control of containers and networking, but you manage the cluster, node pools, and scaling rules, which the team wants to avoid. Use AKS when you need Kubernetes-level control or existing Kubernetes tooling."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents"
+ },
+ {
+  "id": "1.2.4-03",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Wide World Importers runs a Python hosted agent named agent1 in Foundry Agent Service. The current version is allocated 2 vCPU and 4 GiB of memory, and Application Insights shows sustained peaks of 25 percent CPU and 30 percent memory for a representative workload. You must reduce compute cost without reducing throughput, keep the current version available for rollback, and route traffic to the smaller allocation only after it is ready. You use the Azure AI Projects SDK client named project_client.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`new = project_client.agents.create_version_from_code(agent_name=\"agent1\", definition=HostedAgentDefinition(cpu=\"1\", memory=\"2Gi\", ...), code=code_stream)`",
+   "Poll `project_client.agents.get_version(agent_name=\"agent1\", agent_version=new.version)` until the status is active.",
+   "`project_client.agents.update_details(agent_name=\"agent1\", agent_endpoint=AgentEndpointConfig(version_selector=VersionSelector(version_selection_rules=[FixedRatioVersionSelectionRule(agent_version=new.version, traffic_percentage=100)]), ...))`",
+   "Send test requests with `project_client.get_openai_client(agent_name=\"agent1\").responses.create(input=...)` and compare the throughput.",
+   "`project_client.agents.delete_version(agent_name=\"agent1\", agent_version=current_version, force=True)`",
+   "`new = project_client.agents.create_version_from_code(agent_name=\"agent1\", definition=HostedAgentDefinition(cpu=\"0.5\", memory=\"1Gi\", ...), code=code_stream)`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Hosted agent versions are immutable, so a different cpu and memory allocation requires a new version. The supported sandbox sizes are 0.5 vCPU with 1 GiB, 1 vCPU with 2 GiB, and 2 vCPU with 4 GiB, and because the values apply per session, a right-sized allocation lowers cost at every level of concurrency. The endpoint version selector decides which version receives traffic, so you route only after the new version is active and keep the old version for rollback.",
+  "rationale": [
+   "Step 1: versions are immutable, so the smaller allocation needs a new version. 1 vCPU with 2 GiB is a supported sandbox size, and with peaks at 0.5 vCPU (25 percent of 2) and 1.2 GiB (30 percent of 4), it still leaves headroom, so throughput is kept.",
+   "Step 2: provisioning a code-deployed version builds it remotely, so you wait until get_version reports active before you send traffic to it.",
+   "Step 3: a FixedRatioVersionSelectionRule with 100 percent routes all endpoint traffic to the new version. The previous version still exists, so you can route back to it for rollback.",
+   "Step 4: requests through get_openai_client(agent_name=...) go to the agent endpoint, which now serves the new version, so the test measures the smaller allocation.",
+   "Incorrect: deleting the current version removes the rollback target that the requirements say to keep. Delete old versions only after the new version is proven and no rollback is needed.",
+   "Incorrect: 0.5 vCPU with 1 GiB is the smallest supported sandbox size, but the measured peak of 1.2 GiB exceeds 1 GiB and the 0.5 vCPU peak leaves no headroom, so throughput would drop. Use it for light agents whose peaks stay well below half a vCPU and 1 GiB."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents"
+ },
+ {
+  "id": "1.2.4-04",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-b",
+  "stem": "You plan to enable spillover on PTU1 and to set Standard1 as the spillover target.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "When PTU1 is fully utilized during the Monday-morning peak and returns HTTP 429, the request is processed by Standard1 instead of failing.",
+   "You can set PTU2 in the West Europe resource as the spillover target of PTU1 instead of Standard1.",
+   "Requests that spill over to Standard1 are billed at the per-token rates of Standard1, in addition to the hourly cost of PTU1."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Spillover routes requests that a provisioned deployment cannot serve, such as 429 responses when the PTUs are fully used, to a standard deployment of the same model in the same Foundry resource. The provisioned deployment keeps its reserved capacity and latency for normal traffic, and only the overflow is billed per token. Failover between provisioned deployments needs a gateway such as Azure API Management instead.",
+  "rationale": [
+   "Yes: when PTU1 returns 429, spillover automatically sends the request to Standard1, so Monday-morning bursts are processed instead of failing. Normal traffic stays on PTU1 with its predictable latency.",
+   "No: the spillover target must be a standard deployment in the same Foundry resource, so PTU2 in another resource cannot be the target. Use a gateway with priority-based backends when you need failover to another provisioned deployment.",
+   "Yes: requests served by PTU1 are covered by its hourly cost, and requests that spill over are billed at Standard1's input, cached, and output token rates. Size PTU1 for the normal load and let spillover absorb the peaks."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/spillover-traffic-management"
+ },
+ {
+  "id": "1.2.4-05",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Consolidated Messenger is designing compute for three components of a multi-agent solution:\n\n- Orchestrator: an HTTP service that coordinates agents, uses Dapr for service invocation, and must scale to zero per app. The operations team does not want to manage clusters.\n- Ingestion: code that runs when new documents arrive, has sporadic traffic with sudden spikes, must use scale-to-zero billing, and is deployed as code without containers.\n- Analysis sandbox: runs Python code that an agent generates from user requests. Each execution must be Hyper-V isolated and start in milliseconds from a prewarmed pool.\n\nWhich compute option should you use for each component? To answer, drag the appropriate compute options to the correct components. Each compute option may be used once, more than once, or not at all.",
+  "choices": [
+   "Azure Container Apps",
+   "Azure Functions on the Flex Consumption plan",
+   "Azure Container Apps dynamic sessions",
+   "Azure Kubernetes Service (AKS)",
+   "Azure App Service",
+   "Azure Container Instances"
+  ],
+  "targets": [
+   "Orchestrator",
+   "Ingestion",
+   "Analysis sandbox"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "The orchestrator needs built-in Dapr, per-app scale to zero, and no cluster management, which Azure Container Apps provides as a serverless container platform.",
+   "Ingestion is event-driven, spiky, deployed as code, and must bill only when it runs, which matches the trigger-based, scale-to-zero Flex Consumption plan.",
+   "The sandbox runs untrusted, LLM-generated code, which needs Hyper-V isolated sessions allocated in milliseconds from a prewarmed pool, which is what dynamic sessions provide."
+  ],
+  "notes": [
+   "Serverless container platform with built-in Dapr, KEDA-based scaling, and scale to zero per app. Use it for microservices and agent services when you do not want to run a cluster.",
+   "Serverless, event-driven functions that scale out fast and scale to zero with per-execution billing. Use it for triggered code such as document ingestion, deployed without containers.",
+   "Hyper-V isolated sandboxes from prewarmed session pools, with egress blocked by default. Use it to run untrusted or LLM-generated code per user or per execution.",
+   "Managed Kubernetes with full control over nodes, networking, and scheduling. Use it when you need Kubernetes-level control or GPU node pools and can operate the cluster.",
+   "Managed hosting for web apps and APIs with always-on instances. Use it for conventional web workloads; it does not scale to zero or provide Dapr.",
+   "Runs single containers on demand without orchestration. Use it for simple batch or burst jobs; it has no prewarmed session pool and no Dapr integration."
+  ],
+  "explanation": "Pick agent compute by the workload shape: long-running services that need microservice primitives fit Container Apps, event-driven code fits Functions, and untrusted code execution fits dynamic sessions. Operational constraints such as no cluster management and scale to zero eliminate AKS, App Service, and Container Instances. The same solution often combines several compute options.",
+  "ref": "https://learn.microsoft.com/azure/architecture/microservices/design/compute-options"
+ },
+ {
+  "id": "1.2.4-06",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso Suites runs an agent fleet that uses a workload-dedicated provisioned (PTU) deployment in Region A. The company also has an enterprise PTU pool in Region B and a Standard deployment. Reliability requirements state that if the workload PTU deployment is unavailable, requests must fail over first to the enterprise PTU pool and then to the Standard deployment. An engineer proposes enabling spillover on the workload PTU deployment and targeting the enterprise PTU pool.\n\nWhat should you do instead?",
+  "choices": [
+   "Deploy a model router and point the agent fleet at the router deployment.",
+   "Configure the failover chain in Azure API Management by using priority-based backend load balancing.",
+   "Enable spillover on the workload PTU deployment and target the Standard deployment.",
+   "Enable spillover on the enterprise PTU pool and target the workload PTU deployment."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Spillover routes overflow only to a corresponding Standard deployment; automatic PTU-to-PTU failover is not documented. Configure the failover chain in a gateway such as API Management with priority-based load balancing and circuit breakers, and keep PTU pools in different regions.",
+  "rationale": [
+   "Incorrect: model router is a deployment that chooses one of its underlying models per prompt to balance quality and cost. It does not fail over across your PTU deployments in a defined order. Use it when you want automatic model selection for mixed prompts.",
+   "Correct: API Management backends with priority-based load balancing and circuit breakers send traffic to the workload PTU deployment first, then to the enterprise PTU pool, and then to the Standard deployment, which is the required failover chain.",
+   "Incorrect: spillover to the Standard deployment is valid, but it skips the enterprise PTU pool, which must be the first failover target. Use spillover alone when one PTU deployment with a Standard overflow is enough.",
+   "Incorrect: spillover can target only a standard deployment in the same resource, not another provisioned deployment, and this setup also reverses the required direction. Configure spillover on the PTU deployment that receives the traffic."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/high-availability-resiliency"
+ },
+ {
+  "id": "1.2.5-01",
+  "obj": "1.2.5",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Coho Vineyard runs prompt agents in a Foundry project. A Python app already has azure-ai-projects, opentelemetry-sdk, azure-core-tracing-opentelemetry, and azure-monitor-opentelemetry installed, and it sets AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING to true before it imports the SDK. Developers must inspect the agent traces in the Foundry portal and query them later by using Kusto Query Language (KQL). No Application Insights resource exists yet.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create an Application Insights resource and connect it to the Foundry project.",
+   "`connection_string = project.telemetry.get_application_insights_connection_string()`",
+   "`configure_azure_monitor(connection_string=connection_string)`",
+   "Run the agent with `openai.responses.create(conversation=conversation.id, input=...)`, and then open the traces in the Foundry portal.",
+   "`os.environ[\"AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API\"] = \"false\"`",
+   "`pip install opentelemetry-exporter-otlp`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Foundry stores agent traces in the Application Insights resource that is connected to the project, which makes them visible in the portal and queryable with KQL. The SDK reads the connection string from the project, and configure_azure_monitor() wires the OpenTelemetry exporter to it. Only spans that are emitted after the exporter is configured are captured.",
+  "rationale": [
+   "Step 1: the project needs a connected Application Insights resource first; it is both the trace store behind the portal views and the source of the connection string.",
+   "Step 2: get_application_insights_connection_string() reads the connection string of the resource that is connected to the project, so it works only after step 1.",
+   "Step 3: configure_azure_monitor() sets up the Azure Monitor OpenTelemetry exporter with that connection string. It must run before the agent calls so that their spans are exported.",
+   "Step 4: agent calls now emit GenAI spans to Application Insights. Traces typically appear in the portal after a few minutes and can then be queried with KQL.",
+   "Incorrect: setting AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API to false disables automatic instrumentation of Responses and Conversations calls, so the agent runs would produce no spans. Use it when you want only your own custom spans.",
+   "Incorrect: the OTLP exporter sends spans to OTLP backends such as Aspire Dashboard, Grafana Tempo, or Jaeger. The requirement is the Foundry portal and KQL, which the Azure Monitor exporter already covers. Install it for a non-Azure backend."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "1.2.5-02",
+  "obj": "1.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys runs a multi-agent solution in which an orchestrator in Azure Container Apps calls a hosted agent in Foundry Agent Service, which calls an MCP server in Azure Functions. Operations needs one end-to-end trace that correlates spans across all three services.\n\nWhich standard should the services use to propagate trace context?",
+  "choices": [
+   "CloudEvents",
+   "JSON-RPC 2.0",
+   "the Azure Monitor common alert schema",
+   "W3C Trace Context"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The multi-agent semantic conventions in Foundry build on OpenTelemetry and W3C Trace Context. By propagating traceparent headers, spans from different services are linked together in one trace.",
+  "rationale": [
+   "Incorrect: CloudEvents is a specification for describing event payloads, for example on Event Grid. It does not carry trace IDs between services to link spans. Use it to standardize event metadata between producers and consumers.",
+   "Incorrect: JSON-RPC 2.0 is the message format that MCP and A2A use for requests and responses. It defines no trace context, so spans stay disconnected unless trace headers are propagated. It is a wire protocol choice, not a tracing standard.",
+   "Incorrect: the Azure Monitor common alert schema standardizes the payload of fired alerts that action groups send to webhooks, Logic Apps, or functions. It plays no role in correlating spans across services.",
+   "Correct: W3C Trace Context propagates the traceparent and tracestate headers between services, so spans from Container Apps, Foundry Agent Service, and Azure Functions share one trace ID and form one end-to-end trace."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept"
+ },
+ {
+  "id": "1.2.5-03",
+  "obj": "1.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Southridge Video has agents built with Microsoft Agent Framework and LangGraph that emit OpenTelemetry GenAI spans to Application Insights. Engineers need structured queries over the reasoning path of each run, including the exact arguments that an agent passed to each tool. The query must work for both frameworks.\n\nWhich span attribute should the query target?",
+  "choices": [
+   "gen_ai.agent.id on invoke_agent spans",
+   "gen_ai.tool.call.arguments on execute_tool spans",
+   "gen_ai.tool.call.result on execute_tool spans",
+   "gen_ai.tool.definitions on invoke_agent spans"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "According to the OpenTelemetry GenAI conventions, gen_ai.tool.call.arguments on execute_tool spans records the arguments of a tool call. Because both frameworks follow these conventions, the query works across frameworks; you see planning in plan spans.",
+  "rationale": [
+   "Incorrect: gen_ai.agent.id identifies which agent produced an invoke_agent span. It is useful to filter or group runs per agent, but it does not contain the arguments that were passed to tools.",
+   "Correct: gen_ai.tool.call.arguments on execute_tool spans records the arguments of each tool call. Both frameworks follow the OpenTelemetry GenAI semantic conventions, so one query covers both.",
+   "Incorrect: gen_ai.tool.call.result records what the tool returned, not what the agent sent to it. Query it when you debug wrong tool outputs rather than wrong tool inputs.",
+   "Incorrect: gen_ai.tool.definitions describes the tools that were available to the agent, not the calls it made during a run. Query it to verify which tools an agent could choose from."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept"
+ },
+ {
+  "id": "1.2.5-04",
+  "obj": "1.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. has a planner agent that calls a GPT-5 series reasoning model through the Azure OpenAI Responses API. Engineers must keep a structured log of how the planner agent reasoned before it chose each tool, so that they can review the reasoning path of failed runs. The logged reasoning must be human-readable, and the solution must use a supported method.\n\nWhat should you do?",
+  "choices": [
+   "Set reasoning.summary to auto and log the reasoning summary items of each response.",
+   "Add reasoning.encrypted_content to the include parameter and log the returned items.",
+   "Instruct the model in the developer message to output its full chain of thought.",
+   "Set reasoning_effort to high and log the reasoning_tokens value of each response."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The reasoning summary parameter (auto, concise, or detailed) is the supported way to get a readable summary of the reasoning of a reasoning model, which you can log per step for debugging. Other methods to extract raw reasoning are not supported and may violate the Acceptable Use Policy.",
+  "rationale": [
+   "Correct: setting reasoning.summary to auto, concise, or detailed returns readable summary items of the model's reasoning that you can log per step. It is the supported way to inspect the reasoning of a reasoning model.",
+   "Incorrect: encrypted reasoning items are opaque; they pass reasoning context back to the model in stateless conversations, for example when responses are not stored. They are not human-readable, so they cannot serve as a review log.",
+   "Incorrect: asking a reasoning model to reveal its raw chain of thought is not a supported method and can violate the Acceptable Use Policy. Step-by-step prompting is useful for non-reasoning models that do not reason internally.",
+   "Incorrect: reasoning_effort controls how much the model reasons, and reasoning_tokens only reports how many tokens that took. Neither shows how the model reasoned. Log reasoning_tokens to track cost and latency."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning"
+ },
+ {
+  "id": "1.2.5-05",
+  "obj": "1.2.5",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Blue Yonder Airlines is debugging a Foundry agent in a development environment by using client-side tracing in Python. Engineers must see the message contents and the tool call arguments in each span. Client-side spans must still correlate with server-side spans, but the baggage header must not be propagated.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nimport os\nfrom azure.ai.projects.telemetry import AIProjectInstrumentor\n\nos.environ[\"AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING\"] = \"true\"\nos.environ[\"[[1]]\"] = \"true\"\n\nAIProjectInstrumentor().instrument([[2]]=False)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT",
+     "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA",
+     "AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE"
+    ],
+    "why": [
+     "Correct: this variable turns on content recording, so spans include message contents and tool call arguments. It is off by default and belongs in development, because it can capture personal data.",
+     "Incorrect: this variable adds full image URLs and file data to spans, and only when content recording is already on. Use it when you must debug multimodal inputs and the backend accepts large spans.",
+     "Incorrect: this variable propagates the baggage header, which the requirement forbids, and it does not record message contents. Use it only when downstream services need baggage and it contains no sensitive data."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "enable_baggage_propagation",
+     "enable_trace_context_propagation",
+     "enable_content_recording"
+    ],
+    "why": [
+     "Correct: enable_baggage_propagation=False keeps the baggage header out of requests while traceparent and tracestate are still sent, so client and server spans stay correlated.",
+     "Incorrect: enable_trace_context_propagation=False stops the traceparent and tracestate headers, so client-side spans no longer correlate with server-side spans. Disable it when compliance forbids sharing trace identifiers.",
+     "Incorrect: enable_content_recording=False overrides the environment variable, because instrument() parameters take priority, so message contents would not be recorded. Pass False in production to keep content out of traces."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Client-side tracing in the Azure AI Projects SDK is controlled by environment variables or by parameters of AIProjectInstrumentor().instrument(), and a parameter wins over its environment variable. Content recording is off by default, trace context propagation is on by default when tracing is enabled, and baggage propagation is off by default. Turn on content recording only in development.",
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "1.2.5-06",
+  "obj": "1.2.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam Residences runs a multi-agent workflow built with Microsoft Agent Framework for Python. Some production runs fail intermittently. Engineers must be able to:\n\n- Reproduce a failing run from its recorded input and intermediate state on a different instance.\n- Turn the failing production interactions into a reusable test set for regression checks.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Configure the workflow with durable checkpoint storage, such as CosmosCheckpointStorage, and rehydrate runs from checkpoints.",
+   "Add the failing traces to an evaluation dataset from the trace view in the Foundry portal.",
+   "Configure the workflow with in-memory checkpoint storage.",
+   "Run an AI red teaming agent scan against the workflow and save the results.",
+   "Generate a synthetic evaluation dataset from the instructions of the agents."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Checkpoints in durable storage capture the full workflow state per superstep; from Python 1.13, entry checkpoints make the complete run replayable and you can rehydrate a new instance. Adding traces to a dataset yields a reusable test set for regression evaluations.",
+  "rationale": [
+   "Correct: checkpoint storage that outlives the process, such as a Cosmos DB-backed store, keeps the workflow state per superstep, so you can rehydrate the failing run from its recorded input and intermediate state on another instance.",
+   "Correct: adding the failing traces to an evaluation dataset from the trace view turns real production interactions into a versioned test set that you rerun for regression checks after each fix.",
+   "Incorrect: in-memory checkpoint storage lives inside the process, so it is lost on restart and cannot be read from another instance. It fits local development and unit tests.",
+   "Incorrect: an AI red teaming agent scan generates adversarial attacks to measure safety risks. It does not capture the state of failing runs or reuse real production interactions. Run it before release and periodically to assess safety.",
+   "Incorrect: a synthetic dataset generated from the agent instructions covers expected and edge-case inputs before launch, but it is not built from the failing production runs. Use it when there is no production traffic yet."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/checkpoints"
+ },
+ {
+  "id": "1.2.6-01",
+  "obj": "1.2.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles runs a customer support agent in Foundry Agent Service. The team needs to detect quality regressions in production as they happen by evaluating a sample of live agent traffic.\n\nWhich monitoring capability should you configure?",
+  "choices": [
+   "cluster analysis",
+   "continuous evaluation",
+   "red team scans",
+   "scheduled evaluation with a golden dataset"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Continuous evaluation samples live agent traffic as it arrives and runs evaluators on the production responses. Results appear in the Agent Monitoring Dashboard, so quality regressions become visible as they happen. Scheduled evaluations, red team scans, and cluster analysis complement it but work on fixed datasets, generated attacks, or past results.",
+  "rationale": [
+   "Incorrect: cluster analysis groups failed samples of evaluation runs that already ran, by similar problem. It analyzes results after the fact and does not sample live traffic. Use it to find recurring failure patterns.",
+   "Correct: continuous evaluation samples live agent traffic and runs evaluators on production responses, so quality regressions show up in the monitoring dashboard as they happen.",
+   "Incorrect: red team scans probe the agent with generated adversarial prompts to measure safety risks such as jailbreaks. They do not score real user traffic for quality. Schedule them to detect safety regressions.",
+   "Incorrect: a scheduled evaluation runs a fixed golden dataset on a timer, which catches regressions on known cases but not in live traffic as it happens. Use it for repeatable benchmark checks after changes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "1.2.6-02",
+  "obj": "1.2.6",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "The Phone Company needs automated remediation for an agent. When the error rate of the agent in Application Insights exceeds a threshold, a workflow must disable the failing agent endpoint and post a message to Microsoft Teams. No alert rule or action group exists yet. ERROR_RATE_QUERY is a KQL query that returns rows only when the error rate exceeds the threshold. You use the Azure CLI in the resource group RG1.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a Logic Apps workflow that disables the agent endpoint and posts the message to Teams.",
+   "`az monitor action-group create --name ag-remediate --resource-group RG1 --short-name Remediate --action logicapp remediate <WORKFLOW_RESOURCE_ID> <CALLBACK_URL> usecommonalertschema`",
+   "`ag=$(az monitor action-group show -g RG1 -n ag-remediate --query id -o tsv)`",
+   "`az monitor scheduled-query create --name AgentErrors --resource-group RG1 --scopes <APP_INSIGHTS_ID> --condition \"count 'errors' > 0\" --condition-query errors=\"<ERROR_RATE_QUERY>\" --action-groups \"$ag\"`",
+   "`az monitor alert-processing-rule create --name SuppressAgent --resource-group RG1 --rule-type RemoveAllActionGroups --scopes <APP_INSIGHTS_ID>`",
+   "Run `az monitor diagnostic-settings create` to stream the agent logs to an Event Hubs namespace."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Automated remediation in Azure Monitor chains three parts: an alert rule that detects the condition, an action group that the rule references, and the automation that the action group calls, such as a Logic Apps workflow, function, or runbook. Each part references the one after it, so you create them from the automation backward. Alert processing rules and diagnostic settings are separate tools for modifying fired alerts and routing logs.",
+  "rationale": [
+   "Step 1: the workflow is the automation that does the remediation and the Teams post. The action group can reference it only after it exists.",
+   "Step 2: the logicapp action takes the resource ID and the callback URL of the workflow from step 1, so the workflow must already exist. The action group then calls the workflow whenever an alert that references it fires.",
+   "Step 3: the scheduled query alert references action groups by resource ID, so you read the ID of the action group that you created.",
+   "Step 4: the log search alert rule runs the error-rate query on Application Insights, fires when the query returns rows, and triggers the action group whose ID you read in step 3.",
+   "Incorrect: an alert processing rule of type RemoveAllActionGroups suppresses the action groups of fired alerts, for example during maintenance, so it would stop the remediation instead of starting it. Use it for planned maintenance windows.",
+   "Incorrect: a diagnostic setting routes resource logs and metrics to destinations such as Event Hubs or a workspace. It does not detect conditions or start remediation. Use it to stream logs to a SIEM or archive."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/alerts/action-groups"
+ },
+ {
+  "id": "1.2.6-03",
+  "obj": "1.2.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. sends a custom metric named TokensPerRun to Azure Monitor for each of its 30 agents, with the agent name as a dimension. Normal values follow daily and weekly traffic patterns, and the team does not know which fixed value indicates abnormal behavior for each agent. You need an alert that detects significant deviations from the learned behavior of every agent by using a single alert rule.\n\nWhich alert configuration should you use?",
+  "choices": [
+   "A metric alert rule that uses dynamic thresholds",
+   "A metric alert rule that uses a static threshold",
+   "Application Insights smart detection",
+   "A Resource Health alert on the Foundry resource"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Dynamic thresholds use machine learning on historical data to learn seasonal patterns (hourly, daily, and weekly) per time series and to detect deviations. One rule can monitor hundreds of time series across dimensions, so you do not need to know a threshold per agent.",
+  "rationale": [
+   "Correct: dynamic thresholds learn the normal pattern of each time series, including daily and weekly seasonality, and one rule can monitor TokensPerRun split by the agent dimension, so no threshold per agent is needed.",
+   "Incorrect: a static threshold needs a known fixed value, which the team does not have, and it ignores daily and weekly patterns, which causes false alerts. Use it when a hard limit is known, such as an SLA value.",
+   "Incorrect: Application Insights smart detection finds anomalies in failure rates and request performance of the app. It does not learn custom metrics such as TokensPerRun per agent. Keep it on for failure anomalies.",
+   "Incorrect: Resource Health reports whether the Azure platform has a problem with the resource itself, such as an outage. It does not detect abnormal agent behavior. Use it to alert on platform-side availability issues."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-dynamic-thresholds"
+ },
+ {
+  "id": "1.2.6-04",
+  "obj": "1.2.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "First Up Consultants ran several evaluation runs for a multi-agent solution. Hundreds of samples failed. The team needs to group the failures by similar problems, see the distribution across error categories, and get recommended next steps for each group.\n\nWhich capability should you use?",
+  "choices": [
+   "the Agent Monitoring Dashboard",
+   "cluster analysis",
+   "intelligent sampling",
+   "a scheduled red team scan"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Cluster analysis groups evaluation samples with similar problems through embedding-based clustering, shows the distribution per error category, and gives a diagnosis and recommendations per cluster. Use it after evaluation runs to find recurring failure patterns, and use dashboards and continuous evaluation to detect that quality is dropping in the first place.",
+  "rationale": [
+   "Incorrect: the Agent Monitoring Dashboard shows metrics, evaluation scores, and trends over time, but it does not group individual failed samples by problem type or recommend fixes. Use it to watch overall agent health.",
+   "Correct: cluster analysis groups failed evaluation samples with similar problems by using embeddings, shows how failures are distributed across error categories, and recommends next steps for each cluster.",
+   "Incorrect: intelligent sampling selects a representative subset of traces to evaluate, which lowers evaluation cost at high volume. It does not diagnose why samples failed.",
+   "Incorrect: a scheduled red team scan generates adversarial attacks to measure safety, not to group the failures of existing evaluation runs. Use it to track safety posture over time."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/cluster-analysis"
+ },
+ {
+  "id": "1.2.6-05",
+  "obj": "1.2.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. runs a multi-agent app on Azure App Service. A Coordinator agent delegates to four specialist agents. Each agent is built with Microsoft Agent Framework for Python, and the app calls configure_azure_monitor() and enable_instrumentation() at startup to export telemetry to Application Insights. To track cross-agent coordination, operations uses the Agents view in Application Insights.\n\nAfter each app restart, the specialists appear as new rows, and their call and token metrics are split across many entries. Each agent ID is generated as a new GUID when the application starts.\n\nWhat should you do?",
+  "choices": [
+   "Enable sensitive data capture on each agent.",
+   "Set the Azure Monitor exporter sampling ratio to 1.0.",
+   "Enable the codeless Application Insights agent on the web app.",
+   "Assign each agent a stable, unique ID that is read from configuration."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Per-agent metrics in the Agents view depend on gen_ai.agent.id and gen_ai.agent.name. An ID that is regenerated at every start fragments the telemetry; use a stable, unique ID from configuration.",
+  "rationale": [
+   "Incorrect: sensitive data capture adds message contents to spans for debugging. It does not change how agents are identified, so the rows still split after each restart. Enable it only in development when you must see contents.",
+   "Incorrect: a sampling ratio of 1.0 keeps every span, which prevents gaps at low volume, but each restart still generates new agent IDs. Raise sampling when telemetry is missing, not when it is fragmented.",
+   "Incorrect: the codeless Application Insights agent auto-instruments the web app, and combining it with in-code OpenTelemetry can cause conflicts. It does not stabilize agent IDs. Use it for apps without in-code instrumentation.",
+   "Correct: the Agents view aggregates calls and tokens by gen_ai.agent.id and gen_ai.agent.name. A stable, unique ID read from configuration keeps each specialist in one row across restarts."
+  ],
+  "ref": "https://learn.microsoft.com/azure/app-service/tutorial-ai-agent-monitoring-dotnet"
+ },
+ {
+  "id": "1.2.6-06",
+  "obj": "1.2.6",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Contoso, Ltd. has one log search alert rule that monitors five agent apps named Agent1 to Agent5 in a resource group. The rule splits alerts by resource and uses an action group with an Automation Runbook action that restarts the failing agent. Agent3 and Agent4 have a planned maintenance window every Sunday from 01:00 to 05:00.\n\nYou create an alert processing rule that is scoped to Agent3 and Agent4, uses the Suppress notifications action, and has a weekly recurring schedule for the maintenance window.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "During the maintenance window, an alert from Agent1 still starts the runbook.",
+   "Alerts that fire for Agent3 during the maintenance window are not shown when you list alerts in the Azure portal.",
+   "If a second alert processing rule applies an additional action group to Agent4 alerts during the window, that action group runs."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Alert processing rules modify alerts after they fire: Suppression removes all action groups from the affected alerts, and Apply action groups adds action groups. A scope and a recurring schedule limit the rule to specific resources and times, so other resources keep their normal actions. Suppressed alerts stay visible, and suppression wins when both rule types affect the same alert.",
+  "rationale": [
+   "Yes: the processing rule is scoped to Agent3 and Agent4 only, so alerts from Agent1 keep their action group and the runbook still restarts the agent.",
+   "No: suppression removes the action groups but the fired alerts remain visible in the portal, Azure Resource Graph, and the API. Disabling the alert rule is the option that stops alerts from firing at all.",
+   "No: suppression has higher priority than Apply action groups, so the alert invokes no action groups at all. An Apply action groups rule is right when you want to add notifications, for example outside maintenance."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-processing-rules"
+ },
+ {
+  "id": "1.2.7-01",
+  "obj": "1.2.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers has a team of developers who build hosted agents. Every developer must get an identical containerized development environment in Visual Studio Code and GitHub Codespaces. The Azure Developer CLI (azd) and its Foundry extensions must be available as soon as the container starts.\n\nWhat should you add to the repository?",
+  "choices": [
+   "an azure.yaml file that defines the agent services",
+   "a devcontainer.json file that adds the azd feature with the extensions option",
+   "a .vscode/extensions.json file that recommends the Foundry Toolkit extension",
+   "a pyproject.toml file that pins the Azure AI Projects SDK version"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A dev container defines a reproducible environment in .devcontainer/devcontainer.json. The azd Dev Container Feature installs azd and, through the extensions option, also the specified azd extensions during the container build.",
+  "rationale": [
+   "Incorrect: azure.yaml tells azd which services to provision and deploy, but it does not build a development container or install azd. Add it to define how azd packages and deploys the agent.",
+   "Correct: .devcontainer/devcontainer.json defines one reproducible container for VS Code and Codespaces, and the azd Dev Container Feature with its extensions option installs azd and the listed extensions when the container is built.",
+   "Incorrect: .vscode/extensions.json only recommends extensions that each developer may install; it creates no container and installs no CLI. Use it to suggest editor extensions for a workspace.",
+   "Incorrect: pinning dependencies in pyproject.toml makes Python packages consistent, but it does not create a container or install azd. Use it for reproducible Python dependency management inside the environment."
+  ],
+  "ref": "https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd"
+ },
+ {
+  "id": "1.2.7-02",
+  "obj": "1.2.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Developers at Bellows College want to browse the Foundry model catalog, create hosted agent projects, test agents locally with Agent Inspector, inspect local traces, and deploy hosted agents without leaving Visual Studio Code.\n\nWhich Visual Studio Code extension should they install?",
+  "choices": [
+   "Jupyter extension for Visual Studio Code",
+   "GitHub Codespaces",
+   "Microsoft Foundry Toolkit for Visual Studio Code",
+   "Python extension for Visual Studio Code"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Microsoft Foundry Toolkit for Visual Studio Code brings Foundry resources, the model catalog, hosted-agent deployment, Agent Inspector, local tracing, and playgrounds to VS Code. It complements language extensions such as the Python extension, which provide editing and debugging but no Foundry features.",
+  "rationale": [
+   "Incorrect: the Jupyter extension runs and edits notebooks in VS Code. It has no model catalog, Agent Inspector, or hosted agent deployment. Use it for data exploration and prototyping in notebooks.",
+   "Incorrect: GitHub Codespaces provides a cloud-hosted development environment, which changes where developers code, not which Foundry features they have. Use it when developers need a hosted dev container.",
+   "Correct: Microsoft Foundry Toolkit for VS Code provides the model catalog, hosted agent project creation, Agent Inspector for local testing, local tracing, and hosted agent deployment inside VS Code.",
+   "Incorrect: the Python extension provides language support, debugging, and interpreter selection, but no Foundry integration. Install it alongside Foundry Toolkit for Python agent code."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/install-foundry-toolkit-visual-studio-code"
+ },
+ {
+  "id": "1.2.7-03",
+  "obj": "1.2.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Best For You Organics Company uses GitHub Copilot in Visual Studio Code to write agent code in Python and infrastructure in Bicep in the same repository. The team wants Copilot to apply its Python conventions for agent code automatically in ask, agent, and inline completion modes, but the conventions must not apply to the Bicep files.\n\nWhich file should you create?",
+  "choices": [
+   ".github/agents/python.agent.md",
+   ".github/copilot-instructions.md",
+   ".github/instructions/python.instructions.md",
+   ".github/prompts/python.prompt.md"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Custom instructions in .github/instructions/<name>.instructions.md are scoped to a glob such as **/*.py through the applyTo front matter key. Copilot applies them automatically to all matching files, and the Bicep files fall outside it.",
+  "rationale": [
+   "Incorrect: a .agent.md file defines a custom agent with its own instructions and tools that a developer selects in chat. It is not applied automatically per file type. Use it for a reusable role such as a code reviewer agent.",
+   "Incorrect: .github/copilot-instructions.md applies to every request in the repository, so the Python conventions would also reach the Bicep files. Use it for conventions that apply to the whole repository.",
+   "Correct: .github/instructions/python.instructions.md with applyTo: **/*.py in its front matter is applied automatically to matching Python files, and the Bicep files fall outside the glob.",
+   "Incorrect: a .prompt.md file is a reusable prompt that a developer runs on demand in chat, so it is not applied automatically. Use prompt files for repeatable tasks such as scaffolding tests."
+  ],
+  "ref": "https://learn.microsoft.com/sql/tools/visual-studio-code-extensions/github-copilot/custom-instructions"
+ },
+ {
+  "id": "1.2.7-04",
+  "obj": "1.2.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A developer at Proseware, Inc. deploys a Python hosted agent by calling create_version_from_code in the Azure AI Projects SDK. The code is packaged as a zip file of the project folder, so main.py and requirements.txt are located in a src/agent subfolder inside the zip. Provisioning fails with \"Hosted agent provisioning failed\". The model deployment name in the .env file exists in the target project.\n\nWhat should you do?",
+  "choices": [
+   "Pin exact package versions in requirements.txt and rebuild the zip.",
+   "Increase the cpu allocation in the hosted agent definition.",
+   "Request the Contributor role on the resource group.",
+   "Rebuild the zip so that main.py and requirements.txt are at the root."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "With code deployment, Foundry resolves the dependencies from requirements.txt and builds the agent remotely. For this, main.py and requirements.txt must be in the root of the zip; that is the documented cause of this error when the model name is correct.",
+  "rationale": [
+   "Incorrect: pinning exact versions fixes dependency conflicts during the remote build, but the build still cannot find main.py and requirements.txt in a subfolder. Pin versions when the build log shows version resolution errors.",
+   "Incorrect: cpu and memory set the resources of each session at run time; they do not affect how the uploaded zip is unpacked and built. Raise them when a running agent is CPU-bound or runs out of memory.",
+   "Incorrect: the Contributor role resolves AuthorizationFailed errors during provisioning, which is a different error. The developer can already create a version, so permissions are not the cause here.",
+   "Correct: with code deployment, Foundry resolves requirements.txt and starts the entry point from the root of the zip. Rebuilding the zip with main.py and requirements.txt at the root fixes the documented cause of this error."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent"
+ },
+ {
+  "id": "1.2.7-05",
+  "obj": "1.2.7",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Margie's Travel is starting a new hosted agent from a Foundry sample by using the Azure Developer CLI (azd). The agent must use a new Foundry project and a new model deployment. Developers must test the agent locally against the new model deployment before they deploy it, and then invoke the deployed agent. azd is authenticated, and the Microsoft.CognitiveServices resource provider is registered in the subscription.\n\nWhich five commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`azd ai agent init -t <SAMPLE_AZURE_YAML_URL> --deploy-mode code`",
+   "`azd provision`",
+   "`azd ai agent run`",
+   "`azd deploy`",
+   "`azd ai agent invoke \"<PROMPT>\"`",
+   "`az provider register --namespace Microsoft.CognitiveServices`",
+   "`azd ext install azure.ai.finetune`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The azd hosted agent workflow is init, provision, run locally, deploy, and invoke. azd ai agent init adds the agent definition to azure.yaml, azd provision creates the resources that azure.yaml describes, and azd deploy packages the source so that Foundry builds and deploys it remotely. Local testing with azd ai agent run needs the provisioned model deployment but not the deployed agent.",
+  "rationale": [
+   "Step 1: azd ai agent init scaffolds the sample and adds the agent definition, including the new project and model deployment choices, to azure.yaml.",
+   "Step 2: azd provision creates the Foundry project and the model deployment that azure.yaml defines; local testing and deployment both need them.",
+   "Step 3: azd ai agent run installs dependencies, starts the agent locally against the new model deployment, and opens Agent Inspector, which meets the test-before-deploy requirement.",
+   "Step 4: azd deploy packages the source as a zip and uploads it to Foundry, which resolves dependencies, builds the hosted agent remotely, and deploys it to the provisioned project.",
+   "Step 5: azd ai agent invoke sends a prompt to the deployed agent endpoint, which confirms that the deployment works. It needs the agent that step 4 deployed.",
+   "Incorrect: registering the Microsoft.CognitiveServices provider fixes a SubscriptionNotRegistered error, but the stem says it is already registered. Run it once in a new subscription before provisioning.",
+   "Incorrect: the azure.ai.finetune extension adds the azd ai finetuning commands for fine-tuning jobs. It is not needed to create, test, or deploy a hosted agent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent"
+ },
+ {
+  "id": "1.2.7-06",
+  "obj": "1.2.7",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Developers at Lucerne Publishing use GitHub Copilot CLI as their coding agent. They need the Microsoft Foundry Skill so that Copilot follows Foundry workflows for deployment, evaluation, and troubleshooting. The same installation must configure the Azure MCP Server and the Foundry MCP Server, the team must confirm that both MCP servers are configured, and later the team must refresh the skills and the MCP configuration together. The Azure Skills Plugin marketplace has never been added in Copilot CLI.\n\nWhich four commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`/plugin marketplace add microsoft/azure-skills`",
+   "`/plugin install azure@azure-skills`",
+   "`/mcp show`",
+   "`/plugin update azure@azure-skills`",
+   "`npx skills add https://github.com/microsoft/azure-skills --skill microsoft-foundry`",
+   "`/plugin install azure@claude-plugins-official`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The Azure Skills Plugin bundles the Microsoft Foundry Skill with the Azure MCP Server and Foundry MCP Server configuration, so one install and one update keep them together. In Copilot CLI you add the plugin marketplace once, install the plugin from it, and verify the MCP configuration. The skill-only install path delivers only the workflow guidance.",
+  "rationale": [
+   "Step 1: the first install from the Azure Skills Plugin marketplace requires adding the marketplace, so Copilot CLI knows where azure@azure-skills comes from.",
+   "Step 2: installing azure@azure-skills adds the Foundry Skill and configures the Azure MCP Server and the Foundry MCP Server in one step.",
+   "Step 3: /mcp show lists the configured MCP servers, which confirms that the plugin set up both the Azure MCP Server and the Foundry MCP Server after the install.",
+   "Step 4: /plugin update azure@azure-skills refreshes the skills and the MCP configuration together when the team wants the latest versions.",
+   "Incorrect: npx skills add installs only the microsoft-foundry skill content, without MCP server configuration. Use it when the host already has its MCP servers configured.",
+   "Incorrect: azure@claude-plugins-official is the install path for the Azure plugin in Claude Code, not in Copilot CLI. Use it when the team's coding agent is Claude Code."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/use-microsoft-foundry-skill"
+ }
+]

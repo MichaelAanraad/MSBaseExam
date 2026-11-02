@@ -1,0 +1,1162 @@
+[
+ {
+  "id": "4.1.1-01",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. publishes a customer-support agent in a Microsoft Foundry project. A service principal named App1 must call the agent endpoint by using the Responses API. App1 must not create, modify, or delete agents.\n\nYou need to grant App1 access by following the principle of least privilege.\n\nWhich role should you assign to App1?",
+  "choices": [
+   "Foundry Agent Consumer",
+   "Foundry User",
+   "Foundry Project Manager",
+   "Foundry Owner"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry built-in roles separate agent consumers from builders and managers. Foundry Agent Consumer can only interact with agent endpoints, Foundry User adds the data actions to build agents, and Project Manager and Owner add management rights. Choose the lowest role that covers the required actions, then the narrowest scope (agent, project, or resource).",
+  "rationale": [
+   "Correct: Foundry Agent Consumer grants only the right to interact with agent endpoints, so App1 can call the agent through the Responses API but has no data actions to create, modify, or delete agents. That is the least-privilege fit.",
+   "Incorrect: Foundry User adds the build-and-develop data actions in the project, so App1 could also create and change agents. Use it for developers who build and test agents with existing models and connections.",
+   "Incorrect: Foundry Project Manager manages projects, publishes agents, and can assign the Foundry User role. Use it for a team lead who runs a project and onboards developers, not for an app that only calls an agent.",
+   "Incorrect: Foundry Owner grants full control of projects and resources, including model deployment and building agents. Use it for a self-serve owner or a CI identity that provisions Foundry resources, not for an endpoint caller."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry"
+ },
+ {
+  "id": "4.1.1-02",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Fabrikam, Inc. has a Microsoft Foundry resource that contains a project named Project1. Four personas need access, and each must receive the least-privileged built-in role that meets its needs.\n\nWhich role should you assign to each persona? To answer, drag the appropriate roles to the correct personas. Each role may be used once, more than once, or not at all.",
+  "choices": [
+   "Foundry Agent Consumer",
+   "Foundry User",
+   "Foundry Project Manager",
+   "Foundry Account Owner",
+   "Foundry Owner",
+   "Azure AI Developer"
+  ],
+  "targets": [
+   "Developers: build and test agents in Project1 by using pre-deployed models and existing connections, and must not deploy models",
+   "Team lead: publishes agents from Project1 and assigns the Foundry User role to new team members, and must not deploy models",
+   "Platform team: creates Foundry accounts and deploys models, and must not build agents in projects",
+   "Web app service principal: calls the endpoint of a published agent and must not change any agent"
+  ],
+  "answer": [
+   1,
+   2,
+   3,
+   0
+  ],
+  "explanation": "The Foundry roles form a ladder: Agent Consumer (call endpoints), User (build in a project), Project Manager (build, publish, and assign Foundry User), Account Owner (manage accounts and models, no building), and Owner (everything). Map each persona to the lowest rung that covers its actions and check what the persona must not be able to do.",
+  "rationale": [
+   "Developers need the build-and-develop data actions in the project but no model management, which is exactly Foundry User. The Microsoft enterprise mapping assigns Foundry User at project scope for this persona.",
+   "The team lead must publish agents and assign Foundry User. Foundry Project Manager has both rights and cannot manage models, so it satisfies the constraint against deploying models.",
+   "The platform team creates accounts and manages models but must not build in projects. Foundry Account Owner has create-account and manage-model rights without the build data actions.",
+   "The service principal only calls an agent endpoint. Foundry Agent Consumer grants endpoint interaction and nothing else, so the app cannot change agents."
+  ],
+  "notes": [
+   "Least-privilege role that only allows interaction with agent endpoints. Use it for users, apps, and service principals that consume agents, at project scope or agent scope.",
+   "Reader access plus the data actions to build and test agents in a project. Use it for developers who work with pre-deployed models and existing connections.",
+   "Manages projects, builds in them, publishes agents, and can assign only the Foundry User role. Use it for team leads who run a project and onboard members.",
+   "Creates accounts and projects, manages models, and assigns Foundry User, ACR, and monitoring roles, but cannot build in projects. Use it for platform managers.",
+   "Full control including building and publishing plus model management. Use it for highly privileged self-serve owners or CI identities that provision Foundry resources; here it exceeds every persona's needs.",
+   "Scoped to Azure Machine Learning workspaces and Foundry hubs, not to Foundry projects. Microsoft says not to use it for Foundry project work; use Foundry User or Foundry Owner instead."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry"
+ },
+ {
+  "id": "4.1.1-03",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Tailspin Toys develops a hosted agent named agent1 by using the Azure Developer CLI. The Foundry project already exists. At runtime, agent1 must read and write blobs in a storage account named storage1 by using the instance identity of the agent, and the security team wants proof of the assignment. agent1 has not been deployed yet.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `azd deploy` to create the first version of agent1.",
+   "Run `AGENT_IDENTITY=$(az rest --method GET --url \"${BASE_URL}/agents/agent1?api-version=v1\" --resource \"https://ai.azure.com\" --query \"instance_identity.principal_id\" --output tsv)`.",
+   "Run `az role assignment create --assignee-object-id \"$AGENT_IDENTITY\" --assignee-principal-type ServicePrincipal --role \"Storage Blob Data Contributor\" --scope \"$STORAGE1_ID\"`.",
+   "Run `az role assignment list --assignee \"$AGENT_IDENTITY\" --scope \"$STORAGE1_ID\" --output table`.",
+   "Run `az identity create --name agent1-identity --resource-group rg1` and grant that identity the role on storage1.",
+   "Run `az role assignment create --assignee-object-id \"$PROJECT_MI_ID\" --assignee-principal-type ServicePrincipal --role \"Storage Blob Data Contributor\" --scope \"$STORAGE1_ID\"`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A hosted agent gets its instance identity, a Microsoft Entra service principal, when the agent is created. Read its principal ID from instance_identity.principal_id, assign the data-plane role at the narrowest resource scope with --assignee-object-id and --assignee-principal-type ServicePrincipal, and verify with az role assignment list. Hosted-agent code gets tokens for the instance identity by default; the project managed identity is not available to that code.",
+  "rationale": [
+   "Step 1: the instance identity is created together with the agent, so agent1 must exist before there is a principal ID to assign. azd deploy creates the hosted agent version.",
+   "Step 2: the agent details expose instance_identity.principal_id. The --resource https://ai.azure.com parameter is required so that az rest gets a token for the Foundry data plane; the ID feeds the next command.",
+   "Step 3: assigning Storage Blob Data Contributor to the principal ID at the storage1 scope grants read and write on blobs only there. Microsoft recommends --assignee-object-id with ServicePrincipal to avoid Graph lookup problems with agent identities.",
+   "Step 4: listing the assignments for the identity on storage1 is the documented verification and gives the security team proof. It can only run after the assignment exists.",
+   "Incorrect: a user-assigned managed identity is a separate principal that hosted-agent code does not use by default, so its role would not authorize agent1. Use az identity create for workloads such as Container Apps that you configure with that identity.",
+   "Incorrect: the project managed identity is not available to hosted-agent code, so a role on it does not help agent1. Assign roles to it when a tool connection uses project managed identity authentication."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-agent"
+ },
+ {
+  "id": "4.1.1-04",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank prototypes agents in Foundry Agent Service. The security team requires that only callers from the corporate virtual network can reach the Foundry endpoint. Agent egress to public endpoints remains acceptable during the prototype phase.\n\nWhich networking option should you configure?",
+  "choices": [
+   "public egress with a private endpoint",
+   "public egress with public inbound access",
+   "a bring-your-own virtual network",
+   "a managed virtual network"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry Agent Service networking is two decisions: egress (public, BYO virtual network, or managed virtual network) and inbound (public or private endpoint). A private endpoint with public egress secures only the inbound path. Isolated egress always pairs with a private endpoint, but it costs more planning, so choose it only when egress must be private.",
+  "rationale": [
+   "Correct: a private endpoint makes the Foundry endpoint reachable only from the corporate virtual network, and public egress keeps agent outbound traffic unchanged, which the prototype accepts. It is the documented option to restrict callers while egress stays public.",
+   "Incorrect: public inbound access leaves the endpoint reachable from the internet, optionally limited to selected IP addresses, which does not confine callers to the virtual network. Use it for quick prototypes and tests with no network restriction.",
+   "Incorrect: a BYO virtual network isolates egress by injecting agents into a delegated subnet you manage. That adds subnet planning the prototype does not need, because public egress is acceptable. Use it when egress must be private and you control IP ranges.",
+   "Incorrect: a managed virtual network gives full egress isolation in a Microsoft-managed network. It solves a requirement the stem does not have. Use it when egress must be isolated but you cannot manage IP ranges or your address space overlaps."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/networking-options"
+ },
+ {
+  "id": "4.1.1-05",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals plans a new Foundry Agent Service deployment for regulated workloads. The requirements are:\n\n- Agents must have no public egress.\n- The network team must control IP ranges, peering, and routing.\n- Conversation history, files, and vector stores must be stored in Azure resources that Contoso Pharmaceuticals owns.\n\nWhich networking option should you deploy?",
+  "choices": [
+   "a BYO virtual network with bring-your-own data resources",
+   "a BYO virtual network with platform-managed data resources",
+   "a managed virtual network",
+   "public egress with a private endpoint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Both BYO virtual network and managed virtual network fully isolate egress; the difference is who runs the network. With BYO virtual network you also choose data resources: bring your own Storage, AI Search, and Cosmos DB so agent data stays in your tenant, or use platform-managed multitenant data resources.",
+  "rationale": [
+   "Correct: a BYO virtual network removes public egress and lets the network team control IP ranges, peering, and routing, and bring-your-own data resources keep conversation history, files, and vector stores in Storage, AI Search, and Cosmos DB that Contoso Pharmaceuticals owns.",
+   "Incorrect: the BYO virtual network meets the isolation and control needs, but platform-managed data resources are multitenant resources that Contoso Pharmaceuticals does not own. Use this option when agents do not need customer-owned data stores, as in many hosted-agent scenarios.",
+   "Incorrect: a managed virtual network isolates egress, but Microsoft manages the network, so the network team cannot control IP ranges, peering, and routing. Use it when you want isolation without managing the address space.",
+   "Incorrect: public egress with a private endpoint secures only inbound calls, so agents still have public egress. Use it to restrict callers during prototyping when outbound traffic does not need isolation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/networking-options"
+ },
+ {
+  "id": "4.1.1-06",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud has a legacy agent named Agent1 in a Microsoft Foundry project. Agent1 reads blobs from storage1 because the shared project agent identity has the Storage Blob Data Reader role on storage1. To adopt the new agent object model, you create a new agent named Agent2 that uses the same definition as Agent1. Every tool call from Agent2 to storage1 fails with HTTP 403.\n\nWhat should you do?",
+  "choices": [
+   "Assign the Storage Blob Data Reader role on storage1 to the unique agent identity of Agent2.",
+   "Assign the Storage Blob Data Reader role on storage1 to the project managed identity.",
+   "Assign the Foundry User role on the Foundry resource to the shared project agent identity.",
+   "Assign the Storage Blob Data Reader role on storage1 to the shared project agent identity at the resource group scope."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Legacy agents use the shared project agent identity, while agents created in the current object model receive their own blueprint and instance identity. Role assignments do not transfer when you migrate, and a new agent identity starts with no permissions, so you must grant the downstream role to the new identity at the target resource scope.",
+  "rationale": [
+   "Correct: Agent2 runs under its own unique agent identity, which starts with no permissions, so the 403 comes from that identity lacking a role on storage1. Assigning Storage Blob Data Reader on storage1 to it restores read access at the narrowest scope.",
+   "Incorrect: the project managed identity is a different principal from the agent identity that Agent2 uses for the tool call, so its role does not authorize the call. Grant it roles when a connection uses project managed identity authentication.",
+   "Incorrect: Foundry User on the Foundry resource grants build permissions in Foundry, not data access to blobs, and it targets the shared identity that Agent2 no longer uses. Legacy deployments use this assignment for compatibility only.",
+   "Incorrect: widening the scope of the shared identity's role to the resource group still targets the wrong principal and breaks least privilege. A broader scope is only useful when one identity must reach many resources in the group."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications"
+ },
+ {
+  "id": "4.1.1-07",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-g",
+  "stem": "You need to grant the Contoso, Ltd. service principal access to the Blue Yonder Airlines agents. The solution must meet the business and technical requirements.\n\nWhich role assignment should you create?",
+  "choices": [
+   "Foundry Agent Consumer at the scope of the RebookAgent agent",
+   "Foundry Agent Consumer at the scope of the BYA-Prod project",
+   "Foundry Agent Consumer at the scope of the BYA-Foundry resource",
+   "Foundry User at the scope of the BYA-Prod project"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry supports role assignments at the agent scope, under the project path, and they are evaluated for agent endpoint access only. Combining Foundry Agent Consumer with agent scope gives a partner the least access: one role that only calls endpoints, applied to one agent. The Azure portal assigns Foundry Agent Consumer only at account scope, so use the Azure CLI for project or agent scope.",
+  "rationale": [
+   "Correct: the case requires that the Contoso service principal can call only RebookAgent. Agent-scope assignments are evaluated for endpoint access to that one agent, and Foundry Agent Consumer grants nothing beyond endpoint interaction.",
+   "Incorrect: project scope grants access to every agent endpoint in BYA-Prod, so the partner could also call the loyalty and baggage agents, which the requirements forbid. Use project scope when a consumer may call every agent in the project.",
+   "Incorrect: resource scope is even broader and covers every project in BYA-Foundry. It is the only scope the Azure portal supports for this role, which is why the CLI is needed for narrower scopes.",
+   "Incorrect: Foundry User adds the data actions to build and change agents and applies to every agent in the project. Use it for developers who work in BYA-Prod, not for an external caller."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry"
+ },
+ {
+  "id": "4.1.1-08",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles has 12 teams that create Foundry resources in one Azure subscription. Security requires that every current and future Foundry resource in the subscription accepts only Microsoft Entra ID authentication. Teams must not be able to create resources that accept API keys.\n\nWhat should you do?",
+  "choices": [
+   "Assign the built-in Azure AI Services key access disabled policy with the Deny effect at the subscription scope.",
+   "Set the disableLocalAuth property to true in a shared Bicep template, and ask each team to deploy by using the template.",
+   "Create a Conditional Access policy that blocks key-based sign-ins for the agent identities in the tenant.",
+   "Run Set-AzCognitiveServicesAccount with -DisableLocalAuth $true against each existing Foundry resource."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Use Azure Policy to enforce a configuration on every current and future resource in a scope; a template or a script only fixes the resources it touches. For AI Services and Foundry resources, disabling local authentication (disableLocalAuth) turns off API keys so that only Microsoft Entra ID tokens work.",
+  "rationale": [
+   "Correct: the built-in policy Azure AI Services resources should have key access disabled supports the Deny effect. Assigned at subscription scope, it blocks any new Foundry resource that keeps key access enabled and reports existing ones as noncompliant, which covers current and future resources.",
+   "Incorrect: setting disableLocalAuth in a shared Bicep template only affects deployments that use the template; teams can still deploy resources in other ways. Use the template property to configure your own deployments in addition to policy.",
+   "Incorrect: Conditional Access controls Microsoft Entra sign-ins, but API keys bypass Microsoft Entra ID entirely, so the policy cannot block key use. Use Conditional Access to govern how identities, including agent identities, obtain tokens.",
+   "Incorrect: running Set-AzCognitiveServicesAccount with -DisableLocalAuth fixes existing resources once, but it does not stop teams from creating new resources that accept keys. Use it to remediate a known set of resources."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-services/disable-local-auth"
+ },
+ {
+  "id": "4.1.1-09",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company has a Foundry account named Account1 that was created six months ago with public networking. Account1 contains two projects with hosted agents and prompt agents. A new compliance rule requires that all agent compute is injected into a delegated subnet in a virtual network that Lamna Healthcare Company manages.\n\nYou create a subnet named Subnet1 that is delegated to Microsoft.App/environments and sized /27.\n\nWhat should you do next?",
+  "choices": [
+   "Create a new Foundry account that uses Subnet1 for virtual network injection, and then migrate the projects and agents.",
+   "Update the networking settings of Account1 to inject agent compute into Subnet1, and then restart the hosted agents.",
+   "Add a private endpoint for Account1 in the virtual network, and then disable public network access on Account1.",
+   "Configure a managed virtual network for each existing project in Account1, and then peer it with the virtual network."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Virtual network injection for Foundry Agent Service is part of the create-resource flow. It cannot be added to an existing account, and it cannot be changed after the first hosted agent is created. Moving to an injected network therefore means creating a new account with the delegated subnet and migrating projects and agents to it.",
+  "rationale": [
+   "Correct: network injection can be configured only when the Foundry account is created, so Account1 cannot be converted. A new account that uses Subnet1, delegated to Microsoft.App/environments and at the /27 minimum, meets the rule, and the projects and agents move to it.",
+   "Incorrect: there is no update path that injects agent compute into a subnet for an existing account, and the network configuration is fixed after the first hosted agent. This step would work only on an account created with injection configured.",
+   "Incorrect: a private endpoint secures inbound traffic to Account1, but agent compute keeps running outside a virtual network that Lamna Healthcare Company manages. Use a private endpoint to restrict callers while egress stays public.",
+   "Incorrect: a managed virtual network is run by Microsoft, not by Lamna Healthcare Company, and networking applies at the account level, not per project. Use it for isolation when you cannot manage IP ranges."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/networking-options"
+ },
+ {
+  "id": "4.1.1-10",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Proseware, Inc. runs a multi-agent solution in one Microsoft Foundry project. An orchestrator agent named Agent1 must read a Cosmos DB container. A billing agent named Agent2 must write to a storage account. Both agents are legacy agents that use the shared project agent identity, which has both permissions. Auditors require that each agent has only its own permissions and an independent audit trail.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Re-create Agent1 and Agent2 as new agents with the same definitions so that each agent receives a unique agent identity.",
+   "Assign each required role to the agent identity of the corresponding new agent, scoped to the target resource.",
+   "Assign the required roles to the shared project agent identity at the subscription scope.",
+   "Assign each required role to the project managed identity, scoped to the target resource.",
+   "Change the tool connections of both agents to OAuth identity passthrough."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Per-agent least privilege requires per-agent identities. Legacy agents share the project agent identity, so you re-create them in the current object model to get a unique agent identity each, and then assign each role to that identity at the scope of the one resource it needs. Role assignments do not carry over from the shared identity.",
+  "rationale": [
+   "Correct: new agents receive their own blueprint and instance identity, which gives each agent a separate principal with its own sign-in and audit trail. This is the documented migration path for legacy agents that share the project identity.",
+   "Correct: new agent identities start without permissions. Assigning the Cosmos DB role to Agent1's identity and the storage role to Agent2's identity, each scoped to its target resource, gives every agent only its own permissions.",
+   "Incorrect: the shared identity is the problem, because both agents would still hold both permissions, and subscription scope makes it broader. Use the shared identity only for legacy agents that have not been migrated.",
+   "Incorrect: the project managed identity is shared by every agent that uses project managed identity authentication, so it cannot separate Agent1 from Agent2. Use it when all agents in a project should share one access level.",
+   "Incorrect: OAuth identity passthrough calls tools with each signed-in user's credentials, so the agent no longer has its own permissions and the orchestrator might run without a user. Use it when every user must sign in to the tool provider."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/migrate-agent-applications"
+ },
+ {
+  "id": "4.1.1-11",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Alpine Ski House configures a project connection for an MCP server that Agent1 uses. The MCP server reads files from an Azure Storage account. The connection uses the AgenticIdentityToken authentication type with the audience set to https://mcp1.alpineskihouse.com. The agent identity was assigned the Storage Blob Data Reader role on the storage account two days ago. Every tool call fails with HTTP 401.\n\nWhat should you do?",
+  "choices": [
+   "Change the audience of the connection to https://storage.azure.com.",
+   "Assign the Storage Blob Data Reader role to the project managed identity.",
+   "Change the connection to OAuth identity passthrough.",
+   "Wait up to 10 minutes for the role assignment to propagate, and then retry."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With agent identity authentication, Agent Service exchanges the agent identity token for an access token scoped to the connection's audience, and the downstream resource validates it. The audience must be the resource identifier of the service that checks the token and the RBAC roles, which is not necessarily the tool endpoint URL.",
+  "rationale": [
+   "Correct: storage validates tokens whose audience is https://storage.azure.com. A token minted for the MCP URL audience is rejected with 401 before RBAC is evaluated, so changing the connection audience to the storage resource identifier fixes the call.",
+   "Incorrect: the connection uses agent identity authentication, so the project managed identity is not the principal on the call. Assign roles to it only when the connection type is project managed identity.",
+   "Incorrect: OAuth identity passthrough makes each user sign in and consent, which changes the identity model instead of fixing the audience. Use it when the tool must act with each user's own credentials.",
+   "Incorrect: the role was assigned two days ago, so propagation is complete, and a missing role produces 403, not 401. Waiting helps only right after a new role assignment."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "4.1.2-01",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys registers a client app named App1 in Microsoft Entra ID. App1 hosts an agent that calls a custom web API named API1. The agent must call API1 on behalf of the signed-in user and must be able to access only the data that the signed-in user can access.\n\nWhich type of permission should you configure for App1 on API1?",
+  "choices": [
+   "delegated permissions",
+   "application permissions",
+   "an Azure RBAC role assignment for App1 at the API1 scope",
+   "an API key that API1 issues to App1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft Entra ID has two permission types. Delegated permissions let an app act for a signed-in user, and the effective access is the intersection of the app's permissions and the user's own rights. Application permissions let an app act as itself with no user, so it gets the same access for every caller.",
+  "rationale": [
+   "Correct: delegated permissions are used when an app calls an API on behalf of a signed-in user, and the app can never exceed what that user can access. That matches both requirements for App1 and API1.",
+   "Incorrect: application permissions let App1 call API1 as itself without a signed-in user, so access does not depend on the user and can exceed the user's rights. Use them for daemons and background jobs.",
+   "Incorrect: Azure RBAC authorizes access to Azure resources through Azure Resource Manager or data planes, not permissions that a custom web API exposes. Use RBAC when the target is an Azure resource such as Storage.",
+   "Incorrect: an API key identifies the calling app, not the user, so API1 cannot limit data to what the signed-in user may access. Use keys for shared access to services that do not support Microsoft Entra ID."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity-platform/permissions-consent-overview"
+ },
+ {
+  "id": "4.1.2-02",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers connects an agent to a third-party weather MCP server. The server supports only API keys. Every user of the agent can see the same weather data.\n\nYou need to provide the API key to the MCP server without passing it at runtime.\n\nWhat should you configure?",
+  "choices": [
+   "key-based authentication that stores the key in a project connection",
+   "OAuth identity passthrough by using custom OAuth",
+   "custom headers that the client app passes with each agent run",
+   "Microsoft Entra agent identity authentication"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Pick MCP tool authentication by whether user context must persist. Key-based authentication stores a shared credential in a project connection that Agent Service injects at runtime; anyone with access to the project can read it, so store only shared secrets there. Microsoft Entra methods avoid secrets but need a server that accepts Microsoft Entra tokens.",
+  "rationale": [
+   "Correct: key-based authentication stores the API key in a project connection, and Agent Service passes it to the MCP server on each call, so no client sends the key at runtime. A shared key is fine because every user sees the same weather data.",
+   "Incorrect: OAuth identity passthrough makes each user sign in to the provider and needs an OAuth-compliant server, but this server supports only API keys. Use it when each user must authorize the tool with their own account.",
+   "Incorrect: custom headers that the client passes on each run are exactly the runtime passing of the key that the requirement forbids, and they expose the key to client code. Use runtime headers for values that change per request.",
+   "Incorrect: agent identity authentication sends a Microsoft Entra token that the server must validate, and this server accepts only API keys. Use it for MCP servers whose underlying service supports Microsoft Entra ID."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/mcp-authentication"
+ },
+ {
+  "id": "4.1.2-03",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Consolidated Messenger has a middle-tier orchestrator API named API1 that is registered in Microsoft Entra ID. A client app signs in a user and calls API1 with an access token for that user. API1 must call a downstream API named API2 with the delegated identity and permissions of the same user. API1 cannot interact with the user. You plan to use the OAuth 2.0 on-behalf-of (OBO) flow.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "API1 sends the access token that it received from the client app as the assertion when it requests a token for API2.",
+   "The token that API1 obtains for API2 carries application permissions, so API2 cannot restrict data to what the user is allowed to access.",
+   "API1 must authenticate itself with its own client credential, such as a secret, a certificate, or a federated credential, when it requests the token for API2."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "In the on-behalf-of flow, a middle-tier service exchanges the incoming user token for a new token to a downstream API. The request contains the incoming token as the assertion plus the middle tier's own client credential, and the result is a delegated token for the same user, so the downstream API sees both the user and the calling app.",
+  "rationale": [
+   "Yes: the OBO request uses the jwt-bearer grant and passes the incoming user access token in the assertion parameter. Microsoft Entra ID validates it and issues a new token for API2 for the same user, with no user interaction.",
+   "No: the OBO result is a delegated token, so it carries the user identity and delegated scopes, and API2 can enforce the user's own rights. Application permissions come from the client credentials flow, which runs with no user.",
+   "Yes: the middle tier is a confidential client, so it proves its own identity with a secret, a certificate, or a federated credential in the same request. The user token alone is not enough to get a token for API2."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow"
+ },
+ {
+  "id": "4.1.2-04",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee runs a nightly reconciliation agent in Foundry Agent Service. No user is signed in when the agent runs. The agent must access Azure Cosmos DB by using permissions that are assigned directly to the agent.\n\nWhich authentication approach should the agent use?",
+  "choices": [
+   "the unattended application-only flow with the agent identity",
+   "the attended on-behalf-of flow with the agent identity",
+   "OAuth identity passthrough",
+   "Microsoft Entra authentication with the project managed identity"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An agent identity can act under its own authority (application-only access, no signed-in user) or on behalf of a signed-in user (delegated access). Unattended jobs use application-only access, so permissions are granted directly to the agent identity, for example as an Azure RBAC role or a Cosmos DB data-plane role.",
+  "rationale": [
+   "Correct: with no signed-in user, the agent must act under its own authority. Application-only access with the agent identity uses permissions assigned directly to that identity, such as a Cosmos DB data-plane role, and keeps the agent as a distinct, auditable actor.",
+   "Incorrect: the on-behalf-of flow needs an incoming user token to exchange, and no user is signed in during the nightly run. Use it when an agent must act with a signed-in user's delegated rights.",
+   "Incorrect: OAuth identity passthrough asks a user to sign in and consent, so it cannot run unattended. Use it when each user must authorize a tool with the user's own account.",
+   "Incorrect: the project managed identity is shared by the whole project, so permissions would not be assigned to this agent. Use it when all agents in a project should share one access level."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "4.1.2-05",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance builds a conversational agent workflow in Azure Logic Apps (Standard). An agent tool reads the mailbox of the person who is chatting. Compliance requires that resource access and audit logs are linked to that person and that the tool respects the person's own licenses and data access rights.\n\nWhich connection configuration should you use for the tool?",
+  "choices": [
+   "Use a per-user connection that has on-behalf-of authorization.",
+   "Use a shared connection that authenticates by using the logic app managed identity.",
+   "Use a shared connection that is created by the workflow author.",
+   "Use a connection that authenticates by using a service principal with application permissions."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Logic Apps agent workflows can run a tool connection on behalf of the user who is chatting. A per-user connection with on-behalf-of authorization uses that user's identity for every call, so licenses, data access, and audit logs follow the person instead of a shared account.",
+  "rationale": [
+   "Correct: a per-user connection with on-behalf-of authorization makes each tool call with the chatting person's identity, so the tool respects that person's licenses and mailbox rights, and access and audit logs are linked to the person.",
+   "Incorrect: a shared connection that uses the logic app managed identity runs every call as the logic app, so logs show the app and access does not follow the person. Use it for back-end operations that do not depend on who is chatting.",
+   "Incorrect: a shared connection created by the workflow author makes every call with the author's identity and rights, so other users could reach data through the author. Use it only for single-user or test workflows.",
+   "Incorrect: a service principal with application permissions can read any mailbox that the permission allows, regardless of who is chatting. Use it for unattended processing across mailboxes with admin consent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/logic-apps/set-up-on-behalf-of-user-flow"
+ },
+ {
+  "id": "4.1.2-06",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-g",
+  "stem": "You need to configure how LoyaltyAgent authenticates to the loyalty API. The solution must meet the business and technical requirements.\n\nWhich authentication approach should LoyaltyAgent use?",
+  "choices": [
+   "the attended on-behalf-of flow with the agent identity",
+   "the unattended application-only flow with the agent identity",
+   "OAuth identity passthrough with a custom OAuth app",
+   "Microsoft Entra authentication with the project managed identity"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An agent identity can be the actor in a delegated call. In the attended on-behalf-of pattern (AgentOnBehalfOfUser), Agent Service exchanges the incoming user token so the downstream API sees both the user and the agent identity, and no separate sign-in session is created. OAuth identity passthrough instead creates a per-user consent session for the tool.",
+  "rationale": [
+   "Correct: the on-behalf-of flow with the agent identity reuses the user token that the SkyHelp portal passes, so the loyalty API applies the member's own rights, sign-in logs show the agent identity as a separate actor, and no consent link appears in the chat.",
+   "Incorrect: application-only access uses the agent's own permissions with no user context, so LoyaltyAgent could read loyalty data for any member. Use it for unattended jobs, such as the nightly baggage reconciliation in the case.",
+   "Incorrect: OAuth identity passthrough generates a consent link the first time each member uses the tool, which the requirements forbid, and it does not record the agent identity as the actor. Use it when users must sign in separately to a provider.",
+   "Incorrect: the project managed identity is shared by the project and has no user context, so every member would get the same access and logs would not show the agent identity. Use it when all agents share one access level."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "4.1.2-07",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel uses Azure API Management to front a SaaS API that agents call through MCP tools. The SaaS API returns user-specific itineraries and requires an OAuth 2.0 token for each Microsoft Entra user. Each user must sign in and consent only once.\n\nWhat should you configure in API Management?",
+  "choices": [
+   "a credential manager connection that is enabled for user-delegated access and the get-authorization-context policy",
+   "a credential manager connection that uses the access policy of the API Management managed identity",
+   "the authentication-managed-identity policy for the SaaS backend",
+   "a subscription key that is passed in the Ocp-Apim-Subscription-Key header"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The API Management credential manager stores and refreshes OAuth tokens for backend SaaS APIs. With user-delegated access, each Microsoft Entra user signs in and consents once, the connection holds that user's token, and the get-authorization-context policy retrieves it at runtime so the gateway attaches the right token to each call.",
+  "rationale": [
+   "Correct: a connection enabled for user-delegated access stores one token per Microsoft Entra user after a single consent, and get-authorization-context fetches the current user's token in the policy, so the SaaS API returns that user's itineraries.",
+   "Incorrect: an access policy for the API Management managed identity lets the gateway use one shared token for everyone, so the SaaS API cannot return user-specific data. Use it when one service account is enough for all callers.",
+   "Incorrect: authentication-managed-identity gets a token for the API Management managed identity, which only works for backends that accept Microsoft Entra tokens for that identity. Use it for Azure services such as Storage or Key Vault behind the gateway.",
+   "Incorrect: a subscription key identifies the calling app to API Management, not the user to the SaaS backend, so no per-user OAuth token is sent. Use subscription keys to meter and control access to APIs that the gateway exposes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/credentials-overview"
+ },
+ {
+  "id": "4.1.2-08",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Lucerne Publishing connects a Foundry prompt agent to a custom MCP server that is protected by Microsoft Entra ID. Each user must authorize access with the user's own account, and the MCP server uses an audience that Lucerne Publishing controls. You plan to use OAuth identity passthrough with a custom OAuth app registration.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Register an app in Microsoft Entra ID, grant it the delegated permissions of the MCP server, and record the client ID and client secret.",
+   "Create the MCP connection with OAuth identity passthrough and custom OAuth by using the client ID, client secret, auth URL, token URL, refresh URL, and scopes that include offline_access.",
+   "Add the redirect URL that Foundry returns after the connection is configured to the app registration.",
+   "Send a prompt as a user who has not consented, confirm that the response contains an oauth_consent_request item, and confirm that calls succeed after consent.",
+   "Run `azd ai connection create mcp1 --kind remote-tool --target https://mcp.lucernepublishing.com --auth-type agentic-identity --audience \"api://lucerne-mcp\"`.",
+   "Configure managed OAuth for the connection so that Microsoft manages the OAuth app."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Custom OAuth for identity passthrough has a fixed dependency chain: the app registration supplies the client ID and secret, the connection configuration produces the redirect URL, and only a registration that contains that redirect URL can complete the consent flow. Validate with a new user, who must get an oauth_consent_request item, and then confirm calls succeed without another prompt.",
+  "rationale": [
+   "Step 1: the custom OAuth connection needs a client ID and, depending on the app, a client secret, so the app registration with the delegated permissions must exist first.",
+   "Step 2: with the app values in hand, you create the connection with OAuth identity passthrough. Including offline_access in the space-separated scopes lets Agent Service refresh tokens automatically.",
+   "Step 3: Foundry returns a redirect URL only after the custom OAuth configuration is saved. Adding it to the app registration lets Microsoft Entra ID send the user back to Agent Service to finish consent.",
+   "Step 4: a user who has not consented must receive the consent link in an oauth_consent_request item. After consent, tool calls must succeed without a new prompt, which proves the per-user flow.",
+   "Incorrect: agentic-identity authentication calls the MCP server with the agent identity, so every user shares the agent's access and nobody authorizes with their own account. Use it for application-only access by the agent.",
+   "Incorrect: with managed OAuth and Microsoft Entra, Agent Service refuses to send Microsoft-audience tokens to custom MCP servers, and the scenario requires your own app registration. Use managed OAuth for publisher-managed servers."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/mcp-authentication"
+ },
+ {
+  "id": "4.1.2-09",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wingtip Toys configures an MCP project connection for Agent1 that uses agent identity authentication with the audience https://storage.azure.com. The MCP server reads blobs from a storage account. The security team asks you to document how Foundry Agent Service authenticates each tool call at runtime.\n\nWhich sequence should you document?",
+  "choices": [
+   "Agent Service authenticates the agent identity blueprint by using its service-managed federated credential -> Microsoft Entra ID issues a token for the agent identity -> Agent Service exchanges that token for an access token for https://storage.azure.com -> Storage checks the RBAC roles of the agent identity",
+   "Agent Service requests an access token for https://storage.azure.com by using the project managed identity -> The MCP server exchanges the token for an agent identity token -> Microsoft Entra ID authenticates the blueprint -> Storage checks the RBAC roles of the project managed identity",
+   "Microsoft Entra ID issues a token for the agent identity -> Agent Service authenticates the agent identity blueprint by using its service-managed federated credential -> Agent Service passes the agent identity token to the MCP server -> The MCP server requests an access token for https://storage.azure.com",
+   "Agent Service authenticates the agent identity blueprint by using a client secret that is stored in the project connection -> Microsoft Entra ID issues an access token for the MCP server URL -> The MCP server forwards the token to storage -> Storage checks the RBAC roles of the blueprint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent identity authentication uses a four-stage exchange: blueprint authentication, agent identity token issuance, a scoped token request for the downstream audience, and the authenticated tool call. Foundry provisions a federated identity credential on the blueprint, so you never configure a client secret for this flow.",
+  "rationale": [
+   "Correct: this follows the documented exchange. Agent Service presents the blueprint credential (a federated identity credential that Foundry provisions), Microsoft Entra ID issues the agent identity token, that token is exchanged for one scoped to https://storage.azure.com, and storage checks the RBAC roles of the agent identity.",
+   "Incorrect: the project managed identity is not part of agent identity authentication, and the MCP server does not perform the exchange; Agent Service does. This sequence describes project managed identity authentication with an invented exchange step.",
+   "Incorrect: Microsoft Entra ID cannot issue an agent identity token before the blueprint is authenticated, and the MCP server does not request the storage token. Agent Service requests the scoped token and passes it to the server.",
+   "Incorrect: the blueprint uses a service-managed federated credential, not a client secret in the project connection, and the token is scoped to the downstream audience, not the MCP server URL. Secrets in connections belong to key-based authentication."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "4.1.2-10",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "VanArsdel, Ltd. has a calling agent named Agent1 in Project1. Agent1 uses an A2A tool with OAuth identity passthrough to invoke a remote Foundry agent named Agent2 in Project2. User1 completes the consent flow, but every A2A tool call that User1 triggers fails. Other users can use the tool successfully.\n\nYou need to resolve the issue by following the principle of least privilege.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Assign User1 the Foundry Agent Consumer role on Project1 or on Agent1.",
+   "Grant User1 access to the remote target project or agent that hosts Agent2.",
+   "Assign User1 the Foundry Owner role on Project1.",
+   "Set send_credentials_for_agent_card to true in the A2A tool definition.",
+   "Assign the Foundry Agent Consumer role to the project managed identity of Project1."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "With OAuth identity passthrough on an A2A tool, the user's own identity is used end to end. The user needs access to the calling agent (at least Foundry Agent Consumer on the project or agent) and access to the remote target project or agent. If one user fails while others succeed, compare that user's role assignments on both sides.",
+  "rationale": [
+   "Correct: passthrough runs the call as User1, so User1 needs at least Foundry Agent Consumer on Project1 or on Agent1 to use the calling agent. It is the least-privileged role for consumers.",
+   "Correct: Agent2 receives User1's identity, so User1 also needs access to the remote project or agent that hosts Agent2. Other users succeed because they already have that access.",
+   "Incorrect: Foundry Owner grants full management of Project1, which far exceeds what a consumer needs and does nothing for access on Project2. Use it for identities that provision and manage Foundry resources.",
+   "Incorrect: send_credentials_for_agent_card controls whether credentials are sent when the agent card is fetched; it does not grant User1 access to the target. Change it when the remote agent card endpoint requires authentication.",
+   "Incorrect: with passthrough, the call runs as the user, not as the project managed identity, so a role on that identity does not affect User1. Assign it roles when the A2A connection uses project managed identity authentication."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-to-agent-authentication"
+ },
+ {
+  "id": "4.1.2-11",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "City Power & Light hosts an MCP server on Azure Functions that agents in a Microsoft Foundry project call. Agents currently authenticate by using a function key (x-functions-key) that is stored in a key-based project connection. Auditors report that anyone with access to the project can access the key. The requirements are:\n\n- Remove the need to manage and rotate secrets.\n- All users can share a single identity for the tool.\n- The Function App supports Microsoft Entra authentication.\n\nWhat should you do?",
+  "choices": [
+   "Enable Azure Functions authentication with Microsoft Entra ID and change the connection to Microsoft Entra project managed identity authentication.",
+   "Change the connection to OAuth identity passthrough by using a custom app registration.",
+   "Rotate the function key every 30 days by using an Azure Key Vault rotation function.",
+   "Change the connection to Microsoft Entra agent identity authentication."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When the service behind an MCP server supports Microsoft Entra ID, Microsoft Entra authentication removes stored secrets and rotates tokens automatically. Choose project managed identity when all agents and users share one identity for the tool, agent identity when access must be scoped per agent, and OAuth passthrough when each user signs in.",
+  "rationale": [
+   "Correct: Azure Functions authentication with Microsoft Entra ID lets the function app accept Entra tokens, and project managed identity authentication gives every agent and user one shared identity with no secret to store or rotate.",
+   "Incorrect: OAuth identity passthrough makes each user sign in and consent, so users no longer share one identity, and a custom app registration adds a client secret to manage. Use it when each user must authorize access.",
+   "Incorrect: rotating the function key on a schedule still leaves a secret in a key-based connection that anyone with project access can read. Use scheduled rotation only when the service supports keys alone.",
+   "Incorrect: agent identity authentication gives each agent its own identity, which is valid Microsoft Entra authentication but does not provide the single shared identity the stem asks for. Use it when different agents need different access to the server."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/mcp/build-your-own-mcp-server"
+ },
+ {
+  "id": "4.1.3-01",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A. Datum Corporation runs a hosted agent that reads an API key from an Azure Key Vault that uses the Azure RBAC permission model. The managed identity of the agent must read secret values. The identity must not create, update, or delete secrets.\n\nWhich role should you assign to the managed identity?",
+  "choices": [
+   "Key Vault Secrets User",
+   "Key Vault Secrets Officer",
+   "Key Vault Reader",
+   "Key Vault Crypto User"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With the Azure RBAC permission model, Key Vault splits data-plane access by object type and by read versus manage. Secrets User reads secret values, Secrets Officer manages secrets, Reader sees metadata only, and the Crypto roles work with keys. Grant workloads the read-only role for exactly the object type they consume.",
+  "rationale": [
+   "Correct: Key Vault Secrets User can read secret contents and nothing else, so the managed identity can fetch the API key but cannot create, update, or delete secrets. It is the least-privileged role for a workload that consumes secrets.",
+   "Incorrect: Key Vault Secrets Officer can perform any action on secrets except managing permissions, so the identity could change and delete secrets. Use it for operators who rotate or maintain secrets.",
+   "Incorrect: Key Vault Reader reads metadata of secrets, keys, and certificates but cannot read sensitive values, so the agent could not get the API key. Use it for auditors who inventory a vault.",
+   "Incorrect: Key Vault Crypto User performs cryptographic operations with keys, such as encrypt and sign, and grants no access to secrets. Use it when a workload uses a key, for example for customer-managed key encryption."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/general/rbac-guide"
+ },
+ {
+  "id": "4.1.3-02",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. plans to encrypt a Microsoft Foundry resource by using customer-managed keys. The key vault is in the same region as the Foundry resource and has no firewall rules.\n\nWhich key vault setting should you enable before you configure the customer-managed key?",
+  "choices": [
+   "soft delete and purge protection",
+   "a private endpoint",
+   "the trusted Microsoft services firewall exception",
+   "the Premium pricing tier"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Customer-managed keys for Foundry have hard prerequisites on the key store: same region as the Foundry resource, soft delete and purge protection enabled, and an identity with Key Vault Crypto User (RBAC) or wrap and unwrap permissions. Networking settings matter only when the vault restricts access.",
+  "rationale": [
+   "Correct: Azure requires soft delete and purge protection on the key store for customer-managed keys, so a deleted key can be recovered and data does not become permanently inaccessible. The region condition is already met.",
+   "Incorrect: a private endpoint is a supported configuration when you use private networking, together with the trusted services exception, but it is not a prerequisite. Use it when the vault must be reachable only from your network.",
+   "Incorrect: the trusted Microsoft services exception matters when the vault firewall blocks public access. This vault has no firewall rules, so the exception changes nothing. Enable it when you restrict vault networking.",
+   "Incorrect: customer-managed keys for Foundry need an RSA key of at least 2048 bits, which the Standard tier supports. Choose Premium when you need HSM-protected keys for compliance."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/encryption-keys-portal"
+ },
+ {
+  "id": "4.1.3-03",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Bellows College stores a TLS certificate in Azure Key Vault for an MCP endpoint. The certificate is issued by DigiCert through the Key Vault partnership. The certificate must renew without manual action at 80 percent of its lifetime.\n\nWhat should you configure?",
+  "choices": [
+   "a lifetime action that automatically renews the certificate at a percentage of its lifetime",
+   "a lifetime action that sends email notifications to the certificate contacts at a percentage of its lifetime",
+   "a key rotation policy on the certificate key",
+   "an Event Grid subscription for the SecretNearExpiry event that triggers a function"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Key Vault certificates have a lifecycle policy with lifetime actions that trigger at a percentage of lifetime or a number of days before expiry. AutoRenew renews certificates from an integrated partner CA such as DigiCert or GlobalSign; EmailContacts only notifies. Key rotation policies apply to keys, and Event Grid events support custom rotation workflows.",
+  "rationale": [
+   "Correct: a lifetime action of type AutoRenew at 80 percent of the lifetime makes Key Vault request a new certificate version from DigiCert, an integrated CA, with no manual step.",
+   "Incorrect: an EmailContacts lifetime action only notifies the certificate contacts, and someone still has to renew. Use it for certificates from CAs that are not integrated with Key Vault.",
+   "Incorrect: a key rotation policy rotates Key Vault keys, not certificates; a certificate's key is replaced when the certificate renews. Use rotation policies for standalone keys such as customer-managed encryption keys.",
+   "Incorrect: an Event Grid subscription with a function is a custom rotation workflow that you must build and maintain, while the requirement is renewal without manual action through the partnership. Use it for secrets that no built-in mechanism rotates."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/certificates/tutorial-rotate-certificates"
+ },
+ {
+  "id": "4.1.3-04",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute creates a new Microsoft Foundry resource. Security requires that secrets for connections that do not use Microsoft Entra ID are stored in a key vault that Graphic Design Institute manages, instead of in a Microsoft-managed key vault.\n\nWhat should you do before you create any connections?",
+  "choices": [
+   "Create an Azure Key Vault connection on the Foundry resource.",
+   "Configure customer-managed keys on the Foundry resource.",
+   "Assign the Key Vault Secrets User role to each project managed identity.",
+   "Create a private endpoint for the key vault and disable its public network access."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, Foundry stores connection secrets in a Microsoft-managed key vault outside your subscription. To use your own vault, create an Azure Key Vault connection on the Foundry resource before any other connection, grant the Foundry resource identity a role such as Key Vault Secrets Officer on the vault, and make other connections depend on both. Foundry does not migrate secrets, and customer-managed keys are a separate feature for encrypting data at rest.",
+  "rationale": [
+   "Correct: an Azure Key Vault connection on the Foundry resource makes Foundry store the secrets of connections that do not use Microsoft Entra ID in the vault that Graphic Design Institute manages. It must be the first connection, because Foundry does not migrate secrets and the Key Vault connection can be added only when no other connections exist.",
+   "Incorrect: customer-managed keys encrypt Foundry data at rest with your key, but they do not change where connection secrets are stored. Use them when compliance requires control of encryption keys.",
+   "Incorrect: granting Key Vault Secrets User to project identities lets them read secrets from a vault, but it does not tell Foundry to store connection secrets there. Assign roles after the vault connection exists if needed.",
+   "Incorrect: a private endpoint restricts network access to a key vault, but it does not tell Foundry where to store connection secrets, so they would still go to the Microsoft-managed vault. Use it when the vault that holds your secrets must be reachable only from your network."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/set-up-key-vault-connection"
+ },
+ {
+  "id": "4.1.3-05",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Southridge Video uses a customer-managed key in Azure Key Vault to encrypt agent data. Compliance requires a new key version every 90 days. The solution must require no custom code, and the encrypting services must start to use the new version without configuration changes.\n\nWhat should you do?",
+  "choices": [
+   "Configure a key rotation policy on the key, and configure the services to use the versionless key URI.",
+   "Create an Event Grid subscription for the key near expiry event that triggers an Azure Functions app to create a new key version.",
+   "Import a new key every 90 days and update each service to use the versioned key URI.",
+   "Configure a certificate lifetime action that renews the key every 90 days."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Key Vault key autorotation creates new key versions on a schedule defined by a rotation policy. Services that reference the versionless key URI automatically use the newest version, while a versioned URI pins one version and needs a manual update after every rotation.",
+  "rationale": [
+   "Correct: a rotation policy creates a new key version every 90 days with no code, and services that use the versionless key URI pick up the latest version on their own, so no configuration change is needed.",
+   "Incorrect: an Event Grid near-expiry subscription with a function creates new versions through custom code that you must write and maintain, which the requirement rules out. Use it for secrets that have no built-in rotation.",
+   "Incorrect: importing a key and switching each service to a versioned URI is manual work every 90 days and requires configuration changes. Use versioned URIs when you must control exactly which version a service uses.",
+   "Incorrect: certificate lifetime actions renew certificates, not standalone keys. Use them to renew certificates through an integrated CA."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/keys/how-to-configure-key-rotation"
+ },
+ {
+  "id": "4.1.3-06",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Nod Publishers has an agent tool that connects to a SQL Server instance by using a password stored as a secret in Azure Key Vault. SQL Server supports only one set of credentials for the login. The password must be rotated automatically before it expires.\n\nWhat should you implement?",
+  "choices": [
+   "an Event Grid SecretNearExpiry subscription that triggers a function to create a password, store a new secret version, and update SQL Server",
+   "a key rotation policy on the secret that generates a new version of the secret every 60 days",
+   "a certificate lifetime action that automatically renews the secret before it expires",
+   "an alternating primary and secondary credential pattern that stores each credential as a version of the same secret"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Key Vault has no built-in rotation for secrets. Microsoft documents two patterns that both use the SecretNearExpiry Event Grid event and a rotation function: a single-credential pattern for services with one set of credentials, and a two-credential pattern that alternates between two credential sets for services that support it.",
+  "rationale": [
+   "Correct: the single-credential rotation pattern uses the SecretNearExpiry event to trigger a function that generates a password, updates SQL Server, and stores the new value as a secret version, which fits a login with only one set of credentials.",
+   "Incorrect: rotation policies are a Key Vault key feature; secrets have no policy that generates new versions. Use a rotation policy for keys such as customer-managed encryption keys.",
+   "Incorrect: certificate lifetime actions renew certificates through a CA and cannot change a SQL Server password. Use them for TLS certificates stored in Key Vault.",
+   "Incorrect: the two-credential pattern alternates between two credential sets, so it needs a service that accepts two sets at once. SQL Server here supports only one set. Use it for resources with two keys, such as Storage accounts."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/secrets/tutorial-rotation"
+ },
+ {
+  "id": "4.1.3-07",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "First Up Consultants deploys an agent to Azure Container Apps as a new app named agent1. The agent reads an MCP API key from a secret named mcp-api-key in a key vault named kv1 that uses the Azure RBAC permission model. The app must be created with the secret in place. When the key is rotated in kv1, the agent must pick up the new value without a new deployment.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az identity create --name agent1-id --resource-group rg1`.",
+   "Run `az role assignment create --assignee-object-id \"$PRINCIPAL_ID\" --assignee-principal-type ServicePrincipal --role \"Key Vault Secrets User\" --scope \"$KV1_ID\"`.",
+   "Run `az containerapp create --name agent1 --resource-group rg1 --environment env1 --image $IMAGE --user-assigned \"$IDENTITY_ID\" --secrets \"mcp-api-key=keyvaultref:https://kv1.vault.azure.net/secrets/mcp-api-key,identityref:$IDENTITY_ID\" --env-vars \"MCP_API_KEY=secretref:mcp-api-key\"`.",
+   "Run `az role assignment create --assignee-object-id \"$PRINCIPAL_ID\" --assignee-principal-type ServicePrincipal --role \"Key Vault Reader\" --scope \"$KV1_ID\"`.",
+   "Run `az containerapp create` with `--secrets \"mcp-api-key=keyvaultref:https://kv1.vault.azure.net/secrets/mcp-api-key/<version-id>,identityref:$IDENTITY_ID\"`.",
+   "Run `az containerapp create` with `--system-assigned` and a Key Vault reference that uses the system-assigned identity."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A Container Apps Key Vault reference needs an identity that already can read the secret when the app is created. A user-assigned identity can be created and authorized before the app exists; a system-assigned identity cannot be used in the create command because it exists only after creation. A versionless secret URI makes the app fetch the latest version within 30 minutes and restart revisions that use it in environment variables.",
+  "rationale": [
+   "Step 1: the user-assigned identity must exist first, because its principal ID is needed for the role assignment and its resource ID for the identityref in the create command.",
+   "Step 2: Key Vault Secrets User lets the identity read secret values in kv1. The identity must have this access before the app is created, or the Key Vault reference fails.",
+   "Step 3: the create command assigns the identity, defines the secret as a Key Vault reference with a versionless URI, and maps it to an environment variable with secretref, so rotated values arrive without a redeployment.",
+   "Incorrect: Key Vault Reader reads only metadata and cannot read secret values, so the Key Vault reference fails with an authentication error. Use Reader for auditors who list vault contents.",
+   "Incorrect: a versioned secret URI pins one version, so a rotation in kv1 is not picked up until you update the app. Use a versioned URI when you need full control over which version the app uses.",
+   "Incorrect: a system-assigned identity cannot be used with the create command because it does not exist until the app is created, so the secret is not in place at creation. Use it when you add the reference after creation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/container-apps/manage-secrets"
+ },
+ {
+  "id": "4.1.3-08",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Best For You Organics Company runs agents that use a key vault that has the Azure RBAC permission model. Four principals need access, and each must receive the least-privileged built-in role that meets its needs.\n\nWhich role should you assign to each principal? To answer, drag the appropriate roles to the correct principals. Each role may be used once, more than once, or not at all.",
+  "choices": [
+   "Key Vault Secrets Officer",
+   "Key Vault Secrets User",
+   "Key Vault Reader",
+   "Key Vault Crypto Service Encryption User",
+   "Key Vault Administrator",
+   "Key Vault Data Access Administrator"
+  ],
+  "targets": [
+   "Operations team: creates, updates, and deletes connection secrets, and must not manage role assignments or work with keys and certificates",
+   "Agent managed identity: reads the values of API key secrets at runtime",
+   "Compliance auditor: lists secrets and their expiration dates, and must not read secret values",
+   "Storage account: encrypts agent data with a customer-managed key by wrapping and unwrapping the key"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Key Vault RBAC roles are scoped by object type (secrets, keys, certificates) and by depth (metadata, use, manage, administer). Separate the people who manage secrets, the workloads that read them, the auditors who only see metadata, and the services that use keys for encryption, and give each the narrowest role.",
+  "rationale": [
+   "The team manages the full secret lifecycle but must not touch keys, certificates, or permissions. Key Vault Secrets Officer allows any action on secrets except managing permissions.",
+   "A runtime identity only reads values. Key Vault Secrets User reads secret contents and cannot change anything.",
+   "The auditor needs names and attributes such as expiration but no values. Key Vault Reader reads metadata of secrets, keys, and certificates and cannot read sensitive values.",
+   "Customer-managed key encryption by a service needs key metadata plus wrap and unwrap. Key Vault Crypto Service Encryption User grants exactly those operations."
+  ],
+  "notes": [
+   "Performs any action on the secrets of a vault except managing permissions. Use it for operators who create, rotate, and delete secrets.",
+   "Reads secret contents, including the secret portion of a certificate with a private key. Use it for workloads that consume secrets at runtime.",
+   "Reads metadata of vaults, secrets, keys, and certificates but not their values. Use it for auditors and inventory tools.",
+   "Reads key metadata and performs wrap and unwrap operations. Use it for Azure services that encrypt data with a customer-managed key.",
+   "Performs all data-plane operations on secrets, keys, and certificates. Use it for vault administrators; it is too broad for every principal here because it includes keys and certificates.",
+   "Adds or removes assignments of the Key Vault roles. Use it to delegate access management; it grants no access to secret values itself."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/general/rbac-guide"
+ },
+ {
+  "id": "4.1.3-09",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Wingtip Toys must create a Microsoft Foundry resource named foundry1 that encrypts data by using a customer-managed key. A key vault named kv1 already exists in the same region, has soft delete and purge protection enabled, uses the Azure RBAC permission model, and contains an RSA key named cmk1. Foundry1 must use a system-assigned managed identity.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az cognitiveservices account create --name foundry1 --resource-group rg1 --location westeurope --kind AIServices --sku S0 --assign-identity`.",
+   "Run `principalId=$(az cognitiveservices account show --name foundry1 --resource-group rg1 --query identity.principalId -o tsv)`.",
+   "Run `az role assignment create --role \"Key Vault Crypto User\" --assignee-object-id $principalId --assignee-principal-type ServicePrincipal --scope $KV1_ID`.",
+   "Run `az cognitiveservices account update --name foundry1 --resource-group rg1 --encryption` with keySource set to Microsoft.KeyVault and the URI of kv1 and the name cmk1.",
+   "Run `az cognitiveservices account show --name foundry1 --resource-group rg1 --query properties.encryption`.",
+   "Run `az role assignment create --role \"Key Vault Secrets User\" --assignee-object-id $principalId --assignee-principal-type ServicePrincipal --scope $KV1_ID`.",
+   "Run `az keyvault set-policy --name kv1 --object-id $principalId --key-permissions get wrapKey unwrapKey`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "With a system-assigned identity, CMK is a two-phase setup: create the resource without encryption so the identity exists, grant it access to the key, and only then update the resource to use the key. Granting access first is mandatory, because enabling CMK fails if the identity cannot reach the key. A user-assigned identity avoids the two phases because you can authorize it before the resource exists.",
+  "rationale": [
+   "Step 1: --assign-identity creates the system-assigned managed identity together with foundry1, without encryption, because the identity does not exist until the resource is provisioned.",
+   "Step 2: the principal ID of the new identity is needed as the assignee of the role assignment, so you read it from identity.principalId after creation.",
+   "Step 3: Key Vault Crypto User lets the identity use the key for cryptographic operations. Access must exist before you enable CMK, or the update fails with 403.",
+   "Step 4: the second update sets the encryption property to use cmk1 in kv1. Omitting keyVersion lets the resource follow key rotations automatically.",
+   "Step 5: reading properties.encryption confirms that keySource is Microsoft.KeyVault with the vault URI and key name, which is the documented verification.",
+   "Incorrect: Key Vault Secrets User reads secret values and grants no key operations, so enabling CMK fails. Use it for workloads that read secrets such as API keys.",
+   "Incorrect: set-policy creates a vault access policy, which only applies to vaults that use the access policy model. kv1 uses Azure RBAC, so assign Key Vault Crypto User instead."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/encryption-keys-portal"
+ },
+ {
+  "id": "4.1.3-10",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-g",
+  "stem": "You need to change the access of the three tool identities to KV-Tools. The solution must meet the technical requirements.\n\nWhich two solutions should you implement? Each correct answer presents a complete solution.",
+  "choices": [
+   "Move the secrets of each tool to a dedicated key vault, and assign the Key Vault Secrets User role to the tool identity at the scope of that key vault.",
+   "Assign the Key Vault Secrets User role to each tool identity at the scope of the individual secret that the tool uses, and remove the vault-scope assignments.",
+   "Assign the Key Vault Reader role to each tool identity at the scope of KV-Tools, and remove the vault-scope assignments.",
+   "Assign the Key Vault Secrets Officer role to each tool identity at the scope of the individual secret that the tool uses.",
+   "Create a vault access policy with the Get secret permission for each tool identity in KV-Tools."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Key Vault RBAC roles can be assigned at the vault scope or at the scope of an individual secret, key, or certificate. To isolate workloads, either give each workload its own vault or assign read roles per secret; Microsoft recommends a vault per application per environment. Removing the broad vault-scope assignment is part of the fix.",
+  "rationale": [
+   "Correct: a dedicated vault per tool with Key Vault Secrets User at that vault scope means each identity can read only the secrets in its own vault, which is the recommended isolation boundary.",
+   "Correct: role assignments at the scope of an individual secret let each identity read exactly one secret in the shared vault, as long as the vault-scope assignments that currently grant every secret are removed.",
+   "Incorrect: Key Vault Reader exposes only metadata, so the tools could no longer read the values they need at runtime. Use it for auditors who list vault contents.",
+   "Incorrect: Key Vault Secrets Officer at secret scope also lets each identity update and delete its secret, which exceeds read access and breaks least privilege. Use it for identities that rotate secrets.",
+   "Incorrect: access policies are ignored on a vault that uses the Azure RBAC permission model, and the Get permission would apply to every secret in the vault. Use access policies only on vaults with the access policy model."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/general/rbac-guide"
+ },
+ {
+  "id": "4.1.3-11",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Coho Vineyard has an agent tool that calls a partner API. The tool runs the following Python code on every invocation:\n\n```python\ndef call_partner(query: str) -> str:\n    credential = DefaultAzureCredential()\n    client = SecretClient(vault_url=VAULT_URL, credential=credential)\n    api_key = client.get_secret(\"partner-api-key\").value\n    return invoke_partner_api(query, api_key)\n```\n\nDuring load tests with hundreds of concurrent agent runs, Key Vault returns HTTP 429 responses and tool calls fail. The partner key is rotated every 60 days.\n\nWhat should you do?",
+  "choices": [
+   "Retrieve the secret once at startup, cache the value in memory, and refresh the cached value when the secret is rotated.",
+   "Replace DefaultAzureCredential with ManagedIdentityCredential to reduce the authentication overhead of each call.",
+   "Change the code to request the secret by using a versioned secret identifier on every call.",
+   "Catch the 429 responses and retry each get_secret call immediately until it succeeds."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Key Vault enforces transaction limits per vault per region, and it was designed to serve secrets at startup rather than on every request. Microsoft recommends caching retrieved secrets in memory, re-reading them only when the cached copy stops working (for example after rotation), and honoring exponential backoff when Key Vault returns 429.",
+  "rationale": [
+   "Correct: reading the secret once and caching it removes the Key Vault call from every tool invocation, which stops the 429 throttling, and refreshing the cache on rotation keeps the 60-day rotation working.",
+   "Incorrect: ManagedIdentityCredential can skip the credential chain, but each call still reads the secret from Key Vault, so the secret transaction rate and the 429 responses remain. Use it to make the credential choice explicit in production.",
+   "Incorrect: a versioned identifier still calls Key Vault on every invocation, and it pins one version so rotation breaks the tool. Use versioned identifiers when you must read one specific version.",
+   "Incorrect: immediate retries ignore the documented exponential backoff guidance and still read the secret from Key Vault on every invocation, so hundreds of concurrent runs keep hitting the per-vault limit. Use retries with exponential backoff as a safety net in addition to caching."
+  ],
+  "ref": "https://learn.microsoft.com/azure/key-vault/general/overview-throttling"
+ },
+ {
+  "id": "4.1.4-01",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs an automated scan by using the AI Red Teaming Agent in Microsoft Foundry against a support agent. Management asks for one key metric that shows the percentage of attacks that elicited undesirable responses.\n\nWhich metric should you report?",
+  "choices": [
+   "attack success rate",
+   "groundedness score",
+   "relevance score",
+   "coherence score"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI Red Teaming Agent sends adversarial prompts to a target and scores each response with Risk and Safety Evaluators. Attack success rate (ASR) is the percentage of attacks that produced an undesirable response, reported per risk category and per attack complexity. Quality metrics such as groundedness come from evaluations, not red teaming.",
+  "rationale": [
+   "Correct: attack success rate is the key red teaming metric and is defined as the percentage of successful attacks over all attacks, which is exactly what management asked for.",
+   "Incorrect: groundedness measures whether a response is supported by the provided context. It is a RAG quality evaluator, not a measure of adversarial success. Use it to evaluate retrieval-based answers.",
+   "Incorrect: relevance measures how well a response addresses the query. It does not count attacks that elicited harmful content. Use it in quality evaluations of normal traffic.",
+   "Incorrect: coherence measures how logical and readable a response is. It ignores safety outcomes. Use it to compare model or prompt versions for answer quality."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-02",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank wants to shift left by automating adversarial probing of its generative AI agents before deployment. The security team wants to reuse the open-source framework that the AI Red Teaming Agent in Microsoft Foundry builds on.\n\nWhich framework should the team use?",
+  "choices": [
+   "PyRIT",
+   "Prompt flow",
+   "Semantic Kernel",
+   "AutoGen"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI Red Teaming Agent integrates the red teaming capabilities of PyRIT, Microsoft's open-source Python Risk Identification Tool. PyRIT supplies the attack strategies (converters such as Base64 or Tense) and prompt targets, while Foundry adds curated attack objectives, safety evaluators, and reporting.",
+  "rationale": [
+   "Correct: PyRIT is the open-source framework whose red teaming capabilities are built into the AI Red Teaming Agent, so the team can reuse its attack strategies and targets directly.",
+   "Incorrect: prompt flow is a tool for building, testing, and evaluating LLM workflows. It does not provide adversarial attack strategies. Use it to orchestrate and evaluate prompt-based flows.",
+   "Incorrect: Semantic Kernel is an SDK for building AI apps and agents with plugins and planners. It is not a red teaming framework. Use it to build the agents that you later red team.",
+   "Incorrect: AutoGen is a framework for multi-agent conversations, now evolving into Microsoft Agent Framework. It has no attack library. Use it to build multi-agent systems."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-03",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud is in the design stage of a new agent solution and has not written any application code yet. The team wants to scan three candidate base model deployments for safety risks to pick the safest model.\n\nWhich target should you pass to the scan method of the AI Red Teaming Agent?",
+  "choices": [
+   "a model configuration for each Azure OpenAI deployment",
+   "a simple callback that calls the application",
+   "a Foundry hosted agent",
+   "a complex callback that follows the OpenAI Chat Protocol"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI Red Teaming Agent supports several target types: a model configuration for scanning a base model during model selection, a simple or complex callback that wraps your application, a PyRIT prompt target, and, in the cloud, Foundry agents. Choose the target by what exists at that stage of the lifecycle.",
+  "rationale": [
+   "Correct: a model configuration with the endpoint and deployment name lets you scan a base model directly, which is the documented design-stage use case for picking the safest model when no application code exists.",
+   "Incorrect: a simple callback takes a prompt string and returns your application's response, so it needs application code that Relecloud has not written. Use it once an app exists to wrap.",
+   "Incorrect: a Foundry hosted agent is a deployed agent, which does not exist yet at the design stage. Target agents in cloud runs when you test agent behavior and agentic risks.",
+   "Incorrect: a complex callback that follows the OpenAI Chat Protocol also wraps an application and handles message history. Use it when your app needs conversation state or context in the callback."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-04",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys red teams a Foundry prompt agent that calls Azure tools. The team must test the prohibited actions and sensitive data leakage risk categories.\n\nWhich execution option should you use for the AI Red Teaming Agent?",
+  "choices": [
+   "as a cloud red teaming run by using the Foundry project client",
+   "as a local scan by using the azure-ai-evaluation[redteam] package",
+   "as a local scan that uses a callback target that wraps the agent",
+   "as a continuous evaluation rule on the agent in the Foundry project"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agentic risk categories such as prohibited actions, sensitive data leakage, and task adherence check tool behavior, not only generated text. They run only in cloud red teaming, which provides a minimally sandboxed environment and supports Foundry prompt and hosted agents with Azure tool calls.",
+  "rationale": [
+   "Correct: prohibited actions and sensitive data leakage are agents-only, cloud-only categories, and cloud red teaming supports Foundry prompt agents with Azure tool calls, so a cloud run with the Foundry project client is required.",
+   "Incorrect: a local scan with azure-ai-evaluation[redteam] supports the content risk categories but not the agentic ones. Use local scans during development for violence, sexual, hate, and self-harm risks.",
+   "Incorrect: a callback wraps the agent as a text target, so the local scan sees only text responses and still cannot run the cloud-only agentic categories. Use callbacks to scan application endpoints locally.",
+   "Incorrect: continuous evaluation scores sampled production responses for quality and safety but does not generate adversarial attacks. Use it to monitor a deployed agent alongside scheduled red teaming."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-05",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. runs local scans by using the AI Red Teaming Agent. Baseline direct adversarial queries produce an ASR of 0 percent. The next scan must use five Microsoft curated attack objectives for each of the violence and self-harm risk categories only, and must add the Base64, Flip, and Morse encoding attacks by using a single grouped setting.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nred_team = RedTeam(\n    azure_ai_project=azure_ai_project,\n    credential=DefaultAzureCredential(),\n    [[1]],\n)\nresult = await red_team.scan(\n    target=support_callback,\n    attack_strategies=[ [[2]] ],\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=5",
+     "custom_attack_seed_prompts=\"violence_selfharm.json\"",
+     "language=SupportedLanguages.Spanish, num_objectives=5"
+    ],
+    "why": [
+     "Correct: risk_categories limits the curated objectives to violence and self-harm, and num_objectives=5 sets five attack objectives per category, which matches both requirements.",
+     "Incorrect: custom_attack_seed_prompts replaces the Microsoft curated objectives with your own JSON prompts, and the file length sets the objective count. Use it when your own policy defines the attacks.",
+     "Incorrect: language translates the simulated attacks into a supported language and keeps the default four risk categories, so hate and sexual content would still be scanned. Use it for agents that serve non-English users."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "AttackStrategy.EASY",
+     "AttackStrategy.MODERATE",
+     "AttackStrategy.DIFFICULT",
+     "AttackStrategy.Jailbreak"
+    ],
+    "why": [
+     "Correct: the EASY group expands to Base64, Flip, and Morse, so one grouped value adds all three encoding attacks on top of the baseline queries.",
+     "Incorrect: the MODERATE group contains Tense, which rephrases prompts into the past tense with a generative model. Use it after easy encodings to test rephrasing attacks.",
+     "Incorrect: the DIFFICULT group is a composition of Tense and Base64, not the three separate encodings. Use it to test chained attacks once easy and moderate attacks are covered.",
+     "Incorrect: Jailbreak is a single strategy that injects user prompt attacks (UPIA). It is not a group and does not include the encodings. Add it when you test jailbreak resistance specifically."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "RedTeam constructor parameters decide what to attack (risk_categories and num_objectives for curated objectives, or custom_attack_seed_prompts, plus language). The scan's attack_strategies decide how to transform the baseline prompts. The groups EASY, MODERATE, and DIFFICULT bundle Base64, Flip, and Morse; Tense; and Tense composed with Base64.",
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-06",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House has deployed a booking agent to production. The safety team wants ongoing adversarial testing that uses synthetic adversarial data at set intervals after deployment, without a developer starting each run.\n\nWhat should you implement?",
+  "choices": [
+   "scheduled continuous red teaming runs in the cloud",
+   "local scans that developers run before each pull request",
+   "Azure AI Content Safety filters on the model deployment",
+   "a one-time pre-deployment red teaming run with the full set of attack strategies"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Use the AI Red Teaming Agent across the lifecycle: model configurations at design time, local scans during development, broader cloud runs before deployment, and scheduled continuous cloud runs on synthetic adversarial data after deployment. In production, combine scheduled runs with guardrails such as Content Safety filters.",
+  "rationale": [
+   "Correct: cloud red teaming supports post-deployment continuous runs that are scheduled at set intervals on synthetic adversarial data, so testing continues after release without a developer starting each run.",
+   "Incorrect: local scans before each pull request shift testing left during development, but they depend on a developer and stop at deployment. Use them in the inner loop and CI.",
+   "Incorrect: Content Safety filters block harmful inputs and outputs at runtime, which is a mitigation, not adversarial testing. Use them as production guardrails in addition to red teaming.",
+   "Incorrect: a one-time pre-deployment run gives a full analysis before release but does not continue after deployment. Use it as a release gate, then schedule continuous runs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-ai-red-teaming-cloud"
+ },
+ {
+  "id": "4.1.4-07",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel is developing a booking agent that serves only Spanish-speaking customers. Before the first release, the security team wants to run local scans by using the AI Red Teaming Agent. The adversarial prompts must be in Spanish, and the team wants to use the Microsoft curated attack objectives instead of maintaining its own prompt set.\n\nWhat should you do?",
+  "choices": [
+   "Set language to SupportedLanguages.Spanish when you create the RedTeam object.",
+   "Pass a JSON file of Spanish prompts to custom_attack_seed_prompts.",
+   "Add AttackStrategy.UnicodeSubstitution to the attack_strategies of the scan.",
+   "Add AttackStrategy.Diacritic to the attack_strategies of the scan."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI Red Teaming Agent can simulate attacks in Spanish, Italian, French, Japanese, Portuguese, and Simplified Chinese. Set the language parameter with the SupportedLanguages class when you create the RedTeam object, and the curated attack objectives are used in that language.",
+  "rationale": [
+   "Correct: language=SupportedLanguages.Spanish makes the RedTeam generate the Microsoft curated attack objectives in Spanish, so the team gets Spanish prompts without maintaining its own set.",
+   "Incorrect: custom_attack_seed_prompts replaces the curated objectives with your own JSON prompts, which is the prompt maintenance the team wants to avoid. Use it when organizational policy defines the attacks.",
+   "Incorrect: UnicodeSubstitution is an easy attack strategy that swaps characters to evade filters; it does not translate prompts. Use it to test obfuscation resistance.",
+   "Incorrect: Diacritic is an easy attack strategy that adds diacritics to characters; it does not produce Spanish prompts. Use it to test whether accent marks bypass safeguards."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-08",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Lamna Healthcare Company wants to red team its patient-intake agent locally by using adversarial prompts that reflect the internal violence and self-harm policy of the organization instead of the Microsoft curated attack objectives. The policy team has exported the prompts to intake_prompts.json in the required format. The scorecard must be saved as a JSON file.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `uv pip install \"azure-ai-evaluation[redteam]\"`.",
+   "Add `from azure.ai.evaluation.red_team import RedTeam` to the script.",
+   "Create the agent with `RedTeam(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential(), custom_attack_seed_prompts=\"intake_prompts.json\")`.",
+   "Run `result = await red_team.scan(target=intake_callback, output_path=\"intake-scan.json\")`.",
+   "Create the agent with `RedTeam(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential(), risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm], num_objectives=20)`.",
+   "Run `uv pip install azure-ai-evaluation` without extras."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A local red teaming scan needs the redteam extra of the Azure AI Evaluation SDK, which brings PyRIT. You then import and construct RedTeam, choosing either curated objectives (risk_categories, num_objectives) or your own prompts (custom_attack_seed_prompts), and finally call scan with a target and an optional output_path for the scorecard.",
+  "rationale": [
+   "Step 1: the redteam extra installs the PyRIT functionality that RedTeam depends on, so it must be installed before any import can succeed.",
+   "Step 2: importing RedTeam from azure.ai.evaluation.red_team requires the installed package and must happen before the class is used.",
+   "Step 3: custom_attack_seed_prompts points the agent at the policy team's JSON file, so the scan uses Lamna Healthcare Company prompts instead of the curated objectives. Violence and self-harm are supported risk types for custom prompts.",
+   "Step 4: scan sends the prompts to the target, and output_path writes the scorecard JSON with ASR per risk category and row-level attack-response pairs. It needs the configured RedTeam object.",
+   "Incorrect: risk_categories with num_objectives selects Microsoft curated attack objectives, which the requirement rules out. Use it when the curated objectives fit your policy.",
+   "Incorrect: the base package does not include PyRIT, so the RedTeam scan cannot run. Install the base package when you only need quality and safety evaluators."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-09",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders adds an AI Red Teaming Agent scan to the development process of an agent. The team must estimate the size of each scan to plan the evaluation workload. The following code is used.\n\n```python\nred_team_agent = RedTeam(\n    azure_ai_project=azure_ai_project,\n    credential=DefaultAzureCredential(),\n    risk_categories=[\n        RiskCategory.Violence,\n        RiskCategory.Sexual,\n        RiskCategory.SelfHarm\n    ],\n    num_objectives=2,\n)\n\nresult = await red_team_agent.scan(\n    target=agent_callback,\n    attack_strategies=[\n        AttackStrategy.CharacterSpace,\n        AttackStrategy.ROT13,\n        AttackStrategy.UnicodeConfusable,\n    ],\n)\n```\n\nWhat total number of attack-response pairs should you expect the scan to produce?",
+  "choices": [
+   "6",
+   "18",
+   "24",
+   "30"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Scan size equals baseline prompts plus one converted copy per attack strategy. The baseline is risk categories times num_objectives, and each strategy is applied to every baseline prompt in addition to the baseline queries. A Compose strategy counts as one strategy.",
+  "rationale": [
+   "Incorrect: 6 is only the baseline, three risk categories times two objectives. It ignores that each of the three attack strategies creates another six attack-response pairs.",
+   "Incorrect: 18 counts the converted prompts (6 baseline prompts times three strategies) but leaves out the six baseline direct queries, which always run in addition to the strategies.",
+   "Correct: 3 categories times 2 objectives gives 6 baseline prompts, and the three strategies each add 6 converted prompts (18), so the scan produces 6 + 18 = 24 attack-response pairs.",
+   "Incorrect: 30 would require a fourth strategy, as in the documentation example that adds a Compose strategy. This code has only three strategies."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/run-scans-ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-10",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Contoso Pharmaceuticals uses local scans of the AI Red Teaming Agent during development of a Foundry hosted agent that calls Azure tools. Before release, the team plans a cloud red teaming run to cover the remaining risks.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Prohibited actions, sensitive data leakage, and task adherence can be tested only in a cloud red teaming run.",
+   "Code vulnerability and ungrounded attributes require a cloud red teaming run because they apply to agents.",
+   "When a cloud red teaming run for the agentic risk categories targets a Foundry hosted agent, the run is transient, so Agent Service does not log the harmful data or store the chat completions."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Content risks (hate, sexual, violence, self-harm), protected material, code vulnerability, and ungrounded attributes run locally and in the cloud for models and agents. The agentic categories prohibited actions, sensitive data leakage, and task adherence check tool behavior and are agents-only and cloud-only, because the cloud run provides a minimally sandboxed, transient environment.",
+  "rationale": [
+   "Yes: these three categories are agents-only and cloud-only. The red teaming checks tool outputs as well as generated text, which requires the minimally sandboxed environment of a cloud run.",
+   "No: code vulnerability and ungrounded attributes support models and agents in both local and cloud red teaming, so the existing local scans can already cover them. Only the agentic categories need the cloud.",
+   "Yes: when a red teaming run targets a Foundry hosted agent, it runs as a transient run so harmful data is not logged by Agent Service and chat completions are not stored, which is why it fits pre-release testing in a purple environment."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "4.1.4-11",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research reviews the scorecard of a red teaming scan for a research assistant agent. For the violence risk category, baseline_asr and easy_complexity_asr are 0.00, but moderate_complexity_asr is 0.40 for the Tense attack strategy. The release is planned for next week, and the team wants to avoid unnecessary rework.\n\nWhat should you do first?",
+  "choices": [
+   "Review the row-level attack-response pairs for the Tense attacks to confirm the findings before you choose mitigations.",
+   "Add a system message mitigation for tense-based rephrasing, and then rerun the full scan.",
+   "Apply a stricter violence content filter to the model deployment, and then rerun the scan.",
+   "Increase num_objectives to the maximum for violence and accept the release if the ASR decreases."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A red teaming scorecard summarizes ASR, but each successful attack is listed in the row-level data with its technique, complexity, risk category, conversation, and risk assessment. Review those rows to confirm real failures and understand the pattern before you choose a mitigation, and rerun the scan afterward to measure the effect.",
+  "rationale": [
+   "Correct: the row-level attack-response pairs show what the Tense attacks asked and how the agent answered, so the team confirms the findings and targets the right mitigation first, which avoids unnecessary rework before next week's release.",
+   "Incorrect: a system message mitigation might be right, but choosing it before reading the failing conversations risks fixing the wrong behavior and repeating the full scan. Apply it after the findings are confirmed.",
+   "Incorrect: a stricter content filter changes runtime blocking for every user and might add false positives, without first confirming what failed. Use filters as production guardrails once you know the risk.",
+   "Incorrect: more objectives change the sample, not the agent's behavior, and accepting the release because ASR moves would hide a confirmed weakness. Raise num_objectives when you need more statistical coverage."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ }
+]

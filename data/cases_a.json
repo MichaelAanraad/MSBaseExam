@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-a",
+  "title": "Proseware, Inc.",
+  "sections": [
+   [
+    "Overview",
+    "Proseware, Inc. is a property and casualty insurer with headquarters in Chicago and regional offices in Denver and Atlanta. The company has 2,400 employees and about 900,000 policyholders. Proseware, Inc. is building ClaimsAssist, a multi-agent solution in Microsoft Foundry that helps policyholders file and track home and auto claims and helps claims adjusters settle claims faster. The company plans to add Spanish-language support next year."
+   ],
+   [
+    "Existing environment",
+    "**Foundry and monitoring**\n\nA Microsoft Foundry project named Project1 is deployed in East US 2. An Application Insights resource named AppInsights1 is connected to Project1, and all ClaimsAssist agents send their traces to AppInsights1.\n\n**Claims system**\n\nThe claims database is exposed through a remote MCP server named ClaimsMCP. ClaimsMCP exposes five tools: get_claim, list_claims, update_claim_status, issue_payment, and purge_claim. A project connection named claims-conn stores the authentication details for ClaimsMCP.\n\n**Agents**\n\n- IntakeAgent is a prompt agent in Foundry Agent Service. It talks with policyholders through the customer web portal, reads claim details, and updates the status of claims.\n- SettlementAgent proposes settlement amounts and issues payments by calling issue_payment.\n- PolicyQA answers coverage questions for adjusters. It is grounded on 1,200 policy wording documents that are indexed in Azure AI Search.\n\n**Memory**\n\nThe customer web portal calls IntakeAgent by using one service identity and sends the ID of the signed-in policyholder in the x-memory-user-id header of each request. IntakeAgent uses a memory store named MemStore1 in Foundry Agent Service to remember the preferred contact channel and the open claim numbers of each policyholder. MemStore1 was created without a default time-to-live (TTL).\n\n**Other systems**\n\nAdjusters work in Microsoft Teams and Dynamics 365 Customer Service. Power BI reports show the monthly claim volume, which is about 18,000 claims."
+   ],
+   [
+    "Pilot results",
+    "**SettlementAgent pilot**\n\nDuring a two-week pilot, every response from SettlementAgent required approval by an adjuster. Adjusters became a bottleneck, and the median settlement time increased from two days to five days. About 15 percent of the claims were ambiguous, for example claims with conflicting damage reports from the policyholder and the inspector.\n\n**PolicyQA evaluation**\n\nAn automated evaluation of PolicyQA shows an average Groundedness score of 4.6 out of 5. However, adjusters report that answers often omit deductibles and exclusions that apply to the policy. The claims team has written an expected answer for each of 300 test questions.\n\n**Human evaluation pilot**\n\nThe quality team started a human evaluation pilot for IntakeAgent. A human evaluation template named Template1 was created yesterday and appears in the template table. Nobody has changed Template1 since it was created. Two reviewers report issues:\n\n- User1 has the Reader role on the Foundry resource but no role assignment on Project1. User1 cannot open the agent preview web app.\n- User2 has the Foundry User role on Project1. User2 opens the preview web app and receives agent responses, but no Feedback button appears after the responses."
+   ],
+   [
+    "Business requirements",
+    "- Payments cannot be recalled after they are sent.\n- Ambiguous claims must be decided by an adjuster who can see the full claim history.\n- Human oversight must focus on decisions where mistakes are costly or the facts are unclear, and adjusters must not become a bottleneck. Routine, low-risk agent actions must not wait for human review.\n- IntakeAgent must never issue payments or purge claims.\n- An adjuster must approve every claim status update that IntakeAgent makes.\n- Policyholders must be able to view and remove individual items that IntakeAgent remembers about them."
+   ],
+   [
+    "Technical requirements",
+    "- Memories of one policyholder must never be visible to another policyholder.\n- Personal data in agent memory must be deleted automatically after 90 days.\n- Reading claim data must not trigger approval prompts, and approval prompts must be minimized.\n- Role assignments must follow the principle of least privilege.\n- Agent instructions must be stored in source control."
+   ]
+  ]
+ }
+]

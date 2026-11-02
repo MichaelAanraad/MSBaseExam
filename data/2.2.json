@@ -1,0 +1,946 @@
+[
+ {
+  "id": "2.2.1-01",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. builds a research agent named Agent1 in Python by using Microsoft Agent Framework. Agent1 keeps its conversation history in memory. Agent1 calls functions that return large JSON payloads, and these function outputs consume most of the context window. You need to reclaim context space while preserving as much of the user and assistant conversation as possible.\n\nWhich compaction strategy should you use?",
+  "choices": [
+   "ToolResultCompactionStrategy",
+   "SummarizationStrategy",
+   "SlidingWindowStrategy",
+   "TruncationStrategy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework compaction strategies differ in what they remove: tool-result compaction targets only tool output, summarization condenses history with an extra model call, and sliding window and truncation drop whole old groups. Choose the least aggressive strategy that targets what actually fills the context.",
+  "rationale": [
+   "Correct: ToolResultCompactionStrategy collapses older tool-call groups into short summary messages and leaves user messages and plain assistant replies untouched, so it reclaims the space of the large JSON payloads while the conversation itself survives.",
+   "Incorrect: SummarizationStrategy uses an extra model call to replace older history, including user and assistant turns, with a summary, so conversation detail is lost. Use it when long chat history itself fills the context and early facts must survive in condensed form.",
+   "Incorrect: SlidingWindowStrategy keeps only the most recent groups and drops every older turn, so early conversation disappears together with the tool output. Use it when only recent turns matter and you want a predictable limit without model calls.",
+   "Incorrect: TruncationStrategy drops the oldest groups once a message or token budget is exceeded, so it removes conversation along with tool output. Use it as a hard backstop against context overflow, not to preserve meaning."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-02",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys builds a customer service agent by using Microsoft Agent Framework in Python. Before each agent run, the agent must receive the current order status of the customer from an internal API. The order status must be added to the prompt for that run, and the agent must be able to process data after the run completes.\n\nWhich component should you implement?",
+  "choices": [
+   "a custom context provider",
+   "a history provider with load_messages set to True",
+   "a compaction strategy",
+   "a function middleware that wraps each tool call"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Context providers are the Agent Framework extension point around every invocation: before the run they can add instructions, messages or tools, and after the run they can inspect the result. Use them for dynamic per-run context such as live account data; use history providers for stored conversation and middleware to intercept tool calls or runs.",
+  "rationale": [
+   "Correct: a custom context provider runs before each invocation, where it can call the order API and add the status to the prompt, and after the run, where it can process the response. That meets both requirements without changing the agent itself.",
+   "Incorrect: a history provider loads and stores conversation messages; load_messages=True replays stored chat history and does not fetch live data from an internal API. Use it when the agent must persist and reload its conversation history.",
+   "Incorrect: a compaction strategy only shrinks history that already exists, for example by summarizing or dropping old turns, and never adds new data to the prompt. Use it when the conversation outgrows the context window.",
+   "Incorrect: function middleware wraps individual tool calls, so it runs only when the model calls a tool, not before every agent run, and it cannot reliably add the status to each prompt. Use it to validate or override tool arguments and results."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/context-providers"
+ },
+ {
+  "id": "2.2.1-03",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud builds a Microsoft Agent Framework workflow in Python. An extraction executor reads a document, and a later summarization executor needs the extracted text. The data is large, and the team prefers that the executors share it without sending it as a message between them.\n\nWhich mechanism should you use?",
+  "choices": [
+   "workflow state by using set_state and get_state on the workflow context",
+   "a single AgentSession instance shared by both executors",
+   "a checkpoint that is restored before the summarization executor runs",
+   "a memory store in Foundry Agent Service with a static scope"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Executors in an Agent Framework workflow exchange data either as messages along edges or through shared workflow state. Use state when data is large or needed by a later, non-adjacent executor; use checkpoints to pause and resume, and memory stores for recall across sessions.",
+  "rationale": [
+   "Correct: workflow state lets one executor write a value with set_state and a later executor read it with get_state on the workflow context, so the large extracted text is shared without sending it as a message between the executors.",
+   "Incorrect: an AgentSession holds the conversation of an agent; executors do not exchange data through a shared session, and sharing one mixes conversation context. Use a session when one agent needs multi-turn continuity.",
+   "Incorrect: a checkpoint captures workflow state so that a run can pause and resume, for example after a failure; it is not a channel to pass data between steps of a running workflow. Use checkpoints for durability of long-running workflows.",
+   "Incorrect: a memory store in Foundry Agent Service keeps long-term memories across sessions, partitioned by scope, and is not designed for temporary data inside one workflow run. Use it when an agent must recall user context in later conversations."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/state"
+ },
+ {
+  "id": "2.2.1-04",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank builds Agent1 in Python by using Microsoft Agent Framework. Agent1 is backed by a Foundry agent, and the service manages the conversation state. To lower token cost, a developer passes compaction_strategy=SlidingWindowStrategy(keep_last_groups=20) to the Agent constructor. After 50 turns, the input token count per request is unchanged.\n\nWhat should you identify as the cause?",
+  "choices": [
+   "The service manages the context of Agent1, so client-side compaction does not apply.",
+   "The keep_last_groups value of 20 exceeds the context window of the model.",
+   "No tokenizer was passed, so the strategy counts characters instead of groups.",
+   "SlidingWindowStrategy requires a separate chat client to produce the window."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Client-side compaction in Agent Framework operates on the message list that the agent manages in memory. With service-managed conversation state, such as a Foundry agent, the service assembles the context, so a client-side strategy has nothing to compact and context size is managed on the service side.",
+  "rationale": [
+   "Correct: when a Foundry agent backs Agent1, the service stores and assembles the conversation server-side, so the client-side compaction strategy has no local message list to compact and the input token count stays the same.",
+   "Incorrect: keep_last_groups counts message groups and is independent of the model context window; with local in-memory history, keeping 20 groups after 50 turns would shrink the input. The value would matter only if it exceeded the number of turns.",
+   "Incorrect: SlidingWindowStrategy counts groups, not tokens, so it works without a tokenizer. A tokenizer matters for token-based limits, such as a TruncationStrategy that enforces a token budget.",
+   "Incorrect: only SummarizationStrategy needs a chat client, because it calls a model to write the summary; a sliding window just drops older groups. Supply a separate, cheaper client when you use summarization."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-05",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing builds an editorial assistant in Python by using Microsoft Agent Framework with in-memory history. Editing sessions last for hours. Decisions made early in a session must still influence later answers, and the token count must stay within the context window. Dropping complete early turns is unacceptable.\n\nWhich compaction strategy should you use?",
+  "choices": [
+   "SummarizationStrategy",
+   "ToolResultCompactionStrategy",
+   "SlidingWindowStrategy",
+   "TruncationStrategy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Summarization trades an extra model call for preserved meaning, so it fits long sessions in which early facts matter. Window and truncation strategies are cheaper but forget whole turns, and tool-result compaction targets only tool output. A smaller, cheaper model is a good choice for the summarizing client.",
+  "rationale": [
+   "Correct: SummarizationStrategy replaces older history with a model-written summary, so early decisions keep influencing later answers while the token count stays inside the context window, and no complete early turn is simply dropped.",
+   "Incorrect: ToolResultCompactionStrategy collapses only old tool-call results, and the problem here is long chat history, which it leaves untouched. Use it when large tool outputs, not conversation, fill the context.",
+   "Incorrect: SlidingWindowStrategy keeps only the most recent groups and drops complete early turns, which the stem rules out. Use it when only recent turns matter and no extra model calls are allowed.",
+   "Incorrect: TruncationStrategy removes the oldest groups once a budget is exceeded, so early decisions disappear from the context. Use it as a hard safety limit behind a gentler strategy."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-06",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wide World Importers builds a Python support agent by using Microsoft Agent Framework. An AzureAISearchContextProvider in semantic mode is attached through context_providers. Telemetry shows that a search runs on every agent invocation, including greetings and small talk, which adds tokens and latency.\n\nThe agent must retrieve content only when the model decides that it needs more information, and the model must be able to choose its own search string.\n\nWhat should you do?",
+  "choices": [
+   "Replace the context provider with a tool from create_vector_search_tool().",
+   "Keep the context provider and change its mode from semantic to agentic.",
+   "Keep the context provider and lower top_k to 1.",
+   "Keep the context provider and add an embedding_function for hybrid search."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework supports two RAG patterns: a context provider that retrieves automatically before each run, and a search tool that the model calls on demand. Automatic retrieval guarantees grounding on every turn; tool-based retrieval saves tokens and lets the model write the query.",
+  "rationale": [
+   "Correct: create_vector_search_tool() exposes the vector store collection as a function tool, so the model calls it only when it needs grounding data and supplies its own query string, which removes the search from greetings and small talk.",
+   "Incorrect: agentic mode adds query planning and multi-hop retrieval inside the provider, but a context provider still retrieves before every invocation, so greetings still trigger a search. Use agentic mode when complex questions need decomposition.",
+   "Incorrect: a lower top_k returns fewer chunks per search and saves some tokens, but a search still runs on every invocation, so the latency remains. Tune top_k when retrieved content is too long or too noisy.",
+   "Incorrect: an embedding_function enables hybrid ranking, which changes how results are scored, not when retrieval runs. Use it when keyword-only or vector-only results miss relevant content."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/rag?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-07",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. builds a Python agent by using Microsoft Agent Framework with in-memory history. The agent is created as follows:\n\n```python\nagent = Agent(\n    client=client,\n    compaction_strategy=ToolResultCompactionStrategy(keep_last_tool_call_groups=1),\n    tokenizer=CharacterEstimatorTokenizer(),\n)\n```\n\nOne bulk-export request regularly exceeds the context window. For that request only, you need oldest-first truncation to 8,000 tokens. All other requests must keep the current compaction behavior, and you must not change the defaults of the chat client that other agents share.\n\nWhat should you do?",
+  "choices": [
+   "Pass compaction_strategy=TruncationStrategy(max_n=8_000, compact_to=4_000) and the tokenizer to agent.run() for that request.",
+   "Replace the strategy in the Agent constructor with TruncationStrategy(max_n=8_000, compact_to=4_000).",
+   "Configure TruncationStrategy(max_n=8_000, compact_to=4_000) as the default compaction strategy on the chat client.",
+   "Call apply_compaction() with a TruncationStrategy on the session messages after the bulk-export run completes."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework resolves compaction settings in layers: chat client defaults, then agent-level values, then per-run values passed to agent.run(). Put a setting at the narrowest layer that covers the requirement so that other agents and other requests are not affected.",
+  "rationale": [
+   "Correct: compaction settings passed to agent.run() override the agent and client defaults for that call only, so the bulk-export request gets oldest-first truncation to 8,000 tokens while all other runs keep ToolResultCompactionStrategy and the shared client stays unchanged.",
+   "Incorrect: a strategy in the Agent constructor applies to every run of this agent, so all requests would lose the current tool-result compaction. Use agent-level settings when one agent needs a different default for all its runs.",
+   "Incorrect: a chat client default affects every agent that shares the client, which the stem forbids, and the agent-level strategy overrides client defaults anyway. Use client defaults when all agents on that client need the same policy.",
+   "Incorrect: apply_compaction() after the run compacts messages that were already sent, so the oversized request still fails. Use ad-hoc compaction to shrink stored history before a later call."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/compaction?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-08",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Northwind Traders builds a Python agent by using Microsoft Agent Framework. The agent is shared by premium and standard customers. A custom context provider derived from ContextProvider performs the following actions in its before_run method for each invocation:\n\n- Calls context.extend_instructions(self.source_id, summary) with a short summary of the stored preferences of the customer.\n- Calls context.extend_tools(self.source_id, [refund_lookup]) only when the customer is a premium customer.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "When a standard customer sends a request after a premium customer, the model cannot call refund_lookup for the standard customer.",
+   "The preference summary is part of the instructions of the model call that follows before_run in the same invocation.",
+   "Moving the extend_instructions call from before_run to after_run adds the summary to the model call of the current invocation."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "A context provider shapes one invocation at a time: before_run adds instructions, messages or tools that apply to that invocation only, and after_run runs once the model has responded. This lets one shared agent expose different context and tools per user without changing its constructor.",
+  "rationale": [
+   "Yes: extend_tools adds refund_lookup for the current invocation only, so the next invocation starts without it unless the provider adds it again for another premium customer. A tool in the Agent constructor would instead be available on every run.",
+   "Yes: before_run executes before the model is called, and extend_instructions adds the summary to the instructions of that invocation. This is the pattern for injecting dynamic, per-user context.",
+   "No: after_run executes after the model has responded, so anything added there cannot change the input of the call that already happened. Use after_run to inspect results or update stored state, such as extracting new preferences."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/context-providers?pivots=programming-language-python"
+ },
+ {
+  "id": "2.2.1-09",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. builds a Python agent by using Microsoft Agent Framework. DatabaseHistoryProvider is the primary history provider. You add a second provider to capture an evaluation log that must include the context injected by other providers. Messages must not be loaded twice into the same invocation.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nprimary = DatabaseHistoryProvider(db)\naudit = InMemoryHistoryProvider(\n    \"audit\",\n    load_messages=[[1]],\n    store_context_messages=[[2]],\n)\nagent = Agent(client=OpenAIChatClient(), context_providers=[primary, audit])\n```",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "History providers both load and store messages. In a chain of providers, exactly one should load history; extra providers for audits or evaluations set load_messages to False and can set store_context_messages to True to capture what other providers added.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/context-providers",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "False",
+     "True"
+    ],
+    "why": [
+     "Correct: only one history provider should load messages into an invocation. With load_messages=False, the audit provider records the conversation without replaying it, so the primary provider stays the only source of loaded history.",
+     "Incorrect: a second provider with load_messages=True loads the same history again, so every message appears twice in the invocation. Set True only on the provider that serves as the primary history source."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "True",
+     "False"
+    ],
+    "why": [
+     "Correct: store_context_messages=True also stores the messages that other context providers injected, so the evaluation log shows the full enriched context that the model saw, not only user input and output.",
+     "Incorrect: with False the provider stores only input and response messages, so the context injected by other providers is missing from the evaluation log. False fits a plain transcript that should exclude injected context."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.2.2-01",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Fourth Coffee builds three agents in Foundry Agent Service that share one memory design. Each agent must rely on the right kind of long-term knowledge.\n\nWhich type should you use for each agent? To answer, drag the appropriate types to the correct agents. Each type may be used once, more than once, or not at all.",
+  "choices": [
+   "procedural memory",
+   "user profile memory",
+   "chat summary memory",
+   "a Foundry IQ knowledge base"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Memory in Foundry Agent Service extracts three types of long-term memory: user profile memory for stable preferences, chat summary memory for conversation continuity, and procedural memory for recurring routines. Organizational knowledge belongs in a knowledge base, not in memory.",
+  "rationale": [
+   "Agent1 needs a learned how-to routine from earlier interactions, which is what procedural memory stores and retrieves when a user asks for a recurring task.",
+   "Agent2 needs durable per-user preferences such as language and accessibility, which user profile memory holds and which you retrieve at the start of each conversation.",
+   "Agent3 needs continuity with earlier conversation topics, which chat summary memory provides as distilled summaries retrieved per turn."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory",
+  "targets": [
+   "Agent1: must repeat the multistep routine it used last month to prepare a weekly supplier report for the same user",
+   "Agent2: must apply the preferred language and accessibility needs of each user from the start of every conversation",
+   "Agent3: must pick up the topic of an earlier conversation when a user returns several days later"
+  ],
+  "notes": [
+   "Stores reusable how-to routines and operating patterns inferred from prior interactions. Use it when users ask the agent to repeat a workflow it handled before.",
+   "Stores durable preferences and personal context, such as language, defaults or accessibility needs. Use it to personalize every conversation from the first turn.",
+   "Stores distilled summaries of earlier conversation topics. Use it to give returning users continuity with what was discussed before.",
+   "Grounds agents on curated organizational content from configured knowledge sources. Use it for shared enterprise knowledge, not for memories learned about one user."
+  ]
+ },
+ {
+  "id": "2.2.2-02",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Humongous Insurance uses a single memory store in Foundry Agent Service for a claims agent. Memories are partitioned by a scope per customer. A customer submits a data deletion request. Memories of other customers must remain available.\n\nWhat should you do?",
+  "choices": [
+   "Delete the memories for the scope of that customer.",
+   "Delete the memory store.",
+   "Set a default TTL on the memory store.",
+   "Update the user_profile_details option of the memory store."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A memory store partitions data by scope, which makes the scope the unit for per-user deletion. Use scope deletion for data deletion requests, item-level operations for single records, a default TTL for general retention, and store deletion only to remove everything.",
+  "rationale": [
+   "Correct: deleting the memories for the scope of that customer, for example with delete_scope on the memory store, removes everything stored for that customer and leaves the other scopes and the store structure intact.",
+   "Incorrect: deleting the memory store removes the memories of every customer together with the store configuration, so the other customers lose their memories. Delete the store only when the agent or the whole memory design is retired.",
+   "Incorrect: a default TTL lets memories expire after a retention period, but it does not remove this customer's data now, and it applies to every customer. Use TTL to enforce a general retention policy.",
+   "Incorrect: user_profile_details steers which profile details are extracted in the future; it does not delete memories that already exist. Use it to keep sensitive categories out of memory from the start."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "2.2.2-03",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery has a Foundry Agent Service prompt agent that has the memory search tool attached. A user tells the agent, \"Forget my home address.\" The privacy policy requires that this request takes effect immediately and that all other memories of the user remain available. You want to avoid writing custom memory-management code.\n\nWhat should you do?",
+  "choices": [
+   "Rely on the memory search tool to apply the forget command directly.",
+   "Delete the memories for the scope of the user.",
+   "Set user_profile_details to exclude home addresses.",
+   "Set default_ttl_seconds on the memory store to a short value."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry memory offers controls at different granularities: direct remember-or-forget commands through the memory search tool, item-level CRUD for precise edits, scope deletion for a whole user, and TTL for retention. Match the control to the granularity and timing of the request.",
+  "rationale": [
+   "Correct: when a user explicitly asks to forget something, the memory search tool applies the forget command immediately and returns a memory command item, so the address is removed now, other memories stay, and no custom code is needed.",
+   "Incorrect: deleting the scope removes every memory of the user, not only the home address, which breaks the requirement to keep the other memories. Use scope deletion for a complete data deletion request.",
+   "Incorrect: user_profile_details controls what is extracted from future conversations, so the address that is already stored remains. Use it to exclude categories such as precise location before they are captured.",
+   "Incorrect: a short default TTL makes all memories in the store expire after the interval and does not act immediately on one item. Use TTL for store-wide retention rules."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "2.2.2-04",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to configure the memory search tool for Agent2 to meet the memory requirements.\n\nWhat should you do?",
+  "choices": [
+   "Set scope to {{$userId}}, and send the x-memory-user-id header on each call.",
+   "Set scope to {{$userId}} in the tool definition, and rely on the Microsoft Entra token of App1 to resolve the user.",
+   "Set scope to a static value in the tool definition, and filter memories by user in App1.",
+   "Create a separate agent version for each end user with the user ID as a static scope."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The scope of the memory search tool decides memory isolation. With {{$userId}}, the service resolves the user on each response call, first from the x-memory-user-id header and otherwise from the Entra identity of the caller, so a backend that acts on behalf of users must send the header.",
+  "rationale": [
+   "Correct: with scope set to {{$userId}}, the service resolves the user on every response call, and the x-memory-user-id header lets the portal backend pass the policyholder it acts for, so each policyholder gets isolated memories without identifiers in the tool definition.",
+   "Incorrect: without the header, the service falls back to the tenant and object ID of the caller, which is the managed identity of the portal backend, so all policyholders would share one scope. Rely on the token when users call the agent with their own Entra identity.",
+   "Incorrect: a static scope stores the memories of every policyholder in one partition, and filtering in the backend does not stop the agent from recalling another user's memories. Use a static scope only for memories that all users should share.",
+   "Incorrect: an agent version per policyholder hard-codes identifiers and cannot scale to thousands of policyholders. A static scope per agent version fits only a few fixed tenants that each have their own agent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage",
+  "case": "C-c"
+ },
+ {
+  "id": "2.2.2-05",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Coho Winery creates a new memory store in Foundry Agent Service for a wine recommendation agent. The agent must keep personalizing answers based on wine style preferences. The privacy policy requires that the memory system does not store age, financial data, precise location, or credentials, and that memory entries expire 30 days after they were last updated.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\noptions = MemoryStoreDefaultOptions(\n    chat_summary_enabled=True,\n    user_profile_enabled=True,\n    [[1]],\n    [[2]],\n)\n```",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Memory store options control what is extracted and how long it is kept: user_profile_details focuses or restricts profile extraction, the enable flags turn whole memory types on or off, and default_ttl_seconds sets retention for new entries. Combine them to meet privacy rules without losing personalization.",
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "user_profile_details=\"Avoid sensitive data, such as age, financials, precise location, and credentials\"",
+     "procedural_memory_enabled=False",
+     "chat_summary_enabled=False"
+    ],
+    "why": [
+     "Correct: user_profile_details tells the memory system which details to extract and which to avoid, so sensitive categories stay out of memory while wine style preferences are still captured for personalization.",
+     "Incorrect: turning off procedural memory stops the extraction of reusable routines, but profile extraction continues unchanged, so age or location could still be stored. Disable it when the agent has no recurring workflows to learn.",
+     "Incorrect: chat summary memory stores topic summaries, not profile details, so turning it off does not stop sensitive profile data from being extracted, and it is already set in the call. Disable it when conversation continuity is not needed."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "default_ttl_seconds=timedelta(days=30)",
+     "default_ttl_seconds=0",
+     "user_profile_enabled=False"
+    ],
+    "why": [
+     "Correct: default_ttl_seconds sets the default retention for memory entries in the store, and an update and consolidation resets the last-updated time, so entries expire 30 days after their last update.",
+     "Incorrect: a default_ttl_seconds value of 0 means that memories never expire, which violates the 30-day retention rule. Use 0 when the retention policy allows indefinite storage.",
+     "Incorrect: disabling user profile memory stops storing preferences, so personalization disappears, and it sets no retention period. Disable it only when the agent must not personalize at all."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.2.2-06",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Best For You Organics Company builds a nutrition agent in Foundry Agent Service by using the Python SDK. A backend service calls the agent on behalf of each end user, and every end user must have isolated memories. Chat and embedding model deployments already exist, and the project identity has the required roles. You need to create the memory store and the agent and send the first request for an end user.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`pip install \"azure-ai-projects>=2.3.0\"`",
+   "`memory_store = project_client.beta.memory_stores.create(name=\"store1\", definition=MemoryStoreDefaultDefinition(chat_model=chat_model, embedding_model=embedding_model, options=options))`",
+   "`agent = project_client.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=chat_model, tools=[MemorySearchPreviewTool(memory_store_name=memory_store.name, scope=\"{{$userId}}\", update_delay=300)]))`",
+   "`openai_client.responses.create(input=message, extra_body={\"agent_reference\": {\"name\": agent.name, \"type\": \"agent_reference\"}}, extra_headers={\"x-memory-user-id\": user_id})`",
+   "`project_client.beta.memory_stores.delete_scope(name=\"store1\", scope=user_id)`",
+   "`agent = project_client.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=chat_model, tools=[MemorySearchPreviewTool(memory_store_name=memory_store.name, scope=\"backend-service\", update_delay=300)]))`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Memory in Foundry Agent Service is set up in dependency order: the SDK, then a memory store with chat and embedding models, then an agent whose memory search tool references the store, and finally the response call that references the agent. Per-user isolation comes from the {{$userId}} scope plus the x-memory-user-id header when a backend calls on behalf of users.",
+  "rationale": [
+   "Step 1: azure-ai-projects 2.3.0 or later provides MemoryStoreDefaultDefinition, MemorySearchPreviewTool and the memory store operations, so it must be installed before any of the following code can run.",
+   "Step 2: memory_stores.create returns the memory_store object whose name the agent definition uses, and it defines the chat and embedding models that extract and embed memories, so it must run before the agent is created.",
+   "Step 3: the memory search tool reads memory_store.name from the previous step, and scope {{$userId}} resolves the end user on each call, so identifiers are not hard-coded and each user gets an isolated partition. The response call needs agent.name from this step.",
+   "Step 4: the response call references agent.name, so it can run only after the agent exists, and the x-memory-user-id header tells the service which end user the backend acts for, so memories are read and written in that user's scope.",
+   "Incorrect: delete_scope removes all memories of a user, which you use for data deletion requests, not when you set up an agent. Running it here would only delete data that does not exist yet.",
+   "Incorrect: a static scope such as backend-service puts the memories of all end users into one partition, which breaks the isolation requirement. Use a static scope only for memories meant to be shared by every caller."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "2.2.2-07",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute tests a Foundry Agent Service prompt agent that has the memory search tool attached with the default configuration. In a test script, User1 states a preference, and the script waits 65 seconds and then starts a new conversation with the same scope to ask a related question. The agent does not recall the preference. The memory store name and scope are verified as correct.\n\nWhat should you do to make the test pass?",
+  "choices": [
+   "Set update_delay to 1 on the memory search tool.",
+   "Use a new stable identifier as the scope in the second conversation.",
+   "Enable chat_summary_enabled on the memory store.",
+   "Increase default_ttl_seconds on the memory store."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Memory updates in Foundry Agent Service are asynchronous: after each response the service schedules extraction and waits for update_delay seconds of inactivity, 300 by default, before it writes. In production the delay batches work; in tests, use a short delay such as 1 second, or wait longer than the delay before you check recall.",
+  "rationale": [
+   "Correct: the memory search tool debounces writes by update_delay, 300 seconds by default, so after 65 seconds the preference is not stored yet. With update_delay set to 1, the write starts after one second of inactivity and the memory is available when the second conversation starts.",
+   "Incorrect: a different scope points to a different partition, so the stored preference would never be found in the second conversation. Use a new scope only when you intend to isolate a different user or tenant.",
+   "Incorrect: chat_summary_enabled decides whether conversation summaries are extracted, while a stated preference is user profile memory, and neither setting changes when memories are written. Change it when you want the store to keep or skip conversation summaries.",
+   "Incorrect: default_ttl_seconds controls when existing memories expire, and the preference has not been written yet, so a longer TTL changes nothing. Adjust TTL to meet retention requirements."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "2.2.2-08",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research hosts a Microsoft Agent Framework agent that uses service-managed storage through the OpenAI Responses API. One Foundry project and one backing key serve all end users of a multi-tenant portal. Users resume conversations after they sign in again. A security review flags that a user who obtains another conversation ID can resume that conversation.\n\nWhat should you do?",
+  "choices": [
+   "Map your own session IDs to server-stored conversation IDs and verify ownership on resume.",
+   "Return the serialized AgentSession to the browser and restore it from the next request.",
+   "Rely on the opaque, unguessable format of the service conversation IDs.",
+   "Add a local history provider alongside the service-managed session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In multi-user apps that share one Foundry project, conversation and response IDs are scoped to the project or key, not to an end user. Treat them like database keys: store them server-side, map them from your own authenticated session IDs, and check ownership on every resume.",
+  "rationale": [
+   "Correct: service conversation IDs are not bound to an end user, so the app keeps its own session-to-conversation mapping in trusted server-side storage and verifies that the signed-in user owns the conversation before it resumes.",
+   "Incorrect: a serialized AgentSession is trusted application state, and sending it to the browser lets a user tamper with it or replay it. Keep it server-side; returning it to a client fits only single-user tools that you fully trust.",
+   "Incorrect: an opaque ID is hard to guess but not bound to a user, so anyone who obtains it, for example from logs or a shared link, can still resume the conversation. Opaque IDs help only together with an ownership check.",
+   "Incorrect: Agent Framework guidance is to use either local history or the service-managed conversation for a given session, not both, and a local history provider adds no authorization check. Use a local history provider instead of service storage when you need full control over where history lives."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/storage"
+ },
+ {
+  "id": "2.2.2-09",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Consolidated Messenger runs a multi-agent workflow by using Microsoft Agent Framework. To save startup time, one workflow instance is built at application start and reused for every customer request. Checkpoints are written so that long-running requests can resume after a failure. Testers find content from a previous customer in the answers to a new customer. You need to isolate agent state per request and protect the persisted workflow state.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Wrap agent creation and workflow building in a helper method that is called for each request.",
+   "Store checkpoints in private storage that only authorized services can read and write.",
+   "Share one AgentSession instance across all agents in the workflow.",
+   "Restore the most recent checkpoint at the start of every new request.",
+   "Use one static memory scope for all customers."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "An Agent Framework workflow instance keeps agent state across runs, so a reused instance shares state between requests. Build agents and workflows per request with a helper, and protect checkpoint storage, because restored checkpoints become trusted state.",
+  "rationale": [
+   "Correct: building new agents and a new workflow for each request gives every customer fresh agent sessions, so no conversation state from an earlier customer can leak into the next answer.",
+   "Correct: checkpoints contain workflow and agent state, including customer data, so they are a trust boundary; private storage that only authorized services can access prevents disclosure and tampering.",
+   "Incorrect: one AgentSession shared by all agents mixes their conversation context and makes leakage between steps more likely. Share a session only when agents intentionally take part in the same conversation.",
+   "Incorrect: restoring the latest checkpoint at the start of a new request loads the state of the previous customer, which is the leak the testers found. Restore a checkpoint only to resume the same request after a failure.",
+   "Incorrect: one static memory scope shares long-term memories between all customers and breaks isolation. Use a static scope only for memories that every user should share."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/state"
+ },
+ {
+  "id": "2.2.3-01",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "City Power & Light builds a multi-agent RAG solution over long technical manuals in Azure AI Search. You choose fixed-size chunking for a first iteration. You need a starting configuration that maintains continuity between chunks without excessive duplication.\n\nWhich chunking configuration should you start with?",
+  "choices": [
+   "512 tokens per chunk with an overlap of 128 tokens",
+   "512 tokens per chunk with no overlap",
+   "8,000 tokens per chunk with no overlap",
+   "512 tokens per chunk with an overlap of 384 tokens"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fixed-size chunking needs a chunk size that fits the embedding model and an overlap that preserves context at the boundaries. Start around 512 tokens with about 25 percent overlap, then tune with evaluations, and move to structure-aware chunking when documents have clear sections.",
+  "rationale": [
+   "Correct: 512 tokens with an overlap of 128 tokens is the documented starting point, about 25 percent overlap, which keeps context across chunk boundaries without storing most content twice.",
+   "Incorrect: without overlap, a sentence or table that is split at a boundary loses its context, which lowers retrieval quality. No overlap fits content that is already split into self-contained units, such as individual FAQ entries.",
+   "Incorrect: 8,000-token chunks approach the input limits of embedding models and dilute each vector across many topics, so matches become vague. Large chunks fit only short, single-topic documents.",
+   "Incorrect: an overlap of 384 tokens duplicates 75 percent of the content, which inflates the index and returns near-duplicate chunks, and the Text Split skill requires the overlap to be smaller than half the chunk length. Use large overlaps only in experiments."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/vector-search-how-to-chunk-documents"
+ },
+ {
+  "id": "2.2.3-02",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Nod Publishers indexes book excerpts in Azure AI Search by using an Azure OpenAI Embedding skill that calls a text-embedding-3-small deployment. A retrieval agent submits text queries, and the index converts them to vectors by using a vectorizer that points to a text-embedding-3-large deployment. Relevance is poor.\n\nWhat should you do?",
+  "choices": [
+   "Point the vectorizer to the model deployment of the embedding skill.",
+   "Increase the k value of the vector query to return more matches.",
+   "Enable semantic ranking on the index for the agent queries.",
+   "Add a scoring profile that boosts the title field."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With integrated vectorization, the embedding skill vectorizes content at indexing time and the vectorizer vectorizes queries at search time. Both must use the same embedding model and dimensions, because vectors from different models are not comparable.",
+  "rationale": [
+   "Correct: query vectors and document vectors are comparable only when the same model creates both, so the vectorizer must point to the deployment that the embedding skill uses, text-embedding-3-small in this case.",
+   "Incorrect: a larger k returns more neighbors, but the query vectors still come from a different vector space than the document vectors, so the extra results are just as poor. Raise k when relevant matches exist just outside the top results.",
+   "Incorrect: semantic ranking reranks the initial results, and when retrieval returns the wrong chunks, the reranker cannot recover the right ones. Enable it when initial results are relevant but poorly ordered.",
+   "Incorrect: a scoring profile boosts scores based on fields or freshness, which does not fix incompatible vectors. Use it when matches in certain fields, such as the title, should weigh more."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/vector-search-how-to-configure-vectorizer"
+ },
+ {
+  "id": "2.2.3-03",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Southridge Video runs a hybrid query in Azure AI Search for a research agent. The initial results are relevant to the keywords, but the top results do not best match the intent of the question. You need a secondary ranking step that uses language understanding to rescore the initial results.\n\nWhich feature should you enable?",
+  "choices": [
+   "semantic ranking",
+   "a scoring profile",
+   "vector weighting",
+   "a synonym map"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Azure AI Search ranks in two levels: L1 retrieval by BM25, vectors or hybrid RRF, and optional L2 semantic ranking over the top results. Add L2 when relevant results are present but not in the best order, and use scoring profiles, weights or synonyms for other ranking needs.",
+  "rationale": [
+   "Correct: semantic ranking is a secondary step that rescores the top BM25 or RRF results with language-understanding models, so results that best match the intent of the question move to the top.",
+   "Incorrect: a scoring profile changes scores with field weights, freshness or distance functions, not with language understanding of the query. Use it when business rules, such as newer documents first, should influence ranking.",
+   "Incorrect: vector weighting changes how much a vector query counts in RRF fusion and adds no semantic rescoring. Use it when vector or keyword matches dominate the hybrid results.",
+   "Incorrect: a synonym map expands keyword matching with equivalent terms, which improves recall but does not rerank by intent. Use it when users and documents use different words for the same concept."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/semantic-search-overview"
+ },
+ {
+  "id": "2.2.3-04",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. indexes PDF policy documents that use deep heading structures. The existing skillset already calls the Document Layout skill, and the team must use only generally available features. Agents retrieve passages that are often cut off in the middle of a section, and the chunks lose their section context. You need chunks that follow document structure and stay within a maximum size.\n\nWhat should you do?",
+  "choices": [
+   "Apply the Text Split skill to each Markdown section from the Document Layout skill.",
+   "Apply the Text Split skill in pages mode to the full extracted document content.",
+   "Apply the Text Split skill in sentences mode to the full extracted document content.",
+   "Index the PDF files by using the Markdown parsing mode of the blob indexer."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Structure-aware chunking keeps semantic units together: extract the layout first, then split within each section to respect a size limit. Fixed-size chunking over a whole document is simpler but breaks sections at arbitrary points and loses heading context.",
+  "rationale": [
+   "Correct: the Document Layout skill already returns the content as Markdown sections by heading, and running Text Split on each section caps the chunk size while keeping every chunk inside one section, using only generally available features.",
+   "Incorrect: pages mode over the full content splits by length and ignores headings, which causes the cut-off sections that the agents see. Use it for unstructured text without meaningful headings.",
+   "Incorrect: sentences mode creates very small chunks of single sentences that lose section context and ground answers poorly. Use it when you need fine-grained units, such as sentence-level enrichment.",
+   "Incorrect: the Markdown parsing mode of the blob indexer parses files that are already Markdown and does not detect headings inside PDF files. Use it when the source documents are Markdown files."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/search-how-to-semantic-chunking"
+ },
+ {
+  "id": "2.2.3-05",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A. Datum Corporation stores 200 million chunks in Azure AI Search, embedded by text-embedding-3-large. Vector index memory is the main cost driver. You need the largest reduction in vector index size while keeping the loss in result quality minimal. You create new vector fields that use the HNSW algorithm.\n\nWhich compression configuration should you use?",
+  "choices": [
+   "binary quantization with truncationDimension set to 1,024 and rescoring with the original vectors",
+   "binary quantization with truncationDimension set to 1,024 and no rescoring",
+   "scalar quantization to int8 with no truncation and rescoring with the original vectors",
+   "no quantization, with the stored property of the vector fields set to false"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Vector compression trades size for quality: scalar quantization gives moderate savings, binary quantization gives the largest savings, and MRL truncation reduces dimensions. Rescoring with the original vectors and oversampling compensate for most of the quality loss.",
+  "rationale": [
+   "Correct: binary quantization stores one bit per dimension, and truncating text-embedding-3-large to 1,024 dimensions shrinks vectors further while staying at the recommended minimum for binary; rescoring with the original vectors restores most of the lost precision.",
+   "Incorrect: this gives the same size reduction, but without rescoring only the compressed vectors rank the results, so quality drops noticeably. Skip rescoring only when the lowest query latency matters more than precision.",
+   "Incorrect: scalar int8 quantization cuts vector size about four times, far less than binary quantization with truncation, so it misses the largest-reduction goal. Use it when you want moderate compression with minimal quality loss.",
+   "Incorrect: setting stored to false removes the retrievable copy of the vectors on disk, but the vector index in memory keeps its full size. Use it to save storage when vectors never need to be returned in results."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/vector-search-how-to-truncate-dimensions"
+ },
+ {
+  "id": "2.2.3-06",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Blue Yonder Airlines grounds a baggage policy agent on an Azure AI Search index whose vector fields use the HNSW algorithm. Before tuning HNSW parameters, the team must measure the recall of the current approximate results against the exact nearest neighbors for a set of test queries. The index definition must not be changed.\n\nWhat should you do?",
+  "choices": [
+   "Set exhaustive to true on the vector queries of the test set.",
+   "Change the algorithm of the vector fields to exhaustiveKnn.",
+   "Increase the k value on the vector queries of the test set.",
+   "Set vectorFilterMode to preFilter on the test set queries."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "HNSW returns approximate nearest neighbors for speed. To measure its recall, compare against exact KNN results for the same queries, which exhaustive: true provides per query on an HNSW field, and then tune HNSW parameters.",
+  "rationale": [
+   "Correct: setting exhaustive to true on a query runs exact KNN over the HNSW field for that query only, so you get the true nearest neighbors as ground truth to measure recall without changing the index definition.",
+   "Incorrect: switching the field to exhaustiveKnn changes the index definition, which is not allowed, and the field then no longer uses HNSW, so there is nothing left to compare. Use exhaustiveKnn for small indexes where exact search is always affordable.",
+   "Incorrect: a larger k returns more neighbors, but they are still approximate HNSW results, so they cannot serve as exact ground truth. Raise k when semantic ranking or recall needs more candidates.",
+   "Incorrect: vectorFilterMode controls when an OData filter is applied relative to the vector search, not whether the neighbors are exact. Use preFilter when filtered queries return too few results."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/vector-search-ranking"
+ },
+ {
+  "id": "2.2.3-07",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles shares one Azure AI Search index among several specialist agents. Each agent filters vector queries on a department field, and some departments contain very few documents. With the current filter mode, agents for small departments sometimes receive fewer than k results, although matching documents exist. Recall matters more than latency.\n\nWhich vectorFilterMode should you use?",
+  "choices": [
+   "preFilter",
+   "postFilter",
+   "strictPostFilter",
+   "no filter mode, with a threshold parameter instead"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "vectorFilterMode decides whether a filter applies during or after the vector search. preFilter maximizes recall for selective filters at some latency cost, while postFilter modes are faster but can return fewer than k results when few documents match.",
+  "rationale": [
+   "Correct: preFilter applies the department filter during the vector search, so the search returns k matching documents if they exist, which fixes the missing results for small departments at the cost of some latency.",
+   "Incorrect: postFilter searches first and filters afterward, so with a selective filter most of the top candidates are removed and fewer than k results remain, which is the current problem. Use it when filters are broad and latency matters most.",
+   "Incorrect: strictPostFilter filters only the global top-k results, which carries the highest risk of missing filtered matches. Use it when you need the global top results and accept fewer filtered matches.",
+   "Incorrect: a threshold drops results below a similarity score, so it can only reduce the number of results further. Use it to remove weak matches when precision matters more than recall."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/vector-search-filters"
+ },
+ {
+  "id": "2.2.3-08",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Northwind Traders builds an Azure AI Search pipeline for a multi-agent RAG solution. Documents are in an Azure Storage account that allows public network access, and the embedding model is deployed in a Microsoft Foundry resource. No search service exists yet. All calls from the search service to the storage account and to the embedding deployment must use the managed identity of the search service, and no keys can be used. Content must be chunked and vectorized during indexing, and changed documents must be picked up on a schedule.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az search service create --name search1 --resource-group RG1 --sku Standard --identity-type SystemAssigned`",
+   "`az search service show --name search1 --resource-group RG1 --query identity.principalId -o tsv`",
+   "Run `az role assignment create --assignee-object-id <principal-id> --assignee-principal-type ServicePrincipal --role \"Storage Blob Data Reader\" --scope <storage-account-id>`, and assign Cognitive Services User on the Foundry resource the same way.",
+   "Create the data source, the index with a vectorizer, the skillset with the Text Split skill and an embedding skill, and an indexer with a schedule that references them.",
+   "`az search admin-key show --resource-group RG1 --service-name search1`",
+   "`az search shared-private-link-resource create --name spl-blob --service-name search1 --resource-group RG1 --group-id blob --resource-id <storage-account-id>`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Keyless integrated vectorization depends on identity: the search service needs a managed identity, that identity needs data-plane roles on storage and on the embedding model, and only then can the indexer read blobs and call the embedding skill. Network features such as shared private links are needed only when the targets block public access.",
+  "rationale": [
+   "Step 1: the search service must exist, and --identity-type SystemAssigned gives it the managed identity that will authenticate to storage and to the embedding deployment without keys.",
+   "Step 2: the role assignments need the object ID of that managed identity, which az search service show returns from identity.principalId.",
+   "Step 3: Storage Blob Data Reader lets the identity read the blobs, and Cognitive Services User lets it call the embedding deployment. The roles must be in place before the indexer runs, or the run fails with authorization errors.",
+   "Step 4: the indexer references the data source, index and skillset and runs as soon as it is created and then on its schedule, so it comes last, after the identity has its roles.",
+   "Incorrect: an admin key authenticates clients to the search service itself; it is not used for outbound calls to storage or Foundry, and the stem rules out keys. Use admin keys only where key-based access to the search service is allowed.",
+   "Incorrect: a shared private link is needed only when the storage account blocks public network access, and here public access is allowed. Create one when the target resource accepts only private connections."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-tutorial-private-outbound"
+ },
+ {
+  "id": "2.2.3-09",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Wingtip Toys has a retrieval agent that serves several other agents. The agent sends hybrid queries with semantic ranking to an Azure AI Search index, and the vector query sets k to 10. Two issues are reported:\n\n- The semantic ranker returns fewer results than expected and misses relevant passages.\n- For questions that contain exact part numbers, such as WT-4471-B, vector matches dominate the fused results and push the keyword matches down.\n\nThe agent must keep using hybrid queries with semantic ranking.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Setting k on the vector query to 50 and using top to limit the returned results gives the semantic ranker more candidates to rerank.",
+   "Setting the weight of the vector query to a value below 1.0 gives keyword matches, such as exact part numbers, more influence in the fused results.",
+   "Applying a minimum threshold to the fused RRF scores is the recommended way to keep keyword matches in the results."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "In a hybrid query, the vector query and the keyword query each return candidates that RRF fuses, and semantic ranking reranks the fused top results. Feed the ranker enough candidates with k of at least 50, and balance the two signals with the weight of the vector query.",
+  "rationale": [
+   "Yes: semantic ranking can only rerank the candidates that retrieval supplies, and k of 10 is too few; the guidance is k of at least 50, with top limiting how many results the agent receives.",
+   "Yes: weight is a multiplier of the vector query in the RRF calculation, so a value below the default 1.0 reduces the vector contribution and lets keyword matches on exact part numbers rank higher.",
+   "No: RRF scores are small and depend on rank positions, so a fixed minimum threshold on fused scores behaves unpredictably and is not recommended for hybrid queries. Thresholds fit pure vector queries, where similarity scores are meaningful."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/hybrid-search-how-to-query"
+ },
+ {
+  "id": "2.2.4-01",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso Suites builds a Foundry IQ knowledge base for its concierge agents. The agents must ground answers on real-time public information, such as current local events, retrieved at query time from Microsoft Bing.\n\nWhich knowledge source should you add?",
+  "choices": [
+   "a web knowledge source",
+   "an MCP server knowledge source",
+   "a remote SharePoint knowledge source",
+   "a search index knowledge source"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry IQ knowledge sources are either indexed, with content ingested into Azure AI Search, or remote, queried live at retrieval time, such as web, remote SharePoint and MCP server sources. Choose a remote source for live or externally governed content and an indexed source for content you control.",
+  "rationale": [
+   "Correct: a web knowledge source retrieves real-time public results from Microsoft Bing at query time, without ingesting content, which fits current local events.",
+   "Incorrect: an MCP server knowledge source calls your own MCP-compatible endpoint at query time, not Bing, so it does not return public web results. Use it for live data from internal systems that expose MCP.",
+   "Incorrect: a remote SharePoint knowledge source queries SharePoint in Microsoft 365 with the permissions of the user, so it returns organizational documents, not public events. Use it for internal content that must stay governed in SharePoint.",
+   "Incorrect: a search index knowledge source wraps an existing Azure AI Search index of content that was ingested earlier, so it is not real-time public information. Use it when you already maintain an index."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/agentic-knowledge-source-overview"
+ },
+ {
+  "id": "2.2.4-02",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "First Up Consultants builds an agent in Foundry Agent Service. During a conversation, consultants upload their own PDF and Word files and ask questions about them. The team does not want to manage search infrastructure or ingestion pipelines.\n\nWhich tool should you add to the agent?",
+  "choices": [
+   "the file search tool",
+   "the Azure AI Search tool",
+   "a Foundry IQ knowledge base",
+   "the web search tool"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry Agent Service offers several grounding tools: file search for files with managed ingestion, the Azure AI Search tool for indexes you maintain, Foundry IQ knowledge bases for governed multi-source knowledge, and web search for public content. The ownership of the data and pipeline decides the choice.",
+  "rationale": [
+   "Correct: the file search tool ingests files that users upload and handles parsing, chunking, embeddings and retrieval, so consultants can ask about their own documents and the team manages no search infrastructure.",
+   "Incorrect: the Azure AI Search tool queries an index that you create and maintain, including its ingestion pipeline, which the team wants to avoid. Use it when curated content already lives in an index you manage.",
+   "Incorrect: a Foundry IQ knowledge base grounds agents on curated organizational sources that the team configures, not on ad hoc files a user uploads during a conversation. Use it for shared, governed enterprise knowledge.",
+   "Incorrect: the web search tool returns public web results, not content from the files that consultants upload. Use it when answers need current public information."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search"
+ },
+ {
+  "id": "2.2.4-03",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Bellows College has a Foundry IQ knowledge base named kb1 that covers admissions, finance, and housing content. You need to connect kb1 to a new prompt agent named Agent1 by using Python, and then test Agent1 with one question. The connection must authenticate with the managed identity of the project, which already has the Search Index Data Reader role on the search service.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`conn = requests.put(f\"https://management.azure.com{project_resource_id}/connections/kb1-conn?api-version=2025-10-01-preview\", headers=headers, json=body)` with a body that sets authType ProjectManagedIdentity, category RemoteTool, and the kb1 MCP endpoint as target",
+   "`agent = project_client.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-4.1-mini\", instructions=instructions, tools=[MCPTool(server_label=\"knowledge-base\", server_url=mcp_endpoint, allowed_tools=[\"knowledge_base_retrieve\"], project_connection_id=conn.json()[\"name\"])]))`",
+   "`conversation = openai_client.conversations.create()`, after `openai_client = project_client.get_openai_client(agent_name=agent.name)`",
+   "`response = openai_client.responses.create(conversation=conversation.id, input=\"When is the housing deadline?\")`",
+   "`az search admin-key show --resource-group RG1 --service-name search1`",
+   "`project_client.beta.memory_stores.create(name=\"kb1-store\", definition=MemoryStoreDefaultDefinition(chat_model=chat_model, embedding_model=embedding_model))`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A Foundry IQ knowledge base reaches an agent as an MCP tool: a RemoteTool project connection stores the knowledge base MCP endpoint and the authentication, the agent definition references that connection, and runs then call knowledge_base_retrieve. One knowledge base can serve many agents this way.",
+  "rationale": [
+   "Step 1: the RemoteTool project connection stores the knowledge base MCP endpoint and authenticates with the project managed identity; the agent definition reads the connection name from conn, so this call must run first.",
+   "Step 2: the agent version gets an MCPTool that points to the kb1 MCP endpoint through the connection from step 1 and allows knowledge_base_retrieve, the tool that knowledge bases expose to Foundry Agent Service. The next step needs agent.name.",
+   "Step 3: the OpenAI client is bound to Agent1, which must exist first, and the conversation that it creates provides the conversation ID that the test request in the next step needs.",
+   "Step 4: the response call sends the question in that conversation, so the agent can call knowledge_base_retrieve and answer with citations from kb1.",
+   "Incorrect: an admin key authenticates key-based calls to the search service, but the connection uses the project managed identity, so no key is needed. Retrieve keys only when you choose key-based authentication for a connection.",
+   "Incorrect: a memory store holds long-term memories learned from conversations, not curated knowledge, so it does not connect kb1 to the agent. Create one when the agent must remember user context across sessions."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect"
+ },
+ {
+  "id": "2.2.4-04",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "The Phone Company queries a Foundry IQ knowledge base from a support agent. Responses must contain a grounded natural-language answer with inline citations. Within that requirement, retrieval must have the lowest latency and a predictable cost per request.\n\nWhich retrieval reasoning effort should you set?",
+  "choices": [
+   "low",
+   "minimal",
+   "medium",
+   "auto"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The retrieval reasoning effort sets how much LLM processing agentic retrieval uses: minimal skips query planning and returns extractive data, low runs one planning pass and supports answer synthesis, medium adds an iterative pass, and auto decides per request. Pick the lowest level that supports the required output.",
+  "rationale": [
+   "Correct: low runs a single pass of LLM-based query planning and supports answer synthesis, so it returns a grounded answer with inline citations at the lowest latency and with a predictable cost among the levels that can synthesize answers.",
+   "Incorrect: minimal disables LLM processing and requires the extractiveData output mode, so it cannot return a synthesized answer with citations. Use minimal when the agent composes the answer itself from the retrieved passages at the lowest cost.",
+   "Incorrect: medium adds deeper search and a possible follow-up iteration, which raises latency and cost per request. Use it when complex questions need maximum completeness.",
+   "Incorrect: auto starts with a lightweight pass and can escalate up to medium, so latency and cost vary per request. Use auto when you want the service to balance depth and latency for each question."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/agentic-retrieval-how-to-set-retrieval-reasoning-effort"
+ },
+ {
+  "id": "2.2.4-05",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the document access requirement for the policy knowledge base.\n\nWhat should you do?",
+  "choices": [
+   "Pass the token of the signed-in user in the x-ms-query-source-authorization header.",
+   "Authenticate the project connection by using the managed identity of the agent.",
+   "Assign the Search Index Data Reader role to each user on the search service.",
+   "Pass the object ID of the signed-in user in the x-ms-client-request-id header."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry IQ knowledge bases can trim results per user, but only when the retrieval request carries the identity of that user. Pass the user token in the x-ms-query-source-authorization header, either set by Agent Service or supplied by the application through a structured input; without it, permission-enabled sources return unfiltered results.",
+  "rationale": [
+   "Correct: with the token of the signed-in user in x-ms-query-source-authorization, the retrieval engine filters permission-enabled content so each adjuster sees only the documents of the adjuster's own region.",
+   "Incorrect: the managed identity authenticates the agent or project to the search service, but it carries no user context, so every user still gets the same results. Use it to authorize the service connection itself.",
+   "Incorrect: Search Index Data Reader grants read access to the index, but the knowledge base still queries without the identity of the caller, so results are not trimmed per user. Assign it to identities that must query the index.",
+   "Incorrect: x-ms-client-request-id is a correlation header for tracing requests; it does not carry a token that the engine can use for permission trimming. Use it to correlate client and service logs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/foundry-iq-connect",
+  "case": "C-c"
+ },
+ {
+  "id": "2.2.4-06",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. connects an existing Azure AI Search index to a Foundry agent by using the Azure AI Search tool. The index has vector fields with a vectorizer and a semantic configuration. Agents must match exact keywords and conceptual meaning, and results must be reranked by semantic relevance.\n\nWhich query_type should you configure?",
+  "choices": [
+   "vector_semantic_hybrid",
+   "vector_simple_hybrid",
+   "semantic",
+   "vector"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The query_type of the Azure AI Search tool combines retrieval modes: simple and semantic are keyword-based, vector is similarity only, and the hybrid types combine keyword and vector search, with vector_semantic_hybrid adding semantic reranking. Match the type to the precision and meaning requirements.",
+  "rationale": [
+   "Correct: vector_semantic_hybrid runs keyword and vector searches together and then applies semantic reranking, which covers exact keywords, conceptual meaning and reranking by semantic relevance; it is also the default of the tool.",
+   "Incorrect: vector_simple_hybrid combines keyword and vector search but skips semantic reranking, so results are not reordered by meaning. Use it when the index has no semantic configuration or reranking cost must be avoided.",
+   "Incorrect: semantic uses keyword search with semantic reranking but no vector search, so conceptual matches without shared words are missed. Use it when the index has no vector fields.",
+   "Incorrect: vector searches by similarity only, without exact keyword precision or semantic reranking. Use it when queries are purely conceptual and exact terms do not matter."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/ai-search"
+ },
+ {
+  "id": "2.2.4-07",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals grounds research agents on SharePoint in Microsoft 365. Document permissions change daily, and documents carry Microsoft Purview sensitivity labels. Governance must remain in SharePoint, results must respect current permissions and labels without reindexing, and the team prefers to maintain no search index for this content.\n\nWhich knowledge source should you use?",
+  "choices": [
+   "a remote SharePoint knowledge source",
+   "an indexed SharePoint knowledge source",
+   "a search index knowledge source over an index built by the SharePoint indexer with ACL ingestion",
+   "a search index knowledge source with security filters on a group field"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SharePoint content can reach Foundry IQ in two ways: a remote SharePoint knowledge source that queries SharePoint live through the Copilot Retrieval API, or indexed approaches that copy content and permissions into an index. Remote retrieval keeps governance in SharePoint; indexing gives more control but must synchronize permission changes.",
+  "rationale": [
+   "Correct: a remote SharePoint knowledge source queries SharePoint at query time with the identity of the user, so results respect current permissions and Purview sensitivity labels, governance stays in SharePoint, and no index is maintained.",
+   "Incorrect: an indexed SharePoint knowledge source generates an indexer pipeline and an index, which the team wants to avoid, and permission changes appear only after the next indexer run. Use it when you need full control over chunking and ranking.",
+   "Incorrect: ACL ingestion with the SharePoint indexer stores permissions in an index and needs indexer runs to pick up daily changes, which conflicts with the no-index preference. Use it when content must be indexed but still trimmed by ACLs.",
+   "Incorrect: security filters on a group field implement a custom access model and do not replicate SharePoint permissions or sensitivity labels. Use them when authorization comes from a system without native integration."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/search-indexer-sharepoint-access-control-lists"
+ },
+ {
+  "id": "2.2.4-08",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam Residences pushes documents into an Azure AI Search index that grounds several tenant-facing agents. Authorization comes from a non-Microsoft system, so native ACL integration is unavailable. Each user belongs to up to 2,000 groups. Retrieval must exclude unauthorized documents inside the search pipeline and keep subsecond response times.\n\nWhat should you do?",
+  "choices": [
+   "Store group identifiers in a filterable string field, and filter queries by using the search.in function with the groups of the user.",
+   "Store group identifiers in a filterable string field, and filter queries by using a disjunction of eq expressions for each group.",
+   "Return unfiltered results, and remove unauthorized documents in the agent code after retrieval.",
+   "Configure an indexer to ingest ADLS Gen2 ACL permission metadata."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Security trimming with a custom access model stores principal identifiers in a filterable field and applies a filter on every query. The search.in function keeps such filters fast even with thousands of values, while long eq disjunctions or post-query filtering cost seconds or leak work to the application.",
+  "rationale": [
+   "Correct: storing group IDs in a filterable string field and filtering with search.in trims unauthorized documents inside the search pipeline and keeps subsecond response times even with 2,000 groups per user.",
+   "Incorrect: a disjunction of eq expressions works for a few values, but with thousands of groups it slows queries by seconds and becomes hard to maintain. Use eq expressions when a user belongs to only a few groups.",
+   "Incorrect: removing documents in agent code after retrieval moves authorization out of the search pipeline, returns larger result sets and risks exposing data to the agent. Post-filtering fits only non-sensitive ranking tweaks.",
+   "Incorrect: ADLS Gen2 ACL ingestion reads permissions that Microsoft Entra ID manages on ADLS Gen2 content, which does not exist for pushed documents with a non-Microsoft authorization system. Use it when content lives in ADLS Gen2 with Entra ACLs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/search-security-trimming-for-azure-search"
+ },
+ {
+  "id": "2.2.4-09",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Wide World Importers builds a Foundry IQ knowledge base for its procurement agents. No search index exists yet. You must add one knowledge source for each type of content.\n\nWhich knowledge source should you use for each type of content? To answer, drag the appropriate knowledge sources to the correct content types. Each knowledge source may be used once, more than once, or not at all.",
+  "choices": [
+   "an Azure blob knowledge source",
+   "an MCP server knowledge source",
+   "a search index knowledge source",
+   "a web knowledge source",
+   "a remote SharePoint knowledge source"
+  ],
+  "answer": [
+   0,
+   1,
+   3
+  ],
+  "explanation": "A knowledge base can combine indexed knowledge sources, which ingest content into Azure AI Search, with remote knowledge sources, which are queried live. Decide per content type: ingest documents you control, and query live systems or public content remotely.",
+  "rationale": [
+   "An Azure blob knowledge source generates the data source, skillset, index and indexer that chunk and vectorize the PDF contracts, which is needed because no index exists yet.",
+   "An MCP server knowledge source calls the MCP-compatible inventory endpoint at query time, so stock levels are live and no ingestion pipeline is needed.",
+   "A web knowledge source retrieves current public information from Microsoft Bing at query time, without ingestion, which fits commodity price news that must be current."
+  ],
+  "ref": "https://learn.microsoft.com/azure/search/agentic-knowledge-source-how-to-mcp-server",
+  "targets": [
+   "Supplier contracts: PDF files in an Azure Blob Storage container that must be chunked and vectorized automatically",
+   "Current stock levels: exposed by an internal inventory system through an MCP-compatible endpoint and queried live without an ingestion pipeline",
+   "Commodity price news: public information that must be current at query time"
+  ],
+  "notes": [
+   "Indexed source that builds a full indexer pipeline over a blob container, including chunking and optional vectorization. Use it for documents in Blob Storage when you want managed ingestion.",
+   "Remote source that sends queries to an MCP-compatible endpoint and returns live, tool-backed results. Use it for systems of record that expose data through MCP.",
+   "Indexed source that wraps an Azure AI Search index that already exists. Use it when you have built and tuned your own index; it cannot help when no index exists.",
+   "Remote source that retrieves real-time public results from Microsoft Bing. Use it for current public information, not for internal content.",
+   "Remote source that queries SharePoint in Microsoft 365 with the permissions of the user. Use it for governed internal documents in SharePoint, not for blob or public content."
+  ]
+ }
+]

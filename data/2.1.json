@@ -1,0 +1,717 @@
+[
+ {
+  "id": "2.1.1-01",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. is building a classification agent named Agent1 that calls a chat model by using a messages array. Agent1 labels incoming support tickets, and the team wants to show the model three labeled sample tickets so that it infers the expected label format for the current request only, without changing the model weights.\n\nWhich placement should you use for the sample tickets?",
+  "choices": [
+   "As a supervised fine-tuning training file for the deployment",
+   "As a series of example user and assistant messages after the system message",
+   "As an assistant message appended after the current user message",
+   "As a JSON schema in the response_format parameter"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Few-shot examples are added in the Chat Completions structure as example interactions between user and assistant directly after the system message. They condition the model only for the current inference; the weights do not change.",
+  "rationale": [
+   "Incorrect: a supervised fine-tuning training file changes the model weights through a training job, and the effect applies to every later request. The stem requires guidance for the current request only. Use fine-tuning when many examples should become permanent behavior.",
+   "Correct: few-shot examples placed as user and assistant message pairs after the system message show the model the expected label format for this inference only, without any change to the weights.",
+   "Incorrect: an assistant message after the current user message is read as the start of the model's own answer, which primes the output rather than showing labeled examples. Use output priming when the response should begin with a specific cue.",
+   "Incorrect: a JSON schema in response_format forces the shape of the output, but it does not show the model labeled sample tickets to infer the labels from. Use structured outputs when downstream code needs a guaranteed schema."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/concepts/prompt-engineering"
+ },
+ {
+  "id": "2.1.1-02",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has an agent that summarizes documents uploaded by external partners. A security review finds that partner documents can contain hidden instructions that try to override the agent behavior. You need a prompt technique that transforms the untrusted document text by interleaving a special token throughout the entire text, and warns the model about this transformation in the system message.\n\nWhich technique should you use?",
+  "choices": [
+   "Chain-of-thought prompting",
+   "Few-shot learning",
+   "Data marking",
+   "Output priming with a cue"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Data marking is a spotlighting technique: a special token is placed throughout the untrusted text so that the model can distinguish system instructions from external input. This helps against indirect prompt injection.",
+  "rationale": [
+   "Incorrect: chain-of-thought prompting asks the model to reason step by step, which improves multi-step answers. It does not mark or transform untrusted text. Use it for complex reasoning tasks on non-reasoning models.",
+   "Incorrect: few-shot examples demonstrate the desired input and output behavior, but they leave the untrusted document text unchanged. Use them to teach a format or style.",
+   "Correct: data marking is a spotlighting technique that interleaves a special token throughout the untrusted text and explains the token in the system message, so the model can tell external content from instructions.",
+   "Incorrect: an output cue at the end of the prompt primes the model to start its answer in a particular way. It gives no protection against instructions embedded in the document. Use it to steer the response format."
+  ],
+  "ref": "https://learn.microsoft.com/security/zero-trust/sfi/defend-indirect-prompt-injection"
+ },
+ {
+  "id": "2.1.1-03",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank publishes a prompt agent named Agent1 in Foundry Agent Service to employees in Microsoft Teams. Prompt engineers save new versions of Agent1 several times per day while they experiment. You need to ensure that employees keep receiving the approved version until a release manager explicitly changes it.\n\nWhat should you configure for the agent endpoint?",
+  "choices": [
+   "Keep the default version selector that routes traffic to the latest version",
+   "Edit the approved version in place for each change",
+   "Publish each experimental version to a separate Teams channel",
+   "Pin the version selector to the approved agent version"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "By default, the version selector routes 100% of traffic to the latest version, including in Teams. When you pin the selector to a specific active version, new versions do not change what users see until you update the selector.",
+  "rationale": [
+   "Incorrect: the default version selector routes all traffic to the latest version, so every experiment that is saved during the day would reach Teams users. Keep it for development endpoints where the newest version should always be live.",
+   "Incorrect: agent versions are immutable, so a saved version cannot be edited in place; every change creates a new version. Immutability is what makes pinning and rollback reliable.",
+   "Incorrect: publishing to another Teams channel does not change the version selector of the endpoint, which still routes to the latest version. Separate channels fit when different audiences need different agents.",
+   "Correct: pinning the version selector to the approved version keeps employees on that version while engineers save new ones, until the release manager updates the selector."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/configure-agent"
+ },
+ {
+  "id": "2.1.1-04",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. builds a support agent by using Microsoft Agent Framework. On every invocation the agent must know the current user's contract tier and preferred language, and these values must match the current records in a CRM system. Testing shows that when this information is exposed as a function tool, the model sometimes answers without calling the tool. The information differs per user, and the agent instructions must stay unchanged.\n\nWhat should you implement?",
+  "choices": [
+   "A context provider that loads the tier and language and injects them before each invocation",
+   "A function tool with a more detailed description that tells the model to call it first",
+   "Few-shot examples that show answers for each contract tier",
+   "A memory provider that extracts the tier and language from earlier conversations"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Context providers run proactively for every invocation and inject context without the model having to decide. Tools are reactive: the model must decide on its own to call them. Rule of thumb: information that must be there every time belongs in a context provider.",
+  "rationale": [
+   "Correct: a context provider runs before every invocation, loads the current tier and language from the CRM, and injects them, so the model always has the data without deciding to call a tool, and the agent instructions stay unchanged.",
+   "Incorrect: a more detailed tool description makes a call more likely, but tools stay reactive, so the model can still answer without calling it. Use a tool for data that only some requests need.",
+   "Incorrect: few-shot examples show what answers per tier should look like, but they do not supply the current user's tier and language from the CRM. Use them to teach response patterns.",
+   "Incorrect: memories extracted from earlier conversations can be missing or stale, while the values must match the current CRM records. Use a memory provider for preferences that a user states over time."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/journey/adding-context-providers"
+ },
+ {
+  "id": "2.1.1-05",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud has a research agent that receives retrieved chunks from Azure AI Search and passes them to a chat model. The current prompt places the user question first, then appends all returned chunks, and ends with the instruction \"Use the context if helpful.\" Evaluations show low groundedness, and when the chunks do not contain the answer, the model answers from its training data.\n\nWhich prompt change should you make?",
+  "choices": [
+   "Move the grounding instructions into the context block and repeat them next to each chunk",
+   "Place labeled chunks before the question, require answers from the context only, and define a fallback",
+   "Require a chunk citation for every claim and keep the current prompt order",
+   "Repeat the user question at the end of the prompt and keep the instruction to use the context if helpful"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Vague grounding instructions, context after the question, and no fallback are known RAG anti-patterns. Place labeled chunks before the question, use an explicit 'only from context' instruction, and define what the model does when the context is insufficient.",
+  "rationale": [
+   "Incorrect: mixing grounding instructions into the context block is itself a RAG anti-pattern, and repeating them next to each chunk wastes tokens without adding a fallback. Keep instructions and retrieved context in clearly separated sections.",
+   "Correct: labeled chunks before the question, an explicit instruction to answer only from the context, and a defined fallback when the context is insufficient fix both the low groundedness and the answers from training data.",
+   "Incorrect: a citation per claim helps users verify answers, but the context still follows the question, the instruction stays vague, and there is no fallback when the chunks lack the answer. Add citations on top of a sound grounding prompt.",
+   "Incorrect: repeating the question at the end can help in long prompts, but the vague instruction remains and no fallback is defined, so the model still answers from training data. Use it only in addition to explicit grounding."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-prompt-engineering"
+ },
+ {
+  "id": "2.1.1-06",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys runs a prompt agent named Agent1 in Foundry Agent Service. The instructions were handcrafted, and manual prompt tuning is slow. You need an evaluation-driven process that generates improved instructions and tool descriptions, scores them against a dataset created from Agent1 traces, and keeps the current version available for rollback. The solution must not require code changes.\n\nWhat should you do?",
+  "choices": [
+   "Create prompt variants in prompt flow and compare them in a batch run",
+   "Fine-tune the model deployment by using supervised fine-tuning on the traces",
+   "Run the agent optimizer from the Optimize tab and promote the best candidate to a new agent version",
+   "Run a batch evaluation on the dataset and rewrite the instructions in a new agent version"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The agent optimizer evaluates a baseline version, generates candidates (instructions, tool descriptions, model choice), scores them, and lets you promote the winner to a new agent version, without code changes for prompt agents. The old version remains available.",
+  "rationale": [
+   "Incorrect: prompt flow can compare prompt variants in a batch run, but it is a separate authoring tool, not the mechanism that optimizes Foundry prompt agents and promotes agent versions. Use it for existing prompt flow applications.",
+   "Incorrect: supervised fine-tuning on traces changes model weights and needs curated desired responses. It does not generate improved instructions or tool descriptions. Use fine-tuning when prompting alone cannot reach the required behavior.",
+   "Correct: the agent optimizer scores a baseline on a dataset built from Agent1 traces, generates candidate instructions and tool descriptions, scores them, and promotes the best one to a new agent version, so the current version stays available for rollback.",
+   "Incorrect: a batch evaluation plus a manual rewrite keeps rollback through versions, but it is still manual prompt tuning; nothing generates and scores candidate instructions and tool descriptions. Use it for small, targeted fixes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview"
+ },
+ {
+  "id": "2.1.1-07",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-b",
+  "stem": "You need to reduce the risk that the red team identified for the intake agent.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Add a system message instruction to treat the delimited letter content as data only and to ignore instructions inside it",
+   "Apply spotlighting by using delimiters and data marking on the letter text",
+   "Screen the letter content by using Azure AI Content Safety before it enters the prompt",
+   "Enable Prompt Shields for user prompt attacks on the messages from clinic staff",
+   "Set the model temperature to 0 so that the summaries are deterministic"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Hidden instructions in documents that an agent reads are indirect prompt injection. Defense in depth combines a defensive instruction to treat external content as data, spotlighting with delimiters and data marking so the model can separate content from instructions, and screening of the content with Azure AI Content Safety before it reaches the prompt. No single layer is sufficient on its own.",
+  "rationale": [
+   "Correct: a defensive system message instruction tells the model that the delimited referral letter is data and that instructions inside it must be ignored, which is the first layer against indirect injection.",
+   "Correct: spotlighting with delimiters and data marking transforms the untrusted letter text so that the model can distinguish it from Lamna's own instructions.",
+   "Correct: screening the letter content with Azure AI Content Safety before it enters the prompt detects document attacks such as the hidden white text, before the model ever sees them.",
+   "Incorrect: user prompt attack detection scans what the user types, such as clinic staff messages. The hidden text arrives in uploaded referral letters, which is a document attack. Use user prompt shields against direct jailbreak attempts.",
+   "Incorrect: temperature controls the randomness of sampling. A temperature of 0 makes output more repeatable, but the model still follows injected instructions. Lower temperature when you need consistent formatting."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-prompt-engineering"
+ },
+ {
+  "id": "2.1.1-08",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Northwind Traders implements a custom context provider in Microsoft Agent Framework for Python. The provider must add the user's support tier to the agent instructions before the model is called. The same provider instance is attached to one agent that serves many concurrent sessions, and the tier must never leak between sessions.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nclass TierProvider(ContextProvider):\n    def __init__(self) -> None:\n        super().__init__(\"support-tier\")\n        self.cache: dict = {}\n\n    async def [[1]](self, *, agent, session, context, state) -> None:\n        if tier := [[2]].get(\"support_tier\"):\n            context.extend_instructions(self.source_id, f\"The user has the {tier} support tier.\")\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "before_run",
+     "after_run"
+    ],
+    "why": [
+     "Correct: before_run runs before the model call, so instructions added with extend_instructions are part of the current invocation.",
+     "Incorrect: after_run runs after the model has responded, so instructions added there arrive too late for the current run. Use after_run to extract data from input and response messages, such as storing the tier in state."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "state",
+     "self.cache"
+    ],
+    "why": [
+     "Correct: state is the per-session provider state that the framework passes to each hook, so the tier of one session is never visible to another session.",
+     "Incorrect: one provider instance serves all sessions, so a field such as self.cache is shared and can leak one user's tier to another. Fields are fine for shared, non-session data such as a service client."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "A context provider wraps each invocation: before_run adds instructions, messages, or tools before the model call, and after_run processes the result. Because one provider instance is attached to an agent and reused by every session, session-specific values belong in the session state that the hooks receive, not in instance fields.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/context-providers"
+ },
+ {
+  "id": "2.1.1-09",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Humongous Insurance is redesigning the system message of a claims agent and wants to manage it as a testable artifact across its lifecycle. You need to minimize regressions and the leakage of unsafe responses when the prompt changes.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Define the scenario: the task, the users, the expected inputs, and the tone and format.",
+   "Identify the RAI risks and decide which ones the system message addresses.",
+   "Decide how the agent behaves at boundaries, such as out-of-scope or unsafe requests.",
+   "Create a test set that contains benign and adversarial prompts.",
+   "Evaluate the system message variants and iterate.",
+   "Select the variant that has the lowest overall defect rate, regardless of defect severity.",
+   "Fine-tune the model on the adversarial prompts instead of changing the system message."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Treat a system message like code: define what it must do, list the risks it must handle, specify boundary behavior, and build a test set before you change it. A test set with benign and adversarial prompts measures both regressions and leakage for every variant. When you compare variants, prefer the one that reduces the most severe defects.",
+  "rationale": [
+   "Step 1: the scenario defines the job, the users, the expected inputs, and the tone and format; the risks, boundaries, and tests cannot be chosen without it.",
+   "Step 2: with the scenario known, you list the RAI harms that matter and decide which ones the system message mitigates versus other layers such as content filters.",
+   "Step 3: for the risks that the system message handles, you specify what the agent does at boundaries, for example how it refuses or redirects.",
+   "Step 4: the test set needs the scenario, risks, and boundary rules to be representative; benign prompts catch regressions and adversarial prompts catch leakage.",
+   "Step 5: you evaluate each variant on the test set and iterate, which makes every future change of the system message measurable for regressions and leakage.",
+   "Incorrect: guidance is to prefer the component that reduces the most severe defects, not only the one with the lowest defect rate. A lowest-rate rule fits only when all defects have similar impact.",
+   "Incorrect: fine-tuning changes model weights and does not manage the system message as an artifact. Use it when the behavior cannot be reached through prompting and you have curated training data."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-foundry/openai/concepts/system-message"
+ },
+ {
+  "id": "2.1.2-01",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Margie's Travel builds a sequential translation pipeline in Microsoft Agent Framework for Python with a writer agent, a translator agent, and a style reviewer agent. Testing shows that the translator is influenced by the original user prompt and sometimes answers it instead of translating the writer output. You need to ensure that each agent after the writer consumes only the response messages of the previous agent.\n\nSolution: You create one session by calling writer.create_session() and pass it as the session of an AgentExecutor for each of the three agents.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "By default, an agent in a sequential workflow consumes the full conversation of the previous agent, including the input that the previous agent received. The last_agent context mode limits each agent to the previous agent's response messages, and chain_only_agent_responses=True applies that mode to every participant of a SequentialBuilder. A shared session gives agents a common conversation thread, which is the opposite of limiting what each agent consumes.",
+  "rationale": [
+   "Incorrect: a shared session keeps one common conversation thread for all three agents, so the translator still has the original user prompt in its context. Share a session when agents should work in the same thread.",
+   "Correct: the solution does not meet the goal. Sharing a session widens the context instead of limiting it; the goal needs the last_agent context mode, for example through chain_only_agent_responses=True."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/advanced/agent-executor"
+ },
+ {
+  "id": "2.1.2-02",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Margie's Travel builds a sequential translation pipeline in Microsoft Agent Framework for Python with a writer agent, a translator agent, and a style reviewer agent. Testing shows that the translator is influenced by the original user prompt and sometimes answers it instead of translating the writer output. You need to ensure that each agent after the writer consumes only the response messages of the previous agent.\n\nSolution: You build the pipeline with SequentialBuilder(participants=[writer, translator, reviewer], chain_only_agent_responses=True).\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, an agent in a sequential workflow consumes the full conversation of the previous agent, including the input that the previous agent received. The last_agent context mode limits each agent to the previous agent's response messages, and chain_only_agent_responses=True applies that mode to every participant of a SequentialBuilder.",
+  "rationale": [
+   "Correct: chain_only_agent_responses=True configures all participants to use context_mode=\"last_agent\", so the translator sees only the writer's response and the reviewer sees only the translator's response.",
+   "Incorrect: the solution does meet the goal. No would be right if the builder kept its default, which passes the full conversation, including the original user prompt, to each agent."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/advanced/agent-executor"
+ },
+ {
+  "id": "2.1.2-03",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A. Datum Corporation has a primary planning agent that delegates subtasks to a pricing agent and a compliance agent. The planning agent must keep ownership of the overall task and the full conversation, and it must pass only the information relevant to each subtask to the other agents.\n\nWhich pattern should you use?",
+  "choices": [
+   "Handoff orchestration",
+   "Group chat orchestration",
+   "Agent-as-tools",
+   "Concurrent orchestration with result aggregation"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "With agent-as-tools, the primary agent retains responsibility and the context, and passes only relevant information to tool agents; control then returns. With handoff, the entire conversation transfers with full context.",
+  "rationale": [
+   "Incorrect: in a handoff, control and the full conversation move to the receiving agent, so the planner would lose ownership and the specialists would see everything. Use handoff when a specialist should take over the conversation, such as escalation to a returns agent.",
+   "Incorrect: in group chat, every participant sees the full shared history, so there is no selective context and no single owner of the task. Use it for iterative refinement between peers such as a writer and a reviewer.",
+   "Correct: with agent-as-tools, the planning agent calls the pricing and compliance agents like tools, passes only the input that each subtask needs, gets their results back, and keeps ownership of the task and the conversation.",
+   "Incorrect: concurrent orchestration sends the same input to all agents in parallel and aggregates their results, so each agent gets the same context, not a subtask-specific slice. Use it for independent parallel analyses of one request."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff"
+ },
+ {
+  "id": "2.1.2-04",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Margie's Travel builds a sequential translation pipeline in Microsoft Agent Framework for Python with a writer agent, a translator agent, and a style reviewer agent. Testing shows that the translator is influenced by the original user prompt and sometimes answers it instead of translating the writer output. You need to ensure that each agent after the writer consumes only the response messages of the previous agent.\n\nSolution: You wrap the translator and the reviewer in AgentExecutor instances that use context_mode=\"last_agent\", and you connect writer -> translator -> reviewer by using WorkflowBuilder edges.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, an agent in a sequential workflow consumes the full conversation of the previous agent, including the input that the previous agent received. The last_agent context mode limits each agent to the previous agent's response messages, and chain_only_agent_responses=True applies that mode to every participant of a SequentialBuilder. Configuring AgentExecutor explicitly gives the same result per executor and also allows a custom context filter.",
+  "rationale": [
+   "Correct: with context_mode=\"last_agent\", each executor consumes only the upstream agent's response messages and excludes the input that the upstream agent received, so the translator never sees the original prompt.",
+   "Incorrect: the solution does meet the goal. No would be right with context_mode=\"full\", the default, which passes the upstream agent's input and response; use \"custom\" with a context_filter when you need a different subset."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/advanced/agent-executor"
+ },
+ {
+  "id": "2.1.2-05",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Fourth Coffee builds a Python workflow in Microsoft Agent Framework with a researcher agent and a writer agent. The executor IDs are researcher and writer. Every tool in the workflow needs the tenant ID of the request. Only the tools of the researcher agent need a database configuration object, and the writer agent must not receive it. The values must flow to the tools for one run without becoming shared workflow state.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nawait workflow.run(\n    \"Create the report\",\n    [[1]]=[[2]],\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "function_invocation_kwargs",
+     "client_kwargs"
+    ],
+    "why": [
+     "Correct: function_invocation_kwargs passes runtime values to the tools that agents call, which is where the tenant ID and the database configuration are needed.",
+     "Incorrect: client_kwargs passes runtime values to the chat clients of the agents, not to their tools. Use it for per-run client settings. The global and per-executor targeting rules are the same for both parameters."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "WorkflowInvocationKwargs(global_kwargs={\"tenant\": tenant_id}, executor_kwargs={\"researcher\": {\"db_config\": db_config}})",
+     "{\"tenant\": tenant_id, \"db_config\": db_config}",
+     "{\"researcher\": {\"tenant\": tenant_id, \"db_config\": db_config}}"
+    ],
+    "why": [
+     "Correct: WorkflowInvocationKwargs combines global values that every agent executor receives, such as the tenant ID, with entries targeted by executor ID, so only the researcher receives db_config.",
+     "Incorrect: a plain mapping without executor ID keys is global, so the writer agent would also receive db_config. Use a plain global mapping when every agent may see every value.",
+     "Incorrect: a mapping keyed by executor ID is targeted, so only the researcher receives values and the writer's tools would not get the tenant ID. Use targeted mappings when no value is shared."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Workflow-scoped runtime kwargs carry per-run values to agents and tools without writing them to shared workflow state. A plain mapping is global unless its keys are executor IDs, in which case it is targeted. WorkflowInvocationKwargs combines both, and an executor-specific value wins when the same key appears in both mappings.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/state?pivots=programming-language-python"
+ },
+ {
+  "id": "2.1.2-06",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a conversational front-end agent that delegates product lookups to a retrieval agent. The retrieval agent receives only the latest user message. When a user asks a follow-up question such as \"What about its pricing?\", the retrieval agent returns irrelevant results. The final answer must still be generated from the user's original question.\n\nWhat should you do?",
+  "choices": [
+   "Rewrite the follow-up into a self-contained query before retrieval",
+   "Increase the number of chunks that the retrieval agent returns",
+   "Send the full conversation history to the search index as the query",
+   "Use the rewritten query instead of the original question for generation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With multi-turn context, you rewrite the current question into a standalone query that resolves references (for example, 'its' becomes the product name). The original request remains the basis for generating the answer.",
+  "rationale": [
+   "Correct: rewriting the follow-up into a self-contained query resolves references such as 'its' to the product name, so the retrieval agent searches correctly even though it sees only the latest message.",
+   "Incorrect: returning more chunks does not resolve the reference 'its', so the extra results are just as irrelevant and add noise and tokens. Increase the number of chunks when relevant content exists but ranks too low.",
+   "Incorrect: using the whole conversation as search text dilutes the query with unrelated terms and lowers precision. Pass the history to a rewriting step, not directly to the search index.",
+   "Incorrect: the rewritten query is for retrieval only; generation must use the user's original question, as the requirements state, so the answer addresses what was actually asked."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/rag/rag-prompt-engineering"
+ },
+ {
+  "id": "2.1.2-07",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adventure Works Cycles runs a handoff orchestration in Microsoft Agent Framework with a triage agent, an order agent, and a returns agent. The order agent calls a tool that returns the order status and then hands off to the returns agent. The returns agent sees the user messages and the order agent's text replies, but it has no access to the order status that the tool returned. Each agent has its own AgentSession.\n\nWhat should you identify as the cause?",
+  "choices": [
+   "Handoff orchestration uses a central orchestrator that summarizes context before each turn",
+   "The returns agent shares the same AgentSession instance as the order agent",
+   "Tool-related content is not broadcast to other agents; only user and agent messages are synchronized",
+   "Context compaction removed the tool result because the session exceeded the context window"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "In a handoff orchestration, participants broadcast their responses and user input to each other, but tool-related content (including handoff tool calls) is not broadcast. As a result, the returns agent does not see the tool output unless it is in an agent message.",
+  "rationale": [
+   "Incorrect: handoff orchestration uses a mesh in which agents hand control directly to each other; no central orchestrator summarizes context. A central orchestrator that manages turns is used in group chat orchestration.",
+   "Incorrect: the stem states that each agent has its own AgentSession, and handoff participants do not share one session instance. Sharing a session is a deliberate configuration for agents of the same provider type.",
+   "Correct: handoff participants broadcast user input and agent responses to each other, but tool-related content, including tool results and handoff tool calls, is not broadcast. The order status stays with the order agent unless it appears in an agent message.",
+   "Incorrect: nothing indicates that the context window was exceeded, and exactly the tool result is missing, which points to the broadcast design. Suspect compaction when older turns of any type disappear in long conversations."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff"
+ },
+ {
+  "id": "2.1.2-08",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals builds a Python group chat by using Microsoft Agent Framework with a research agent and a writer agent. The writer agent uses a model from an external provider and must never receive patient identifiers. The research agent sometimes includes patient identifiers in its response text.\n\nA developer removes the identifiers from the events that are returned by workflow.run() before they are shown in the UI. An audit shows that the writer agent still receives the identifiers in its prompts.\n\nWhat should you do?",
+  "choices": [
+   "Filter the research agent text in a participant-response handler of a custom GroupChatOrchestrator.",
+   "Add the research agent to intermediate_output_from, and filter the intermediate events.",
+   "Pass the same AgentSession instance to both participants so that they share the filtered history.",
+   "Use an orchestrator_agent whose instructions tell the writer agent to ignore patient identifiers."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a group chat, the orchestrator broadcasts every response to all other participants after an agent's turn. Filtering events from workflow.run() is too late, because the original response is then already in the shared history and has been broadcast. You stop text in a participant-response handler of a custom GroupChatOrchestrator.",
+  "rationale": [
+   "Correct: a participant-response handler in a custom GroupChatOrchestrator runs before a response is added to the shared history and broadcast, so you can remove the identifiers before the writer agent receives them.",
+   "Incorrect: intermediate_output_from selects which participants' outputs are surfaced as workflow events to the caller. It does not change what is broadcast to other participants. Use it to show progress in a UI.",
+   "Incorrect: participants do not share one session; the orchestrator synchronizes the response into each participant's session, so the unfiltered text would still reach the writer. Sharing sessions is not a filtering mechanism.",
+   "Incorrect: an instruction only asks the writer to ignore identifiers that are still in its prompt and are sent to the external provider. Instructions guide behavior; they do not protect data."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/group-chat"
+ },
+ {
+  "id": "2.1.2-09",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Graphic Design Institute builds a Python tutoring solution by using Microsoft Agent Framework. A tutor agent and a quiz agent both use FileMemoryProvider over the same FileSystemAgentFileStore, so the model can store and recall each student's learning goals through the file_memory_* tools. The solution has the following requirements:\n\n- Goals that a student mentions in one session must be available in later sessions and to both agents.\n- One student's goals must never be visible to another student.\n- The web client sends the student ID in the request body.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Create FileMemoryProvider with a stable per-student scope, such as scope=f\"student-{student_id}\".",
+   "Verify that the student ID belongs to the authenticated caller before you use it as the scope.",
+   "Omit the scope so that the provider derives the working folder from the session ID.",
+   "Use a per-class scope, such as scope=f\"class-{class_id}\", so that both agents find the goals.",
+   "Pass one AgentSession instance to both agents so that they share the memory files."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "FileMemoryProvider derives its working folder from the session ID when scope is omitted, so memory is isolated per session. A stable scope, such as a student identifier, shares the same memory files across sessions and agents. The scope is an opaque namespace key, so the application must authorize externally supplied scopes.",
+  "rationale": [
+   "Correct: a stable per-student scope maps to the same memory folder in every session, and both agents use the same store, so goals are durable across sessions and shared by the tutor and quiz agents.",
+   "Correct: the scope is an opaque namespace key, and the student ID comes from the client, so the application must check that it belongs to the authenticated caller; otherwise a caller could read another student's memory.",
+   "Incorrect: without a scope, the provider derives the working folder from the session ID, which isolates memory to one session, so goals are not available in later sessions. Omit the scope when memory should not outlive the session.",
+   "Incorrect: a per-class scope puts every student's goals in one shared folder, so students in the same class would see each other's goals. A class scope fits shared class-level notes, not personal data.",
+   "Incorrect: memory files are selected by scope, not by session, and agents in a solution should not share one session instance to share memory. Share a session only when agents should work in the same conversation thread."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/conversations/context-providers?pivots=programming-language-python"
+ },
+ {
+  "id": "2.1.3-01",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Alpine Ski House plans to customize models for three agents. For each agent, you must choose the customization method that fits the available data:\n\n- Agent1 must respond in a warmer, more concise brand tone. There is no single correct answer, but A/B test logs show which of two responses to the same prompt reviewers preferred.\n- Agent2 must produce a fixed structured report format. The team has curated prompts with the desired response for each prompt.\n- Agent3 solves multi-step pricing calculations that have several valid solution paths, and the team can score each answer reliably with a grader.\n\nWhich customization method should you use for each agent? To answer, drag the appropriate methods to the correct agents. Each method may be used once, more than once, or not at all.",
+  "choices": [
+   "Direct preference optimization (DPO)",
+   "Supervised fine-tuning (SFT)",
+   "Reinforcement fine-tuning (RFT)",
+   "Few-shot examples in the system message",
+   "Retrieval grounding on a knowledge base"
+  ],
+  "targets": [
+   "Agent1",
+   "Agent2",
+   "Agent3"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Agent1 has preference pairs, preferred and rejected responses to the same prompt, for a subjective quality such as tone, which is exactly the training signal of DPO.",
+   "Agent2 has prompts with one desired response each, so supervised fine-tuning can demonstrate the fixed report format directly.",
+   "Agent3 has many valid solution paths and a reliable grader, which is the setup for reinforcement fine-tuning, where the grader scores generated responses."
+  ],
+  "notes": [
+   "Trains on preferred and rejected responses to the same input. Use it when quality depends on preferences such as tone or completeness rather than one correct answer.",
+   "Trains on prompts with desired responses. Use it when you can demonstrate the exact behavior, such as a format, terminology, or a narrow task.",
+   "Trains with a grader that scores generated responses. Use it when multiple solutions are possible and quality can be scored reliably, often in objective domains.",
+   "Adds labeled examples to every prompt without training. Use it for quick, small adjustments when only a few examples exist and extra prompt tokens are acceptable.",
+   "Supplies current facts at run time from indexed content. Use it for knowledge that changes or must be cited; it does not change tone or format behavior."
+  ],
+  "explanation": "Choose a customization method by the training signal you have: desired responses for SFT, preference pairs for DPO, and a reliable grader for RFT. Prompting with examples and retrieval are alternatives that change no weights; they suit small adjustments and current knowledge. Matching the method to the data is the first decision in a fine-tuning strategy.",
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/overview"
+ },
+ {
+  "id": "2.1.3-02",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery has an agent that answers questions about product availability and prices. The underlying catalog changes several times per day. A developer proposes fine-tuning the model every night on the latest catalog.\n\nWhat should you recommend?",
+  "choices": [
+   "Ground the agent on the live catalog by using retrieval instead",
+   "Use the Developer training type to reduce the cost of the nightly jobs",
+   "Use continuous fine-tuning on the previous fine-tuned model each night",
+   "Use reinforcement fine-tuning with a grader that checks prices"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fine-tuning does not replace retrieval for current information. Fast-changing knowledge belongs in the context via retrieval or tools; fine-tuning is intended for stable behavior such as format, tone, and terminology.",
+  "rationale": [
+   "Correct: retrieval grounds every answer on the live catalog at request time, so availability and prices are current; fine-tuning stays reserved for stable behavior such as format, tone, and terminology.",
+   "Incorrect: the Developer training type lowers training cost by using idle capacity, but a nightly model still lags a catalog that changes several times a day. Use it for experiments and price-sensitive jobs.",
+   "Incorrect: continuous fine-tuning starts from a previous fine-tuned model to refine behavior with new examples. It does not make the model current with daily facts. Use it for iterative behavior improvements.",
+   "Incorrect: reinforcement fine-tuning optimizes behavior against a grader score, but the model still cannot know prices that changed after training. Use RFT for reasoning tasks with gradable answers."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/overview"
+ },
+ {
+  "id": "2.1.3-03",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys plans its first supervised fine-tuning job in Microsoft Foundry to teach a model a structured output format. The team has thousands of raw chat logs of mixed quality, including duplicates and some sensitive information.\n\nWhat should you recommend for preparing the training data?",
+  "choices": [
+   "Remove the duplicate chat logs and upload the rest as training data",
+   "Curate accurate, consistent, representative examples and hold out validation and test data",
+   "Train on the curated examples and use the raw chat logs as the validation file",
+   "Put the best chat logs into the system message as few-shot examples instead"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Fine-tuning is iterative and not a guaranteed improvement: the quality and coverage of the data determine the result. Microsoft advises accurate, consistent, and representative examples, checking for duplicates, bias, and sensitive information before upload, and keeping training, validation, and test data separate.",
+  "rationale": [
+   "Incorrect: deduplication is one necessary check, but mixed-quality examples and sensitive information stay in the data, and nothing is held out for validation or testing. Deduplicate as part of a full curation pass.",
+   "Correct: accurate, consistent, representative examples, checked for duplicates, bias, and sensitive information, with separate validation and test data, follow the Foundry data guidance and make results measurable.",
+   "Incorrect: raw logs with sensitive data are a governance risk, and a noisy validation file gives no reliable measure of quality. The validation set should be curated with the same standards as the training set.",
+   "Incorrect: few-shot examples in the prompt are an alternative to fine-tuning, not a way to prepare training data for the planned job. Use few-shot when only a handful of examples exist."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/overview"
+ },
+ {
+  "id": "2.1.3-04",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Trey Research uses a fine-tuned model to power a report-writing agent. Each month, analysts curate new prompts with the ideal report for each prompt and save them as training.jsonl and validation.jsonl. The team must be able to tell the resulting models apart and must deploy the best candidate, not just the most recent one. You use the OpenAI client from the Foundry SDK, named client.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`training_file = client.files.create(file=training, purpose=\"fine-tune\")`, and the same for validation.jsonl",
+   "`client.files.wait_for_processing(training_file.id)` and `client.files.wait_for_processing(validation_file.id)`",
+   "`job = client.fine_tuning.jobs.create(model=..., training_file=training_file.id, validation_file=validation_file.id, suffix=\"reports-2026-10\", method={\"type\": \"supervised\", ...})`",
+   "`client.fine_tuning.jobs.checkpoints.list(job.id)`, and then compare the candidates on held-out tasks",
+   "Deploy the selected model or checkpoint from the Foundry portal.",
+   "`job = client.fine_tuning.jobs.create(model=..., training_file=training_file.id, validation_file=validation_file.id, method={\"type\": \"dpo\"})`",
+   "Deploy `job.fine_tuned_model` as soon as `client.fine_tuning.jobs.retrieve(job.id).status` reports that the job succeeded."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "A recurring fine-tuning cycle uploads curated data, trains with a suffix that identifies the iteration, and then selects a candidate by evaluation rather than by recency. Checkpoints and their metrics let you compare candidates, and held-out tasks show whether a model generalizes. Training loss alone and the latest checkpoint are not reliable selection criteria.",
+  "rationale": [
+   "Step 1: files.create with purpose fine-tune uploads the training and validation data and returns the file IDs that the job needs.",
+   "Step 2: uploaded files are processed before a job can use them, so you wait for both the training and the validation file to finish processing before you submit the job.",
+   "Step 3: the supervised job trains on the prompt and ideal-report pairs, and the suffix makes this month's model recognizable among earlier iterations.",
+   "Step 4: checkpoints.list returns the checkpoint identifiers and metrics of the finished job, and comparing candidates on held-out tasks identifies the best one.",
+   "Step 5: you deploy the candidate that won the held-out comparison, which may be an earlier checkpoint rather than the final model of the job.",
+   "Incorrect: DPO trains on preferred and rejected response pairs. The analysts curate one ideal response per prompt, which is SFT data. Use DPO when reviewers compare two responses to the same prompt.",
+   "Incorrect: deploying the final model as soon as the job succeeds ships the most recent candidate, not the best one. Automatic deployment is acceptable only with an automated evaluation gate before it."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/fine-tuning"
+ },
+ {
+  "id": "2.1.3-05",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Blue Yonder Airlines runs a high-volume routing agent on a large model. The quality is acceptable, but cost and latency are too high. The task is narrow and stable, and the team can generate high-quality outputs for representative prompts by using the large model.\n\nWhich approach should you use?",
+  "choices": [
+   "Fine-tune the large model by using direct preference optimization",
+   "Fine-tune a smaller model on outputs generated by the large model",
+   "Add more few-shot examples generated by the large model to its prompt",
+   "Switch the agent to a smaller base model without any fine-tuning"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Distillation uses teacher-generated examples from a large model to specialize a smaller model through SFT, with lower cost and latency at comparable task performance. The teacher model is used only to generate training data, so production traffic runs on the cheaper student model.",
+  "rationale": [
+   "Incorrect: DPO on the large model can improve how responses match preferences, but the agent keeps running on the same large model, so cost and latency do not drop. Use DPO when tone or style is the problem.",
+   "Correct: distillation uses outputs from the large teacher model as SFT training data for a smaller student model, which can reach comparable quality on a narrow, stable task at lower cost and latency.",
+   "Incorrect: more few-shot examples in the prompt increase input tokens on every call, which raises cost and latency further. Use few-shot examples when quality, not cost, is the issue and only a few examples exist.",
+   "Incorrect: a smaller base model without training lowers cost and latency, but it is unlikely to match the large model's quality on the specialized task. Try it first only when the task is simple."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/overview"
+ },
+ {
+  "id": "2.1.3-06",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-b",
+  "stem": "You need to choose the training type for the fine-tuning job of the summarization model.\n\nWhich training type should you use?",
+  "choices": [
+   "Global",
+   "Developer",
+   "Standard",
+   "Data zone"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Training types define where training runs and what data residency and service guarantees apply, separately from how the model is later deployed. Standard trains in the region of the Foundry resource and guarantees data residency; Global and Developer trade residency for lower price or faster queues. Data zone keeps data within a zone, and only the US data zone is currently supported.",
+  "rationale": [
+   "Incorrect: Global training uses capacity beyond the resource's region and copies data and weights to the region where training runs, so the data leaves Sweden Central. Use it when residency is not a restriction and you want lower prices and faster queues.",
+   "Incorrect: Developer training uses idle capacity with no SLA and no data residency guarantees, and jobs can be preempted. Use it for experiments and price-sensitive workloads without residency requirements.",
+   "Correct: Standard training runs in the region of Foundry1 and guarantees data residency, and Lamna accepts the longer queue time because compliance matters more.",
+   "Incorrect: Data zone training keeps data within a data zone instead of one region, and only the US data zone is supported, which does not fit a resource in Sweden Central. Use it for US workloads that need zone-level residency."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/fine-tuning/overview"
+ },
+ {
+  "id": "2.1.3-07",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. fine-tuned a chat model by using training examples that all start with the system message \"You are the Litware claims assistant. Respond in JSON.\" Validation results were strong. After deployment, the agent team uses a new, longer system message that adds tool guidance, and the fine-tuned model now often ignores the JSON format.\n\nWhat should you do first?",
+  "choices": [
+   "Align the inference system message with the one used in training",
+   "Increase the number of training epochs and retrain on the same data",
+   "Switch the fine-tuning method to reinforcement fine-tuning",
+   "Redeploy the fine-tuned model to a Global Standard deployment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For chat models, the system message at inference must match the one in the training data; a different system message can cause unexpected behavior. Use the same system message or retrain with the new one.",
+  "rationale": [
+   "Correct: chat models learn the system message that appears in the training examples. A different, longer system message at inference can cause unexpected behavior, so use the training system message or retrain with the new one.",
+   "Incorrect: more epochs on the same data increase the risk of overfitting and still train only on the old system message. Increase epochs when validation metrics show the model is still underfitting.",
+   "Incorrect: switching to reinforcement fine-tuning changes the training signal to grader scores, but the mismatch between training and inference system messages remains. Use RFT when answers can be graded and many solutions exist.",
+   "Incorrect: the deployment type determines where and how inference is processed and billed, not how the model reacts to a different system message. Change it for capacity, cost, or residency reasons."
+  ],
+  "ref": "https://learn.microsoft.com/azure/ai-foundry/openai/how-to/fine-tuning-troubleshoot"
+ },
+ {
+  "id": "2.1.3-08",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "School of Fine Art reviews the metrics of a supervised fine-tuning job. train_loss keeps decreasing, but full_valid_loss starts to rise after the first epochs, and the fine-tuned model performs worse than the baseline on held-out test prompts.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The metrics indicate that the model is overfitting the training data.",
+   "Retraining with a smaller learning_rate_multiplier can reduce the problem.",
+   "Retraining with a larger n_epochs value lets full_valid_loss recover."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "When training loss keeps falling while validation loss rises, the model memorizes the training set instead of generalizing, which is overfitting. Fewer epochs or a smaller learning rate multiplier make training less aggressive, and better data coverage helps too. Always keep training, validation, and test data separate so that the signal is reliable.",
+  "rationale": [
+   "Yes: falling training loss with rising validation loss, plus worse results than the baseline on held-out prompts, is the classic sign of overfitting.",
+   "Yes: a smaller learning rate multiplier makes each update less aggressive, which can reduce overfitting. Fewer epochs is the other common adjustment.",
+   "No: more epochs give the model more passes over the same examples, which increases overfitting. Increase epochs only when both training and validation loss are still falling."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/fine-tuning"
+ },
+ {
+  "id": "2.1.3-09",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Relecloud wants a specialized model for a travel-planning agent. The team has curated prompt and ideal response pairs for the core task, uploaded as sft_file, and reviewer preference pairs for tone, uploaded as dpo_file. You need to stack customization methods and be able to detect regressions. You use the OpenAI client from the Foundry SDK, named client.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`sft_job = client.fine_tuning.jobs.create(model=base_model, training_file=sft_file.id, method={\"type\": \"supervised\"})`",
+   "`dpo_job = client.fine_tuning.jobs.create(model=sft_job.fine_tuned_model, training_file=dpo_file.id, method={\"type\": \"dpo\"})`",
+   "Evaluate the base model and the final model on the same held-out test prompts and compare the results.",
+   "`dpo_job = client.fine_tuning.jobs.create(model=base_model, training_file=sft_file.id, method={\"type\": \"dpo\"})`",
+   "`dpo_job = client.fine_tuning.jobs.create(model=\"<SFT_DEPLOYMENT_NAME>\", training_file=dpo_file.id, method={\"type\": \"dpo\"})`",
+   "Compare the final model with the base model on the prompts from sft_file."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "You can stack techniques: SFT first teaches the task from demonstrations, and DPO on the SFT model then aligns responses with preferences. Each method needs its own data shape, and DPO after SFT starts from the fine-tuned model's identifier. Regressions are detected only by comparing against the base model on held-out data that was not used in training.",
+  "rationale": [
+   "Step 1: SFT on the curated prompt and ideal response pairs creates a model that performs the core task; it must exist before preference tuning can build on it.",
+   "Step 2: DPO starts from the SFT model, identified by sft_job.fine_tuned_model, and uses the preference pairs to align tone without losing the task behavior.",
+   "Step 3: comparing the final model with the base model on the same held-out prompts reveals regressions and confirms that stacking improved the agent.",
+   "Incorrect: DPO needs preferred and rejected outputs for each input, and the curated pairs contain one ideal response each, which is SFT data. Run DPO on the preference pairs instead.",
+   "Incorrect: for DPO after SFT you pass the fine-tuned model's identifier, not its deployment name. A deployment name is what you use for inference calls.",
+   "Incorrect: prompts from the training file were already seen during training, so the comparison overstates quality and hides regressions. Use training-set results only as a sanity check."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/fine-tuning-direct-preference-optimization"
+ }
+]

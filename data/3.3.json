@@ -1,0 +1,1613 @@
+[
+ {
+  "id": "3.3.1-01",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs a customer service agent named Agent1 in Foundry Agent Service. The operations team needs one indicator on the Agent Monitoring Dashboard that shows the percentage of agent runs that complete without failing, so that the team can open an investigation when the value drops below 95 percent.\n\nWhich dashboard metric should the team use?",
+  "choices": [
+   "Red teaming results",
+   "Run success rate",
+   "Latency",
+   "Token usage"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The Agent Monitoring Dashboard combines operational metrics (run success rate, latency, token usage) with quality and safety signals (evaluations, red teaming). Map the symptom to the metric: failures to run success rate, slowness to latency, cost to token usage, and safety to red teaming results.",
+  "rationale": [
+   "Incorrect: red teaming results summarize adversarial scans that probe the agent for safety risks such as jailbreaks. They say nothing about how many production runs fail. Use them when you track safety exposure, not run health.",
+   "Correct: run success rate is the percentage of agent runs that complete without failing. It is the direct agent health indicator, and Microsoft Learn names a value below 95 percent as a reason to investigate failed runs.",
+   "Incorrect: latency shows how long runs take and points to throttling or slow tools. A run can be fast and still fail, so latency does not give the share of successful runs. Use it for a response-time objective.",
+   "Incorrect: token usage shows how many tokens runs consume and helps you spot verbose prompts or responses that drive cost. It does not show whether runs completed. Use it when you investigate cost or context growth."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "3.3.1-02",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a multi-agent solution in which an orchestrator agent calls two subagents hosted in separate Azure Container Apps apps. All components send OpenTelemetry data to the same Application Insights resource. An engineer needs a KQL query that returns every request, dependency, and trace record that belongs to one end-to-end user transaction across the three components.\n\nWhich Application Insights field should the engineer filter on?",
+  "choices": [
+   "The id field of the request telemetry",
+   "operation_Id",
+   "operation_ParentId",
+   "cloud_RoleName"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Application Insights correlates distributed telemetry through the operation context: operation_Id is the trace ID shared by all items of one transaction, operation_ParentId links an item to its parent, and cloud_RoleName names the component. Filter on operation_Id for end-to-end views and on cloud_RoleName for per-component views.",
+  "rationale": [
+   "Incorrect: the id field of a request item is unique to that one request, so filtering on it returns a single request and none of the dependency or trace records downstream. Use it when you need one specific request only.",
+   "Correct: operation_Id holds the W3C trace ID that every request, dependency, and trace item of one distributed transaction shares, so one filter returns the full path through the orchestrator and both subagents.",
+   "Incorrect: operation_ParentId points to the immediate parent of an item. Filtering on it returns only the direct children of one span, not the whole transaction. Use it when you rebuild the parent-child tree inside a trace.",
+   "Incorrect: cloud_RoleName identifies the component that emitted the telemetry, such as one Container Apps app. It returns every transaction of that component, not one transaction across all three. Use it to filter by service."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/data-model-complete"
+ },
+ {
+  "id": "3.3.1-03",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Wingtip Toys runs an orchestrator agent and four subagents as separate Azure Container Apps apps. Each app sends telemetry to one Application Insights resource with a distinct cloud role name. The operations team has three monitoring needs.\n\nWhich Application Insights feature should the team use for each need? To answer, drag the appropriate features to the correct needs. Each feature may be used once, more than once, or not at all.",
+  "choices": [
+   "Application map",
+   "Live Metrics",
+   "Smart detection",
+   "Standard test",
+   "Workbooks"
+  ],
+  "targets": [
+   "Need1: a visual topology of the components and the calls between them, with failure hotspots per component",
+   "Need2: current request and failure rates while a new subagent version rolls out, without waiting for ingestion",
+   "Need3: an automatic notification when the failure rate rises abnormally compared with earlier days, without writing alert logic"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Application Insights offers several views on the same telemetry: Application map for topology, Live Metrics for real time, smart detection for anomaly notification, Standard tests for synthetic availability, and workbooks for custom reporting. Match the feature to whether the need is structure, immediacy, detection, reachability, or reporting.",
+  "rationale": [
+   "Need1 asks for topology with per-component health. Application map draws each cloud role name as a node and each call as an edge, and it highlights failing or slow nodes, which a test or a report does not do.",
+   "Need2 needs current numbers during a rollout. Live Metrics streams near real-time requests, failures, and dependency calls from the running apps, whereas the other features read stored telemetry or synthetic results.",
+   "Need3 needs anomaly-based notification with no rule to write. Smart detection learns the normal failure rate and alerts on abnormal rises, while a Standard test only checks whether an endpoint is reachable."
+  ],
+  "notes": [
+   "Application map: a topology view built from telemetry with health KPIs per node. Use it to find which component or dependency causes failures in a distributed application.",
+   "Live Metrics: a near real-time stream of key telemetry from running instances. Use it during deployments or incidents when you must see the effect of a change immediately.",
+   "Smart detection: machine-learning detection of failure anomalies that needs no setup. Use it when thresholds are hard to choose because the normal failure rate varies with load.",
+   "Standard test: a synthetic availability test that calls a public URL from several locations and can validate TLS certificates. Use it to monitor reachability, not real-user failure patterns.",
+   "Workbooks: interactive reports that combine queries, metrics, and parameters. Use them for custom dashboards or SLA reports; they do not detect anomalies or send notifications themselves."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/app-map"
+ },
+ {
+  "id": "3.3.1-04",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank creates a log search alert rule that fires when a loan-processing agent records more than 20 failed tool calls in five minutes. When the alert fires, a predefined remediation script that restarts the tool backend must run automatically, without human intervention.\n\nWhat should you attach to the alert rule?",
+  "choices": [
+   "A diagnostic setting that sends logs to a Log Analytics workspace",
+   "An action group that contains an Automation Runbook action",
+   "An Azure Monitor workbook that visualizes failed tool calls",
+   "An action group that contains an email and SMS notification action"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Azure Monitor separates detection from response: the alert rule detects the condition, and its action groups define what happens next. Notification actions (email, SMS, push) inform people, while automation actions (Automation runbook, Azure Functions, Logic Apps, webhook) remediate automatically.",
+  "rationale": [
+   "Incorrect: a diagnostic setting routes platform logs and metrics of a resource to a destination such as a Log Analytics workspace. It feeds data to an alert but cannot react when the alert fires. Use it when the log data is not yet collected.",
+   "Correct: an alert rule calls its action groups, and an action group can contain an Automation Runbook action that starts a predefined runbook. The restart runs as soon as the alert fires, with no person involved.",
+   "Incorrect: a workbook is an interactive report that can chart the failed tool calls, which helps triage but performs no action. Use a workbook when the team needs a shared view of trends, not automated remediation.",
+   "Incorrect: email and SMS actions notify people, who must then restart the backend themselves, which violates the no-human-intervention requirement. Use these actions when an on-call engineer must decide on the fix."
+  ],
+  "ref": "https://learn.microsoft.com/azure/automation/automation-create-alert-triggered-runbook"
+ },
+ {
+  "id": "3.3.1-05",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a claims-triage agent named Agent1. Production traffic changes every week, so the team wants to detect behavioral drift by comparing Agent1 against the same fixed set of reference questions and expected answers every day at 06:00. The results must appear on the Monitor tab of the agent.\n\nWhat should you configure?",
+  "choices": [
+   "A scheduled evaluation that uses a golden dataset as the data source",
+   "A scheduled red team scan that uses an evaluation template",
+   "A continuous evaluation that uses live traffic with random sampling",
+   "A continuous evaluation that uses live traffic with intelligent sampling"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Drift detection needs a stable baseline: run the same golden dataset on a schedule so that score changes can be attributed to the agent itself. Continuous evaluation complements it by scoring live traffic for quality regressions, and red team scans cover safety.",
+  "rationale": [
+   "Correct: a scheduled evaluation runs at a fixed time, and a golden dataset supplies the same questions and expected answers every day. Because the input never changes, a score change reflects drift in the agent, and the results appear on the Monitor tab.",
+   "Incorrect: a scheduled red team scan probes the agent with adversarial prompts to find safety risks. It does not compare answers with expected reference answers. Use it for recurring safety testing, not for drift against a baseline.",
+   "Incorrect: continuous evaluation scores sampled live traffic. Traffic changes every week, so score changes mix traffic shifts with behavior changes, and the rule has no fixed 06:00 run. Use it to watch quality on real production requests.",
+   "Incorrect: intelligent sampling selects more informative live requests, but the input is still changing production traffic and the rule runs continuously, not daily at 06:00. Use it when you evaluate live traffic and want better coverage per sample."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "3.3.1-06",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders builds an order-fulfilment workflow by using Microsoft Agent Framework workflows in Python. Instrumentation is enabled and traces are exported to Application Insights. Some orders stall because an executor never receives the message sent by the previous executor. You suspect that the target executor cannot handle the message type.\n\nWhich span attribute should you query to confirm the cause?",
+  "choices": [
+   "gen_ai.operation.name",
+   "gen_ai.tool.call.result",
+   "edge_group.delivery_status",
+   "code.function.return.value"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Workflow observability in Agent Framework adds spans for executor processing and for edge routing between executors. When messages stall, inspect the edge spans: the delivery status shows whether a message was delivered or dropped, for example because of a type mismatch.",
+  "rationale": [
+   "Incorrect: gen_ai.operation.name names the generative AI operation of a span, such as chat or invoke_agent. It tells you what kind of call happened, not whether a workflow message reached its target executor. Use it to filter spans by operation type.",
+   "Incorrect: gen_ai.tool.call.result stores the result that a tool returned to the model. Messages between workflow executors are not tool calls, so this attribute says nothing about routing. Use it when you debug tool output.",
+   "Correct: Agent Framework workflows emit edge_group.process spans whose edge_group.delivery_status attribute records the routing outcome. A value of dropped type mismatch confirms that the target executor cannot handle the message type.",
+   "Incorrect: code.function.return.value is recorded by the @trace_function decorator for custom functions. It shows what a function returned, not how a message was routed between executors. Use it when you trace your own helper functions."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/observability"
+ },
+ {
+  "id": "3.3.1-07",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles runs a LangGraph agent on Azure Kubernetes Service (AKS). The company wants to track the error rate of the agent and run continuous evaluations from Microsoft Foundry, next to the agents that run in Foundry Agent Service. The LangGraph agent already emits traces that follow the OpenTelemetry semantic conventions for generative AI.\n\nWhat should you do?",
+  "choices": [
+   "Add the llm-emit-token-metric policy to the API Management API that fronts the agent",
+   "Register the agent in Foundry Control Plane and send its telemetry to the Application Insights resource of the project",
+   "Create a separate Application Insights resource for the agent and add it to an Azure Monitor workbook",
+   "Create Resource Health alerts for the AKS cluster that hosts the LangGraph agent"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Foundry can monitor agents that run elsewhere when two conditions hold: the agent is registered in Foundry Control Plane, and its GenAI-convention telemetry lands in the Application Insights resource connected to the project. The same dashboard and continuous evaluation then apply to agents on any host.",
+  "rationale": [
+   "Incorrect: llm-emit-token-metric sends token counts from API Management to Application Insights. It measures consumption at the gateway but does not register the agent in Foundry or enable Foundry evaluations. Use it for token reporting per consumer.",
+   "Correct: registering the LangGraph agent in Foundry Control Plane and sending its OpenTelemetry data to the project's Application Insights resource lets Foundry show its error rate and run continuous evaluations next to the hosted agents.",
+   "Incorrect: a separate Application Insights resource keeps the telemetry outside the resource connected to the project, so Foundry cannot monitor or evaluate the agent. A workbook only charts the data. Use this when the agent must stay outside Foundry.",
+   "Incorrect: Resource Health reports whether the AKS cluster is Available or Degraded on the platform. It provides no agent error rate and no quality evaluation. Use it to detect platform problems with the cluster."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "3.3.1-08",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. exposes a customer service agent through a web API that is instrumented with Application Insights. The failure rate of requests rises and falls with load, so the team cannot choose a fixed alert threshold. The team needs near real-time notification when the failure rate rises abnormally compared to the previous days, including an analysis of the characteristics of the failures. The team does not want to write or configure alert logic.\n\nWhich feature should you use?",
+  "choices": [
+   "Smart detection of failure anomalies",
+   "A metric alert rule with a static failed-requests threshold",
+   "An Application Insights standard availability test",
+   "A log search alert rule that runs a KQL query every five minutes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Azure Monitor alert rules (metric and log search) require you to define the signal and threshold, while Application Insights smart detection needs no setup and detects failure anomalies against learned history. Choose smart detection when the baseline varies and you want analysis without writing rules.",
+  "rationale": [
+   "Correct: smart detection learns the normal failure rate of the app and alerts in near real time when it rises abnormally compared with earlier days. The notification includes an analysis of failure characteristics, and no alert logic has to be written.",
+   "Incorrect: a metric alert with a static threshold fires when failed requests cross a fixed value. The failure rate varies with load, so any fixed value is either noisy or late. Use it when the normal value is stable.",
+   "Incorrect: a Standard availability test sends synthetic requests to an endpoint and reports reachability. It does not analyze the failure rate of real user requests. Use it to detect outages of a public endpoint.",
+   "Incorrect: a log search alert runs a KQL query that you write against a threshold that you choose, which conflicts with the no-configuration requirement, and it adds no failure analysis. Use it when you need custom conditions over log data."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-types#smart-detection-alerts"
+ },
+ {
+  "id": "3.3.1-09",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. configured a continuous evaluation rule for a high-traffic support agent by using the Python SDK. The project managed identity has the Foundry User role. Evaluation scores appear on the Monitor tab during most of the day, but the charts show gaps during peak business hours, and the evaluation runs list shows that runs are skipped during those hours.\n\nWhat should you do to remove the gaps?",
+  "choices": [
+   "Assign the Foundry User role to the project managed identity at the subscription scope",
+   "Replace the continuous evaluation rule with a daily scheduled evaluation",
+   "Increase the max_hourly_runs value of the evaluation rule",
+   "Expand the time range of the Monitor tab and refresh the dashboard"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Continuous evaluation rules sample live traffic within an hourly budget set by max_hourly_runs. When peaks exceed the budget, runs are skipped and charts show gaps; raise the limit and accept the higher evaluation cost. Distinguish skipped runs (limits) from failed runs (permissions) and empty charts (ingestion delay).",
+  "rationale": [
+   "Incorrect: Foundry User at subscription scope broadens access but changes nothing here, because evaluations already succeed outside peak hours with the current role. A permission problem would fail every run. Fix roles when all runs fail with authorization errors.",
+   "Incorrect: a daily scheduled evaluation runs once on a fixed dataset, so it stops scoring live peak traffic and misses regressions there. Use scheduled evaluation for drift against a golden dataset, not as a replacement for continuous evaluation.",
+   "Correct: skipped runs that cluster in peak hours mean the rule reached its hourly run cap. Raising max_hourly_runs above the default of 100 lets the rule evaluate more samples per hour, which removes the gaps.",
+   "Incorrect: a wider time range helps when charts are empty because data is still being ingested. Here the runs list shows runs as skipped, so results were never produced. Widen the range when results are delayed, not skipped."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "3.3.1-10",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fourth Coffee needs automated remediation for an ordering agent. When more than 20 failed tool calls are recorded in an Application Insights resource named AppInsights1 within five minutes, an Azure Automation runbook must restart the backend that hosts the tools, without human intervention. You have an Automation account that has a user-assigned managed identity, and the remediation script is ready.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create and publish the runbook in the Automation account.",
+   "Create an action group named AG1 that has an Automation Runbook action that references the published runbook.",
+   "Run `az monitor scheduled-query create --name ToolFailures --resource-group RG1 --scopes <AppInsights1-id> --condition \"count 'rows' > 20\" --condition-query rows=@tool-failures.kql --window-size 5m --evaluation-frequency 5m --action-groups <AG1-id>`.",
+   "Create an action group named AG1 that has an email action and an SMS action for the on-call engineer.",
+   "Run `az monitor activity-log alert create --name ToolFailures --resource-group RG1 --condition category=ServiceHealth --action-group <AG1-id>`."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Automated remediation chains three objects that each reference the previous one: the runbook, the action group that starts it, and the alert rule that calls the action group. Create them in dependency order. Log search alerts (scheduled-query) evaluate KQL over your telemetry, while activity log alerts react to platform events.",
+  "rationale": [
+   "Step 1: the Automation Runbook action of an action group lets you select only an existing runbook, so the runbook must be created and published first. Publishing makes the runbook available to be started by the alert.",
+   "Step 2: the action group links the alert to the remediation. Its Automation Runbook action references the published runbook and starts it automatically, so no person has to act when the alert fires.",
+   "Step 3: az monitor scheduled-query create builds the log search alert over the AppInsights1 data with a five-minute window. --action-groups needs the ID of AG1, so the action group must already exist.",
+   "Incorrect: an action group with email and SMS actions only notifies the on-call engineer, who then restarts the backend by hand, which breaks the no-human-intervention requirement. Use it when a person must approve the fix.",
+   "Incorrect: an activity log alert on the ServiceHealth category fires on published Azure platform incidents, not on failed tool calls in your telemetry. Use it to learn about regional service issues that affect your resources."
+  ],
+  "ref": "https://learn.microsoft.com/azure/automation/automation-create-alert-triggered-runbook"
+ },
+ {
+  "id": "3.3.1-11",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "case": "C-f",
+  "stem": "You need to meet the quality monitoring requirement for the booking agent.\n\nWhat should you add to the monitoring strategy?",
+  "choices": [
+   "Continuous evaluation with agent evaluators such as task adherence and intent resolution",
+   "An alert rule on token usage for the agent",
+   "An Application Insights Standard availability test for the agent endpoint",
+   "An alert rule on run success rate with a threshold of 99.5 percent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Operational metrics (run success rate, latency, token usage) show whether an agent runs, not whether it answers correctly. Quality regressions need evaluators: agent evaluators such as task adherence and intent resolution, run continuously on sampled production traffic, catch wrong outcomes that technical metrics miss.",
+  "rationale": [
+   "Correct: task adherence and intent resolution evaluators judge whether the agent did what the user asked. Run as continuous evaluation on live traffic, they flag bookings with wrong dates automatically, even while run success rate and latency look healthy.",
+   "Incorrect: an alert on token usage reacts to how many tokens runs consume, which helps control cost. Correct and wrongly dated bookings use similar token counts, so the alert stays silent. Use it when cost spikes are the concern.",
+   "Incorrect: a Standard availability test checks that a public endpoint answers from several locations. The agent is reachable and fast, so the test passes. Use it to detect outages, not wrong answers.",
+   "Incorrect: the dashboard already shows a 99 percent run success rate because the runs complete technically. A stricter threshold still sees no failures, since the problem is answer quality. Tighten it when technical failures are the risk."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/evaluation-evaluators/agent-evaluators"
+ },
+ {
+  "id": "3.3.1-12",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "A. Datum Corporation runs an orchestrator agent that invokes three remote subagents over HTTP. Each subagent calls tools. All components export OpenTelemetry data to one Application Insights resource, but in the Foundry portal each subagent invocation appears as a separate, unrelated trace. You need a single trace tree that shows the orchestrator, each subagent invocation, and each tool execution.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Enable baggage propagation so that user identifiers flow to each subagent",
+   "Enable content recording for message contents in each subagent",
+   "Record each subagent invocation as an invoke_agent child span and each tool call as an execute_tool child span",
+   "Propagate W3C Trace Context headers, such as traceparent, on calls from the orchestrator to the subagents",
+   "Set a unique OTEL_SERVICE_NAME for each subagent so that each appears as its own cloud role"
+  ],
+  "answer": [
+   2,
+   3
+  ],
+  "explanation": "A single trace tree across services needs propagation and structure. Propagation (traceparent) keeps one trace ID across process boundaries, and structure (invoke_agent and execute_tool child spans) gives each step its place in the tree. Service names and content recording improve analysis but do not correlate spans.",
+  "rationale": [
+   "Incorrect: baggage carries key-value pairs such as user identifiers next to the trace context, and it can leak PII. It does not replace traceparent, so subagent spans still start new traces. Use baggage only for non-sensitive context that downstream services need.",
+   "Incorrect: content recording adds prompts, responses, and tool arguments to spans. Each span gets richer, but nothing links spans across the HTTP boundary. Enable it in development when you need to see message content.",
+   "Correct: the OpenTelemetry GenAI conventions model each subagent invocation as an invoke_agent span and each tool call as an execute_tool span, nested under the caller. That nesting produces the orchestrator, subagent, and tool hierarchy.",
+   "Correct: W3C Trace Context headers such as traceparent carry the trace ID and parent span ID over HTTP. Without them, each remote subagent starts a new, unrelated trace, which is exactly the symptom in the stem.",
+   "Incorrect: a unique OTEL_SERVICE_NAME per subagent sets cloud_RoleName, which separates components in queries and Application map. It does not join spans into one trace. Use it to tell components apart in a shared resource."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept"
+ },
+ {
+  "id": "3.3.2-01",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. exposes a multi-agent solution through a public HTTPS endpoint. The operations team needs synthetic checks that send a request to the endpoint every five minutes from several Azure regions and validate the response code and the TLS certificate.\n\nWhich monitoring feature should the team use?",
+  "choices": [
+   "A Service Health alert",
+   "An Application Insights Standard test",
+   "A Resource Health alert",
+   "The Application Insights application map"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Synthetic monitoring tests your endpoint from outside on a schedule, independent of user traffic. Standard tests are the current Application Insights option and validate status codes, content, and TLS certificates from multiple locations. Platform signals such as Service Health and Resource Health complement them but do not test your endpoint.",
+  "rationale": [
+   "Incorrect: a Service Health alert notifies you about published Azure incidents, planned maintenance, and advisories for a service and region. It does not probe your own endpoint. Use it to learn about platform problems that may affect you.",
+   "Correct: an Application Insights Standard test sends a request to a public URL at a set frequency, such as every five minutes, from several locations, and validates the response code and the TLS certificate, which covers each requirement.",
+   "Incorrect: a Resource Health alert reports health changes of an Azure resource as detected by the platform, such as Unavailable or Degraded. It sends no synthetic requests and checks no certificate. Use it for platform-detected resource problems.",
+   "Incorrect: Application map visualizes components and calls from real telemetry. It shows nothing when no users call the endpoint and does not validate TLS. Use it to locate failing components in a distributed application."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/availability"
+ },
+ {
+  "id": "3.3.2-02",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Coho Winery streams responses from chat agents that use an Azure OpenAI model on a provisioned deployment. The operations team defines three monitoring needs.\n\nWhich metric should the team use for each need? To answer, drag the appropriate metrics to the correct needs. Each metric may be used once, more than once, or not at all.",
+  "choices": [
+   "Time to Response",
+   "Time Between Tokens",
+   "Time to Last Byte",
+   "Provisioned-managed Utilization V2",
+   "Processed Prompt Tokens"
+  ],
+  "targets": [
+   "Need1: how quickly users see the first part of each streamed response after they send a prompt",
+   "Need2: how fast the model generates tokens once a streamed response has started",
+   "Need3: how close the deployment is to the capacity at which new calls return HTTP 429"
+  ],
+  "answer": [
+   0,
+   1,
+   3
+  ],
+  "explanation": "Azure OpenAI exposes separate latency metrics for each phase: Time to Response for the first output, Time Between Tokens for generation speed, and Time to Last Byte for the full response. Capacity of provisioned deployments is tracked with Provisioned-managed Utilization V2. Do not use the legacy Cognitive Services Latency metric for Azure OpenAI.",
+  "rationale": [
+   "Need1 is first-token responsiveness for streaming. Time to Response measures the time from the prompt until the first response arrives, which is the recommended responsiveness metric for streaming requests.",
+   "Need2 is generation speed after the first token. Time Between Tokens measures the interval between generated tokens, so it isolates decoding speed from queueing and prompt processing.",
+   "Need3 is capacity headroom on a provisioned deployment. Provisioned-managed Utilization V2 reports PTUs consumed divided by PTUs deployed, and calls are throttled with 429 at 100 percent."
+  ],
+  "notes": [
+   "Time to Response: time until the first response of a request. Use it for perceived responsiveness of streaming chats. It is not available for Standard deployments.",
+   "Time Between Tokens: the interval between generated tokens. Use it to monitor generation speed once output has started, for example after a model or load change.",
+   "Time to Last Byte: time until the full response is received. Use it for overall response time, and pair it with token counts to tell expected from unexpected changes.",
+   "Provisioned-managed Utilization V2: the percentage of provisioned capacity in use. Use it to alert before a PTU deployment reaches 100 percent and starts returning 429 responses.",
+   "Processed Prompt Tokens: the number of input tokens processed. Use it to track prompt size and input cost trends, and as a companion to latency metrics, not as a latency or capacity metric."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/monitor-openai-reference"
+ },
+ {
+  "id": "3.3.2-03",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Humongous Insurance needs the on-call engineer to receive an email when the Foundry resource named Foundry1 in resource group RG1 becomes Unavailable or Degraded, even when no broader Azure platform incident is published for the region. Foundry1 is in a subscription named Sub1, but your Azure CLI session currently uses a different default subscription.\n\nWhich three commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az account set --subscription Sub1`",
+   "`az monitor action-group create --name AG1 --resource-group RG1 --short-name AG1 --action email oncall <oncall-email>`",
+   "`az monitor activity-log alert create --name Foundry1Health --resource-group RG1 --scope <Foundry1-id> --condition category=ResourceHealth --action-group <AG1-id>`",
+   "`az monitor activity-log alert create --name Foundry1Health --resource-group RG1 --scope <Foundry1-id> --condition category=ServiceHealth --action-group <AG1-id>`",
+   "`az monitor metrics alert create --name Foundry1Idle --resource-group RG1 --scopes <Foundry1-id> --condition \"total ProcessedPromptTokens < 1\" --action <AG1-id>`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Resource Health and Service Health events both arrive in the activity log and are distinguished by category: ResourceHealth covers the health of your individual resources, ServiceHealth covers published service-wide incidents. Both use activity log alerts that call action groups, so create the action group first and pass its ID to the alert.",
+  "rationale": [
+   "Step 1: az account set switches the CLI context to Sub1. Later commands create resources in the active subscription, so it must run first, or the action group and the alert land in the wrong subscription.",
+   "Step 2: az monitor action-group create defines who is notified, here an email action for the on-call engineer. The alert rule in the next step references the ID of this action group, so it must exist first.",
+   "Step 3: an activity log alert on category=ResourceHealth fires when the platform reports a health change of a resource, including Unavailable and Degraded, even when no regional incident is published. --scope limits the rule to events of Foundry1; without it, the rule covers the whole subscription.",
+   "Incorrect: category=ServiceHealth fires on published Azure service incidents and maintenance for a region. The requirement asks for an alert even when no such incident exists. Use it to follow broad platform issues.",
+   "Incorrect: a metric alert on zero processed prompt tokens also fires in quiet periods and does not reflect the health status of the resource. Use token metrics to monitor usage, not availability."
+  ],
+  "ref": "https://learn.microsoft.com/azure/service-health/resource-health-alert-monitor-guide"
+ },
+ {
+  "id": "3.3.2-04",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Blue Yonder Airlines runs its flight-status agents on a Global Provisioned deployment in a Foundry resource named Foundry1. The team needs an email alert when the deployment approaches full capacity so that it can act before requests are throttled. You script the setup in the Azure CLI, and the alert command must receive the action group resource ID from a lookup command.\n\nWhich three commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az monitor action-group create --name AG1 --resource-group RG1 --short-name AG1 --action email OnCall <oncall-email>`",
+   "`az monitor action-group show --name AG1 --resource-group RG1 --query id -o tsv`",
+   "`az monitor metrics alert create --name PtuHigh --resource-group RG1 --scopes <Foundry1-id> --condition \"avg AzureOpenAIProvisionedManagedUtilizationV2 > 90\" --action <AG1-id>`",
+   "`az monitor metrics alert create --name PtuHigh --resource-group RG1 --scopes <Foundry1-id> --condition \"avg AzureOpenAIProvisionedManagedUtilization > 90\" --action <AG1-id>`",
+   "`az monitor activity-log alert create --name PtuHigh --resource-group RG1 --condition category=ResourceHealth --action-group <AG1-id>`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Provisioned capacity is measured as PTUs consumed divided by PTUs deployed and exposed as Provisioned-managed Utilization V2 (AzureOpenAIProvisionedManagedUtilizationV2). Alert below 100 percent to act before 429 responses start, and create the action group, look up its ID, and then create the metric alert, because each step needs the output of the previous one.",
+  "rationale": [
+   "Step 1: az monitor action-group create builds AG1 with an email action named OnCall for the on-call engineer. The action group must exist before its ID can be looked up or referenced by an alert rule.",
+   "Step 2: az monitor action-group show with --query id -o tsv returns only the resource ID of AG1 as plain text. The script passes this value to --action of the metric alert in the next step, so the lookup runs after creation and before the alert.",
+   "Step 3: the metric alert watches AzureOpenAIProvisionedManagedUtilizationV2, the recommended PTU utilization metric. A threshold of 90 percent warns before utilization reaches 100 percent, where new calls return 429.",
+   "Incorrect: AzureOpenAIProvisionedManagedUtilization is the original utilization metric, which is deprecated and replaced by the V2 metric. You meet it only in older charts or alert rules that still reference it.",
+   "Incorrect: a Resource Health activity log alert fires when the platform marks Foundry1 as Unavailable or Degraded. A fully utilized deployment is healthy, so this alert stays silent. Use it to detect platform outages of the resource."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/monitor-openai-reference"
+ },
+ {
+  "id": "3.3.2-05",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wide World Importers sees the average Time to Last Byte of its Azure OpenAI deployment increase by 40 percent over one week. The team must decide whether this indicates a real service problem or expected behavior caused by the agents producing longer answers.\n\nWhich metric should the team chart next to Time to Last Byte?",
+  "choices": [
+   "Blocked Volume",
+   "Prompt Token Cache Match Rate",
+   "Potential Abusive User Count",
+   "Generated Completion Tokens"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Read latency metrics together with token metrics, because longer outputs take longer to generate. Microsoft recommends pairing every latency metric with a token count metric: a latency rise without a token rise points to a service issue, while a proportional rise is expected behavior.",
+  "rationale": [
+   "Incorrect: Blocked Volume counts requests that content filtering blocked. It is a Content Safety metric and does not explain why the time to the last byte grows. Use it when you investigate filter behavior or abuse.",
+   "Incorrect: Prompt Token Cache Match Rate shows how many prompt tokens hit the prompt cache, which affects input processing. It does not show whether answers got longer. Use it when you tune prompts for caching.",
+   "Incorrect: Potential Abusive User Count is a Content Safety metric that estimates users with abusive patterns. It has no link to output length or latency. Use it for abuse monitoring together with Blocked Volume.",
+   "Correct: Time to Last Byte grows with the number of generated tokens. If Generated Completion Tokens rose by a similar proportion, the latency change is expected; if it did not, there may be a real service problem."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/monitor-openai-reference"
+ },
+ {
+  "id": "3.3.2-06",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Trey Research hosts its agent API in an Azure Container Apps environment. The API is reachable only through a private endpoint, and inbound traffic from the internet is blocked by policy. A Container Apps job inside the same virtual network calls the API health endpoint every minute and writes each failed probe to its console log. The logs destination of the environment is set to Azure Monitor, but no diagnostic setting exists. You need an alert that calls the existing action group AG1 when probes fail. No Log Analytics workspace exists yet.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az monitor log-analytics workspace create --resource-group RG1 --workspace-name WS1 --location eastus --query id -o tsv`",
+   "`az monitor diagnostic-settings create --name ToWS1 --resource <environment-id> --workspace <WS1-id> --logs '[{\"categoryGroup\":\"allLogs\",\"enabled\":true}]'`",
+   "`az monitor scheduled-query create --name ProbeFailed --resource-group RG1 --scopes <WS1-id> --condition \"count 'rows' > 0\" --condition-query rows=@probe-failures.kql --action-groups <AG1-id>`",
+   "Create an Application Insights Standard test that calls the API URL from five public test locations every five minutes.",
+   "`az monitor activity-log alert create --name AcaHealth --resource-group RG1 --condition category=ServiceHealth --action-group <AG1-id>`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "For endpoints without public ingress, synthetic tests from Azure test locations cannot connect. Microsoft recommends an internal health signal from inside the network instead: collect it into Log Analytics, for example through a diagnostic setting, and alert on it with a log or metric alert.",
+  "rationale": [
+   "Step 1: the workspace is both the destination of the logs and the scope of the alert. The two later commands need its resource ID, so it must be created first.",
+   "Step 2: the diagnostic setting on the Container Apps environment sends all log categories, including the console output of the probe job, to WS1. Without it, the workspace holds no probe data for the alert query.",
+   "Step 3: the log search alert runs probe-failures.kql against WS1 and calls AG1 when the query returns rows. It depends on the workspace ID and on the probe logs that the diagnostic setting delivers.",
+   "Incorrect: Standard tests run from public Azure test locations and need an endpoint that is reachable from the internet. The private endpoint blocks them, so the test would always fail. Use Standard tests for public endpoints.",
+   "Incorrect: a Service Health alert fires on published Azure incidents for Container Apps in the region. It does not fire when your own API stops responding. Use it to stay informed about platform-wide issues."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/availability"
+ },
+ {
+  "id": "3.3.2-07",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-f",
+  "stem": "You need to meet the availability requirement for the Azure OpenAI endpoint that the agents use.\n\nWhat should you recommend?",
+  "choices": [
+   "Deploy resources in two regions behind an API Management backend pool that has circuit breaker rules",
+   "Configure spillover from the primary deployment to a standard deployment in the same resource",
+   "Request a quota increase for the deployment in the primary region",
+   "Add retry logic that honors the retry-after-ms header in each agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Business continuity for Standard deployments relies on redundant resources in more than one region plus a generative AI gateway, such as API Management, that load balances and opens a circuit breaker when one backend fails. Consumers see one endpoint, so failover needs no code change.",
+  "rationale": [
+   "Correct: Foundry resources in two EU regions behind an API Management backend pool with load balancing and circuit breaker rules let the gateway route around a regional outage. The agents keep calling the same gateway, so no agent code changes.",
+   "Incorrect: spillover moves overflow traffic from a provisioned deployment to a standard deployment in the same resource. Foundry1 uses Data Zone Standard, and same-resource routing does not survive a regional outage. Use spillover to absorb PTU peaks.",
+   "Incorrect: more quota in West Europe raises the rate limit in that region only. During a regional outage, the endpoint is unreachable whatever the quota. Request more quota when 429 responses, not outages, are the problem.",
+   "Incorrect: retry logic that honors retry-after-ms helps with transient throttling, but the case forbids agent code changes for availability, and retries against an unreachable region keep failing. Add retries in code you control for 429 handling."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/high-availability-resiliency"
+ },
+ {
+  "id": "3.3.2-08",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Graphic Design Institute creates an Application Insights Standard test for its tutoring agent endpoint. The test runs from five test locations every five minutes, retries for test failures are enabled, and the alert location threshold is set to 3.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The alert location threshold follows the recommended relationship for five test locations.",
+   "A location reports a failure only after three successive attempts from that location fail.",
+   "The test can target the private endpoint IP address of the API, which is reachable only from the company virtual network."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Standard tests reduce false alerts in two layers: retries filter transient failures at each location, and the alert location threshold (number of locations minus 2) filters problems that affect only one or two locations. They can test only endpoints that are reachable from the internet.",
+  "rationale": [
+   "Yes: Microsoft recommends an alert location threshold equal to the number of test locations minus 2, with at least five locations. Five minus two is three, which filters single-location noise but still alerts on real outages.",
+   "Yes: with retries enabled, a failed test retries after a short interval and reports a failure only if three successive attempts fail. The rule applies independently at each location, and most transient failures disappear on retry.",
+   "No: the URL of a Standard test must be visible from the public internet, because requests come from Azure test locations. For a private endpoint, monitor an internal health signal from inside the network and alert on it instead."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/availability"
+ },
+ {
+  "id": "3.3.2-09",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Alpine Ski House runs a booking agent on a Global Provisioned deployment of gpt-4.1 in a Foundry resource named Foundry1. During weekend peaks, the deployment returns HTTP 429 responses because utilization reaches 100 percent. The company must process the overflow requests instead of failing them, keep the provisioned deployment as the primary target, and avoid changing the agent code. Foundry1 contains a Global Standard deployment of the same model version. A second resource named Foundry2 in another region also contains a Global Standard deployment of that model version.\n\nWhat should you do?",
+  "choices": [
+   "Set spilloverDeploymentName on the provisioned deployment to the Global Standard deployment in Foundry1",
+   "Set spilloverDeploymentName on the provisioned deployment to the Global Standard deployment in Foundry2",
+   "Increase max_retries on the OpenAI client so that throttled agent requests are retried later",
+   "Add the x-ms-spillover-deployment header with the Foundry1 deployment name to each agent request"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Spillover keeps a provisioned deployment as the primary target and sends requests that would receive 429 to a standard deployment in the same resource. Enable it for all traffic with the deployment property spilloverDeploymentName, or per request with the x-ms-spillover-deployment header.",
+  "rationale": [
+   "Correct: spilloverDeploymentName is a property of the provisioned deployment. Pointing it at the Global Standard deployment in Foundry1 sends overflow to standard capacity while the PTU deployment stays primary, with no agent code change.",
+   "Incorrect: a spillover target must be a standard deployment in the same Foundry resource as the provisioned deployment. Foundry2 is a different resource in another region, so it cannot be the target. Use a gateway such as API Management to route across resources.",
+   "Incorrect: max_retries makes the client wait and retry after a 429, which adds latency and still depends on free PTU capacity. It is also a code change. Use retries when longer latency is acceptable and spillover is not available.",
+   "Incorrect: the x-ms-spillover-deployment header enables spillover per request, so every agent request must be changed to send it, which breaks the no-code-change requirement. Use the header when only some requests may spill over."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/spillover-traffic-management"
+ },
+ {
+  "id": "3.3.2-10",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. runs agents on a Standard deployment that has 300,000 TPM assigned. During a sustained burst, the agents receive HTTP 429 responses. Azure Monitor shows billed token usage at about half of the assigned TPM, requests are spread evenly over each minute, and max_tokens is sized to the expected answers. The x-ratelimit-limit-tokens response header reports a value lower than 300,000.\n\nWhat should you do first?",
+  "choices": [
+   "Increase the TPM allocated to the deployment from the unused subscription quota",
+   "Retry the throttled requests by honoring the retry-after-ms header",
+   "Submit a quota increase request for the model in the region",
+   "Reduce the max_tokens value in each request"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Standard deployments share capacity, and the effective limit can temporarily drop below the configured TPM. Check the x-ratelimit-limit-tokens header: when it is lower than your assignment, handle 429 responses with retry-after-ms backoff, and consider provisioned throughput if the problem persists.",
+  "rationale": [
+   "Incorrect: allocating more TPM raises the configured limit, but the header already shows an effective limit below the configured 300,000 TPM because the shared pool lowered it temporarily. Allocate more TPM when usage really reaches the configured limit.",
+   "Correct: an x-ratelimit-limit-tokens value below the assigned TPM, with burst patterns and max_tokens ruled out, indicates a temporary rate limit adjustment of the shared Standard pool. The first response is to retry with retry-after-ms backoff.",
+   "Incorrect: a quota increase raises how much TPM you can assign in the region. The assigned TPM is not the bottleneck, because billed usage is about half of it. Request quota when deployments cannot get the TPM they need.",
+   "Incorrect: max_tokens counts toward rate limit estimation, but it is already sized to the expected answers. Lowering it further would truncate answers without changing the lowered effective limit. Reduce it when it is set far above real answer length."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/quota"
+ },
+ {
+  "id": "3.3.2-11",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Southridge Video must report monthly whether Azure met its service-level agreement (SLA) for the Foundry resource that hosts its agents. The on-call engineer must also be notified when the resource becomes unavailable because of an Azure platform event rather than an action by the team.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Review the activity log of the Foundry resource",
+   "Create a Resource Health alert that filters on the User initiated reason type",
+   "Create a Resource Health alert that filters on the Platform initiated reason type",
+   "Create a Service Health alert for service issues in the region",
+   "Review the Resource Health history of the Foundry resource"
+  ],
+  "answer": [
+   2,
+   4
+  ],
+  "explanation": "Resource Health is the per-resource availability signal: its history supports SLA verification, and its alerts can be filtered by reason type to separate platform-initiated from user-initiated events. Service Health and the activity log answer other questions: published incidents and change audit.",
+  "rationale": [
+   "Incorrect: the activity log records control-plane operations on the resource, such as configuration changes and who made them. It does not record availability history, so it cannot prove SLA compliance. Use it to audit changes.",
+   "Incorrect: the User initiated reason type matches health events caused by your own actions, such as stopping or reconfiguring the resource. The requirement covers platform events only. Use it to track downtime that the team caused.",
+   "Correct: a Resource Health alert filtered on the Platform initiated reason type fires only when Azure, not the team, makes the resource unavailable, so the on-call engineer is notified about platform events only.",
+   "Incorrect: a Service Health alert covers broad, published incidents for a service and region. A single resource can become unavailable without such an incident, so this alert can miss it. Use it for region-wide awareness.",
+   "Correct: Resource Health history shows the current and past health of the Foundry resource, including periods when it was unavailable because of Azure problems, which is the evidence needed for a monthly SLA report."
+  ],
+  "ref": "https://learn.microsoft.com/azure/service-health/resource-health-alert-monitor-guide"
+ },
+ {
+  "id": "3.3.2-12",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wingtip Toys runs a latency-critical pricing agent on a Global Standard deployment. Traffic is high and sustained. During business hours, response latency becomes more than two times higher than at night, and occasional HTTP 429 responses occur. The business requires consistent, predictable latency at scale.\n\nWhat should you recommend?",
+  "choices": [
+   "Implement retry logic with exponential backoff in the pricing agent",
+   "Submit a quota increase request for the Global Standard deployment",
+   "Move the workload to a provisioned throughput (PTU) deployment",
+   "Switch to a Data Zone Standard deployment"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Standard deployment types (Global, Data Zone, and regional) share capacity, so latency varies with load. Provisioned throughput (PTU) reserves capacity and is recommended for latency-critical or high, sustained workloads; quota increases and retries only address throttling.",
+  "rationale": [
+   "Incorrect: exponential backoff absorbs 429 responses, but each retry adds waiting time, so latency becomes higher and less predictable. Use retries when occasional delays are acceptable, not when latency must stay consistent.",
+   "Incorrect: more Global Standard quota reduces 429 responses, but the capacity is still shared, so latency still varies with demand during business hours. Request quota when throttling, not latency consistency, is the issue.",
+   "Correct: provisioned throughput reserves dedicated capacity for the deployment, which gives consistent, predictable latency at scale and removes the shared-pool variability that doubles latency during peak hours.",
+   "Incorrect: Data Zone Standard keeps processing within a data zone, which addresses data residency. It is still shared, pay-per-token capacity, so latency under sustained load behaves like Global Standard. Use it when data must stay in a geography."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/quotas-limits"
+ },
+ {
+  "id": "3.3.3-01",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. builds a research agent by using Microsoft Agent Framework in Python. When the model keeps requesting tools, a single request can trigger many model round trips. You need to limit the number of model and tool round trips that the chat client performs for each request.\n\nWhich function invocation setting should you configure?",
+  "choices": [
+   "allow_concurrent_invocation",
+   "max_function_calls",
+   "max_duration_seconds",
+   "max_iterations"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "FunctionInvocationConfiguration bounds the automatic tool loop in several ways: max_iterations for model round trips, max_function_calls for total tool executions, max_duration_seconds for elapsed time, and max_consecutive_errors_per_request for repeated failures. Pick the control that matches the budget you must enforce.",
+  "rationale": [
+   "Incorrect: allow_concurrent_invocation controls whether function calls from one model response run in parallel. It changes speed, not the number of model round trips per request. Set it to False when tools share state or must run in model order.",
+   "Incorrect: max_function_calls caps the total number of tool executions per request, not model round trips. One round trip can contain several tool calls, so it measures something else. Use it when the requirement is a tool-call budget.",
+   "Incorrect: max_duration_seconds stops tool invocation after a wall-clock limit, regardless of how many round trips occurred. Use it when the requirement is a time budget per request.",
+   "Correct: max_iterations limits how many times the client sends function results back to the model in a new request, which is the number of model and tool round trips per request. The default is 40."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "3.3.3-02",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. calls a reasoning model through the Azure OpenAI Responses API. You need to cap the total number of tokens that the model generates for each request, including reasoning tokens and visible output tokens.\n\nWhich parameter should you set?",
+  "choices": [
+   "max_completion_tokens",
+   "max_output_tokens",
+   "reasoning.context",
+   "reasoning.effort"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Reasoning tokens are billed as output tokens and count toward the output limit. Cap them with max_output_tokens in the Responses API or max_completion_tokens in Chat Completions; reasoning.effort only influences how many tokens the model tends to spend.",
+  "rationale": [
+   "Incorrect: max_completion_tokens is the Chat Completions API parameter that caps reasoning plus visible output tokens. The stem uses the Responses API, which has its own parameter. Use max_completion_tokens with Chat Completions requests.",
+   "Correct: in the Responses API, max_output_tokens caps all tokens that the model generates for the response, including reasoning tokens and visible output, so it bounds the billable output of each request.",
+   "Incorrect: reasoning.context controls which earlier reasoning is carried into the request, which affects context size, not a hard cap on generated tokens. Use it to decide whether reasoning from earlier turns is reused.",
+   "Incorrect: reasoning.effort sets how much the model reasons, such as low or high. Lower effort usually uses fewer tokens but sets no upper bound. Use it to trade answer depth for cost and latency."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning"
+ },
+ {
+  "id": "3.3.3-03",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a Foundry toolbox that contains 35 tools shared by several agents. Token costs grow with each tool that is added because every tool definition is passed to the model on each turn.\n\nWhat should you enable to keep token costs flat as the toolbox grows?",
+  "choices": [
+   "Tool search in the toolbox",
+   "Concurrent tool invocation",
+   "Content recording for tool call arguments",
+   "A lower max_iterations value"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tool definitions are input tokens on every turn, so large tool catalogs make every request expensive. Tool search defers definitions and loads them only when the model needs them; Microsoft suggests it once a toolbox reaches roughly 10 to 15 tools.",
+  "rationale": [
+   "Correct: tool search replaces the full list of tool definitions with meta-tools that let the model find and call tools on demand. Each turn carries a small fixed overhead, so token cost stays flat as the toolbox grows.",
+   "Incorrect: concurrent tool invocation runs several tool calls in parallel, which reduces wall-clock time. Every tool definition is still sent on each turn, so input tokens keep growing. Use it to speed up independent tool calls.",
+   "Incorrect: content recording adds tool arguments and messages to traces for debugging. It changes telemetry, not the prompt, so it does not reduce tokens. Enable it in development when you need to see tool inputs.",
+   "Incorrect: a lower max_iterations caps the number of round trips, but every remaining turn still carries all 35 definitions, so cost still grows with each added tool. Use it to bound runaway loops."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-search"
+ },
+ {
+  "id": "3.3.3-04",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud builds a Python agent by using Microsoft Agent Framework. When a downstream service is unavailable, the tool that calls it fails, and the model keeps calling the tool again within the same request, which wastes tokens. You need automatic function calling to stop for the request after two consecutive tool errors.\n\nWhich function invocation setting should you configure?",
+  "choices": [
+   "include_detailed_errors",
+   "terminate_on_unknown_calls",
+   "max_iterations",
+   "max_consecutive_errors_per_request"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Loop controls react to different signals: consecutive errors (max_consecutive_errors_per_request), unknown tools (terminate_on_unknown_calls), and volume (max_iterations, max_function_calls). Choose the control that matches the failure mode you want to stop.",
+  "rationale": [
+   "Incorrect: include_detailed_errors adds exception details to the function result that the model sees. It may help the model react, but it does not stop repeated calls. Enable it only on trusted channels, because exception text can contain sensitive data.",
+   "Incorrect: terminate_on_unknown_calls ends the loop when the model requests a tool that is not registered. Here the tool exists but fails, so the setting never triggers. Use it to stop on hallucinated tool names.",
+   "Incorrect: max_iterations caps round trips whether calls succeed or fail, so a failing tool can still consume the full limit, 40 by default. Use it as a general loop bound, not as an error-based stop.",
+   "Correct: max_consecutive_errors_per_request stops further function calls for the request after the set number of consecutive errors. A value of 2 stops wasting tokens on an unavailable service. The default is 3."
+  ],
+  "ref": "https://learn.microsoft.com/python/api/agent-framework-core/agent_framework.functioninvocationconfiguration?view=agent-framework-python-latest"
+ },
+ {
+  "id": "3.3.3-05",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Graphic Design Institute calls a model through the Azure OpenAI Responses API with the file search and code interpreter built-in tools. For some requests, the model calls the built-in tools many times within one response, which increases token usage. You need to cap the total number of built-in tool calls per response at four, across both tools. The model must still decide on its own whether to use each tool.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nresponse = client.responses.create(\n    model=\"gpt-4.1\",\n    tools=builtin_tools,  # file_search and code_interpreter\n    [[1]]=4,\n    tool_choice=[[2]],\n    input=question,\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "max_tool_calls",
+     "max_output_tokens"
+    ],
+    "why": [
+     "Correct: max_tool_calls sets the maximum total number of built-in tool calls processed in one response, across all built-in tools, and further tool attempts are ignored, which caps the loop at four.",
+     "Incorrect: max_output_tokens caps generated tokens, and a value of 4 would cut the answer off almost immediately. It does not count tool calls. Use it to bound output and reasoning tokens per response."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"auto\"",
+     "\"required\"",
+     "\"none\""
+    ],
+    "why": [
+     "Correct: auto lets the model decide on each step whether to call a tool, so both built-in tools remain available and the model chooses when to use them, as the requirement states.",
+     "Incorrect: required forces the model to call a tool even when a direct answer would do, which can add tool calls and tokens. Use it when every request must be grounded on a tool result.",
+     "Incorrect: none prevents the model from calling any tool, so file search and code interpreter can no longer be used. Use it when you want a plain text answer from a request that still lists tools."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The Responses API offers separate controls: max_tool_calls bounds built-in tool calls per response, tool_choice decides whether tools may or must be called, and max_output_tokens bounds generated tokens. Combine a call cap with tool_choice auto to limit cost without removing capabilities.",
+  "ref": "https://learn.microsoft.com/rest/api/microsoft-foundry/azureopenai/responses"
+ },
+ {
+  "id": "3.3.3-06",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Northwind Traders configures a Microsoft Agent Framework chat client in Python. Each request must stop invoking tools after five model round trips, after 20 tool calls in total, or after 30 seconds, whichever comes first.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nclient = OpenAIChatCompletionClient()\nclient.function_invocation_configuration.update(\n    {\n        \"max_iterations\": 5,\n        [[1]]: 20,\n        [[2]]: 30.0,\n    }\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"max_function_calls\"",
+     "\"max_consecutive_errors_per_request\"",
+     "\"max_duration_seconds\""
+    ],
+    "why": [
+     "Correct: max_function_calls caps the total number of tool executions per request. It defaults to None, which means unlimited, so setting it to 20 enforces the tool-call budget.",
+     "Incorrect: max_consecutive_errors_per_request stops after that many consecutive failed calls. Successful calls never count toward it, so 20 successful calls would not stop the loop. Use it to stop on repeated errors.",
+     "Incorrect: max_duration_seconds is the time budget. With 20 here, the client would stop after 20 seconds and the number of tool calls would stay unlimited. Use it for the wall-clock requirement instead."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"max_duration_seconds\"",
+     "\"max_function_calls\"",
+     "\"max_iterations\""
+    ],
+    "why": [
+     "Correct: max_duration_seconds stops tool invocation after the elapsed wall-clock time, here 30 seconds. Time spent waiting for tool approval also counts toward this limit.",
+     "Incorrect: max_function_calls would allow 30 tool calls instead of 30 seconds, and the key is already needed for the 20-call limit. Use it to count tool executions, not time.",
+     "Incorrect: max_iterations is already set to 5 for round trips; repeating the key would overwrite it with 30 and leave no time limit. Use it only for the round-trip requirement."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Agent Framework limits for automatic tool invocation are best effort and checked after each model-requested batch of tool calls, so a batch can overshoot. When any limit is reached, the client stops invoking tools and asks the model for a final text response.",
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "3.3.3-07",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Lucerne Publishing has five agents that share one Azure OpenAI deployment through Azure API Management. One agent occasionally enters a runaway state and sends many large prompts that consume most of the tokens-per-minute (TPM) capacity of the deployment, which throttles the other agents. Each agent sends a unique x-agent-id header. You need to cap token consumption per agent per minute so that a runaway agent receives HTTP 429 responses while the other agents continue to work.\n\nSolution: You configure the rate-limit-by-key policy with a calls value and a counter-key based on the x-agent-id header.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Call-based limits and token-based limits protect different things. Model capacity is measured in tokens, so a per-key token limit is required when large prompts are the risk.",
+  "rationale": [
+   "Incorrect: rate-limit-by-key counts calls per key. A runaway agent that sends few but very large prompts stays under the call limit while it still consumes most of the TPM, so the other agents are still throttled.",
+   "Correct: the solution does not meet the goal. rate-limit-by-key is the right policy when you need to limit request rates per caller, for example to protect a backend from chatty clients, not token consumption."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-token-limit-policy"
+ },
+ {
+  "id": "3.3.3-08",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Lucerne Publishing has five agents that share one Azure OpenAI deployment through Azure API Management. One agent occasionally enters a runaway state and sends many large prompts that consume most of the tokens-per-minute (TPM) capacity of the deployment, which throttles the other agents. Each agent sends a unique x-agent-id header. You need to cap token consumption per agent per minute so that a runaway agent receives HTTP 429 responses while the other agents continue to work.\n\nSolution: You configure the llm-token-limit policy with a tokens-per-minute value and a counter-key based on the x-agent-id header.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "llm-token-limit enforces a token rate limit per counter key and returns 429 when it is exceeded. Keying the counter on a header that identifies the caller isolates a runaway agent from the others.",
+  "rationale": [
+   "Correct: llm-token-limit counts tokens, not calls, per counter key. With tokens-per-minute and x-agent-id as the key, only the agent that exceeds its budget receives 429 Too Many Requests, while the others keep their own budgets.",
+   "Incorrect: the solution does meet the goal. No would be right if the policy counted calls instead of tokens, or if one shared counter key throttled all agents together."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-token-limit-policy"
+ },
+ {
+  "id": "3.3.3-09",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Trey Research uses the following code to re-run a coding agent until its output contains the word DONE:\n\n```python\nfrom agent_framework import Agent, AgentLoopMiddleware\n\ndef needs_more_work(*, last_result, **kwargs):\n    return \"DONE\" not in last_result.text\n\nagent = Agent(\n    client=client,\n    middleware=[AgentLoopMiddleware(needs_more_work, max_iterations=5)],\n)\n```\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "If the model never writes DONE, the loop stops after five agent runs.",
+   "If max_iterations is removed from the code, the loop runs until the predicate returns False.",
+   "If an iteration returns a pending tool-approval request, the middleware returns the request to the caller before it evaluates needs_more_work."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Agent looping re-invokes an agent while a predicate returns True, and Microsoft advises always bounding autonomous loops because models can stall. AgentLoopMiddleware defaults to 10 runs and judge loops to five, while options such as fresh_context and inject_progress change the context, not the bound.",
+  "rationale": [
+   "Yes: max_iterations=5 is a hard upper bound on agent runs. The predicate keeps returning True while DONE is missing, but the middleware stops at the bound, which caps token usage for tasks that never converge.",
+   "No: without the argument, AgentLoopMiddleware uses its default maximum of 10 agent runs, so the loop is still bounded. Only max_iterations=None removes the bound, which Microsoft advises only when the predicate is guaranteed to terminate.",
+   "Yes: the middleware stops before evaluating its continuation predicate when an iteration returns a pending tool-approval request, and it returns the request to the caller instead of hiding it behind another autonomous iteration."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/looping"
+ },
+ {
+  "id": "3.3.3-10",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Margie's Travel calls a reasoning model through the Responses API with max_output_tokens set to 2,000 for an itinerary-planning agent. For complex requests, some responses have status incomplete with incomplete_details.reason set to max_output_tokens and contain no visible output. The company is billed for these requests, and the agent shows them to users as empty answers. You need to reduce how often this occurs and prevent the agent from presenting incomplete responses as answers.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set reasoning.context to all_turns so that earlier reasoning carries forward",
+   "Decrease max_output_tokens so that the model produces shorter reasoning",
+   "Set reasoning.effort to high for complex itinerary requests",
+   "Raise max_output_tokens to reserve enough room for reasoning and output",
+   "Check the status of each response and handle incomplete responses explicitly"
+  ],
+  "answer": [
+   3,
+   4
+  ],
+  "explanation": "A response can end incomplete because of max_output_tokens before any visible output exists, and you still pay for input and reasoning tokens. Reserve enough room for reasoning plus output, and always check the response status so that the application handles this case explicitly.",
+  "rationale": [
+   "Incorrect: reasoning.context set to all_turns carries earlier reasoning forward, which adds context and tends to increase token use within the same 2,000-token limit. Use it when continuity of reasoning across turns matters more than cost.",
+   "Incorrect: a lower max_output_tokens leaves even less room for reasoning and visible output, so the limit is hit sooner and incomplete responses become more frequent. Lower it only when answers are reliably far below the limit.",
+   "Incorrect: high reasoning effort makes the model reason more, which consumes more reasoning tokens inside the same limit and raises the chance of an incomplete response. Use high effort when quality justifies more tokens and room is reserved.",
+   "Correct: reasoning tokens and visible output share max_output_tokens. Raising the limit reserves room for both, so complex itineraries can finish with a visible answer instead of stopping during reasoning.",
+   "Correct: checking status on every response lets the agent detect incomplete responses with reason max_output_tokens and handle them, for example by retrying with a larger limit, instead of showing an empty answer."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning"
+ },
+ {
+  "id": "3.3.3-11",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-f",
+  "stem": "You need to meet the token budget requirement for the itinerary agent.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Declare the functions with defer_loading set to true and add the tool_search tool",
+   "Pass the reasoning items, function call items, and function call outputs from the previous response into the next request",
+   "Set allow_concurrent_invocation to False",
+   "Set reasoning.context to all_turns",
+   "Increase max_output_tokens"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Two token sinks dominate tool-heavy reasoning agents: tool definitions sent on every request and reasoning that restarts after each function call. Tool search with deferred loading addresses the first, and passing reasoning items back between calls addresses the second.",
+  "rationale": [
+   "Correct: functions declared with defer_loading set to true, together with the tool_search tool, are not sent in full on every request. The model loads definitions only when needed, which cuts input tokens for the 30 functions in the case.",
+   "Correct: passing reasoning items, function calls, and function outputs from the previous response into the next request, for example through previous_response_id, lets the model continue its reasoning instead of starting over, which saves tokens in function-call chains.",
+   "Incorrect: allow_concurrent_invocation is an Agent Framework setting that controls whether tool calls run in parallel. It affects execution order and speed, not the tokens sent to the model. Set it to False when tools must run in model order.",
+   "Incorrect: reasoning.context set to all_turns includes earlier reasoning in the context, which increases token consumption. Use it only when continuity across turns is worth the extra tokens.",
+   "Incorrect: a higher max_output_tokens allows the model to generate more tokens, so it can only raise consumption. Raise it when responses end incomplete, not to reduce cost."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/reasoning"
+ },
+ {
+  "id": "3.3.3-12",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Lucerne Publishing has five agents that share one Azure OpenAI deployment through Azure API Management. One agent occasionally enters a runaway state and sends many large prompts that consume most of the tokens-per-minute (TPM) capacity of the deployment, which throttles the other agents. Each agent sends a unique x-agent-id header. You need to cap token consumption per agent per minute so that a runaway agent receives HTTP 429 responses while the other agents continue to work.\n\nSolution: You configure the llm-token-limit policy with a token-quota value, a token-quota-period of Hourly, and a counter-key based on the x-agent-id header.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "llm-token-limit supports two modes: a tokens-per-minute rate limit that returns 429 and resets every minute, and a token-quota over a period from Hourly to Yearly that returns 403 until the quota resets. Choose the mode that matches the required time window and response.",
+  "rationale": [
+   "Incorrect: a token quota counts tokens over the quota period and returns 403 Forbidden until the period resets. The goal requires a per-minute cap that returns 429, so an hourly quota blocks a runaway agent too long and with the wrong status code.",
+   "Correct: the solution does not meet the goal. token-quota with a period is the right choice for allowances, such as a monthly token budget per partner, not for per-minute rate limiting."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-token-limit-policy"
+ },
+ {
+  "id": "3.3.4-01",
+  "obj": "3.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. has four Foundry projects that share one Foundry resource and use Azure OpenAI models. The finance team needs to allocate the shared model spend to the business unit that owns each project, without adding tags manually.\n\nWhat should the finance team do in Cost Management?",
+  "choices": [
+   "Filter the cost analysis view by the project tag",
+   "Group the cost analysis view by Meter",
+   "Group the cost analysis view by Resource",
+   "Filter the cost analysis view by Service tier: Azure OpenAI"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Chargeback needs a cost dimension that matches the owner. Foundry tags consumption with the project automatically, so projects on one shared resource can be charged back through a tag filter. Finer splits inside one project need gateway metrics, such as API Management token metrics.",
+  "rationale": [
+   "Correct: Foundry adds a project tag to the consumption of each project, so filtering cost analysis on that tag splits the spend of the shared resource per project without manual tagging, for models sold by Azure.",
+   "Incorrect: grouping by Meter shows which priced units, such as input or output tokens of a model, drove cost. All projects use the same meters, so this does not split spend by project. Use it to see which models cost the most.",
+   "Incorrect: grouping by Resource shows cost per Azure resource. The four projects share one Foundry resource, so the result is one total. Use it when each business unit has its own resource.",
+   "Incorrect: a service filter for Azure OpenAI isolates model spend from other services, but it still returns one total for the shared resource. Use it to separate model cost from other services before you split by project."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/manage-costs"
+ },
+ {
+  "id": "3.3.4-02",
+  "obj": "3.3.4",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys must give three users read access for monitoring a Foundry solution. No user may receive permissions to manage resources.\n\nWhich role should you assign to each user? To answer, drag the appropriate roles to the correct users. Each role may be used once, more than once, or not at all.",
+  "choices": [
+   "Cost Management Reader",
+   "Cognitive Services Usages Reader",
+   "Log Analytics Reader",
+   "Foundry User",
+   "Privileged Monitoring Data Reader"
+  ],
+  "targets": [
+   "User1: a financial analyst who views costs and usage charges for the Foundry resources in a resource group",
+   "User2: a capacity planner who views Azure OpenAI quota usage across the subscription",
+   "User3: an engineer who opens agent traces from the Application Insights resource connected to the project; the trace tables are not protected"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Monitoring access is split by data type: costs (Cost Management Reader), quota (Cognitive Services Usages Reader), telemetry (Log Analytics Reader, plus Privileged Monitoring Data Reader for protected tables), and Foundry resources (Foundry User). Assign the narrowest role at the scope where the data lives.",
+  "rationale": [
+   "User1 needs cost and usage charges only. Cost Management Reader grants read access to Cost Management data at the assigned scope, here the resource group, without any permission to change resources.",
+   "User2 needs quota usage across the subscription. Cognitive Services Usages Reader is the minimal role for viewing quota usage and must be assigned at subscription scope, because the Usages API is subscription-scoped.",
+   "User3 needs to read traces. Log Analytics Reader on the connected Application Insights resource allows viewing trace data; Privileged Monitoring Data Reader is needed in addition only when the tables are protected."
+  ],
+  "notes": [
+   "Cost Management Reader: read access to cost and usage data. Use it for finance and chargeback reporting at subscription or resource group scope; it grants no access to resources or telemetry.",
+   "Cognitive Services Usages Reader: minimal read access to quota usage at subscription scope. Use it for capacity planning and to see quota allocations in the Foundry portal.",
+   "Log Analytics Reader: read access to monitoring data and logs. Assign it on the connected Application Insights resource so that users can view Foundry traces.",
+   "Foundry User: access to Foundry resources and projects to build and use agents. Assign it in addition to Cost Management Reader when users must also inspect Foundry resources and usage context.",
+   "Privileged Monitoring Data Reader: read access to protected Log Analytics tables. Use it when sensitive trace content, such as prompts in AppGenAIContent, is stored in a protected table."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/manage-costs"
+ },
+ {
+  "id": "3.3.4-03",
+  "obj": "3.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud plans capacity for several agents that use gpt-4o. Before the team creates deployments, an architect must explain how Azure OpenAI Standard quota is granted.\n\nWhich scope should the architect use to plan Azure OpenAI quota?",
+  "choices": [
+   "Per Azure OpenAI resource, shared by the deployments in that resource",
+   "Per subscription, per region, per model, and per deployment type",
+   "Per Microsoft Entra tenant, shared by every subscription in the tenant",
+   "Per Foundry project, shared by the deployments in that project"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Quota planning starts at the subscription and region: each model and deployment type has a TPM pool there, and deployments take their share from it. To add capacity, redistribute TPM between deployments, request an increase, or use another region or subscription.",
+  "rationale": [
+   "Incorrect: Azure OpenAI resources do not receive their own quota. Several resources in the same region and subscription draw from one quota pool, so planning per resource overstates capacity. Plan per resource only for the deployments that it hosts.",
+   "Correct: Standard quota is assigned in tokens per minute per subscription, per region, per model, and per deployment type. Each deployment takes part of that pool until the pool is used up.",
+   "Incorrect: quota is not pooled at the Microsoft Entra tenant level. Each subscription has its own quota per region and model, so a second subscription has a separate pool. Use more subscriptions when one subscription's quota is not enough.",
+   "Incorrect: Foundry projects do not receive their own Azure OpenAI quota. Deployments in all projects use the quota of the subscription in that region. Use projects to organize work and chargeback, not to obtain capacity."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/quota"
+ },
+ {
+  "id": "3.3.4-04",
+  "obj": "3.3.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Woodgrove Bank wants a monthly budget for resource group RG1, which hosts its Foundry resources. When spending reaches 80 percent of the budget, an existing Logic Apps workflow must start. Your Azure CLI session uses a different default subscription than the one that contains RG1.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az account set --subscription <subscription-id>`",
+   "Run `az monitor action-group create --name AG1 --resource-group RG1 --short-name AG1` with an action that starts the Logic Apps workflow.",
+   "`az consumption budget create-with-rg --budget-name Budget1 -g RG1 --amount 10000 --category Cost --time-grain Monthly --time-period <period> --notifications <threshold-80-with-AG1-id-in-contact-groups>`",
+   "`az monitor metrics alert create --name Spend80 --resource-group RG1 --scopes <Foundry1-id> --condition \"total ProcessedPromptTokens > 1000000\" --action <AG1-id>`",
+   "`az cognitiveservices usage list --location eastus`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Azure OpenAI has no hard spending cap, so cost control relies on Cost Management budgets with alert thresholds. Budget notifications can call action groups, which start automation such as Logic Apps, Azure Functions, or runbooks; create the action group first so that the budget can reference it.",
+  "rationale": [
+   "Step 1: az account set makes the subscription that contains RG1 the active one. The action group and the budget are created in the active subscription, so this must run before either command.",
+   "Step 2: the action group holds the action that starts the Logic Apps workflow. The budget notification references the action group ID in contact-groups, so the action group must exist before the budget is created.",
+   "Step 3: az consumption budget create-with-rg creates the monthly cost budget for RG1. Its notification with an 80 percent threshold and the AG1 ID in contact-groups starts the workflow when spending reaches that level.",
+   "Incorrect: a metric alert on processed prompt tokens reacts to token volume, not to money spent against a budget, and it ignores other cost meters. Use token alerts to watch usage spikes and budgets to watch spend.",
+   "Incorrect: az cognitiveservices usage list shows quota usage per region, which matters for capacity planning. It neither tracks spending nor triggers automation. Run it when you plan TPM allocations."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-acm-create-budgets"
+ },
+ {
+  "id": "3.3.4-05",
+  "obj": "3.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has three internal teams that call the same Azure OpenAI deployment from one Foundry project through Azure API Management. Each team sends a team identifier in an x-team-id header. Finance needs monthly token consumption per team for internal chargeback.\n\nWhat should you configure?",
+  "choices": [
+   "The llm-token-limit policy with a counter-key based on the x-team-id header",
+   "A cost analysis filter on the project tag",
+   "A metric alert on Processed Prompt Tokens split by deployment",
+   "The llm-emit-token-metric policy with a custom dimension based on the x-team-id header"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "When consumers share a project and a deployment, platform cost data cannot tell them apart. The gateway sees every request, so API Management llm-emit-token-metric with a team dimension produces per-consumer token data for chargeback; keep the dimensions low in cardinality.",
+  "rationale": [
+   "Incorrect: llm-token-limit enforces a token budget per key and rejects excess requests. It controls consumption but produces no per-team metric to report. Use it to cap usage per team, next to a metric policy for reporting.",
+   "Incorrect: the project tag splits cost by Foundry project. All three teams use one project, so the tag returns one total. Use the project tag when each team has its own project.",
+   "Incorrect: a metric alert split by deployment notifies on token thresholds per deployment. The teams share one deployment, so the split cannot separate them, and an alert is not a report. Use deployment splits when teams have separate deployments.",
+   "Correct: llm-emit-token-metric sends prompt, completion, and total token counts to Application Insights with custom dimensions such as the x-team-id header value, so finance can sum tokens per team each month."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/genai-gateway-capabilities"
+ },
+ {
+  "id": "3.3.4-06",
+  "obj": "3.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders gives each partner a monthly allowance of 5 million tokens for an agent API in Azure API Management. When a partner exceeds its allowance, requests must be rejected until the next month starts. Partners use separate subscription keys.\n\nWhich configuration should you use?",
+  "choices": [
+   "A separate TPM allocation for each partner on the shared Azure OpenAI deployment",
+   "llm-token-limit with token-quota and a Monthly token-quota-period per subscription ID",
+   "quota-by-key with calls and renewal-period, keyed on the subscription ID",
+   "llm-token-limit with a tokens-per-minute rate limit, keyed on the subscription ID"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "llm-token-limit has two modes: tokens-per-minute rate limiting (429 on excess) and token-quota over a period from Hourly to Yearly (403 until reset). Keying on the subscription ID applies the limit per partner, which is the basis for allowance-based plans.",
+  "rationale": [
+   "Incorrect: a TPM allocation sets the rate limit of a whole deployment, which all partners share. It cannot give each partner a monthly allowance. Use TPM allocation to divide subscription quota among deployments.",
+   "Correct: llm-token-limit with token-quota and a Monthly token-quota-period, keyed on the subscription ID, counts each partner's tokens over the month and rejects requests with 403 Forbidden until the quota resets.",
+   "Incorrect: quota-by-key counts calls per key over a renewal period. A partner that sends few but large requests would exceed its token allowance unnoticed. Use it when the allowance is defined in calls.",
+   "Incorrect: a tokens-per-minute limit resets every minute, so a partner can keep consuming tokens all month. It throttles bursts, not monthly totals. Use it to protect capacity from runaway callers."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-token-limit-policy"
+ },
+ {
+  "id": "3.3.4-07",
+  "obj": "3.3.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Adventure Works Cycles has 240,000 TPM of gpt-4o Standard quota in East US. Two deployments of gpt-4o version 2024-11-20 in a resource named Foundry1, Deployment1 and Deployment2, use 120,000 TPM each. Azure Monitor shows that Deployment2 uses less than 10 percent of its allocation. A new agent needs a gpt-4o Standard deployment named Deployment3 in Foundry1 with 60,000 TPM today, and a quota increase cannot be approved in time. You must confirm that the freed quota is available before you create Deployment3. The Azure CLI uses the correct subscription.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Foundry portal, open the Quota pane and lower the quota allocation of Deployment2 to 60,000 TPM.",
+   "`az cognitiveservices usage list -l eastus`",
+   "`az cognitiveservices account deployment create -g RG1 -n Foundry1 --deployment-name Deployment3 --model-name gpt-4o --model-version \"2024-11-20\" --model-format OpenAI --sku-capacity 60 --sku-name \"Standard\"`",
+   "`az cognitiveservices account create --name Foundry2 --resource-group RG1 --kind AIServices --sku S0 --location eastus`",
+   "`az cognitiveservices account deployment create -g RG1 -n Foundry1 --deployment-name Deployment3 --model-name gpt-4o --model-version \"2024-11-20\" --model-format OpenAI --sku-capacity 60000 --sku-name \"Standard\"`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Standard quota is a regional pool per subscription and model that deployments draw from in units of 1,000 TPM. When the pool is exhausted, lower the capacity of underused deployments to free quota, check usage, and then create the new deployment.",
+  "rationale": [
+   "Step 1: once the regional pool is fully allocated, a new deployment needs TPM that another deployment of the same model releases. Editing the allocation of the underused Deployment2 on the Quota pane lowers it to 60,000 TPM and frees 60,000 TPM of the East US gpt-4o quota.",
+   "Step 2: az cognitiveservices usage list -l eastus shows quota usage in the region for the active subscription. Quota edits can take up to 15 minutes to propagate, so this check confirms that 60,000 TPM of gpt-4o Standard quota is free before Deployment3 is created.",
+   "Step 3: with quota freed, creating Deployment3 with --sku-capacity 60 assigns 60,000 TPM, because one capacity unit equals 1,000 TPM for Standard deployments.",
+   "Incorrect: a new resource in East US draws from the same subscription quota for gpt-4o Standard in that region, which is fully allocated. Create another resource when you need separate endpoints or keys, not more quota.",
+   "Incorrect: --sku-capacity is expressed in units of 1,000 TPM, so 60000 requests 60 million TPM, far beyond the available quota, and the deployment fails. Use 60 to request 60,000 TPM."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/quota"
+ },
+ {
+  "id": "3.3.4-08",
+  "obj": "3.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House deployed a fine-tuned Azure OpenAI model that the marketing agent uses during one-week campaigns that run every other week. Cost analysis shows a steady charge for the model every day, including weeks with no inference calls.\n\nWhat should you do to reduce this cost?",
+  "choices": [
+   "Delete the deployment after each campaign and redeploy it before the next one",
+   "Reduce the TPM assigned to the fine-tuned deployment between campaigns",
+   "Configure spillover from the fine-tuned deployment to a standard deployment",
+   "Add an llm-token-limit policy with a monthly token quota for the marketing agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fine-tuned models have three cost components: training, inference per token, and hourly hosting while deployed. Hosting accrues even when the model is idle, so for periodic workloads delete deployments between uses.",
+  "rationale": [
+   "Correct: a deployed fine-tuned model incurs an hourly hosting charge as long as it is deployed, even without inference calls. Deleting the deployment after each campaign and redeploying before the next stops the idle charge.",
+   "Incorrect: TPM sets the rate limit of the deployment and affects how many tokens it can process. It does not change the hourly hosting charge of a fine-tuned deployment. Reduce TPM to free quota for other deployments.",
+   "Incorrect: spillover routes overflow from a provisioned deployment to a standard deployment. It does not apply to idle fine-tuned hosting and does not lower the hourly charge. Use spillover to absorb PTU peaks.",
+   "Incorrect: a monthly token quota limits inference consumption by the agent. The charge appears in weeks without inference, so it is hosting, not tokens. Use a token quota to cap usage-based spending."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/manage-costs"
+ },
+ {
+  "id": "3.3.4-09",
+  "obj": "3.3.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "case": "C-f",
+  "stem": "You review the token metric issue that is described in the Problem statements section.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Token data for some requests is discarded without an error being returned to the caller.",
+   "Adding Client IP as a fourth custom dimension reduces the amount of discarded token data.",
+   "Removing the User ID dimension makes the per-cost-center totals complete."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Custom metrics from API Management create active time series as the product of the unique values of each dimension, with limits of 100 values per dimension and 1,000 series per namespace. Use low-cardinality dimensions such as cost center or API for chargeback, and handle per-user analysis in logs instead of metrics.",
+  "rationale": [
+   "Yes: API Management limits each dimension to 100 unique values and each metric namespace to 1,000 active time series. With 4,000 users, new User ID values exceed the limits, and that metric data is silently discarded, with no error to callers.",
+   "No: Client IP is another high-cardinality dimension. The number of time series is the product of the unique values of each dimension, so adding it multiplies the series count and makes data loss worse. Add only dimensions with few values.",
+   "Yes: without User ID, the series count is 3 APIs times 40 cost centers, or 120, well under the 1,000 limit, and each dimension stays under 100 values, so every request counts toward the cost center totals."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-emit-token-metric-policy"
+ },
+ {
+  "id": "3.3.4-10",
+  "obj": "3.3.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Coho Winery wants to reduce billing surprises before it moves a multi-agent solution to production. You need to estimate costs and verify the estimate against actual charges before you set the production budget.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Build an estimate in the Azure pricing calculator.",
+   "Deploy a small test workload and send representative traffic.",
+   "Group costs by Resource and then by Meter in Cost analysis.",
+   "Compare the meter charges with the estimate and adjust the budget.",
+   "Create a scheduled export of cost data to a storage account.",
+   "Enable a diagnostic setting that sends Foundry resource metrics to a Log Analytics workspace."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Microsoft recommends an estimate-and-verify approach: estimate with the pricing calculator, run a representative test, break the actual cost down by resource and meter, and adjust the budget. Meters are the unit at which estimates and invoices can be compared.",
+  "rationale": [
+   "Step 1: the pricing calculator turns the expected models, token volumes, and other services into a baseline estimate. The baseline must exist first, because the later steps verify it.",
+   "Step 2: a small test workload with representative traffic produces real charges on the actual meters. Without it, Cost analysis has no data that reflects the planned usage.",
+   "Step 3: grouping by Resource and then by Meter breaks the test charges down to priced units, such as input and output tokens per model, which is the level at which the estimate was built.",
+   "Step 4: comparing the meter charges with the estimate shows which assumptions were wrong, so you can correct the baseline and set a realistic production budget.",
+   "Incorrect: a scheduled export copies cost data to storage for reporting or external tools. It neither estimates nor verifies anything by itself. Use it when finance needs regular cost data outside the portal.",
+   "Incorrect: a diagnostic setting sends platform metrics and logs for operational monitoring. They are not billing data, and Log Analytics ingestion adds its own cost. Use it for availability and performance monitoring."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/manage-costs"
+ },
+ {
+  "id": "3.3.4-11",
+  "obj": "3.3.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Wide World Importers enabled spillover from a Global Provisioned deployment to a Global Standard deployment. Finance reports pay-as-you-go token charges that are higher than expected and asks the team to identify how much of the Global Standard traffic arrived through spillover.\n\nWhich two actions should you perform? Each correct answer presents a complete solution.",
+  "choices": [
+   "Log the x-ms-spillover-from-deployment response header in the agent application and count the requests that contain it",
+   "Count the HTTP 429 responses of the provisioned deployment in the Azure OpenAI Requests metric",
+   "Group cost analysis by Meter for the Foundry resource",
+   "Split the Azure OpenAI Requests metric of the Global Standard deployment by the IsSpillover dimension",
+   "Chart the Provisioned-managed Utilization V2 metric of the provisioned deployment"
+  ],
+  "answer": [
+   0,
+   3
+  ],
+  "explanation": "Spilled requests are billed on the standard deployment at standard rates, so they show up as pay-as-you-go charges. Measure them with the IsSpillover dimension on the request metric of the standard deployment, or per request with the x-ms-spillover-from-deployment header.",
+  "rationale": [
+   "Correct: the x-ms-spillover-from-deployment response header is present on requests that were served through spillover. Logging and counting it in the application gives a per-request count of spilled traffic.",
+   "Incorrect: requests that spill over are served by the standard deployment instead of returning 429, so they are not counted as 429 responses on the provisioned deployment. Count 429 responses when spillover is not enabled.",
+   "Incorrect: grouping by Meter shows token charges per model and token type, but spilled and direct requests to the Global Standard deployment use the same meters. Use meter grouping to see which models drive cost.",
+   "Correct: the Azure OpenAI Requests metric of the Global Standard deployment can be split by the IsSpillover dimension, which separates requests that arrived through spillover from direct requests.",
+   "Incorrect: Provisioned-managed Utilization V2 shows how full the provisioned deployment is. High utilization explains why spillover happens but does not count spilled requests. Use it to size PTUs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/spillover-traffic-management"
+ },
+ {
+  "id": "3.3.4-12",
+  "obj": "3.3.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute scopes Cost analysis to its Foundry resource to track the cost of a tutoring agent. The agent uses Azure OpenAI models and a partner model from Azure Marketplace, and tracing sends telemetry to Application Insights. The monthly invoice is consistently higher than the Foundry resource view shows.\n\nWhat should you do to see the full cost of the solution?",
+  "choices": [
+   "Wait for cost ingestion and compare the same time window again",
+   "Scope Cost analysis to the resource group or subscription of the solution",
+   "Add a filter for the Azure OpenAI service in the Foundry resource view",
+   "Assign the Cost Management Reader role at the Foundry resource scope"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Foundry costs are only part of a solution's cost: Marketplace partner models, Application Insights and Log Analytics, and other services are billed outside the Foundry resource. Analyze cost at the resource group or subscription that contains all resources of the solution.",
+  "rationale": [
+   "Incorrect: cost data can lag, but the difference here is the same every month, so it is structural, not a timing issue. Wait and compare again when only the most recent day looks too low.",
+   "Correct: meters for partner models from Azure Marketplace appear at the resource group instead of the Foundry resource, and Azure Monitor costs for logs and alerts belong to other resources. Scoping to the resource group or subscription shows all of them.",
+   "Incorrect: a service filter narrows the view and hides even more of the solution cost. The gap comes from costs outside the Foundry resource scope. Use filters to isolate one service once the scope is complete.",
+   "Incorrect: the user can already see the Foundry resource costs, so permissions are not the issue; the missing costs sit outside this scope. Assign Cost Management Reader at a wider scope only when access is denied."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/manage-costs"
+ },
+ {
+  "id": "3.3.5-01",
+  "obj": "3.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a planning agent whose runs include several model calls and tool calls. A developer needs to identify which model call in one specific run consumed the most tokens and how long each step took.\n\nWhat should the developer use?",
+  "choices": [
+   "The Processed Prompt Tokens metric of the model deployment in Azure Monitor",
+   "The trace of the run in the Foundry portal, stepping through each span",
+   "The token usage chart on the Agent Monitoring Dashboard of the agent",
+   "Cost analysis in Cost Management, grouped by Meter for the project"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Tracing records each run as a tree of spans with timing, tokens, inputs, and outputs, which is the level needed for per-step diagnosis. Metrics and dashboards aggregate across runs and suit trends and alerts, not the explanation of one run.",
+  "rationale": [
+   "Incorrect: Processed Prompt Tokens aggregates input tokens across requests over time. It cannot attribute tokens to one run or one model call, and it covers input only. Use it to watch prompt volume trends per deployment.",
+   "Correct: a trace in the Foundry portal shows each model call and tool call of the run as a span with its inputs, outputs, token usage, and duration in execution order, so you can find the most expensive call and the slow steps.",
+   "Incorrect: the token usage chart on the Agent Monitoring Dashboard aggregates tokens across runs over a period. It does not break one run into steps. Use it to spot trends and anomalies in consumption.",
+   "Incorrect: Cost analysis shows billed charges per meter and resource over days, not tokens per step of an individual run. Use it for cost reporting and chargeback."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept"
+ },
+ {
+  "id": "3.3.5-02",
+  "obj": "3.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. instruments a Python agent application with the Microsoft Foundry SDK. Tracing is already enabled and spans appear in Application Insights. In the development environment, developers need the built-in traces to include message contents and tool call arguments.\n\nWhich environment variable should you set to true?",
+  "choices": [
+   "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA",
+   "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT",
+   "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING",
+   "AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Foundry SDK tracing has separate switches: enable tracing, record content, propagate trace context and baggage, auto-instrument the Responses API, and include binary data. Content recording can expose sensitive data, so enable it in development unless compliance allows it in production.",
+  "rationale": [
+   "Incorrect: AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA adds full image URLs and file data to spans, and it applies only when content recording is already on. It does not enable message content. Use it when you must debug multimodal inputs.",
+   "Correct: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT set to true turns on content recording, so built-in spans capture message contents and tool call arguments. It is off by default and intended for development.",
+   "Incorrect: AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING opts in to GenAI tracing itself. Spans already appear, so tracing is on, and this variable adds no content. Set it when no GenAI spans are produced at all.",
+   "Incorrect: AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE adds the baggage header to the propagated trace context. It changes what is sent to Azure services, not what spans record. Enable it only when downstream services need baggage."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-03",
+  "obj": "3.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys wants Foundry to notify the team when the token usage or latency of an agent shows an anomaly, or when evaluation scores drop.\n\nWhich setting on the Monitor tab of the agent should you configure?",
+  "choices": [
+   "Red team scans",
+   "Recurring evaluations",
+   "Traces",
+   "Alerts"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The Monitor tab combines recurring evaluations and red team scans, which produce signals, with alerts, which notify on anomalies in those signals and in operational metrics. Traces support the investigation after an alert fires.",
+  "rationale": [
+   "Incorrect: red team scans run adversarial probes against the agent to find safety risks. Their findings can feed alerts, but the scans do not notify on latency or token anomalies. Use them to test safety on a schedule.",
+   "Incorrect: recurring evaluations produce quality scores over time. They supply the data that an alert watches, but they do not send notifications themselves. Use them to measure quality regularly.",
+   "Incorrect: Traces show individual runs for debugging, including spans and tokens. They contain no notification settings. Use traces to investigate a specific run after an alert fires.",
+   "Correct: Alerts in the Monitor settings of the agent detect anomalies in latency, token usage, evaluation scores, and red team findings and notify the team, which covers every condition in the requirement."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/how-to-monitor-agents-dashboard"
+ },
+ {
+  "id": "3.3.5-04",
+  "obj": "3.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud connected an Application Insights resource to its Foundry project. A developer named User1 has the Contributor role on the project but receives authorization errors when opening traces in the Foundry portal. The trace tables are not protected.\n\nWhich role should you assign to User1 on the connected Application Insights resource?",
+  "choices": [
+   "Log Analytics Reader",
+   "Privileged Monitoring Data Reader",
+   "Cost Management Reader",
+   "Cognitive Services Usages Reader"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Trace data lives in the connected Application Insights resource, so access to it is controlled there, not on the Foundry project. Log Analytics Reader covers standard tables; protected tables additionally need Privileged Monitoring Data Reader.",
+  "rationale": [
+   "Correct: viewing traces requires Log Analytics Reader on the Application Insights resource connected to the project, in addition to a role on the project. Contributor on the project alone does not grant read access to the telemetry.",
+   "Incorrect: Privileged Monitoring Data Reader grants access to protected Log Analytics tables. The trace tables are not protected, so it is not needed. Assign it in addition when sensitive content is stored in a protected table.",
+   "Incorrect: Cost Management Reader grants read access to cost and usage charges. It provides no access to Application Insights telemetry. Assign it to users who need cost reports.",
+   "Incorrect: Cognitive Services Usages Reader shows quota usage at subscription scope. It grants no access to trace data. Assign it to users who plan TPM capacity."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-05",
+  "obj": "3.3.5",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Woodgrove Bank calls a Foundry agent from a Python application that is instrumented for tracing. Traces reach Application Insights, but they are not correlated with the agent in the Foundry portal.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nresponse = openai.responses.create(\n    conversation=conversation.id,\n    extra_body={\"agent_reference\": {\n        \"name\": [[1]],\n        \"id\": [[2]],\n        \"type\": \"agent_reference\",\n    }},\n    input=\"What is my current balance?\",\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "agent.name",
+     "agent.version",
+     "conversation.id"
+    ],
+    "why": [
+     "Correct: the name key must hold the agent name. Together with the id, it tells the Foundry portal which agent the client-side traces belong to, so they appear under that agent.",
+     "Incorrect: agent.version identifies one version of the agent, not its name. Pass the version when you manage a specific agent version, for example with delete_version.",
+     "Incorrect: conversation.id identifies the conversation that holds the turns and is already passed in the conversation parameter. It does not identify the agent."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "agent.id",
+     "agent.version",
+     "conversation.id"
+    ],
+    "why": [
+     "Correct: Microsoft Learn requires both name and id in agent_reference to correlate traces with a specific agent. agent.id supplies the identifier that was returned when the agent version was created.",
+     "Incorrect: agent.version is a version label, not the agent identifier that agent_reference expects for correlation. Use it when you manage agent versions.",
+     "Incorrect: conversation.id would point the reference at a conversation instead of the agent, so the portal still cannot correlate the traces with the agent. Pass it in the conversation parameter only."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Client-side traces are linked to a Foundry agent through agent_reference in the responses.create() call, which must include both the agent name and the agent id. Traces usually appear within 2 to 5 minutes after the call.",
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-06",
+  "obj": "3.3.5",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "case": "C-f",
+  "stem": "You need to meet the session correlation requirement for TripPlanner.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nfrom typing import cast\nfrom opentelemetry import trace\nfrom opentelemetry.sdk.trace import SpanProcessor, TracerProvider\n\nclass SessionSpanProcessor(SpanProcessor):\n    def [[1]](self, span, parent_context=None):\n        [[2]]\n\n    def on_end(self, span):\n        pass\n\nprovider = cast(TracerProvider, trace.get_tracer_provider())\n[[3]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "on_start",
+     "on_end",
+     "force_flush"
+    ],
+    "why": [
+     "Correct: on_start runs when each span starts, while the span is still writable, so an attribute set there is present on every span, including spans created by the Foundry SDK instrumentation.",
+     "Incorrect: on_end receives a read-only span after it has finished, so attributes can no longer be added. Use on_end to inspect or export completed spans.",
+     "Incorrect: force_flush asks the processor to export buffered spans immediately and is not called for each span. Use it before the process exits so that pending spans are not lost."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "span.set_attribute(\"session.id\", current_session_id())",
+     "span.add_event(\"session.id\", {\"value\": current_session_id()})",
+     "baggage.set_baggage(\"session.id\", current_session_id())"
+    ],
+    "why": [
+     "Correct: set_attribute adds session.id as an attribute of the span, which is what the requirement asks for and what KQL queries and the Foundry portal can filter on.",
+     "Incorrect: add_event records a timestamped event inside the span, not an attribute of the span, so filtering spans by session.id does not work. Use events to mark moments within a span.",
+     "Incorrect: set_baggage places the value in a context that propagates to downstream services; it does not set a span attribute, and propagated baggage can leak data. Use baggage for non-sensitive cross-service context."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "provider.add_span_processor(SessionSpanProcessor())",
+     "trace.set_tracer_provider(TracerProvider())",
+     "provider.force_flush()"
+    ],
+    "why": [
+     "Correct: add_span_processor registers the processor with the global tracer provider that the application and the SDK instrumentation already use, so every new span passes through on_start.",
+     "Incorrect: setting a new TracerProvider does not register the processor, and the new provider lacks the configured exporter, so spans would neither get the attribute nor reach Application Insights. Use it only at startup when no provider exists.",
+     "Incorrect: force_flush exports pending spans but registers nothing, so spans never pass through SessionSpanProcessor. Call it during shutdown to flush telemetry."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "A SpanProcessor registered with the global tracer provider sees every span that starts in the process, including spans from SDK instrumentation. Setting attributes in on_start adds correlation IDs such as session.id without changing the traced functions.",
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-07",
+  "obj": "3.3.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders has two agent applications, App1 and App2, that send OpenTelemetry traces to the same Application Insights resource. The team needs to filter the traces of each application in KQL queries without creating another Application Insights resource.\n\nWhat should you do?",
+  "choices": [
+   "Set a unique OTEL_SERVICE_NAME for each application and filter on cloud_RoleName",
+   "Create a separate Foundry project for each application that shares the resource",
+   "Add a session.id attribute that identifies the application to every span",
+   "Set the gen_ai.operation.name attribute to the application name on each span"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Within a shared Application Insights resource, component identity comes from the OpenTelemetry service name, stored as cloud_RoleName. Use it to filter queries and to show separate nodes in Application map, and keep session and operation attributes for their own purposes.",
+  "rationale": [
+   "Correct: OTEL_SERVICE_NAME sets the OpenTelemetry service name, which Application Insights maps to cloud_RoleName. A unique value per app lets KQL queries filter each application in the shared resource.",
+   "Incorrect: a separate Foundry project per application changes how the apps are organized, but both still send telemetry to the same Application Insights resource with no field that tells them apart. Use separate projects for access or chargeback boundaries.",
+   "Incorrect: session.id identifies a user session, which spans one conversation, not an application. Reusing it for app identity breaks session correlation. Use session.id to group the spans of one session.",
+   "Incorrect: gen_ai.operation.name describes the operation of a span, such as chat or execute_tool, according to the GenAI semantic conventions. Overloading it breaks those conventions. Use it to filter spans by operation type."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-configuration"
+ },
+ {
+  "id": "3.3.5-08",
+  "obj": "3.3.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Proseware, Inc. adds client-side tracing to a Python agent application that uses the Microsoft Foundry SDK. Client-side spans must be produced for every agent call and must correlate with server-side spans from Azure OpenAI. The startup code already calls configure_azure_monitor() with the connection string of the Application Insights resource of the project.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`pip install azure-ai-projects opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry`",
+   "`os.environ[\"AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING\"] = \"true\"`",
+   "`AIProjectInstrumentor().instrument()`",
+   "`openai = project.get_openai_client(agent_name=agent.name)`",
+   "`response = openai.responses.create(input=question)`",
+   "`os.environ[\"AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API\"] = \"false\"`",
+   "`AIProjectInstrumentor().instrument(enable_trace_context_propagation=False)`",
+   "`pip install opentelemetry-exporter-otlp`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Foundry SDK tracing in Python follows a strict startup order: install the packages, opt in with AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING, call AIProjectInstrumentor().instrument(), and only then obtain OpenAI clients. Clients obtained before instrumentation do not propagate trace context.",
+  "rationale": [
+   "Step 1: the packages provide the Foundry SDK, the OpenTelemetry SDK, the Azure Core tracing bridge, and the Azure Monitor exporter. They must be installed before any import or call in the later steps can run.",
+   "Step 2: GenAI tracing is an experimental opt-in. The variable must be true before instrument() is called; otherwise instrumentation is not enabled and only a warning is logged.",
+   "Step 3: instrument() enables the GenAI instrumentation, with trace context propagation on by default. It must run before the OpenAI client is obtained so that the client is covered.",
+   "Step 4: trace context propagation applies only to OpenAI clients obtained through get_openai_client() after instrumentation, so the client is obtained after instrument() to inject the traceparent and tracestate headers.",
+   "Step 5: calls through the instrumented client now produce client-side spans and carry the trace context to Azure OpenAI, so client-side and server-side spans correlate in one trace.",
+   "Incorrect: setting AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API to false disables automatic instrumentation of Responses and Conversations calls, so agent calls produce no client-side spans. Use it when you want only explicit custom spans.",
+   "Incorrect: instrument(enable_trace_context_propagation=False) stops injecting W3C trace context headers, so client-side and server-side spans no longer correlate. Use it when compliance forbids sending trace IDs to Azure services.",
+   "Incorrect: opentelemetry-exporter-otlp is needed to export to an OTLP backend such as Aspire Dashboard or a third-party tool. The app exports to Application Insights through configure_azure_monitor(), so this package is not required."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-09",
+  "obj": "3.3.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Humongous Insurance traces a claims agent in production. OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT is set to false. A helper function named lookup_policy is decorated with @trace_function and accepts a policy_number parameter. A compliance review finds policy numbers in the span attributes of production traces. The team must keep a span for lookup_policy.\n\nWhat should you do?",
+  "choices": [
+   "Set AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION to false",
+   "Set AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API to false",
+   "Replace the decorator with a manual span that omits policy_number",
+   "Set AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA to false"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Content recording controls only the built-in GenAI spans. The @trace_function decorator always records parameters as code.function.parameter attributes and the return value, so for sensitive parameters create a manual span with explicitly chosen attributes.",
+  "rationale": [
+   "Incorrect: disabling trace context propagation stops sending traceparent headers to Azure services, which affects only correlation. The decorator still records policy_number as a span attribute. Disable propagation when trace IDs must not leave the app.",
+   "Incorrect: this variable disables automatic instrumentation of Responses and Conversations API calls. lookup_policy is a decorated custom function, so its span and parameters are still recorded. Use it when you want only explicit custom spans.",
+   "Correct: @trace_function records all supported parameters and the return value regardless of the content recording setting. A manual span created with the tracer lets you choose the attributes, so it keeps a span for lookup_policy without policy_number.",
+   "Incorrect: AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA controls whether image and file data is included when content recording is on. Policy numbers are plain parameters, so the setting has no effect. Leave it false to keep payloads small."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ },
+ {
+  "id": "3.3.5-10",
+  "obj": "3.3.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research stores clinical prompts in Foundry traces. The September 30, 2026, migration date for generative AI content has passed. Earlier, the team registered the optOutProtectGenAISensitiveData feature flag on the subscription so that existing custom queries kept working, and all queries now read from the AppGenAIContent table. Members of an auditor group must be able to read prompts, responses, and tool call content in new traces, while other engineers keep access to the non-sensitive trace data only.\n\nWhich sequence of actions should you perform?",
+  "choices": [
+   "Register the protectGenAISensitiveData feature flag -> set the AppGenAIContent table to Protected -> assign Privileged Monitoring Data Reader to the auditor group -> verify access with an account that has Log Analytics Reader",
+   "Unregister the optOutProtectGenAISensitiveData feature flag -> set the AppGenAIContent table to Protected -> assign Privileged Monitoring Data Reader to the auditor group -> verify access with an account that has Log Analytics Reader",
+   "Set the AppGenAIContent table to Protected -> assign Privileged Monitoring Data Reader to the auditor group -> verify access with an account that has Log Analytics Reader -> unregister the optOutProtectGenAISensitiveData feature flag",
+   "Unregister the optOutProtectGenAISensitiveData feature flag -> verify access with an account that has Log Analytics Reader -> set the AppGenAIContent table to Protected -> assign Privileged Monitoring Data Reader to the auditor group"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Foundry stores sensitive GenAI attributes, such as input and output messages and tool call arguments, in the AppGenAIContent table. For data ingested on or after September 30, 2026, Application Insights routes these values only to AppGenAIContent by default, so the early-enablement flag protectGenAISensitiveData is no longer needed; only the temporary optOutProtectGenAISensitiveData flag keeps the old routing, until you unregister it or the opt-out ends on September 30, 2027. Then protect the table so that standard readers are denied, grant Privileged Monitoring Data Reader to authorized identities, and verify with both kinds of accounts.",
+  "rationale": [
+   "Incorrect: protectGenAISensitiveData enabled the dedicated-table routing early, before the September 30, 2026, migration date. Now it adds nothing, and the registered opt-out flag still keeps content values in AppDependencies, AppTraces, and AppEvents, where a Log Analytics Reader can read them. Register it only before the migration date.",
+   "Correct: unregistering optOutProtectGenAISensitiveData returns new data to the default routing, so content values go only to AppGenAIContent. Protecting that table denies standard readers, Privileged Monitoring Data Reader restores access for the auditors, and the final check confirms both outcomes.",
+   "Incorrect: this order verifies while the opt-out flag still copies content values into the existing telemetry tables, so the Log Analytics Reader account can still read prompts and the check fails. Unregister the opt-out first, and verify only after the final configuration is in place.",
+   "Incorrect: verifying before the table is set to Protected shows that a Log Analytics Reader can still read the content, because unprotected tables follow standard read roles, and the auditors have no dedicated role yet. Protect the table and grant access before you verify."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/traces-sensitive-content"
+ },
+ {
+  "id": "3.3.5-11",
+  "obj": "3.3.5",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Wingtip Toys deploys a hosted agent named Agent1 in Foundry Agent Service. Monitoring is enabled for the Foundry project, and the agent code contains no telemetry setup code. The agent version is deployed with this agent.yaml section:\n\n```yaml\nenvironment_variables:\n  - name: OTEL_EXPORTER_OTLP_ENDPOINT\n    value: https://otlp.example-provider.com\n  - name: OTEL_EXPORTER_OTLP_PROTOCOL\n    value: http/protobuf\n  - name: OTEL_SERVICE_NAME\n    value: booking-agent\n```\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Agent1 sends telemetry to both the Application Insights resource of the project and the OTLP endpoint.",
+   "You can change the OTLP endpoint of the deployed agent version without creating a new agent version.",
+   "In Application Insights, the telemetry of Agent1 appears with booking-agent as the cloud_RoleName."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Hosted agents bundle the OpenTelemetry distro and choose exporters from environment variables at startup: Application Insights through the platform-injected connection string, and OTLP through OTEL_EXPORTER_OTLP_ENDPOINT. Export settings are immutable per version, and service.name always equals the agent name.",
+  "rationale": [
+   "Yes: with project monitoring enabled, Foundry injects APPLICATIONINSIGHTS_CONNECTION_STRING into the container, and OTEL_EXPORTER_OTLP_ENDPOINT adds an OTLP exporter. The two exporters are independent, so telemetry goes to both destinations.",
+   "No: environment variables are set per agent version and are immutable once the version is created. To change the export destination or the headers, you create a new agent version.",
+   "No: hosted agents report service.name fixed to the agent name, shown as cloud_RoleName, so the value is Agent1. The platform overrides OTEL_SERVICE_NAME; to use another service name, name the agent accordingly."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/configure-hosted-agent-telemetry"
+ },
+ {
+  "id": "3.3.5-12",
+  "obj": "3.3.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Margie's Travel enables Foundry SDK tracing in a Python application. Client-side spans and server-side spans from Azure OpenAI appear as separate traces. Trace context propagation is at its default value. During startup, the application obtains an OpenAI client by calling get_openai_client() and then calls AIProjectInstrumentor().instrument().\n\nWhat should you do to correlate the spans?",
+  "choices": [
+   "Obtain the OpenAI client by calling get_openai_client() after the instrumentation call",
+   "Call instrument() with enable_trace_context_propagation set to False",
+   "Set AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE to true",
+   "Set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT to true"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Trace context propagation is on by default when tracing is enabled, but it applies only to OpenAI clients obtained through get_openai_client() after instrumentation or after a setting change. The order of client creation therefore decides whether client and server spans join one trace.",
+  "rationale": [
+   "Correct: trace context propagation injects traceparent and tracestate only into OpenAI clients obtained through get_openai_client() after instrumentation. Obtaining the client after instrument() makes its requests carry the context, so the spans correlate.",
+   "Incorrect: enable_trace_context_propagation=False turns off the header injection that correlates client-side and server-side spans, which is the opposite of the goal. Use it when compliance forbids sharing trace identifiers.",
+   "Incorrect: the baggage variable adds the baggage header with key-value pairs to the propagated context. It depends on propagation already working for the client, which it does not here, and it can expose PII. Use it only for non-sensitive data.",
+   "Incorrect: content recording adds message contents and tool arguments to spans. It does not add trace headers to requests, so the traces stay separate. Enable it in development when you need to see content."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side"
+ }
+]

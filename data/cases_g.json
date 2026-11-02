@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-g",
+  "title": "Blue Yonder Airlines",
+  "sections": [
+   [
+    "Overview",
+    "Blue Yonder Airlines is an airline with headquarters in Brussels and operations centers in Toronto and Singapore. The company has 6,500 employees and flies to 140 destinations. Blue Yonder Airlines is building SkyHelp, a multi-agent customer assistant that helps travelers rebook flights, check loyalty balances, and track delayed baggage. SkyHelp is available in the Blue Yonder Airlines mobile app and on the SkyHelp web portal, and it currently answers about 40,000 conversations each day in English, French, and Dutch."
+   ],
+   [
+    "Existing environment",
+    "Blue Yonder Airlines uses a single Microsoft Entra tenant. Loyalty members sign in to the SkyHelp portal by using Microsoft Entra ID, and the portal passes the signed-in member's user token when it calls an agent.\n\nA Microsoft Foundry resource named BYA-Foundry in Sweden Central contains two projects named BYA-Test and BYA-Prod. BYA-Prod contains three prompt agents:\n\n- RebookAgent finds alternative flights and rebooks travelers.\n- LoyaltyAgent answers questions about loyalty balances and member benefits by calling a loyalty API that is protected by Microsoft Entra ID. The API returns only the data that the calling member is allowed to see.\n- BaggageAgent tracks delayed bags. A nightly reconciliation job also runs BaggageAgent without any signed-in user.\n\nThe SkyHelp orchestrator API runs in Azure Container Apps as a container app named skyhelp-api in a resource group named rg-skyhelp. The app uses single revision mode. Its current revision, skyhelp-api--v41, serves all traffic on the app URL. No labels are assigned to any revision.\n\nThree tool services named BaggageTool, LoyaltyTool, and RebookTool run as separate container apps. Each tool service uses its own user-assigned managed identity. All partner API keys are stored as secrets in a key vault named KV-Tools that uses the Azure RBAC permission model. Each tool identity has the Key Vault Secrets User role at the scope of KV-Tools, and each tool uses exactly one secret.\n\nInfrastructure is defined in Bicep and stored in a GitHub repository. GitHub Actions workflows deploy the infrastructure and the application. Operational dashboards are built in Power BI from data in Azure Data Explorer."
+   ],
+   [
+    "Problem statements",
+    "In the last release, every infrastructure test in the pipeline passed. However, after the release, the agents could not use the Azure AI Search index that the Bicep templates provisioned, because the application used an index name that did not match the deployed index. The issue was found by customers.\n\nThe call center reports that average handling time increased by 8 percent during the winter storm season. This issue is handled by a separate workforce planning project."
+   ],
+   [
+    "Business requirements",
+    "- Contoso, Ltd. operates a partner rebooking portal for travel agencies. The Contoso, Ltd. service principal must be able to call RebookAgent. It must not be able to call LoyaltyAgent or BaggageAgent.\n- Loyalty members must see only the loyalty data that they are authorized to access.\n- Loyalty members must not receive a separate sign-in or consent link inside a SkyHelp conversation.\n- New versions of the SkyHelp orchestrator must be released as a canary: 10 percent of the traffic on the app URL must go to the new revision while the current revision serves the remaining 90 percent, and both revisions must stay active.\n- Issues such as the one from the last release must be caught before a release reaches customers."
+   ],
+   [
+    "Technical requirements",
+    "- Follow the principle of least privilege for every identity.\n- Sign-in logs must show the agent identity of LoyaltyAgent as an actor that is separate from the member.\n- Each tool identity must be able to read the value of only the secret that its tool uses.\n- Continuous integration must give feedback within 10 minutes of each commit.\n- Use Microsoft Entra ID authentication instead of API keys wherever the target service supports it."
+   ]
+  ]
+ }
+]

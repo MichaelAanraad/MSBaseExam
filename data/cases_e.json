@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-e",
+  "title": "Adventure Works Cycles",
+  "sections": [
+   [
+    "Overview",
+    "Adventure Works Cycles is a bicycle manufacturer that has its main office in Seattle and a branch office in Amsterdam. The company sells through about 400 independent dealers in North America and Europe and employs 1,200 people.\n\nAdventure Works Cycles is building a multi-agent dealer service solution named DealerHub on Microsoft Foundry. DealerHub answers dealer questions about parts, warranty claims, and product quality."
+   ],
+   [
+    "Existing environment",
+    "**Identity and data**\n\n- Employees and dealers sign in by using Microsoft Entra ID. Dealers use B2B guest accounts.\n- Order history is stored in Azure Cosmos DB. Warranty claims are stored in Azure SQL Database.\n- A Microsoft Foundry project named Project1 is connected to an Application Insights resource. Traces are collected for every agent.\n\n**Agents**\n\nDealerHub contains three agents in Foundry Agent Service:\n\n- Agent1 is a hosted agent that acts as the orchestrator. It receives every dealer request from the dealer portal and routes the request to Agent2 or Agent3.\n- Agent2 answers parts questions. It uses the Azure AI Search tool to query an index named Index1 that contains 60,000 parts catalog pages and repair manuals. Agent2 sends vector queries only. Version 4 of Agent2 is the current version. Version 3 remains active for the dealers in Amsterdam until their migration finishes next quarter.\n- Agent3 handles warranty claims. It reads dealer bulletins and inspection reports by using the SharePoint Grounding tool on a SharePoint site named Site1. It also calls an Azure Functions tool named update_claim that changes the status and the amount of a warranty claim.\n\n**Reporting**\n\nA Python app named App1 runs on Azure Container Apps. Each quarter, App1 calls an o3 deployment through the Azure OpenAI Responses API to generate a failure-analysis report for each product line. Each report takes four to eight minutes to generate. All outbound traffic from the Container Apps environment passes through a corporate proxy that closes any connection that stays open for more than 100 seconds."
+   ],
+   [
+    "Business requirements",
+    "- Dealers must find catalog pages for exact part numbers, such as AW-4471-RD, and for the names of field technicians. Today, Agent2 often returns pages for similar but wrong parts for these searches.\n- Dealers must be able to ask about the status of a warranty claim without the claim being changed.\n- The dealer portal must remain available in English, French, and German.\n- The quarterly failure-analysis reports must keep the current reasoning depth of the o3 model.\n- Support costs per dealer request must be reported to the finance team every month."
+   ],
+   [
+    "Technical requirements",
+    "**Security**\n\n- External dealers can upload inspection reports to Site1. Instructions that are hidden in these documents must not steer Agent3.\n- Agent3 must call update_claim only when a dealer asks for a change to a claim.\n\n**Evaluation**\n\n- A weekly job must refresh the regression dataset of Agent2 from its traces.\n- The dataset must contain only spans from the current version of Agent2.\n- The dataset must be a representative subset without near-duplicate prompts.\n- Each refresh must combine the new rows with the latest existing version of the dataset.\n\n**Reporting**\n\n- App1 must retrieve each report after the Responses API accepts the request, without holding a connection open while the report is generated."
+   ],
+   [
+    "Release plan",
+    "DealerHub version 2 is planned for the spring release, after the annual dealer conference in Barcelona. Before the release, the security team will perform agentic red teaming of Agent1. The red teaming results must reflect the resource configuration that Agent1 uses in production, the tests must not affect dealers who use the production agents, and the team must not spend effort on mitigations for false positive findings."
+   ]
+  ]
+ }
+]

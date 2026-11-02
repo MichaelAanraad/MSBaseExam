@@ -1,0 +1,32 @@
+[
+ {
+  "id": "C-c",
+  "title": "Humongous Insurance",
+  "sections": [
+   [
+    "Overview",
+    "Humongous Insurance is a property and casualty insurer that has its headquarters in Chicago and regional claims offices in Denver, Atlanta, and Toronto. The company serves about 2.1 million policyholders and employs 450 claims adjusters.\n\nThe company is building a multi-agent claims assistant named ClaimsAssist. ClaimsAssist will help policyholders report and track claims, and it will help adjusters research policies and procedures."
+   ],
+   [
+    "Existing environment",
+    "**Identity and platform**\n\nAll employees, including adjusters, sign in by using Microsoft Entra ID. Policyholders sign in to a customer portal by using accounts that the portal manages; policyholders do not have Microsoft Entra identities.\n\nA Microsoft Foundry project named Project1 is deployed in East US 2. Project1 has a gpt-4.1 deployment and a text-embedding-3-small deployment.\n\n**Applications and data**\n\n- The customer portal runs in Azure App Service. Its backend, named App1, calls Foundry Agent Service on behalf of the signed-in policyholder by using the system-assigned managed identity of App1.\n- Claims records are stored in an Azure SQL database named ClaimsDB.\n- Underwriting guidelines and regional claims procedures are indexed in a Foundry IQ knowledge base named PolicyKB. Each document carries permission metadata that identifies the regional office allowed to read it.\n- A remote MCP server named ClaimsMCP is available at https://mcp.humongousinsurance.com/claims/mcp. ClaimsMCP exposes eight tools: get_policy, list_claims, create_claim, update_claim, close_claim, issue_payment, delete_attachment, and export_claims. A project connection named ClaimsMcpConn stores the credentials for ClaimsMCP.\n- A third-party HTTP API named RepairQuote returns repair-shop estimates for vehicle damage.\n- The call center uses Dynamics 365 Customer Service, and billing runs on an on-premises system that will be migrated in 2027. Executive reporting uses Power BI dashboards that refresh nightly."
+   ],
+   [
+    "Planned agents",
+    "ClaimsAssist will contain the following agents, all built in Foundry Agent Service by using Python:\n\n- **Agent1** (intake): collects the first notice of loss and calls a function tool named update_claim_address that writes to ClaimsDB. The function is defined with strict set to true and authenticates to ClaimsDB by using DefaultAzureCredential.\n- **Agent2** (policyholder assistant): answers questions from policyholders in the customer portal and uses memory in Foundry Agent Service.\n- **Agent3** (adjuster research): answers questions from adjusters by using PolicyKB.\n- **Agent4** (claim status): looks up policies and claims by using ClaimsMCP.\n- **Agent5** (repair estimates): calls RepairQuote through a function tool named get_repair_quote."
+   ],
+   [
+    "Business requirements",
+    "- Policyholders who return to the portal must not have to repeat their preferences, such as preferred contact channel. The memories of each policyholder must be isolated from those of every other policyholder.\n- Adjusters must see only the documents in PolicyKB that are permitted for their regional office.\n- Agent4 must only read policy and claim data. It must never create, change, pay, close, export, or delete anything.\n- Read-only lookups by Agent4 must not wait for human approval.\n- Answers from Agent5 must never state that an estimate was retrieved when the call to RepairQuote failed, and users must not wait more than 30 seconds for a response."
+   ],
+   [
+    "Technical requirements",
+    "- No user or policyholder identifiers can be hard-coded in any agent or tool definition.\n- PolicyKB must be connected to Agent3 as an MCP tool through a project connection.\n- For update_claim_address, malformed or malicious values must not reach ClaimsDB, and the impact must be limited if the identity of the function is misused.\n- Production traces for Agent5 show three problems: the agent waits indefinitely when RepairQuote hangs, the model calls RepairQuote again and again after a 429 response, and the model sometimes answers as if a failed call succeeded."
+   ],
+   [
+    "Constraints",
+    "- Minimize custom infrastructure; prefer built-in features of Foundry Agent Service.\n- Secrets must not be stored in source code.\n- All new code must be written in Python."
+   ]
+  ]
+ }
+]

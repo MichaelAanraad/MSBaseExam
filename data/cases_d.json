@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-d",
+  "title": "Woodgrove Bank",
+  "sections": [
+   [
+    "Overview",
+    "Woodgrove Bank is a retail bank with 140 branches and about two million customers. The bank is building Woodgrove Assist, a multi-agent assistant for customers and branch staff. Woodgrove Assist must go live before the next mortgage season. The project is sponsored by the head of digital channels and is staffed by a platform team of Python developers."
+   ],
+   [
+    "Existing environment",
+    "**Agents**\n\nA Microsoft Foundry project named Project1 is deployed in the East US 2 region. All agents in Project1 were created by using the new agent object model. A hub agent named ConciergeAgent receives every request and routes it to one of three spoke agents: AccountsAgent, CardsAgent, and MortgageAgent.\n\nCard disputes are handled by a separate Python application that uses a Microsoft Agent Framework handoff workflow. The workflow has three participants: DisputeTriage, ChargebackAgent, and FraudReviewAgent.\n\n**Data and models**\n\nCustomer profiles are stored in an Azure Cosmos DB account that has Microsoft Entra authentication enabled and local key authentication disabled. AccountsAgent reads the profiles through an A2A endpoint named ProfileService that wraps the Cosmos DB account.\n\nAll agents use a gpt-4.1 deployment of the Global Standard type. Each agent's system message starts with the line \"Request time: <current timestamp>, Customer: <customer ID>\", followed by a 6,000-token static compliance policy and the tool definitions. Monitoring shows that cached_tokens is 0 for every request.\n\n**Other systems**\n\nThe bank uses Microsoft 365 E5 for employee productivity and Power BI for branch performance reports. Branch staff sign in with Microsoft Entra ID accounts."
+   ],
+   [
+    "Business requirements",
+    "- The mortgage team plans a new agent named RefinanceAgent. Refinance requests need routing logic and instructions that are distinct from general mortgage questions. Refinance requests must reach RefinanceAgent with minimal latency and without loss of context.\n- Wire transfers above 10,000 USD must be approved by a branch manager before the transfer tool runs. Balance lookups and address changes must proceed without waiting for a person.\n- Manager approvals can take up to three business days. The host process is redeployed every night, and a pending approval must survive the redeployment without repeating completed agent work.\n- A maker-checker loop drafts credit limit increase memos. The loop must not run indefinitely when the checker keeps rejecting a draft, and unresolved drafts must be reviewed by a credit officer.\n- When a customer stops responding during a card dispute, DisputeTriage must continue on its own for at most two turns. ChargebackAgent and FraudReviewAgent must return control to the customer after every response."
+   ],
+   [
+    "Technical requirements",
+    "- Only AccountsAgent may read customer profiles. Other agents in Project1 must not receive the same access.\n- ProfileService must be called by using the access of AccountsAgent itself, not the access of the signed-in user.\n- The solution must not store or rotate any secrets.\n- The input token cost of the repeated compliance policy must be reduced without changing the answers that the model generates.\n- All custom code must be written in Python."
+   ],
+   [
+    "Constraints",
+    "- The risk team prohibits any cache that can return a response that was generated for a different request or a different customer.\n- All resources must remain in the East US 2 region.\n- The platform team must minimize the amount of custom code."
+   ]
+  ]
+ }
+]

@@ -1,0 +1,1952 @@
+[
+ {
+  "id": "2.4.1-01",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Litware, Inc. builds a contract generation solution in Python by using Microsoft Agent Framework and a model deployment in a Microsoft Foundry project. A template agent, a clause agent, a compliance agent, and a risk agent must run in that fixed order, and each agent requires the complete output of the previous agent.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`workflow = ConcurrentBuilder(participants=[template, clause, compliance, risk]).build()`",
+   "`pip install agent-framework`",
+   "`workflow = SequentialBuilder(participants=[template, clause, compliance, risk]).build()`",
+   "`chat_client = FoundryChatClient(project_endpoint=endpoint, model=deployment, credential=AzureCliCredential())`",
+   "`workflow = HandoffBuilder(name=\"contracts\", participants=[template, clause, compliance, risk]).with_start_agent(template).build()`",
+   "`result = await workflow.run(\"Draft a supplier contract.\")`",
+   "`template = chat_client.as_agent(name=\"template\", instructions=\"Select a base template.\")`, and the same call for the clause, compliance, and risk agents"
+  ],
+  "answer": [
+   1,
+   3,
+   6,
+   2,
+   5
+  ],
+  "explanation": "Sequential orchestration is a pipeline: the participants list defines the order, and each agent builds on the output of the one before it. In Agent Framework you install the package, create a chat client, create the agents from it, build the workflow, and then run it. Choose concurrent orchestration for independent parallel work and handoff orchestration when the next agent is chosen dynamically.",
+  "rationale": [
+   "Incorrect: ConcurrentBuilder fans the same input out to every participant in parallel and aggregates the results, so no agent sees the previous output. Use it when agents analyze the same input independently and latency matters.",
+   "Step 1: the agent-framework metapackage installs agent-framework-core plus the provider packages, including the Foundry integration, so the later imports of FoundryChatClient and SequentialBuilder resolve.",
+   "Step 4: SequentialBuilder runs the participants in list order and passes the conversation from one agent to the next, which matches the fixed order and the dependency on the previous output.",
+   "Step 2: FoundryChatClient connects to the Foundry project endpoint and model deployment. The agents are created from this client, so it must exist before any agent is defined.",
+   "Incorrect: HandoffBuilder lets each agent decide at run time which agent takes over, so the order is not fixed. Use it for dynamic routing, such as a support triage agent that transfers the user to a specialist.",
+   "Step 5: workflow.run() starts the pipeline with the initial input. It can only run after build() has produced the workflow; its terminal output is an AgentResponse that holds the final response of the risk agent.",
+   "Step 3: as_agent() creates each participant from the chat client with its own name and instructions. The builder in the next step needs these agent objects as its participants."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/sequential?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.1-02",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Woodgrove Bank designs three multi-agent solutions and must choose an orchestration pattern for each one.\n\nWhich orchestration pattern should you use for each solution? To answer, drag the appropriate patterns to the correct solutions. Each value may be used once, more than once, or not at all.",
+  "choices": [
+   "Group chat orchestration",
+   "Concurrent orchestration",
+   "Magentic orchestration",
+   "Sequential orchestration",
+   "Handoff orchestration"
+  ],
+  "targets": [
+   "Solution1: fundamental, technical, sentiment, and ESG agents analyze the same stock ticker independently, and the combined result must be returned with the lowest latency",
+   "Solution2: a know-your-customer pipeline in which an identity agent, a sanctions agent, and a risk agent run in a fixed order and each needs the complete output of the previous agent",
+   "Solution3: a support desk in which the agent that is currently answering decides at run time which specialist takes full ownership of the conversation"
+  ],
+  "answer": [
+   1,
+   3,
+   4
+  ],
+  "explanation": "Choose the orchestration pattern from the dependency structure: fixed dependencies mean sequential, independent work on the same input means concurrent, and run-time transfer of ownership means handoff. Group chat suits collaborative discussion, and Magentic suits open-ended tasks that need a dynamic plan.",
+  "rationale": [
+   "Solution1 has independent agents that work on the same input and a latency goal, so concurrent orchestration fans out the ticker to all agents in parallel and aggregates their results.",
+   "Solution2 has a fixed order and a dependency on the previous output, which is the definition of sequential orchestration, a linear pipeline in which each agent builds on the one before.",
+   "Solution3 needs dynamic routing in which the receiving agent takes full ownership, which handoff orchestration provides: agents transfer control directly to each other without a central orchestrator."
+  ],
+  "notes": [
+   "Lets agents discuss in a shared thread while a chat manager selects the next speaker. Use it for debate, consensus, or maker-checker reviews, not for strict pipelines.",
+   "Runs agents in parallel on the same input and aggregates the results (fan-out and fan-in). Use it for independent perspectives on one input when total latency matters.",
+   "A manager agent builds and updates a task ledger and assigns work dynamically. Use it for open-ended problems without a known plan, accepting slower convergence.",
+   "Chains agents in a predefined linear order, each processing the previous output. Use it for pipelines with stage dependencies, such as draft, review, and approve.",
+   "Lets agents transfer control and ownership to each other at run time, one active agent at a time. Use it when the right specialist only becomes clear during the conversation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.1-03",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys builds a customer support solution by using Microsoft Agent Framework. A triage agent, a refund agent, an order agent, and a return agent must be able to transfer the conversation directly to one another without a central orchestrator. The agent that receives the conversation must take full ownership of the task.\n\nWhich Agent Framework orchestration should you use?",
+  "choices": [
+   "Handoff orchestration",
+   "Magentic orchestration",
+   "Sequential orchestration",
+   "Concurrent orchestration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Handoff orchestration in Agent Framework uses a mesh topology without a central orchestrator: each agent can transfer the conversation to another agent, and the receiver takes full ownership. Choose it when the right specialist is decided during the conversation; choose a manager-based pattern when a central coordinator must stay in charge.",
+  "rationale": [
+   "Correct: handoff connects the agents directly in a mesh, so the triage, refund, order, and return agents can transfer the conversation to each other, and the receiving agent takes full ownership of the task.",
+   "Incorrect: Magentic orchestration uses a central manager agent that plans with a task ledger and assigns work, which is the central orchestrator the stem rules out. Use it for open-ended tasks without a known plan.",
+   "Incorrect: sequential orchestration runs agents in a fixed, predefined order, so agents cannot choose which agent receives the conversation next. Use it for pipelines with stage dependencies.",
+   "Incorrect: concurrent orchestration sends the same input to all agents in parallel and aggregates the results, so no single agent owns the conversation. Use it for independent analyses that must finish quickly."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff"
+ },
+ {
+  "id": "2.4.1-04",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. builds a research assistant by using Microsoft Agent Framework. A coordinator agent must delegate subtasks to a pricing agent and a legal agent, receive their results, and then compose the final answer itself. The coordinator must retain overall responsibility for the task and pass only the relevant context to each specialist.\n\nWhat should you do?",
+  "choices": [
+   "Expose each specialist agent as a tool of the coordinator agent",
+   "Build a handoff workflow that starts with the coordinator agent",
+   "Build a concurrent workflow that uses the default aggregator",
+   "Build a group chat workflow that uses a round-robin manager"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent-as-tools is the orchestrator-subagent pattern: a primary agent calls specialist agents like tools, keeps ownership of the task, and passes them only the context they need. Handoff is the opposite: control and the full conversation move to the receiving agent.",
+  "rationale": [
+   "Correct: exposing the pricing and legal agents as tools keeps the coordinator in control. It sends each specialist only the relevant context, receives the results, and composes the final answer itself.",
+   "Incorrect: in a handoff workflow the receiving agent takes full ownership and gets the whole conversation, so the coordinator would lose control of the task. Use handoff when the specialist should own the rest of the conversation.",
+   "Incorrect: a concurrent workflow with the default aggregator just collects one message per agent; no agent composes a final answer or filters the context. Use it when independent results are returned side by side.",
+   "Incorrect: a group chat with a round-robin manager gives every agent turns in a shared thread, so each sees the full conversation and the coordinator does not own the answer. Use it for collaborative review or debate."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff"
+ },
+ {
+  "id": "2.4.1-05",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-d",
+  "stem": "You need to integrate RefinanceAgent into Woodgrove Assist.\n\nWhat should you do?",
+  "choices": [
+   "Add the refinance topics and knowledge to the instructions of MortgageAgent",
+   "Connect RefinanceAgent directly to ConciergeAgent as a peer of MortgageAgent",
+   "Expose RefinanceAgent as a tool that MortgageAgent calls for refinance requests",
+   "Connect RefinanceAgent to MortgageAgent so that MortgageAgent routes refinance requests"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "In hub-and-spoke orchestration, a hub agent routes each request to one spoke. Specialized agents with distinct logic are best attached directly to the hub, because every extra routing layer adds latency and risks losing conversation context.",
+  "rationale": [
+   "Incorrect: merging the refinance content into MortgageAgent ignores the requirement for distinct routing logic and instructions. Extend an existing spoke only when the new topics share its logic.",
+   "Correct: in a hub-and-spoke design, a spoke with its own routing logic and instructions is connected directly to the hub. ConciergeAgent then routes refinance requests in one hop, which keeps latency low and avoids context loss.",
+   "Incorrect: an agent-as-tool call keeps MortgageAgent in control and adds a delegation round trip for every refinance request. Use it when a parent agent must combine a specialist result into its own answer.",
+   "Incorrect: nesting RefinanceAgent under MortgageAgent adds a second routing hop, which adds latency and can lose context between hops. Nest spokes only when the parent must enforce shared policy first."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/employee-self-service/connecting-agents-overview"
+ },
+ {
+  "id": "2.4.1-06",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. runs a sequential orchestration of four agents that transform insurance claims. The stages have strict dependencies, so the order must be kept. Occasionally the first agent returns malformed or off-topic output, and the later agents process it and produce incorrect results.\n\nWhat should you do?",
+  "choices": [
+   "Validate each agent output before passing it on, and retry or halt when validation fails",
+   "Convert the workflow to a concurrent orchestration so that every agent receives the original claim",
+   "Add a maker-checker loop after the last agent that reviews the final result",
+   "Move the first agent to a larger model deployment to reduce malformed output"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a sequential pipeline, an error in an early stage propagates to every later stage. Validate the output of each stage before passing it on, and retry or stop when validation fails, so that the fixed order is preserved and bad data never reaches later agents.",
+  "rationale": [
+   "Correct: validating each agent output before the next stage catches malformed or off-topic results at the source, and a retry or halt stops them from propagating, while the strict stage order stays intact.",
+   "Incorrect: a concurrent orchestration gives every agent the original claim, which breaks the strict dependencies between stages. Use concurrent orchestration only when the agents do not need each other's output.",
+   "Incorrect: a maker-checker loop after the last agent detects problems only after all later stages already processed the bad output, which wastes work and makes the error harder to locate. Use it to refine a final result.",
+   "Incorrect: a larger model may reduce malformed output but cannot guarantee it, so invalid output can still flow downstream. Change the model when quality is consistently too low, combined with validation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.1-07",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Northwind Traders implements a peer-to-peer support solution by using the Agent Framework HandoffBuilder in Python. Users report that conversations bounce repeatedly between the order agent and the return agent before a response is produced. The triage agent must receive the initial user input and must be able to route to either specialist. Each specialist must be able to transfer control only back to the triage agent. A termination condition is already defined.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nworkflow = (\n    HandoffBuilder(\n        name=\"support\",\n        participants=[triage_agent, order_agent, return_agent],\n        termination_condition=lambda conversation: len(conversation) > 0 and \"resolved\" in conversation[-1].text.lower(),\n    )\n    .with_start_agent([[1]])\n    .add_handoff(triage_agent, [order_agent, return_agent])\n    .add_handoff(order_agent, [[2]])\n    .add_handoff(return_agent, [[3]])\n    .build()\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "order_agent",
+     "return_agent",
+     "triage_agent"
+    ],
+    "why": [
+     "Incorrect: starting with order_agent sends every new conversation to a specialist first, including return questions. Start with a specialist only when nearly all traffic belongs to it.",
+     "Incorrect: starting with return_agent has the same problem for order questions, and it skips the triage step that decides which specialist owns the request.",
+     "Correct: with_start_agent defines which participant receives the initial user input, and the requirement names the triage agent as the entry point that routes to the specialists."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "[triage_agent, return_agent]",
+     "[triage_agent]",
+     "[return_agent]"
+    ],
+    "why": [
+     "Incorrect: keeping return_agent in the list still permits the direct specialist-to-specialist transfer, so the bouncing continues. A list with several targets suits a hub agent, not a specialist.",
+     "Correct: allowing order_agent to hand off only to triage_agent removes the direct order-to-return path that causes the bouncing, while triage can still reroute the user.",
+     "Incorrect: a direct handoff from order_agent to return_agent is exactly the path that makes conversations bounce between the two specialists. Allow it only when that transfer is a deliberate business step."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "[triage_agent]",
+     "[order_agent]",
+     "[triage_agent, order_agent]"
+    ],
+    "why": [
+     "Correct: limiting return_agent to triage_agent closes the second half of the loop, so every transfer between specialists goes through triage, which matches the requirement.",
+     "Incorrect: a direct handoff to order_agent recreates the loop from the return side. Use specialist-to-specialist handoffs only for a fixed business sequence, such as return then refund.",
+     "Incorrect: including order_agent still allows the return agent to bounce the user back to the order agent. Only triage_agent satisfies the only-back-to-triage rule."
+    ]
+   }
+  ],
+  "answer": [
+   2,
+   1,
+   0
+  ],
+  "explanation": "By default every participant in a handoff workflow can hand off to every other participant, which can cause loops between specialists. add_handoff restricts which agents each agent can transfer to, and with_start_agent sets the entry point. A termination condition then ends the workflow when the conversation reaches a final state.",
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.1-08",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adventure Works Cycles uses an Agent Framework handoff workflow in which a triage agent routes questions to a parts agent and a warranty agent. A new requirement states that the triage agent must combine the results of one or both specialists into a single final answer in the same turn, and it must remain the owner of the conversation. The specialists to call must still be selected dynamically per request.\n\nWhat should you do?",
+  "choices": [
+   "Expose the parts agent and the warranty agent as tools of the triage agent",
+   "Call enable_return_to_previous(False) on the handoff builder",
+   "Enable autonomous mode for the triage agent",
+   "Replace the handoff workflow with a sequential workflow that runs every specialist"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When an agent must combine results from one or more specialists in the same turn and keep ownership, use the agent-as-tools pattern: the model selects the tools dynamically and the calling agent composes the answer. Handoff settings only change how control moves between agents.",
+  "rationale": [
+   "Correct: as tools of the triage agent, the parts and warranty agents can be called selectively per request, and their results return to the triage agent, which stays the owner and combines them into one answer.",
+   "Incorrect: enable_return_to_previous(False) only routes each user reply through the start agent instead of the last active agent. Ownership still moves to a specialist on handoff, so no combined answer is produced.",
+   "Incorrect: autonomous mode lets an agent keep working without waiting for user input. It does not let the triage agent collect and merge results from specialists. Use it to continue when the user is unavailable.",
+   "Incorrect: a sequential workflow would run every specialist for every request in a fixed order, which removes the dynamic selection per request. Use it when every stage must always run."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff"
+ },
+ {
+  "id": "2.4.1-09",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lucerne Publishing designs a document generation solution. A template must be selected first, and grounded content must then be generated from that template. After generation, five independent compliance checks must run, and their findings must be combined before a final formatting agent runs. The checks write to separate data stores, and you must minimize end-to-end latency.\n\nWhich orchestration design should you implement?",
+  "choices": [
+   "A sequential pipeline in which the compliance stage fans out to five parallel agents and fans in before the formatting agent",
+   "A single concurrent orchestration that runs the template, generation, compliance, and formatting agents in parallel",
+   "A handoff orchestration in which each agent decides which agent runs next",
+   "A group chat orchestration in which a chat manager selects the next speaker"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Real solutions often combine patterns. Keep sequential stages where dependencies exist, and fan out only the independent part, such as compliance checks, with a fan-in before the next dependent stage. This preserves correctness and minimizes latency.",
+  "rationale": [
+   "Correct: template selection and generation depend on each other, so they stay sequential. The five independent checks fan out in parallel to cut latency and fan in so the formatting agent receives the combined findings.",
+   "Incorrect: running every agent in parallel ignores the dependencies, because generation needs the template and formatting needs the findings. Use one concurrent orchestration only when all agents are independent.",
+   "Incorrect: in a handoff orchestration the agents decide at run time who runs next, so the known order and the parallel compliance stage are not guaranteed. Use handoff when routing must be decided dynamically.",
+   "Incorrect: group chat lets a chat manager pick one speaker at a time in a shared thread, so the five checks run one after another and latency grows. Use group chat for discussion or consensus between agents."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.2-01",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "dropdown",
+  "stem": "Wide World Importers builds a returns solution in Python as a Microsoft Agent Framework handoff workflow. A refund agent has a process_refund function tool. A human operator must approve every call to process_refund before the function runs, and the application must send the operator decision back to the workflow.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\n@tool(approval_mode=[[1]])\ndef process_refund(order_number: str) -> str:\n    return f\"Refund processed for order {order_number}.\"\n\npending = []\nasync for event in workflow.run(\"Refund order 12345\", stream=True):\n    if event.type == [[2]]:\n        pending.append(event)\n\nresponses = {\n    req.request_id: req.data.[[3]](approved=operator_ok)\n    for req in pending\n}\nasync for event in workflow.run(responses=responses, stream=True):\n    print(event)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"always_require\"",
+     "\"never_require\""
+    ],
+    "why": [
+     "Correct: always_require makes the framework pause before every invocation of process_refund and emit an approval request, so the function only runs after the operator decides.",
+     "Incorrect: never_require lets the model call the tool without any approval, which is the default for function tools. Use it for safe, read-only tools such as an order status lookup."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"request_info\"",
+     "\"output\"",
+     "\"intermediate\""
+    ],
+    "why": [
+     "Correct: an approval-required tool call pauses the workflow and emits a request_info event whose data is a function_approval_request. These events carry the request_id that the response must use.",
+     "Incorrect: output events carry agent responses or the final workflow result, not pending approvals. Handle output events to display answers after the approval is processed.",
+     "Incorrect: intermediate events carry outputs from participants listed in intermediate_output_from. They report progress but never contain approval requests."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "to_function_approval_response",
+     "create_response"
+    ],
+    "why": [
+     "Correct: the function_approval_request content exposes to_function_approval_response(approved=...), which builds the response that tells the workflow whether to run the tool.",
+     "Incorrect: create_response is the static method of HandoffAgentUserRequest that wraps the next user message when an agent waits for user input. It is not a method of the approval request content."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Function tools in Agent Framework opt into human approval with approval_mode=\"always_require\". When the model calls such a tool, the workflow emits a request_info event with a function_approval_request, and the application resumes the run by sending to_function_approval_response(approved=...) keyed by request_id. User-input requests in handoff workflows use HandoffAgentUserRequest.create_response instead.",
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.2-02",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research connects a Foundry Agent Service agent to a remote MCP server that exposes get_ticket, search_tickets, update_ticket, and close_ticket. The read operations get_ticket and search_tickets must run without approval. The write operations must require developer approval for each call.\n\nWhich value should you configure for the require_approval property of the mcp tool?",
+  "choices": [
+   "{\"never\": [\"get_ticket\", \"search_tickets\"]}",
+   "\"never\"",
+   "{\"never\": [\"update_ticket\", \"close_ticket\"]}",
+   "Omit require_approval and set allowed_tools to [\"update_ticket\", \"close_ticket\"]"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The require_approval property of an MCP tool can be a single value (always or never) or an object that lists tools by name. Listing the read operations under never makes only those tools run without approval, and every other tool, including future ones, still requires approval.",
+  "rationale": [
+   "Correct: the never object lists the read tools that may run without approval. Every tool that is not listed, including update_ticket and close_ticket, still requires developer approval for each call.",
+   "Incorrect: the value never disables approval for every tool on the server, so the write operations would also run without review. Use never only when all tools on the server are safe to call unattended.",
+   "Incorrect: this object exempts the write tools from approval and leaves the read tools gated, which is the reverse of the requirement. List under never only the tools that may run unreviewed.",
+   "Incorrect: allowed_tools restricts which tools the agent can call at all, so the read tools would become unavailable, and omitting require_approval applies the default always to every call. Use allowed_tools to limit the tool surface of a server."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol"
+ },
+ {
+  "id": "2.4.2-03",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Margie's Travel uses a Magentic orchestration in Microsoft Agent Framework to plan complex itineraries. Agents in the workflow can book hotels and flights. A travel consultant must review and approve or revise the plan that the manager agent creates before any agent executes tasks.\n\nWhat should you configure?",
+  "choices": [
+   "Plan review on the Magentic workflow",
+   "Tool approval on each booking tool",
+   "A max_reset_count value of 0",
+   "Intermediate outputs from every participant"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Magentic orchestration supports human-in-the-loop plan review: after the manager creates its plan, the workflow pauses so that a human can approve or revise it before any agent runs. Tool approval gates individual calls instead, and the reset and stall limits control replanning.",
+  "rationale": [
+   "Correct: plan review pauses the Magentic workflow after the manager creates the plan, so the travel consultant can approve or revise it before any agent executes a task.",
+   "Incorrect: tool approval pauses only when an agent calls a booking tool, after planning and possibly other tasks are done, so the consultant never reviews the plan itself. Use it to gate individual sensitive calls.",
+   "Incorrect: max_reset_count limits how many times the manager may reset and replan after stalls. A value of 0 prevents replanning but does not give anyone a chance to review the plan.",
+   "Incorrect: intermediate outputs surface participant results as events while the workflow runs. They give visibility, but nothing pauses for approval before agents execute."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/magentic"
+ },
+ {
+  "id": "2.4.2-04",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Lamna Healthcare Company runs a Python handoff workflow that uses Microsoft Agent Framework. A procedure agent calls a schedule_procedure tool that is decorated with @tool(approval_mode=\"always_require\"). A manager can approve the call several days later, and the host process restarts every night. The workflow must resume with the pending approval request intact and without repeating completed agent work.\n\nWhich six actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`async for event in workflow.run(\"Schedule an MRI for patient 4411\", stream=True)`, collecting the events whose type is `\"request_info\"`",
+   "`storage = InMemoryCheckpointStorage()`",
+   "`storage = FileCheckpointStorage(storage_path=\"./checkpoints\")`",
+   "`async for event in workflow.run(checkpoint_id=latest.checkpoint_id, stream=True)` to reload the pending requests",
+   "`workflow = HandoffBuilder(name=\"procedures\", participants=[triage_agent, procedure_agent], checkpoint_storage=storage).with_start_agent(triage_agent).build()`",
+   "After the restart, call `workflow.run(\"Schedule an MRI for patient 4411\", stream=True)` again with the original input",
+   "`async for event in workflow.run(responses=responses, stream=True)`, where each response is `req.data.to_function_approval_response(approved=True)`",
+   "`checkpoints = await storage.list_checkpoints(workflow_name=\"procedures\")`, and then select the latest checkpoint"
+  ],
+  "answer": [
+   2,
+   4,
+   0,
+   7,
+   3,
+   6
+  ],
+  "explanation": "Durable human-in-the-loop needs two capabilities: request and response handling to pause, and persistent checkpoint storage to survive restarts. The resume pattern is always restore first with checkpoint_id, which re-emits pending requests, then send the responses keyed by request ID. In-memory storage or a rerun from the original input loses the pending state.",
+  "rationale": [
+   "Step 3: the first run executes the agents until schedule_procedure needs approval. The workflow emits a request_info event and saves a checkpoint, so the process can exit safely.",
+   "Incorrect: InMemoryCheckpointStorage keeps checkpoints in process memory, so the nightly restart deletes them. Use it for tests or short-lived runs in which the process stays alive until the response arrives.",
+   "Step 1: FileCheckpointStorage writes checkpoints to disk, so they survive the nightly restart. The storage object must exist before it can be passed to the builder.",
+   "Step 5: running with checkpoint_id restores the state and re-emits the pending request_info events, so you get the request IDs that the responses must reference.",
+   "Step 2: passing checkpoint_storage to HandoffBuilder makes the workflow save a checkpoint automatically at each superstep, including the point where it pauses for approval.",
+   "Incorrect: running again with the original input starts a new run from the beginning, so every agent repeats its work and the old request is lost. Start a fresh run only when no checkpoint exists.",
+   "Step 6: running with responses delivers the manager decision to the restored request. The approved tool call runs and the workflow continues without repeating earlier agent work.",
+   "Step 4: after the restart, list_checkpoints() returns the saved checkpoints for the workflow name. You select the latest one, which holds the pending approval request."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.2-05",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing builds a Python multi-agent solution by using Microsoft Agent Framework. An intake agent must collect missing manuscript details from an author over several back-and-forth turns, rather than only having the author approve or reject an action. When the details are complete, the intake agent must route the request to either an editing agent or a rights agent.\n\nWhich orchestration should you use?",
+  "choices": [
+   "Handoff orchestration",
+   "Sequential orchestration with an approval-required tool",
+   "Concurrent orchestration",
+   "Magentic orchestration with plan review"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Handoff orchestration is interactive: when an agent answers without handing off, the workflow returns control to the user for the next message. That supports multi-turn information gathering, and the agent can then route the request to the right specialist through a handoff.",
+  "rationale": [
+   "Correct: in a handoff workflow the intake agent can keep asking the author questions over several turns, because control returns to the user after each answer, and then hand off to the editing or rights agent.",
+   "Incorrect: an approval-required tool supports only an approve or reject decision for one tool call, not a back-and-forth conversation, and a sequential order cannot choose between two agents. Use it for gating actions.",
+   "Incorrect: concurrent orchestration runs all agents in parallel on the same input, so there is no multi-turn intake and no choice of one target agent. Use it for independent analyses of one input.",
+   "Incorrect: plan review lets a person approve or revise the manager's plan once before execution. It does not collect missing details over several turns. Use it when a human must check the plan of an open-ended task."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/human-in-the-loop?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.2-06",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Proseware, Inc. runs a hosted agent that uses tools from a Foundry toolbox. The tools/list response marks a payment tool with require_approval set to always. The agent instructions tell the model to ask the user before calling the tool, but audits show that the tool was invoked without user approval.\n\nWhat should you do?",
+  "choices": [
+   "Enforce the approval in the agent runtime before each invocation of the tool",
+   "Strengthen the agent instructions so that the model asks for confirmation before each call",
+   "Rely on the toolbox MCP endpoint to block tools/call until approval is granted",
+   "Register function middleware that logs each invocation of the payment tool"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A require_approval flag in a toolbox tools/list response is metadata. The hosted agent runtime must enforce the approval itself before it calls the tool; instructions to the model and logging do not prevent an unapproved call.",
+  "rationale": [
+   "Correct: the toolbox reports that approval is required, but the hosted agent runtime must enforce it by blocking each invocation until a user approves, because a model can ignore instructions.",
+   "Incorrect: stronger instructions still depend on the model following them, and audits already show that the model skipped the confirmation. Use instructions to shape behavior, not to enforce a mandatory control.",
+   "Incorrect: the toolbox MCP endpoint only advertises require_approval in tools/list; it does not hold tools/call until approval is granted. Rely on the server only when it documents enforcement of approval.",
+   "Incorrect: function middleware that only logs each invocation creates an audit trail, but the payment tool still runs without approval. Logging middleware fits monitoring, not enforcement."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/use-toolbox-hosted-agent"
+ },
+ {
+  "id": "2.4.2-07",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Coho Winery creates a Foundry Agent Service prompt agent in Python by using the Azure AI Projects SDK. The agent uses a remote MCP server whose write operations must be reviewed and approved by a developer before they run. The conversation context must be kept across turns.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Inspect each item in `response.output` whose `type` is `\"mcp_approval_request\"`, and review its `name` and `arguments`",
+   "`project.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-5-mini\", tools=[MCPTool(server_label=\"crm\", server_url=url, require_approval=\"always\", project_connection_id=conn)]))`",
+   "`project.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-5-mini\", tools=[MCPTool(server_label=\"crm\", server_url=url, require_approval=\"never\", project_connection_id=conn)]))`",
+   "`response = openai.responses.create(conversation=conversation.id, input=\"Update the order status.\")`",
+   "`openai.responses.create(previous_response_id=response.id, input=[McpApprovalResponse(type=\"mcp_approval_response\", approve=True, approval_request_id=item.id)])`",
+   "Decorate a local Python function with `@tool(approval_mode=\"always_require\")` and add it to the agent definition",
+   "`with project.get_openai_client(agent_name=\"Agent1\") as openai: conversation = openai.conversations.create()`"
+  ],
+  "answer": [
+   1,
+   6,
+   3,
+   0,
+   4
+  ],
+  "explanation": "For an MCP tool in Foundry Agent Service, approval is configured on the tool definition with require_approval. When the model selects the tool, the response returns an mcp_approval_request; you approve or deny it by sending an mcp_approval_response with previous_response_id. Local function tools in Agent Framework use approval_mode instead.",
+  "rationale": [
+   "Step 4: the developer reviews the tool name and arguments of each mcp_approval_request item before deciding. The item id is needed for the approval response.",
+   "Step 1: the agent version must exist with an MCPTool whose require_approval is always, otherwise the service calls the MCP tools without pausing for the developer.",
+   "Incorrect: require_approval set to never lets every MCP call run without review, which breaks the developer approval requirement. Use never only for trusted read-only tools, or a per-tool dictionary to mix both.",
+   "Step 3: the user request makes the model select the MCP tool. Because approval is required, the response contains an mcp_approval_request item instead of the tool result.",
+   "Step 5: the approval is sent as an mcp_approval_response that references the request id, chained with previous_response_id so the service runs the approved call and continues.",
+   "Incorrect: @tool(approval_mode=\"always_require\") is the Agent Framework approval for local function tools that run in your own process. It does not control a remote MCP tool that a Foundry prompt agent calls server-side.",
+   "Step 2: get_openai_client(agent_name=...) returns a client bound to the agent version that now exists, and the conversation it creates keeps context across turns. The first request must reference conversation.id."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python"
+ },
+ {
+  "id": "2.4.2-08",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-d",
+  "stem": "You need to meet the business requirements for wire transfer approvals and credit limit increase memos.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Require human approval of every agent output before the next agent runs",
+   "Scope human approval gates to the invocations of the wire transfer tool for amounts above 10,000 USD",
+   "Keep the orchestration state in memory until the branch manager responds",
+   "Set an iteration cap on the maker-checker loop and escalate to a credit officer when the cap is reached",
+   "Persist the orchestration state to durable checkpoint storage at each mandatory approval point"
+  ],
+  "answer": [
+   1,
+   3,
+   4
+  ],
+  "explanation": "Effective human-in-the-loop design scopes approvals to risky actions, bounds iterative loops with caps and escalation, and persists state at approval points so long waits survive restarts. Blanket approvals slow everything down, and in-memory waits do not survive process restarts.",
+  "rationale": [
+   "Incorrect: approving every agent output blocks low-risk actions behind people, which violates the requirement that balance lookups proceed without waiting. Use blanket review only for fully supervised, low-volume processes.",
+   "Correct: gating only the high-value transfer tool calls keeps people in the loop where the risk is, while balance lookups and address changes run without waiting, as the requirements state.",
+   "Incorrect: in-memory state is lost when the host process is redeployed every night, so approvals that take days would be lost. Keep state in memory only for approvals that arrive within one process lifetime.",
+   "Correct: an iteration cap stops a maker-checker loop that keeps rejecting drafts, and escalating unresolved memos to a credit officer meets the review requirement instead of failing silently.",
+   "Correct: durable checkpoints let the orchestration resume after the nightly redeployment with the pending approval intact, without replaying completed agent work."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.2-09",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Blue Yonder Airlines builds a Python booking solution by using SequentialBuilder with a booking agent and a confirmation agent. The reservation tool is decorated with @tool(approval_mode=\"always_require\"). A new edge case requires the workflow to ask the user a typed question to collect missing passenger details at a fixed point before the booking agent runs, and the explicit order of executors must be preserved.\n\nWhat should you do?",
+  "choices": [
+   "Build a WorkflowBuilder workflow in which an executor calls ctx.request_info() before the booking agent",
+   "Decorate the passenger lookup tool with @tool(approval_mode=\"always_require\")",
+   "Rebuild the workflow as a handoff workflow with autonomous mode enabled",
+   "Add an intake agent before the booking agent in SequentialBuilder that asks for the details"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SequentialBuilder chains agents and offers no fixed point to ask the user a typed question. A custom WorkflowBuilder workflow lets an executor call ctx.request_info() at an exact position, which pauses the workflow and returns a typed response, while the executor order stays explicit.",
+  "rationale": [
+   "Correct: in a WorkflowBuilder workflow you place an executor before the booking agent that calls ctx.request_info() with a typed request, so the workflow pauses at that fixed point and resumes with the passenger details.",
+   "Incorrect: approval_mode=\"always_require\" asks for an approve or reject decision on one tool call. It cannot collect typed passenger details, and it only runs when the model decides to call the tool.",
+   "Incorrect: a handoff workflow lets agents decide the order at run time, and autonomous mode makes agents continue without the user, which is the opposite of asking a question. Use it for dynamic support routing.",
+   "Incorrect: an intake agent asks in natural language and its output is free text, so there is no typed request and the workflow does not pause for the answer. Use an agent when conversational follow-up is enough."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/human-in-the-loop?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.3-01",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee runs five agents on Azure OpenAI in Microsoft Foundry Models. Every request from an agent starts with the same 3,000-token block of instructions and tool definitions, followed by a unique user question. You need to reduce input token cost and latency without changing the model output.\n\nWhat should you do?",
+  "choices": [
+   "Keep the static instructions and tool definitions first and the user question last",
+   "Place the user question first so that the model reads it before the instructions",
+   "Add an llm-semantic-cache-lookup policy in Azure API Management in front of the deployment",
+   "Move the agent traffic to a Global Batch deployment that processes the requests"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Prompt caching reuses the processed computation for an identical prompt prefix of at least 1,024 tokens, which lowers cost and latency without changing output. Static content such as instructions and tool definitions must come first and variable content last.",
+  "rationale": [
+   "Correct: with the identical 3,000-token block first, every request shares the same prefix, so prompt caching reuses it and lowers input cost and latency while the model still answers each question freshly.",
+   "Incorrect: placing the unique question first makes every prefix different, so no request shares a cacheable prefix and prompt caching never applies. Put variable content first only when no prefix is shared.",
+   "Incorrect: semantic caching returns stored responses for similar prompts, so the output can change from what the model would generate. Use it when reusing earlier answers for similar questions is acceptable.",
+   "Incorrect: Global Batch processes requests asynchronously with a 24-hour target, which fits offline jobs, not agents that answer users. Use it for large jobs that do not need immediate results."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/prompt-caching"
+ },
+ {
+  "id": "2.4.3-02",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. exposes a Foundry chat model to an FAQ agent through Azure API Management. Users ask the same questions with different wording, for example \"How do I reset my badge?\" and \"What are the steps to reset a badge?\". You need to return a stored response for prompts that are similar in meaning.\n\nWhich policy should you add to the inbound section?",
+  "choices": [
+   "llm-semantic-cache-lookup",
+   "cache-lookup-value",
+   "llm-token-limit",
+   "rate-limit-by-key"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Semantic caching in Azure API Management compares the embedding of a new prompt with stored prompts and returns a stored response when they are similar in meaning. The lookup policy goes in the inbound section and the store policy in the outbound section.",
+  "rationale": [
+   "Correct: llm-semantic-cache-lookup embeds the prompt and returns a stored response when a cached prompt is similar in meaning, so differently worded questions about badge resets get the stored answer.",
+   "Incorrect: cache-lookup-value retrieves a value under an exact key that you compute in policy, so prompts with different wording never match. Use it to cache specific values such as tokens.",
+   "Incorrect: llm-token-limit enforces a token budget per key and returns 429 when it is exceeded. It protects the backend but never returns a stored response.",
+   "Incorrect: rate-limit-by-key limits the number of calls per key in a time window. It protects the backend from overload, but it never stores or returns a cached response."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/azure-openai-enable-semantic-caching"
+ },
+ {
+  "id": "2.4.3-03",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute has several agents that call a product catalog tool through Azure API Management. The tool is an HTTP GET operation that returns the complete catalog, which changes once per day. Agents send identical requests many times per hour.\n\nWhich caching policies should you configure?",
+  "choices": [
+   "cache-lookup in the inbound section and cache-store in the outbound section",
+   "llm-semantic-cache-lookup in the inbound section and llm-semantic-cache-store in the outbound section",
+   "cache-store-value in the inbound section and cache-lookup-value in the outbound section",
+   "cache-store in the inbound section and cache-lookup in the outbound section"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Response caching in Azure API Management uses cache-lookup in the inbound section to return a stored response before the backend is called, and cache-store in the outbound section to save the backend response. It fits identical, cacheable requests such as GET operations.",
+  "rationale": [
+   "Correct: cache-lookup in the inbound section returns a stored response before the request reaches the backend, and cache-store in the outbound section saves the response, so identical catalog requests are served from the cache.",
+   "Incorrect: the llm-semantic-cache policies compare prompt embeddings for LLM APIs and need an embeddings backend. A catalog GET with identical requests needs exact matching, not semantic similarity.",
+   "Incorrect: cache-store-value and cache-lookup-value store values under explicit keys, and this order stores before anything is returned. Use these policies, in lookup-then-store order, to cache computed values.",
+   "Incorrect: storing in the inbound section happens before the backend responds, and looking up in the outbound section happens after the backend was already called, so the cache never saves a call."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/caching-overview"
+ },
+ {
+  "id": "2.4.3-04",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-d",
+  "stem": "You need to reduce the input token cost of the compliance policy.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Semantic caching in Azure API Management with vary-by set to the customer ID meets the cost requirement.",
+   "Moving the request time and customer ID line after the static compliance policy allows prompt cache hits.",
+   "With prompt caching enabled, the model can return an answer that was generated for another customer."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Prompt caching gives a discount and lower latency for repeated prompt prefixes of at least 1,024 tokens, so static content must come first and variable content last. It never returns a stored answer, unlike semantic or response caching in Azure API Management.",
+  "rationale": [
+   "No: semantic caching returns stored responses, which the risk team prohibits because a response can be reused for a different request. Use it for FAQ-style agents where reusing similar answers is acceptable.",
+   "Yes: prompt caching only matches an identical prompt prefix. The changing timestamp and customer ID at the start make every prefix unique; moving them after the static policy creates a shared prefix that can be cached.",
+   "No: prompt caching reuses only the processed input prefix; the model still generates a new answer for every request. That is why it reduces cost without changing output and satisfies the risk team."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/prompt-caching"
+ },
+ {
+  "id": "2.4.3-05",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. hosts a multi-tenant support agent. Each tenant calls the LLM API through Azure API Management by using its own subscription. You enable semantic caching, and a tenant reports receiving an answer that was generated for another tenant.\n\nWhat should you do?",
+  "choices": [
+   "Add a vary-by element that uses the subscription ID to the lookup policy",
+   "Lower the score-threshold value of the llm-semantic-cache-lookup policy",
+   "Set ignore-system-messages to true on the llm-semantic-cache-lookup policy",
+   "Increase the duration value of the llm-semantic-cache-store policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A semantic cache is shared by default, so a prompt from one tenant can match a stored response from another tenant. Partition the cache with a vary-by element, such as the subscription ID, in the lookup policy so that entries are only reused within the same partition.",
+  "rationale": [
+   "Correct: a vary-by element with the subscription ID partitions the cache per subscription, and each tenant has its own subscription, so a tenant only receives responses that were stored for that tenant.",
+   "Incorrect: a lower score-threshold requires closer semantic matches, but entries are still shared across tenants, so a very similar prompt can still return another tenant's answer. Tune it to control match quality.",
+   "Incorrect: ignore-system-messages excludes system messages from the similarity comparison, which can make matches across tenants more likely. Use it when system messages vary but should not affect matching.",
+   "Incorrect: a longer duration keeps cached responses longer, which increases the window for cross-tenant hits instead of preventing them. Tune duration to how quickly answers become stale."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/azure-openai-enable-semantic-caching"
+ },
+ {
+  "id": "2.4.3-06",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys uses semantic caching in Azure API Management for a product advice agent. Users report that the agent sometimes returns answers to questions that are related to, but different from, the question they asked. You need cached responses to be returned only when prompts are very close in meaning.\n\nWhat should you do?",
+  "choices": [
+   "Decrease the score-threshold value of the llm-semantic-cache-lookup policy",
+   "Increase the score-threshold value of the llm-semantic-cache-lookup policy",
+   "Increase the duration value of the llm-semantic-cache-store policy",
+   "Increase the max-message-count value of the llm-semantic-cache-lookup policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The score-threshold attribute of llm-semantic-cache-lookup sets how close a new prompt must be to a cached prompt. A lower score threshold demands higher semantic similarity, so cached responses are returned only for prompts that are very close in meaning.",
+  "rationale": [
+   "Correct: a lower score-threshold means prompts must have higher semantic similarity to return a cached response, so related but different questions no longer receive another question's answer.",
+   "Incorrect: a higher score-threshold accepts prompts with lower similarity, which makes the wrong-answer problem worse. Raise it only when too few similar prompts get cache hits.",
+   "Incorrect: duration controls how long a response stays in the cache, not how closely prompts must match, so the agent still returns answers to related questions. Tune duration for freshness.",
+   "Incorrect: max-message-count controls how many messages of the conversation are considered for the lookup, not the similarity bar. Adjust it when conversation history should or should not affect matching."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/azure-openai-enable-semantic-caching"
+ },
+ {
+  "id": "2.4.3-07",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Consolidated Messenger configures semantic caching for an LLM API in Azure API Management. If the cache is unavailable, the backend model deployment must be protected from overload. Successful responses must be stored for 60 seconds.\n\n```xml\n<policies>\n  <inbound>\n    <llm-semantic-cache-lookup score-threshold=\"0.15\" embeddings-backend-id=\"embeddings-backend\" embeddings-backend-auth=\"system-assigned\">\n      <vary-by>@(context.Subscription.Id)</vary-by>\n    </llm-semantic-cache-lookup>\n    <!-- Slot 1 -->\n  </inbound>\n  <outbound>\n    <!-- Slot 2 -->\n  </outbound>\n</policies>\n```\n\nWhich elements should you insert at Slot 1 and Slot 2?",
+  "choices": [
+   "Slot 1: <rate-limit calls=\"10\" renewal-period=\"60\" /> Slot 2: <llm-semantic-cache-store duration=\"60\" />",
+   "Slot 1: <llm-semantic-cache-store duration=\"60\" /> Slot 2: <rate-limit calls=\"10\" renewal-period=\"60\" />",
+   "Slot 1: <rate-limit calls=\"10\" renewal-period=\"60\" /> Slot 2: <cache-store duration=\"60\" />",
+   "Slot 1: <cache-lookup vary-by-developer=\"false\" vary-by-developer-groups=\"false\" /> Slot 2: <llm-semantic-cache-store duration=\"60\" />"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Semantic caching uses llm-semantic-cache-lookup in the inbound section and llm-semantic-cache-store in the outbound section. A rate-limit policy placed after the lookup protects the backend when the cache is unavailable, because uncached requests then hit the model directly.",
+  "rationale": [
+   "Correct: rate-limit after the lookup in the inbound section limits calls that reach the backend if the cache is unavailable, and llm-semantic-cache-store with duration 60 in the outbound section stores responses for 60 seconds.",
+   "Incorrect: a store policy in the inbound section runs before the backend returns a response, so there is nothing to store, and a rate limit in the outbound section runs after the backend was already called.",
+   "Incorrect: cache-store is the store policy for exact response caching and does not pair with llm-semantic-cache-lookup, so semantic entries are never written. Use cache-store with cache-lookup.",
+   "Incorrect: cache-lookup adds a second, exact-match cache and no rate limit, so the backend is not protected when the cache fails. Use cache-lookup for identical requests such as GET operations."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/azure-openai-enable-semantic-caching"
+ },
+ {
+  "id": "2.4.3-08",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Datum Corporation plans to enable semantic caching for a Foundry chat model API that is imported into Azure API Management. Azure API Management already authenticates to the model by using its managed identity, and a backend named embeddings-backend for an embeddings deployment already exists. The company has an existing Azure Managed Redis instance that was created without any modules.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add the RediSearch module to the existing Azure Managed Redis instance.",
+   "Configure the new Azure Managed Redis instance as an external cache in Azure API Management.",
+   "Trace a test call to the chat completion operation and confirm the cache lookup entries in the trace output.",
+   "Create a new Azure Managed Redis instance and enable the RediSearch module during creation.",
+   "Add cache-lookup to the inbound section and cache-store to the outbound section of the chat completion operation.",
+   "Add llm-semantic-cache-lookup with embeddings-backend-id=\"embeddings-backend\" to the inbound section and llm-semantic-cache-store to the outbound section."
+  ],
+  "answer": [
+   3,
+   1,
+   5,
+   2
+  ],
+  "explanation": "Semantic caching in Azure API Management needs an embeddings backend, an external Azure Managed Redis cache with RediSearch, and the llm-semantic-cache-lookup and llm-semantic-cache-store policies. Because RediSearch can be enabled only at creation, an existing cache without modules must be replaced. Exact-match caching uses the cache-lookup and cache-store policies instead.",
+  "rationale": [
+   "Incorrect: modules such as RediSearch cannot be added to an existing Azure Managed Redis cache. Enabling a module is only possible at creation time, so this action fails here.",
+   "Step 2: the semantic cache policies store and look up entries in the external cache that is configured in Azure API Management, so the new instance must be connected before the policies work.",
+   "Step 4: once the policies are in place, a traced test call shows whether the cache lookup returned a stored response, which confirms the configuration end to end.",
+   "Step 1: semantic caching needs vector search, which the RediSearch module provides. The module can be enabled only when a cache is created, so a new instance is required.",
+   "Incorrect: cache-lookup and cache-store perform exact response caching keyed on the request, so prompts with different wording never match. Use them for identical GET requests, such as a catalog API.",
+   "Step 3: the lookup policy embeds the prompt through the embeddings backend and returns a stored response for similar prompts; the store policy saves new responses. Both need the external cache."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/azure-openai-enable-semantic-caching"
+ },
+ {
+  "id": "2.4.3-09",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Woodgrove Bank runs three agent workloads and must choose a caching strategy for each one to reduce cost and latency.\n\nWhich caching strategy should you use for each workload? To answer, drag the appropriate strategies to the correct workloads. Each value may be used once, more than once, or not at all.",
+  "choices": [
+   "Response caching by using cache-lookup and cache-store",
+   "Prompt caching",
+   "Key-value caching by using cache-lookup-value and cache-store-value",
+   "Semantic caching by using llm-semantic-cache-lookup and llm-semantic-cache-store"
+  ],
+  "targets": [
+   "Workload1: an advisory agent whose answers must reflect the current account data of each customer; it sends a long, static compliance preamble with every request, and the risk team prohibits returning a response that was generated for a different request",
+   "Workload2: an FAQ agent whose users ask the same questions with different wording, and a stored answer may be reused for similar questions",
+   "Workload3: a product catalog tool exposed as an HTTP GET operation that returns identical data for identical requests and changes once per day"
+  ],
+  "answer": [
+   1,
+   3,
+   0
+  ],
+  "explanation": "Response and semantic caching return a stored answer, so they are only safe when reuse across requests is acceptable; semantic caching matches meaning, response caching matches exact requests. Prompt caching never returns a stored answer, it only speeds up processing of a repeated prompt prefix, which makes it the choice when every answer must be freshly generated.",
+  "rationale": [
+   "Workload1 cannot reuse any stored response, so only prompt caching fits: it reuses the processed static preamble prefix inside the model and still generates a fresh answer from current data.",
+   "Workload2 must match prompts that differ in wording but not in meaning, which semantic caching does by comparing prompt embeddings against stored entries in Azure API Management.",
+   "Workload3 sends identical GET requests for data that changes daily, so exact response caching with cache-lookup and cache-store returns the stored response without calling the backend."
+  ],
+  "notes": [
+   "Stores and returns whole HTTP responses keyed on the exact request. Use it for identical, cacheable requests such as GET operations on slowly changing data.",
+   "Reuses the computation for an identical prompt prefix of at least 1,024 tokens. The model still generates a new answer, so output stays current. Use it for long static instructions.",
+   "Stores arbitrary values under a key that you compute in policy, such as a token or a lookup result. Use it to cache a specific value, not to return complete API responses.",
+   "Returns a stored LLM response for prompts that are similar in meaning, based on embeddings and a score threshold. Use it for repetitive questions with varied wording."
+  ],
+  "ref": "https://learn.microsoft.com/azure/api-management/llm-semantic-cache-store-policy"
+ },
+ {
+  "id": "2.4.4-01",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Relecloud runs a nightly job in which a summarization agent processes 200,000 documents. Results are needed by the next business day. The job must cost as little as possible and must not consume the quota of the online agent deployments. A JSONL input file named docs.jsonl is ready, and every line references a deployment named batch1. A Python OpenAI client named client is configured for the Foundry resource.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`batch = client.batches.create(input_file_id=file.id, endpoint=\"/chat/completions\", completion_window=\"24h\")`",
+   "`az cognitiveservices account deployment create --name foundry1 --resource-group rg1 --deployment-name batch1 --model-name <model> --model-version <version> --model-format OpenAI --sku-name GlobalStandard --sku-capacity <capacity>`",
+   "`az cognitiveservices account deployment create --name foundry1 --resource-group rg1 --deployment-name batch1 --model-name <model> --model-version <version> --model-format OpenAI --sku-name GlobalBatch --sku-capacity <capacity>`",
+   "`client.files.content(batch.output_file_id)`",
+   "`client.chat.completions.create(model=\"batch1\", messages=messages)`, called once for each document",
+   "`file = client.files.create(file=open(\"docs.jsonl\", \"rb\"), purpose=\"batch\")`",
+   "`batch = client.batches.retrieve(batch.id)`, repeated until the status is completed"
+  ],
+  "answer": [
+   2,
+   5,
+   0,
+   6,
+   3
+  ],
+  "explanation": "Azure OpenAI batch processing trades latency (24-hour target) for about half the cost of Global Standard, and it uses its own enqueued token quota. The flow is fixed: create a Global Batch deployment, upload a JSONL file with purpose batch, create the batch job, poll its status, and download the output file. Online deployments stay untouched.",
+  "rationale": [
+   "Step 3: batches.create() submits the uploaded file as one job with the required 24h completion window, which gives the 50 percent lower batch price and returns a batch id to track the job.",
+   "Incorrect: a Global Standard deployment serves online requests and uses the same kind of quota as the online agents; the batch API rejects it. Use Global Standard for interactive, low-latency agent traffic.",
+   "Step 1: the batch API only accepts a batch deployment, and --sku-name GlobalBatch is the documented value for the Global Batch deployment type. Every line of the file must name it, and its separate enqueued token quota leaves online deployments unaffected.",
+   "Step 5: files.content() downloads the output file, which contains one result per custom_id. It is only available after the job completes, and the agent then reads the summaries from it.",
+   "Incorrect: calling the chat completions API once per document is online processing at full price, and it would fail against a batch deployment. Use online calls only when each result is needed immediately.",
+   "Step 2: the JSONL file must be uploaded with purpose set to batch before a job can reference it, because batches.create() takes the uploaded file id as its input_file_id argument.",
+   "Step 4: batches.retrieve() returns the job status. You poll it, ideally about every 60 seconds, until the job reaches the completed state and an output file id is set."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/batch?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.4-02",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Southridge Video uses a Magentic orchestration in Microsoft Agent Framework. The manager agent sometimes keeps invoking participant agents for a long time. You need to cap the total number of coordination rounds, regardless of whether the team is making progress.\n\nWhich setting should you configure?",
+  "choices": [
+   "max_round_count",
+   "max_stall_count",
+   "max_reset_count",
+   "intermediate_output_from"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Magentic orchestration has three limits: max_round_count caps the total number of coordination rounds, max_stall_count sets how many consecutive rounds without progress trigger a replan, and max_reset_count limits how many replans are allowed.",
+  "rationale": [
+   "Correct: max_round_count caps the total number of coordination rounds, whether the team is making progress or not, so the manager cannot keep invoking participants indefinitely.",
+   "Incorrect: max_stall_count only counts consecutive rounds without progress before a replan, so a team that keeps making small progress can still run for a long time. Use it to react to stalls.",
+   "Incorrect: max_reset_count limits how many times the manager resets and replans. It does not cap rounds within a plan. Use it to bound repeated replanning.",
+   "Incorrect: intermediate_output_from selects participants whose outputs appear as intermediate events. It improves visibility but does not limit execution."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/magentic"
+ },
+ {
+  "id": "2.4.4-03",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders builds an inventory agent by using Microsoft Agent Framework in Python. The model often returns several tool calls in one assistant message. The tools update the same in-memory reservation object, and concurrent execution corrupts the object. The tools must still run in the order that the model requested.\n\nWhat should you do?",
+  "choices": [
+   "Set allow_concurrent_invocation to False in the function invocation configuration",
+   "Set max_iterations to 1 in the function invocation configuration",
+   "Set max_function_calls to 1 in the function invocation configuration",
+   "Set include_detailed_errors to True in the function invocation configuration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, Agent Framework runs the function calls from one assistant message concurrently. When tools share mutable state or must run in model order, set allow_concurrent_invocation to False in the function invocation configuration of the chat client.",
+  "rationale": [
+   "Correct: allow_concurrent_invocation set to False makes the client run the requested tool calls one at a time in the order the model returned them, which protects the shared reservation object.",
+   "Incorrect: max_iterations limits the number of model round trips in the function calling loop. A value of 1 stops the loop early but still runs the tool calls of one message concurrently.",
+   "Incorrect: max_function_calls caps the total tool calls per request, but the limit is checked only after each batch, so the calls in one message still run concurrently and corrupt the object. Use it to bound runaway tool loops.",
+   "Incorrect: include_detailed_errors adds exception details to failed tool results for the model. It helps diagnosis but does not change concurrency, so the object is still corrupted."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "2.4.4-04",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys deploys an Agent Framework workflow as a Foundry hosted agent. During a promotion, the agent must serve about 500 concurrent sessions. An engineer plans to configure minimum and maximum replica counts and a warm pool. Costs must stay proportional to actual usage.\n\nWhat should you do?",
+  "choices": [
+   "Right-size the per-session CPU and memory of the agent version",
+   "Set the minimum replica count to 500 before the promotion starts",
+   "Configure a warm pool that is sized for 500 concurrent sessions",
+   "Increase the maximum replica count of the hosted agent deployment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry hosted agents are scaled by the platform from the resources that are set on the agent version, so you do not configure replica counts or warm pools. Right-size the per-session CPU and memory, and the platform scales sessions with demand, which keeps cost proportional to usage.",
+  "rationale": [
+   "Correct: hosted agents scale sessions automatically, and the CPU and memory per session are set on the agent version. Right-sizing them lets the platform serve 500 sessions while you pay only for actual use.",
+   "Incorrect: hosted agents do not expose a minimum replica count that you set. Pre-provisioning 500 replicas, where a platform allows it, would also cost money while idle, which breaks the cost requirement.",
+   "Incorrect: a warm pool keeps capacity running ahead of demand, which costs money even when no sessions are active, and hosted agents manage this capacity themselves. Pre-warming suits self-managed container platforms.",
+   "Incorrect: hosted agents do not expose a maximum replica count to tune, because the platform handles scaling. Replica limits apply when you host the agent yourself, such as on Azure Container Apps."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents"
+ },
+ {
+  "id": "2.4.4-05",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs a concurrent orchestration that fans out each request to six analysis agents. All six agents call the same Global Standard model deployment, and the deployment returns HTTP 429 errors during peak hours. Results must still be produced in parallel to meet the latency target.\n\nWhat should you do?",
+  "choices": [
+   "Assign the agents to separate model deployments with their own quota",
+   "Convert the concurrent orchestration to a sequential orchestration",
+   "Move the six agents to a shared Data Zone Standard deployment",
+   "Move the six analysis agents to a single Global Batch deployment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Parallel agents multiply the load on a single model deployment. When one deployment returns 429 errors, spread the agents across several deployments with their own quota, so parallelism and latency are kept without exceeding a single rate limit.",
+  "rationale": [
+   "Correct: separate deployments give each agent group its own tokens-per-minute and requests-per-minute quota, so the six parallel calls no longer exceed one deployment's rate limit and stay parallel.",
+   "Incorrect: a sequential orchestration lowers the peak load but adds up the latency of all six agents, which breaks the latency target. Use it when agents depend on each other's output.",
+   "Incorrect: a single shared Data Zone Standard deployment still puts all six agents on one quota, so the 429 errors continue. Use Data Zone Standard when processing must stay within a data zone.",
+   "Incorrect: Global Batch processes requests asynchronously with a 24-hour target, so the results are not produced in parallel within the latency target. Use it for offline bulk jobs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.4-06",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Coho Winery builds a supply chain planning solution by using a Magentic orchestration in Microsoft Agent Framework:\n\n```python\nworkflow = MagenticBuilder(\n    participants=[forecast_agent, sourcing_agent],\n    manager_agent=manager_agent,\n    max_round_count=20,\n    max_stall_count=2,\n    max_reset_count=1,\n).build()\n```\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The max_round_count value limits only the rounds in which the team makes no progress.",
+   "The manager resets and replans after two consecutive rounds in which the team makes no progress.",
+   "The workflow can reset and replan its plan at most one time."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Magentic orchestration has three inner-loop limits: max_round_count for total coordination rounds, max_stall_count for consecutive rounds without progress before a replan, and max_reset_count for how many replans are allowed. Together they bound cost and prevent a manager from running indefinitely.",
+  "rationale": [
+   "No: max_round_count caps the total number of coordination rounds, whether the team makes progress or not. Use max_stall_count when you want to react only to rounds without progress.",
+   "Yes: max_stall_count sets how many consecutive rounds without progress the manager tolerates before it resets and replans. With a value of 2, the second stalled round in a row triggers a replan.",
+   "Yes: max_reset_count caps the number of plan resets. With a value of 1, the manager can reset and replan once; after that it cannot replan again, which bounds the cost of repeated stalls."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/magentic"
+ },
+ {
+  "id": "2.4.4-07",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "case": "C-d",
+  "stem": "You need to configure the card dispute workflow to meet the requirements for unresponsive customers.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nworkflow = (\n    HandoffBuilder(\n        name=\"disputes\",\n        participants=[dispute_triage, chargeback_agent, fraud_review_agent],\n    )\n    .with_start_agent(dispute_triage)\n    .with_autonomous_mode(\n        agents=[[1]],\n        [[2]]={dispute_triage.name: [[3]]},\n    )\n    .build()\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[dispute_triage, chargeback_agent, fraud_review_agent]",
+     "[chargeback_agent, fraud_review_agent]",
+     "[dispute_triage]"
+    ],
+    "why": [
+     "Incorrect: listing every participant lets ChargebackAgent and FraudReviewAgent also continue without the customer, which violates the requirement that they return control after each response.",
+     "Incorrect: this list enables autonomy for exactly the two agents that must hand control back, and it leaves DisputeTriage interactive. Use such a list when only the specialists should work unattended.",
+     "Correct: only DisputeTriage may continue on its own. Agents that are not listed in agents return control to the customer after a single response, which matches the requirement for the other two agents."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "prompts",
+     "turn_limits"
+    ],
+    "why": [
+     "Incorrect: prompts maps an agent name to the continuation message that replaces the default text. Use it to change what the agent is told when the user does not respond, not how long it continues.",
+     "Correct: turn_limits maps an agent name to the maximum number of autonomous turns before control returns to the user, which enforces the at-most-two-turns rule."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "2",
+     "0",
+     "50"
+    ],
+    "why": [
+     "Correct: a limit of 2 lets DisputeTriage take at most two autonomous turns when the customer does not respond, and then control returns to the customer.",
+     "Incorrect: a limit of 0 returns control immediately after DisputeTriage responds without a handoff, so it never continues on its own. Use 0 to disable autonomy for one listed agent.",
+     "Incorrect: 50 is the default number of autonomous turns, far above the limit of two in the requirements. Rely on the default only when long unattended work is acceptable."
+    ]
+   }
+  ],
+  "answer": [
+   2,
+   1,
+   0
+  ],
+  "explanation": "Handoff orchestration is interactive by default: when an agent answers without handing off, control returns to the user. with_autonomous_mode lets selected agents continue with a continuation prompt, and turn_limits bounds how many turns each agent may run before the user is asked again.",
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/handoff?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.4-08",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Trey Research submits very large Azure OpenAI batch jobs for an agent evaluation pipeline. The jobs fail to start because they reach the enqueued token limit, even though the deployment quota is already at its maximum. Online agent traffic must not be affected, and the pipeline must remain as cheap as possible.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Split the input into multiple smaller batch jobs",
+   "Submit the jobs with automatic retry and exponential backoff when enqueued token quota is exceeded",
+   "Send the requests one at a time to the online Global Standard deployment",
+   "Request a quota increase for the online Global Standard deployment",
+   "Enable prompt caching on the batch deployment"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Global Batch jobs count their tokens against an enqueued token quota until they finish. When jobs exceed it even at maximum quota, split the input into smaller jobs and queue them with retries and exponential backoff, so each job starts when quota is free again.",
+  "rationale": [
+   "Correct: smaller batch jobs each fit within the enqueued token limit, so they can start, and they keep the 50 percent batch discount and the separate batch quota that protects online traffic.",
+   "Correct: with automatic retry and exponential backoff, a job that fails fast on enqueued token quota is resubmitted later, so the next job starts as soon as an earlier job releases its quota.",
+   "Incorrect: sending requests one at a time to the online Global Standard deployment uses the online quota and full price, which affects online agents and breaks the cost goal. Use online calls for interactive work.",
+   "Incorrect: a quota increase for the online Global Standard deployment does not raise the batch enqueued token limit, because batch uses its own quota. Request online quota when interactive traffic hits 429.",
+   "Incorrect: prompt caching lowers cost for repeated prompt prefixes but does not change how many tokens are enqueued, so the jobs still fail to start. Use it when requests share long static prefixes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/how-to/batch"
+ },
+ {
+  "id": "2.4.4-09",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. runs a concurrent orchestration in which four agents evaluate a loan application in parallel. Each agent writes its findings directly to the same Azure Cosmos DB document. Reviewers find that the document sometimes contains inconsistent or overwritten findings. The agents must keep running in parallel.\n\nWhat should you do?",
+  "choices": [
+   "Have each agent return its findings to an aggregator that performs a single write after fan-in",
+   "Set allow_concurrent_invocation to False for each agent",
+   "Convert the orchestration to a group chat so that the agents can discuss their updates",
+   "Add retry logic to each agent for failed writes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In concurrent orchestration, agents that write to the same record in parallel create race conditions. Let each agent return its findings and let an aggregator perform one write after fan-in, so the agents stay parallel and the record stays consistent.",
+  "rationale": [
+   "Correct: the agents keep running in parallel, but only the aggregator writes, once, after fan-in. That removes the concurrent writes that overwrite each other and makes the document consistent.",
+   "Incorrect: allow_concurrent_invocation controls whether one agent runs its own tool calls in parallel. It does not stop four agents from writing to the same document at the same time.",
+   "Incorrect: a group chat makes the agents take turns in a shared thread, which removes the parallelism the stem requires, and discussion does not coordinate the writes. Use group chat for consensus building.",
+   "Incorrect: retries help with failed writes, but the problem is successful writes that overwrite each other, so retries can make inconsistency worse. Use retries for transient write errors."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "2.4.5-01",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders enables incoming A2A on a Foundry prompt agent named Agent1. A partner service will call Agent1 through its A2A base path. The partner team asks which credential its client must present on each request, including the request for the agent card.\n\nWhich credential should the partner client present?",
+  "choices": [
+   "a Microsoft Entra ID token for https://ai.azure.com",
+   "an API key that is sent in the x-api-key header",
+   "no credential, because the agent card is public",
+   "a Microsoft Entra ID token for https://management.azure.com"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Foundry agent with incoming A2A is protected by Microsoft Entra ID. Callers present a Microsoft Entra token for the https://ai.azure.com audience on every request, including the agent card request, and need a role such as Foundry Agent Consumer on the target project.",
+  "rationale": [
+   "Correct: the A2A endpoint of a Foundry agent uses Microsoft Entra authentication with the https://ai.azure.com audience, so the partner presents that token on every request, including the agent card request.",
+   "Incorrect: an API key in an x-api-key header is used by endpoints that support key-based authentication, such as many third-party A2A agents. Incoming A2A on a Foundry agent expects a Microsoft Entra token.",
+   "Incorrect: the agent card of a Foundry agent is not anonymous; it is served behind the same Microsoft Entra authentication as the A2A calls. Anonymous agent card requests are typical only for public endpoints.",
+   "Incorrect: a token for https://management.azure.com targets Azure Resource Manager, which you use to create resources such as connections. The A2A data plane needs a token for https://ai.azure.com."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint"
+ },
+ {
+  "id": "2.4.5-02",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Alpine Ski House connects a Foundry agent to a partner A2A endpoint. Each user must sign in with the user's own account, so the team selects OAuth identity passthrough for the connection. The endpoint publisher already provides a managed OAuth option in the Foundry tool catalog. The team wants the simplest setup and does not want to maintain its own OAuth app registration.\n\nWhich OAuth option should the team configure?",
+  "choices": [
+   "managed OAuth",
+   "custom OAuth with a Microsoft Entra app registration",
+   "custom OAuth with an app in a third-party identity provider",
+   "key-based authentication with a shared token"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "OAuth identity passthrough lets each user sign in with the user's own account. Managed OAuth uses an OAuth app that the endpoint publisher manages through the Foundry tool catalog, so you do not register or maintain your own app; custom OAuth means you bring and maintain the app registration.",
+  "rationale": [
+   "Correct: managed OAuth uses the publisher-managed OAuth app from the Foundry tool catalog, so users still sign in with their own accounts and the team maintains no app registration.",
+   "Incorrect: custom OAuth with a Microsoft Entra app registration also gives per-user sign-in, but the team must create and maintain that registration, which the stem rules out. Use it when no managed option exists.",
+   "Incorrect: custom OAuth with a third-party identity provider app still requires the team to maintain its own app. Use it when the endpoint trusts only a non-Microsoft identity provider and has no managed option.",
+   "Incorrect: key-based authentication uses one shared secret for all users, so nobody signs in with their own account. Use it for endpoints that accept only a static key and where all users share the same access."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-to-agent-authentication"
+ },
+ {
+  "id": "2.4.5-03",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing has an existing Microsoft Agent Framework agent in Python that summarizes manuscripts. Developers want to call the agent as a tool from GitHub Copilot in Visual Studio Code and from other MCP-compatible agent hosts.\n\nWhat should you do?",
+  "choices": [
+   "Call as_mcp_server() on the agent and run the server over an MCP transport",
+   "Wrap the agent in an A2AAgent instance",
+   "Add an MCPStreamableHTTPTool instance to the agent",
+   "Register the agent in Foundry Control Plane by using the A2A protocol"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework can expose an existing agent as an MCP server with as_mcp_server(), so MCP hosts such as GitHub Copilot in Visual Studio Code can call it as a tool. MCPStreamableHTTPTool does the opposite: it lets an agent consume tools from an MCP server.",
+  "rationale": [
+   "Correct: as_mcp_server() wraps the agent as an MCP server that advertises it as a tool, and running it over an MCP transport such as stdio lets GitHub Copilot and other MCP hosts call it.",
+   "Incorrect: A2AAgent is a client proxy that lets your code call a remote agent that speaks A2A. It does not make your agent available to MCP hosts. Use it to consume A2A agents.",
+   "Incorrect: MCPStreamableHTTPTool connects your agent to an external MCP server so the agent can use that server's tools. It consumes MCP; it does not expose the agent. Use it to add remote MCP tools.",
+   "Incorrect: registering an A2A agent in Foundry Control Plane adds governance and a proxy URL for A2A clients, but GitHub Copilot calls tools over MCP. Use registration to manage agents that run outside Agent Service."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/local-mcp-tools"
+ },
+ {
+  "id": "2.4.5-04",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. adds a Foundry Agent Service A2A tool that uses key-based authentication to call a supplier agent endpoint. Tool calls fail with the message \"Failed to fetch agent card\" and HTTP 401. The supplier confirms that the agent card path requires the same API key as the tool calls.\n\nWhat should you do?",
+  "choices": [
+   "Set send_credentials_for_agent_card to true in the A2A tool definition",
+   "Regenerate the API key and update the project connection",
+   "Assign roles to the agent identity on the supplier service",
+   "Change the credential name of the project connection to x-api-key"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, Foundry Agent Service fetches the agent card of a non-Foundry A2A endpoint anonymously. If the endpoint protects the agent card, set send_credentials_for_agent_card to true in the A2A tool definition so the connection credentials are sent with the card request.",
+  "rationale": [
+   "Correct: the card is fetched anonymously by default, which produces the 401 on the card path. send_credentials_for_agent_card set to true sends the same key with the card request, so the card loads.",
+   "Incorrect: the key is valid, because the supplier confirms that the card path requires the same key the tool calls use. Regenerating it would not change the anonymous card request. Rotate keys when one is compromised or expires.",
+   "Incorrect: the connection uses key-based authentication, so role assignments on the agent identity are not evaluated by the supplier service. Assign roles when the connection uses agent identity.",
+   "Incorrect: the credential name must match the header that the endpoint expects, such as x-api-key or Authorization, but the failure is on the card request, which sends no credential at all. Fix the name when tool calls return 401."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-to-agent-authentication"
+ },
+ {
+  "id": "2.4.5-05",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-d",
+  "stem": "You need to configure how AccountsAgent authenticates to ProfileService.\n\nWhich authentication method should you use?",
+  "choices": [
+   "Project managed identity (project-managed-identity) that is granted access to ProfileService",
+   "OAuth identity passthrough that uses a custom Microsoft Entra app registration",
+   "Agent identity (agentic-identity) of AccountsAgent that is granted access to ProfileService",
+   "Key-based authentication that stores an API key for ProfileService in a project connection"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Foundry offers several A2A authentication methods: agent identity, project managed identity, key-based, and OAuth identity passthrough. Agent identity gives per-agent, secretless, app-only access, which makes it the choice when one agent needs access that its sibling agents must not have.",
+  "rationale": [
+   "Incorrect: the project managed identity is shared by every agent in Project1, so granting it access to ProfileService gives the same access to all agents, which the requirements forbid. Use it when all agents in a project need the same access.",
+   "Incorrect: identity passthrough calls ProfileService with each signed-in user's access, but the requirement is to use the access of AccountsAgent itself. Use passthrough when per-user permissions must apply at the target endpoint.",
+   "Correct: in the new agent object model each agent has its own Microsoft Entra agent identity, so only AccountsAgent is granted access to ProfileService. The call is app-only with the agent's own access, and there are no secrets to store or rotate.",
+   "Incorrect: an API key in a project connection is a shared secret that must be stored and rotated, which the technical requirements prohibit. Use key-based authentication only for endpoints that accept nothing else, such as a third-party key-only A2A endpoint."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-to-agent-authentication"
+ },
+ {
+  "id": "2.4.5-06",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Best For You Organics Company wants Agent1, a Foundry prompt agent in Project1, to call Agent2, a Foundry agent in Project2, by using A2A protocol version 1.0. Incoming A2A is already enabled on Agent2, and the identity of Agent1 already has the Foundry Agent Consumer role on Project2. The call must use the identity of Agent1, not the identity of the signed-in user.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`azd ai connection create agent2-conn --kind remote-a2a --target <Agent2 A2A base path> --auth-type user-entra-token --audience https://ai.azure.com`",
+   "`a2a_connection = project.connections.get(\"agent2-conn\")`",
+   "`azd ai project set <Project1 endpoint>`",
+   "`azd ai project set <Project2 endpoint>`",
+   "`project.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-5-mini\", tools=[A2ATool(a2a_version=A2AProtocolVersion.V1_0, project_connection_id=a2a_connection.id)]))`",
+   "`azd ai connection create agent2-conn --kind remote-a2a --target <Agent2 A2A base path> --auth-type agentic-identity --audience https://ai.azure.com`",
+   "`openai.responses.create(tool_choice=\"required\", input=\"What can Agent2 do?\", extra_body={\"agent_reference\": {\"name\": \"Agent1\", \"type\": \"agent_reference\"}})`"
+  ],
+  "answer": [
+   2,
+   5,
+   1,
+   4,
+   6
+  ],
+  "explanation": "To call one Foundry agent from another over A2A, the target needs incoming A2A and the caller needs the Foundry Agent Consumer role on the target project. On the calling project you create a remote-a2a connection to the target's A2A base path with audience https://ai.azure.com, then attach an A2A tool that references the connection. The auth type decides whose identity is used: agentic-identity for app-only, user-entra-token for delegated calls.",
+  "rationale": [
+   "Incorrect: user-entra-token passes the signed-in user's Microsoft Entra context to Agent2, which breaks the requirement to call as Agent1. Use it for existing delegated integrations that need the user context.",
+   "Step 3: the SDK reads the connection by name to get its full id. The A2A tool definition in the next step needs this connection id, so the connection must already exist in Project1.",
+   "Step 1: azd ai commands act on the active project. The connection belongs to the calling side, so Project1 must be the active project before you create it.",
+   "Incorrect: setting Project2 as the active project would create the connection in the target project, where Agent1 cannot use it. Set Project2 only when you configure resources for Agent2 itself.",
+   "Step 4: create_version() adds an A2ATool for protocol version 1.0 that references the connection id, so Agent1 can delegate tasks to Agent2 through the connection and its identity.",
+   "Step 2: a remote-a2a connection that targets the A2A base path of Agent2 with agentic-identity and the https://ai.azure.com audience makes the call app-only with the identity of Agent1.",
+   "Step 5: a request with tool_choice set to required forces Agent1 to call the A2A tool, which tests the delegation end to end after everything else exists."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent?pivots=python"
+ },
+ {
+  "id": "2.4.5-07",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Litware, Inc. connects a Foundry agent to a third-party A2A endpoint that accepts only a static API key. All users of the agent share the same level of access. The security team requires that exposure of the shared secret is minimized.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Store the API key in a project connection and restrict who can access the project",
+   "Request a least-privilege key from the endpoint publisher and rotate it before it expires",
+   "Set send_credentials_for_agent_card to true so that every request carries the key",
+   "Configure OAuth identity passthrough so that each user signs in to the endpoint",
+   "Configure the A2A connection to authenticate by using the project managed identity"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "When an A2A endpoint accepts only a static API key and all users share the same access, the key is unavoidable. Reduce its exposure by storing it in a project connection with limited access, and by requesting a least-privilege key that you rotate regularly.",
+  "rationale": [
+   "Correct: a project connection stores the key securely instead of in code, and restricting who can access the project limits who can read or use the secret.",
+   "Correct: a least-privilege key limits the damage if it leaks, and rotating it before it expires shortens the window in which a leaked key can be used.",
+   "Incorrect: send_credentials_for_agent_card sends the key on the agent card request as well, which adds exposure. Set it only when the endpoint requires authentication to read its card.",
+   "Incorrect: OAuth identity passthrough needs an endpoint that supports OAuth, but this endpoint accepts only a static key. Use passthrough when each user must access the endpoint with the user's own identity.",
+   "Incorrect: project managed identity authentication requires an endpoint that accepts Microsoft Entra tokens, so it cannot authenticate to a key-only endpoint. Use it for Entra-protected endpoints."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-to-agent-authentication"
+ },
+ {
+  "id": "2.4.5-08",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute has a Foundry prompt agent named ReviewAgent that has incoming A2A enabled. An existing partner agent that is built with the open-source A2A SDK calls ReviewAgent by using A2A v1.0 over JSONRPC. Integration tests show the following behavior:\n\n- Requests that contain only text parts succeed.\n- Requests that attach design files as file parts fail.\n- The partner client is configured to receive server-sent events and never receives incremental updates.\n\nYou need to make the integration work without changing how ReviewAgent is hosted.\n\nWhat should you do?",
+  "choices": [
+   "Send the design content as text and configure the partner client for non-streaming requests.",
+   "Switch the partner client to A2A v0.3 with the HTTP+JSON transport to support file parts.",
+   "Switch the partner client to the gRPC transport to support streaming and binary parts.",
+   "Assign the partner identity the Foundry User role instead of the Foundry Agent Consumer role."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Incoming A2A on a Foundry agent supports A2A v1.0 over JSON-RPC with text parts only, and streaming responses are not supported. Existing partner clients must send text and use non-streaming requests; protocol or transport changes do not add these capabilities.",
+  "rationale": [
+   "Correct: incoming A2A supports text modality only and no streaming, so the partner must send the design content as text and call ReviewAgent without server-sent events.",
+   "Incorrect: the preview v0.3 protocol is also limited to text on Foundry agent targets, so switching versions does not enable file parts. Use v0.3 only for existing preview integrations.",
+   "Incorrect: incoming A2A on a Foundry agent uses JSON-RPC, so a gRPC transport is not available and would not add streaming or binary parts. Use gRPC only with A2A servers that offer it.",
+   "Incorrect: Foundry Agent Consumer is enough to call the agent, because text requests already succeed. Changing roles affects authorization, not supported content types or streaming."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint"
+ },
+ {
+  "id": "2.4.5-09",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Humongous Insurance builds an orchestrator agent that must select, invoke, filter, and weigh the results of internal claims capabilities, and then synthesize the final answer itself. The capabilities are owned by the same engineering team as the orchestrator. The architects prefer control over the reasoning to flexibility, and they require authenticated access to the underlying tools and data.\n\nWhich integration approach should you use?",
+  "choices": [
+   "Expose the claims capabilities through MCP servers that the orchestrator calls as tools",
+   "Expose each claims capability as an A2A agent that uses its own orchestration",
+   "Register each claims capability in Foundry Control Plane as a custom A2A agent",
+   "Connect the claims capabilities as handoff targets that take ownership of the conversation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Choose MCP when an orchestrator must stay in control of the reasoning and call capabilities as tools that it selects, filters, and combines itself. Choose A2A when capabilities are autonomous agents with their own orchestration, often owned by other teams.",
+  "rationale": [
+   "Correct: MCP servers expose the claims capabilities as tools, so the orchestrator selects, invokes, filters, and weighs the results and keeps control of the reasoning, and MCP supports authenticated access.",
+   "Incorrect: A2A agents run their own orchestration and return finished answers, so the orchestrator loses control over how each capability reasons. Use A2A for autonomous agents owned by other teams.",
+   "Incorrect: registering custom A2A agents in Foundry Control Plane adds governance and a proxy, but the capabilities still reason on their own. Use it to manage A2A agents that run outside Agent Service.",
+   "Incorrect: handoff targets take ownership of the conversation, so the orchestrator could not synthesize the final answer. Use handoff when a specialist should own the rest of the conversation."
+  ],
+  "ref": "https://learn.microsoft.com/agents/architecture/multi-agent-patterns"
+ },
+ {
+  "id": "2.4.6-01",
+  "obj": "2.4.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles automates warranty processing. The process has well-defined steps, and several agents and deterministic functions must coordinate in an explicit order that the developers control.\n\nWhich Microsoft Agent Framework component should you use?",
+  "choices": [
+   "A workflow",
+   "A single agent with function tools",
+   "Agent middleware",
+   "A context provider"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework distinguishes agents, which plan and call tools autonomously, from workflows, which coordinate agents and functions in an explicit, developer-defined order. Use a workflow when the process has well-defined steps; use an agent when the task is open-ended.",
+  "rationale": [
+   "Correct: a workflow connects agents and deterministic functions as executors with explicit edges, so the developers control the order of the well-defined warranty steps.",
+   "Incorrect: a single agent with function tools lets the model decide which tools to call and in which order, so the developers do not control the order. Use it for open-ended or conversational tasks.",
+   "Incorrect: agent middleware intercepts runs to add logging, checks, or result changes. It does not coordinate several agents and functions in order. Use it for cross-cutting concerns.",
+   "Incorrect: a context provider adds memories or extra context to an agent before each run. It does not define execution order. Use it to enrich prompts with relevant context."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/overview/"
+ },
+ {
+  "id": "2.4.6-02",
+  "obj": "2.4.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research has production multi-agent solutions built with Semantic Kernel and AutoGen. The company wants to standardize on the framework that the same Microsoft teams created as the direct successor to both, including graph-based workflows.\n\nWhich framework should you choose?",
+  "choices": [
+   "Microsoft Agent Framework",
+   "LangGraph",
+   "Microsoft 365 Agents SDK",
+   "LangChain"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft Agent Framework is the direct successor of Semantic Kernel and AutoGen, built by the same Microsoft teams. It combines agent abstractions with graph-based workflows and provides migration guides from both frameworks.",
+  "rationale": [
+   "Correct: Agent Framework was created by the Semantic Kernel and AutoGen teams as their direct successor, and it includes graph-based workflows, so it is the standard to migrate both solutions to.",
+   "Incorrect: LangGraph is an open-source graph framework from the LangChain ecosystem, not the successor of Semantic Kernel or AutoGen. Use it when the team standardizes on LangChain tooling.",
+   "Incorrect: the Microsoft 365 Agents SDK builds agents for channels such as Microsoft Teams and Microsoft 365 Copilot. It is not the successor of Semantic Kernel and AutoGen orchestration.",
+   "Incorrect: LangChain is an open-source framework for LLM applications and chains, not a Microsoft successor to Semantic Kernel or AutoGen. Use it with langchain-azure-ai when the team already builds on LangChain."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/overview/"
+ },
+ {
+  "id": "2.4.6-03",
+  "obj": "2.4.6",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Fourth Coffee configures its agents centrally in the Foundry portal. A developer builds a LangGraph application in Python and must use an existing Foundry agent named menu-agent as a node in a graph, without redefining the agent in code. A StateGraph object named workflow is already defined in the application.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`workflow.add_node(\"menu_node\", menu_node)`, and then `workflow.add_edge(START, \"menu_node\")`",
+   "`factory.delete_agent(menu_node)`",
+   "`factory = AgentServiceFactory(project_endpoint=os.environ[\"AZURE_AI_PROJECT_ENDPOINT\"], credential=DefaultAzureCredential())`",
+   "`app = workflow.compile()`",
+   "`pip install langchain-azure-ai[tools,opentelemetry] azure-identity`",
+   "`menu_node = factory.create_prompt_agent(name=\"menu-agent\", model=os.environ[\"MODEL_DEPLOYMENT_NAME\"], instructions=menu_instructions)`",
+   "`menu_node = factory.get_agent_node(name=\"menu-agent\", version=\"latest\")`"
+  ],
+  "answer": [
+   4,
+   2,
+   6,
+   0,
+   3
+  ],
+  "explanation": "The langchain-azure-ai package bridges LangGraph and Foundry Agent Service through AgentServiceFactory. Referencing portal-managed agents with get_agent_node keeps configuration centralized in Foundry, while create_prompt_agent defines agents in code. Either way, the node is added to a StateGraph and the graph is compiled before it can run.",
+  "rationale": [
+   "Step 4: the node must be added to the StateGraph and connected with edges before compile(), because compile() validates and freezes the graph structure.",
+   "Incorrect: delete_agent() removes the agent from the Foundry project, after which the graph object can no longer be used. Use it only to clean up agents you created during a session.",
+   "Step 2: AgentServiceFactory connects to the Foundry project. Every agent node that you reference or create later is resolved through this factory object and its credential.",
+   "Step 5: compile() turns the StateGraph into a runnable app that you can invoke. It is the last step because it validates the graph and needs all nodes and edges in place.",
+   "Step 1: the langchain-azure-ai package provides AgentServiceFactory and the Foundry integration for LangGraph, and azure-identity provides DefaultAzureCredential. Nothing can be imported before they are installed.",
+   "Incorrect: create_prompt_agent() defines a new agent version in code, which is exactly what the requirement forbids. Use it when the agent configuration should live in your application code, such as for prototyping.",
+   "Step 3: get_agent_node() returns the existing portal-managed agent as a LangGraph-compatible node, so the configuration stays in Foundry; version latest targets the newest version."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/langchain-agents"
+ },
+ {
+  "id": "2.4.6-04",
+  "obj": "2.4.6",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Alpine Ski House builds a LangGraph StateGraph with a local router_node and an expert_node that runs a Foundry agent. The function route_decision must return expert_node when the router delegates and must finish the graph otherwise. The graph must call expert_node only when the router decides to delegate.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\ndef route_decision(state: RouterState) -> Literal[\"expert_node\", END]:\n    if state.get(\"jump_to\") == \"delegate\":\n        return \"expert_node\"\n    return [[1]]\n\nworkflow = StateGraph(RouterState)\nworkflow.add_node(\"router_node\", router_node)\nworkflow.add_node(\"expert_node\", expert_node)\nworkflow.add_edge(START, \"router_node\")\nworkflow.[[2]](\"router_node\", route_decision)\nworkflow.add_edge(\"expert_node\", END)\napp = workflow.compile()\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "END",
+     "START",
+     "\"router_node\""
+    ],
+    "why": [
+     "Correct: END is the special LangGraph node that finishes the graph, so a request the router handles itself ends without calling the Foundry agent or using its tokens.",
+     "Incorrect: START is the entry point of the graph and cannot be a routing target. You use it only as the source of the first edge, as in add_edge(START, \"router_node\").",
+     "Incorrect: returning router_node routes back to the router itself, which creates a loop on the same request. Route back to a node only when it must run again, for example in a retry loop."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "add_edge",
+     "add_node",
+     "add_conditional_edges"
+    ],
+    "why": [
+     "Incorrect: add_edge creates a fixed edge between two nodes that is always taken, so it cannot choose between expert_node and END. Use it for unconditional steps, such as expert_node to END.",
+     "Incorrect: add_node registers a node, not a transition. Registering route_decision as a node would leave router_node without an outgoing edge that depends on the decision.",
+     "Correct: add_conditional_edges runs route_decision after router_node and follows the node name it returns, so expert_node runs only when the router delegates."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "In LangGraph, fixed transitions use add_edge and dynamic routing uses add_conditional_edges with a function that returns the next node name or END. A Foundry agent node from get_agent_node behaves like any other node, so you can combine local routing logic with Foundry agents in one graph.",
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/langchain-agents"
+ },
+ {
+  "id": "2.4.6-05",
+  "obj": "2.4.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud creates a LangGraph agent by using AgentServiceFactory.create_prompt_agent with an MCPTool whose require_approval is set to always and a MemorySaver checkpointer. The first invoke call uses config = {\"configurable\": {\"thread_id\": \"session-7\"}} and returns an interrupt for an MCP approval request. The reviewer approves the call.\n\nWhat should you do to resume the run?",
+  "choices": [
+   "Invoke the agent with Command(resume={\"approve\": True}) and the same config",
+   "Invoke the agent with a new HumanMessage that contains the text approve and no config",
+   "Invoke the agent with Command(resume={\"approve\": True}) and a new thread_id",
+   "Send a new request that sets previous_response_id to the interrupt ID"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "LangGraph human-in-the-loop uses interrupts and a checkpointer. The run pauses with an interrupt, and you resume it by invoking the graph with Command(resume=...) and the same thread_id, so the checkpointer restores the paused state.",
+  "rationale": [
+   "Correct: Command(resume={\"approve\": True}) supplies the approval to the pending interrupt, and the same config with thread_id session-7 lets MemorySaver restore the paused run and execute the MCP call.",
+   "Incorrect: a new HumanMessage without config starts a new run with no thread, so the paused interrupt is never resumed. Send a new message when the user starts a new turn in an existing thread.",
+   "Incorrect: a new thread_id points to an empty checkpoint, so there is no pending interrupt to resume. Use a new thread_id only to start an independent conversation.",
+   "Incorrect: previous_response_id with an approval response is the Responses API pattern for MCP approvals when you call Foundry directly. The LangGraph agent from create_prompt_agent resumes through Command."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/langchain-agents"
+ },
+ {
+  "id": "2.4.6-06",
+  "obj": "2.4.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Graphic Design Institute builds a long-running Agent Framework workflow in which an AgentExecutor wraps a FoundryAgent that uses server-side sessions. After restoring a checkpoint, the agent behaves as though its conversation state changed since the checkpoint was taken. The workflow must resume reliably from checkpoints.\n\nWhat should you do?",
+  "choices": [
+   "Implement a custom executor that manages the agent state",
+   "Share a single session between all AgentExecutor instances",
+   "Increase the frequency at which checkpoints are created",
+   "Switch the checkpoint storage to FileCheckpointStorage"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When an AgentExecutor wraps an agent whose session state lives on the server, a workflow checkpoint cannot capture that state, so a restore can diverge from it. A custom executor that manages the agent state makes the state part of the checkpoint and resumes reliably.",
+  "rationale": [
+   "Correct: a custom executor can keep the conversation state in workflow state that is checkpointed, so restoring a checkpoint restores the agent state as well, instead of relying on server-side sessions that changed.",
+   "Incorrect: sharing one session between AgentExecutor instances mixes the conversations of different agents and still keeps the state on the server, outside the checkpoint. Keep one session per agent.",
+   "Incorrect: more frequent checkpoints shrink the gap but cannot capture state that lives on the server, so a restore can still diverge. Tune frequency to limit lost work after a crash.",
+   "Incorrect: FileCheckpointStorage only changes where workflow checkpoints are stored. Server-side session state is still not part of them. Use file storage when checkpoints must survive restarts."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/workflows/advanced/agent-executor"
+ },
+ {
+  "id": "2.4.6-07",
+  "obj": "2.4.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wide World Importers uses the langchain-azure-ai package to compose a LangGraph solution with Foundry Agent Service. A developer adds the CodeInterpreterTool from langchain_azure_ai.agents.prebuilt.tools to a generic LangGraph tool node, and the graph fails when the model requests code execution. Data analysis must run in the Foundry sandbox.\n\nWhat should you do?",
+  "choices": [
+   "Pass the CodeInterpreterTool in the tools list of factory.create_prompt_agent",
+   "Wrap the CodeInterpreterTool in a local Python function and add it to the tool node",
+   "Retrieve the agent by using get_agent_node and add the CodeInterpreterTool to the tool node",
+   "Replace the CodeInterpreterTool with AzureAIDocumentIntelligenceTool"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In langchain-azure-ai, tools in langchain_azure_ai.agents.prebuilt.tools are built-in Foundry tools that run server-side and work only with create_prompt_agent. Local tools run in a LangGraph tool node; built-in tools are passed to the prompt agent definition.",
+  "rationale": [
+   "Correct: CodeInterpreterTool is a built-in tool that runs in the Foundry sandbox, and built-in tools work only when you pass them in the tools list of create_prompt_agent, so data analysis runs server-side.",
+   "Incorrect: wrapping the tool in a local function makes it a local tool that runs where your code runs, so analysis would not run in the Foundry sandbox. Wrap logic as a local tool for deterministic business code.",
+   "Incorrect: get_agent_node references an existing agent, and adding the tool to a separate tool node still treats it as a local tool, which fails. Use get_agent_node to reuse agents configured in Foundry.",
+   "Incorrect: AzureAIDocumentIntelligenceTool parses documents and acts like a local tool, so it neither executes analysis code nor runs in the sandbox. Use it to extract data from forms and invoices."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/develop/langchain-agents"
+ },
+ {
+  "id": "2.4.6-08",
+  "obj": "2.4.6",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Northwind Traders migrates an AutoGen GraphFlow solution to Microsoft Agent Framework workflows. The new workflow must pause to wait for a credit officer decision, and it must continue from the same point after the host process restarts.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Checkpointing lets the workflow continue from saved state after the host process restarts.",
+   "Agent Framework workflows deliver every message to every executor, in the same way as AutoGen GraphFlow broadcasts messages.",
+   "Request and response handling lets an executor pause the workflow until the credit officer decision is supplied."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Agent Framework workflows combine typed, edge-based message routing with built-in request and response handling and checkpointing. Request and response handling provides the human pause, and checkpointing provides durability across restarts, so long-running approvals need both.",
+  "rationale": [
+   "Yes: checkpointing saves workflow state at superstep boundaries to a checkpoint storage. After a restart you restore a checkpoint by its ID and continue without repeating completed work.",
+   "No: Agent Framework workflows route messages along the edges that you define, so only connected executors receive a message. Broadcast-style delivery is an AutoGen GraphFlow behavior that the migration replaces.",
+   "Yes: an executor can request external input, which emits a request_info event and pauses the workflow until the application sends a response that references the request ID."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/migration-guide/from-autogen/"
+ },
+ {
+  "id": "2.4.6-09",
+  "obj": "2.4.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company has a validated patient-consent process that consists of three executors. The process must be reused inside several larger Agent Framework workflows. Each reuse must keep isolated input and output and its own independent state, and messages must not be broadcast between the outer and inner levels.\n\nWhat should you do?",
+  "choices": [
+   "Compose the consent process as a sub-workflow that runs as an executor in each larger workflow",
+   "Copy the three executors into each larger workflow and connect them with edges",
+   "Run the consent process as a group chat participant in each larger workflow",
+   "Expose the consent process as an A2A agent and call it from each larger workflow"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Framework supports sub-workflows: a complete workflow can run as an executor inside a larger workflow, with its own isolated input, output, and state. This lets you reuse a validated process without copying executors or exposing internal messages.",
+  "rationale": [
+   "Correct: a sub-workflow runs as one executor in each larger workflow, so the consent process is reused unchanged, keeps isolated input, output, and state, and does not exchange internal messages with the outer level.",
+   "Incorrect: copying the executors duplicates the validated process, shares state with the outer workflow, and creates copies that must each be revalidated. Copy executors only when a variant must diverge.",
+   "Incorrect: a group chat participant takes turns in a shared conversation, so messages are visible to all participants and the consent process loses its isolated input and output. Use group chat for discussion.",
+   "Incorrect: an A2A agent adds a network hop and a separate deployment, and the consent process would run as a remote agent instead of a composed workflow. Use A2A to integrate agents owned by other teams."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/migration-guide/from-autogen/"
+ },
+ {
+  "id": "2.4.7-01",
+  "obj": "2.4.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. adds a sentiment pre-check in front of its support agents so that angry customers are routed to an escalation agent. The team wants to use a pre-trained Hugging Face model without additional training, and inference must use a GPU with batching when one is available.\n\nWhich Hugging Face Transformers component should you use?",
+  "choices": [
+   "A Transformers pipeline for the sentiment analysis task",
+   "The Trainer class with TrainingArguments",
+   "The load_dataset function from the datasets library",
+   "DataCollatorWithPadding"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Hugging Face Transformers pipelines wrap a pre-trained model and tokenizer for a task such as sentiment analysis. They need no training, use a GPU when one is available, and support batching, which makes them the simplest way to add a model-based check to an agent flow.",
+  "rationale": [
+   "Correct: a sentiment-analysis pipeline loads a pre-trained model without training, runs on a GPU when available, and batches inputs, which matches the pre-check in front of the support agents.",
+   "Incorrect: the Trainer class with TrainingArguments fine-tunes a model on labeled data, which the team explicitly wants to avoid. Use it when a pre-trained model is not accurate enough for your domain.",
+   "Incorrect: load_dataset downloads and prepares datasets for training or evaluation. It does not run inference on customer messages. Use it to prepare data for fine-tuning.",
+   "Incorrect: DataCollatorWithPadding pads batches during training. It is a training utility and does not classify text. Use it with Trainer when inputs have different lengths."
+  ],
+  "ref": "https://learn.microsoft.com/azure/databricks/machine-learning/train-model/huggingface/"
+ },
+ {
+  "id": "2.4.7-02",
+  "obj": "2.4.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants a small intent classifier that decides which specialist agent receives each request. The team has labeled examples and will fine-tune an open-source base model by using Hugging Face Transformers.\n\nWhich class should you use to load the base model for this task?",
+  "choices": [
+   "AutoModelForSequenceClassification",
+   "AutoModelForTokenClassification",
+   "AutoModelForQuestionAnswering",
+   "AutoModelForCausalLM"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Transformers provides task-specific Auto classes. Choose the class by output shape: one label per sequence uses AutoModelForSequenceClassification, one label per token uses AutoModelForTokenClassification, and text generation uses AutoModelForCausalLM.",
+  "rationale": [
+   "Correct: intent classification assigns one label to each whole request, so AutoModelForSequenceClassification loads the base model with a sequence classification head sized for the intents.",
+   "Incorrect: AutoModelForTokenClassification assigns a label to every token, as in named entity recognition. Use it to extract entities such as order numbers from a request.",
+   "Incorrect: AutoModelForQuestionAnswering predicts an answer span inside a given context. Use it for extractive question answering over documents, not for routing requests.",
+   "Incorrect: AutoModelForCausalLM generates text token by token. It could classify through prompting, but it is larger and slower to fine-tune for this. Use it when the model must generate text."
+  ],
+  "ref": "https://learn.microsoft.com/azure/databricks/machine-learning/train-model/huggingface/fine-tune-model"
+ },
+ {
+  "id": "2.4.7-03",
+  "obj": "2.4.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud wants a retrieval agent to use an open-source Sentence-Transformers embedding model from the Hugging Face collection in the Foundry model catalog. The model is available in the current Foundry project.\n\nWhich deployment option should you use?",
+  "choices": [
+   "Foundry Managed Compute",
+   "Global Batch",
+   "Global Provisioned",
+   "Data Zone Standard"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Open-source Hugging Face models in the Foundry model catalog, such as Sentence-Transformers embedding models, are deployed to Foundry Managed Compute. Global Batch, Global Provisioned, and Data Zone Standard are deployment types for models sold directly by Azure, such as Azure OpenAI models.",
+  "rationale": [
+   "Correct: Hugging Face models from the Foundry catalog are hosted on Foundry Managed Compute, which runs the open-source embedding model on dedicated compute in your project.",
+   "Incorrect: Global Batch is a deployment type for Azure OpenAI and other models sold directly by Azure, for asynchronous bulk jobs. It is not available for Hugging Face catalog models.",
+   "Incorrect: Global Provisioned reserves throughput units for models sold directly by Azure. Use it for predictable, high-volume Azure OpenAI traffic, not for Hugging Face models.",
+   "Incorrect: Data Zone Standard is a pay-per-token deployment type for models sold directly by Azure with data zone processing. Hugging Face catalog models do not use it."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/foundry-models/how-to/hugging-face-models"
+ },
+ {
+  "id": "2.4.7-04",
+  "obj": "2.4.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing wants to deploy a permissively licensed Hugging Face chat model in the current Foundry experience for an editing agent. The model meets the Foundry support criteria and the project region supports it, but the model does not appear when the Available in my Project filter is enabled in the model catalog.\n\nWhat should you do first?",
+  "choices": [
+   "Request GPU quota for Foundry Managed Compute for a compatible accelerator type",
+   "Request a virtual machine core quota increase for the subscription",
+   "Assign the Foundry User role on the Foundry account to the developers",
+   "Change the deployment option filter of the model catalog to Global Batch"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Hugging Face model in Foundry appears under Available in my Project only when the project has quota for a compatible accelerator on Foundry Managed Compute. Request GPU quota for a compatible accelerator type first, and then deploy the model.",
+  "rationale": [
+   "Correct: the filter shows only models that the project can deploy, and Foundry Managed Compute needs GPU quota for a compatible accelerator. Once that quota exists, the model appears and can be deployed.",
+   "Incorrect: a generic virtual machine core quota does not provide the accelerator quota that Foundry Managed Compute checks. Request VM core quota when you run self-managed virtual machines.",
+   "Incorrect: Foundry User grants access to use the project, but the filter hides the model because of missing compute quota, not missing permissions. Assign roles when users cannot open or use the project.",
+   "Incorrect: Global Batch is a deployment option for models sold directly by Azure, so changing the filter to it does not show Hugging Face models. Use it to find models that support batch jobs."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/foundry-models/how-to/hugging-face-models"
+ },
+ {
+  "id": "2.4.7-05",
+  "obj": "2.4.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys tries to deploy a Hugging Face model from the Azure Machine Learning model catalog for a product description agent. The deployment fails with an error that states that loading the model requires executing the configuration file in the model repository and setting trust_remote_code=True.\n\nWhat should you do?",
+  "choices": [
+   "Select an alternative model that uses Safetensors weights and does not require remote code",
+   "Set trust_remote_code to True in an environment variable of the deployment",
+   "Select a larger instance_type for the deployment",
+   "Add the missing Python libraries to a custom environment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Models that require trust_remote_code=True execute code from the model repository at load time, which Azure Machine Learning does not allow for catalog deployments. Choose an alternative model that does not require remote code, preferably with Safetensors weights.",
+  "rationale": [
+   "Correct: the catalog does not deploy models that need remote code execution, so the fix is an alternative model that loads without trust_remote_code and ships Safetensors weights.",
+   "Incorrect: an environment variable does not override the deployment's block on remote code, and executing untrusted repository code is the risk the block prevents. Run such models only in your own vetted environment.",
+   "Incorrect: a larger instance type adds CPU, GPU, or memory, but the failure is about remote code execution, not resources. Choose a larger instance when the model runs out of memory.",
+   "Incorrect: adding libraries to a custom environment fixes missing dependencies, but the model would still require remote code. Use a custom environment when a model needs extra packages."
+  ],
+  "ref": "https://learn.microsoft.com/azure/machine-learning/how-to-deploy-models-from-huggingface?view=azureml-api-2"
+ },
+ {
+  "id": "2.4.7-06",
+  "obj": "2.4.7",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Trey Research fine-tunes a Hugging Face model on a single GPU to act as a domain classifier for its agents. Training with per_device_train_batch_size=16 fails with \"OutOfMemoryError: CUDA out of memory\". The effective batch size must stay at 16. You change TrainingArguments to per_device_train_batch_size=4 and gradient_accumulation_steps=4.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The change keeps the effective batch size at 16.",
+   "Setting fp16=True in TrainingArguments would increase the GPU memory that training needs.",
+   "The change lowers the GPU memory that each forward and backward pass needs."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "On a memory-limited GPU, you reduce per_device_train_batch_size and raise gradient_accumulation_steps by the same factor to keep the effective batch size. Lower-precision training with fp16 and an 8-bit optimizer are further ways to reduce memory without changing the training objective.",
+  "rationale": [
+   "Yes: the effective batch size is the per-device batch size multiplied by the gradient accumulation steps, so 4 x 4 keeps 16 samples per optimizer update on a single GPU.",
+   "No: fp16=True enables lower-precision training, which reduces memory use and is one of the documented fixes for CUDA out-of-memory errors. Keep full precision only when numeric stability requires it.",
+   "Yes: each pass now processes 4 samples instead of 16, so activations take less memory; gradients are summed over four passes before one optimizer step, which avoids the out-of-memory error."
+  ],
+  "ref": "https://learn.microsoft.com/azure/databricks/machine-learning/train-model/huggingface/fine-tune-model"
+ },
+ {
+  "id": "2.4.7-07",
+  "obj": "2.4.7",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Tailspin Toys uses a Hugging Face Transformers classifier on Azure Databricks to label millions of support transcripts. The labels feed an agent analytics dashboard daily. The input data is read several times for different experiments, and the scoring must scale across the cluster at low cost.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Run a preprocessing job that writes the cleaned transcripts to a Delta Lake table before the inference job",
+   "Apply the model by using an iterator pandas UDF that loads the model once and scores batches of rows",
+   "Apply the model by using a row-at-a-time Python UDF",
+   "Deploy the model from the HuggingFace registry to an Azure Machine Learning batch endpoint",
+   "Collect the transcripts to the driver node and score them with one Transformers pipeline"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "On Azure Databricks, store data that is read repeatedly in Delta Lake, and apply Transformers models at scale with an iterator pandas UDF that loads the model once per executor and scores batches. Avoid row-at-a-time UDFs and collecting data to the driver.",
+  "rationale": [
+   "Correct: writing the cleaned transcripts to a Delta Lake table once lets every experiment read optimized data instead of repeating preprocessing, which is the recommended pattern for data that is read several times.",
+   "Correct: an iterator pandas UDF loads the model once per executor and scores batches of rows, so inference scales across the cluster with low overhead and low cost.",
+   "Incorrect: a row-at-a-time Python UDF pays serialization overhead for every row and can reload the model often, so it is slow and expensive for millions of transcripts. Use it only for light per-row logic.",
+   "Incorrect: models from the HuggingFace registry in Azure Machine Learning cannot be deployed to batch endpoints, and moving scoring off the Databricks cluster would add data movement anyway. Use an Azure Machine Learning batch endpoint for a model registered in the workspace.",
+   "Incorrect: collecting millions of transcripts to the driver puts all work on one node and can exhaust its memory, so it does not scale. Use the driver only for small samples during development."
+  ],
+  "ref": "https://learn.microsoft.com/azure/databricks/machine-learning/train-model/dl-best-practices"
+ },
+ {
+  "id": "2.4.7-08",
+  "obj": "2.4.7",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Datum Corporation wants to summarize long documents overnight by using the facebook/bart-large-cnn Hugging Face model in Azure Machine Learning. A summarization agent reads the results the next morning. A batch endpoint named text-summarization-batch and a GPU compute cluster already exist, and deployment.yml references the model as azureml:bart-text-summarization@latest. An attempt to deploy the model directly from the HuggingFace registry to the batch endpoint failed.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`az ml model create --name bart-text-summarization --path \"model\"`",
+   "`az ml job download --name $JOB_NAME --output-name score --download-path .`",
+   "Deploy the model to a managed online endpoint and have the summarization agent call it in a loop for each document.",
+   "`pipeline(\"summarization\", model=\"facebook/bart-large-cnn\").save_pretrained(\"model\")`",
+   "`JOB_NAME=$(az ml batch-endpoint invoke --name text-summarization-batch --input data --input-type uri_folder --query name -o tsv)`",
+   "`az ml batch-endpoint create --file endpoint.yml --name text-summarization-batch`",
+   "`az ml batch-deployment create --file deployment.yml --endpoint-name text-summarization-batch --set-default`"
+  ],
+  "answer": [
+   3,
+   0,
+   6,
+   4,
+   1
+  ],
+  "explanation": "Batch endpoints in Azure Machine Learning run asynchronous scoring jobs on a compute cluster that scales to zero, which suits overnight summarization. Hugging Face models are deployed to batch endpoints after you download them and register them in the workspace. The job flow is register, deploy, invoke, and then download the outputs.",
+  "rationale": [
+   "Step 2: az ml model create registers the saved folder as bart-text-summarization, which is the name that deployment.yml references with @latest, so the deployment finds the model.",
+   "Step 5: az ml job download retrieves the score output of the finished job, to a local folder, so the summarization agent can read the summaries the next morning.",
+   "Incorrect: a managed online endpoint runs all day for real-time requests, so calling it in a loop for an overnight job costs more and needs custom retry logic. Use online endpoints when agents need low-latency answers.",
+   "Step 1: the model must first be downloaded from the Hugging Face Hub and saved to a local folder, because batch deployments need a model registered in the workspace, not a registry reference.",
+   "Step 4: az ml batch-endpoint invoke starts a batch scoring job over the input folder and returns the job name, which the download step needs to locate the outputs.",
+   "Incorrect: the endpoint text-summarization-batch already exists, and batch endpoint names must be unique in a region, so creating it again is unnecessary and fails. Create the endpoint only when none exists yet.",
+   "Step 3: az ml batch-deployment create deploys the registered model, scoring script, and environment to the existing endpoint; --set-default makes it the deployment that endpoint calls use."
+  ],
+  "ref": "https://learn.microsoft.com/azure/machine-learning/how-to-nlp-processing-batch?view=azureml-api-2"
+ },
+ {
+  "id": "2.4.7-09",
+  "obj": "2.4.7",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank adds a Hugging Face model as a specialist in a multi-agent solution. Compliance requires that model weights are stored on Azure and are not downloaded from Hugging Face Hub at deployment time. The model is not gated, it is available in the current Foundry project, and the agent must call it through an OpenAI-compatible endpoint.\n\nWhich deployment approach should you use?",
+  "choices": [
+   "Deploy the model to Foundry Managed Compute in Foundry",
+   "Deploy the model to a managed online endpoint in Foundry (classic)",
+   "Deploy the model from the HuggingFace registry to an Azure Machine Learning managed online endpoint",
+   "Deploy the model to Azure Databricks Model Serving by loading it from Hugging Face Hub"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry Managed Compute deploys Hugging Face models from the Foundry catalog with weights that are stored on Azure instead of being downloaded from Hugging Face Hub at deployment time, and exposes an OpenAI-compatible endpoint for agents.",
+  "rationale": [
+   "Correct: Foundry Managed Compute serves the model from weights stored on Azure, so nothing is downloaded from Hugging Face Hub at deployment, and agents call it through an OpenAI-compatible endpoint.",
+   "Incorrect: managed online endpoints in Foundry (classic) pull Hugging Face models from the Hub at deployment time, which breaks the compliance requirement. Use them only for existing classic deployments.",
+   "Incorrect: the HuggingFace registry in Azure Machine Learning downloads the model from Hugging Face Hub when it deploys, which breaks the requirement that weights are not downloaded at deployment time.",
+   "Incorrect: loading the model from Hugging Face Hub into Databricks Model Serving downloads the weights from the Hub, which the compliance rule forbids. Use Model Serving when the model already lives in Databricks."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/foundry-models/how-to/hugging-face-models"
+ },
+ {
+  "id": "2.4.8-01",
+  "obj": "2.4.8",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Proseware, Inc. runs several Microsoft Agent Framework agents in Python and must add three reusable capabilities without modifying the agent or tool logic.\n\nWhich type of component should you use for each capability? To answer, drag the appropriate components to the correct capabilities. Each value may be used once, more than once, or not at all.",
+  "choices": [
+   "A context provider",
+   "Agent middleware",
+   "Chat middleware",
+   "Function middleware"
+  ],
+  "targets": [
+   "Capability1: log the name and duration of every tool call that the agents make",
+   "Capability2: audit the exact messages sent to the model, including the calls that send tool results back to the model",
+   "Capability3: stop a whole agent run before the model is called when the user message contains a blocked term, and return a fixed reply"
+  ],
+  "answer": [
+   3,
+   2,
+   1
+  ],
+  "explanation": "Agent Framework has three middleware layers: agent middleware around the whole run, function middleware around each tool call, and chat middleware around each model call. Pick the layer whose scope matches the capability. Context providers inject context into runs and are not interception points.",
+  "rationale": [
+   "Capability1 targets individual tool calls, and function middleware intercepts each function invocation with access to context.function.name, so it can time and log every call.",
+   "Capability2 needs every model request, and chat middleware runs inside the function invocation loop, so it sees each call to the model, including the ones that carry tool results.",
+   "Capability3 must decide before anything runs, and agent middleware wraps the whole run: it can set context.result and skip call_next() so the model is never called."
+  ],
+  "notes": [
+   "Adds context, such as memories or instructions, to the agent before each run. Use it to enrich prompts with relevant context, not to intercept or block execution.",
+   "Wraps a complete agent run with access to messages, session, options, and result. Use it for run-level guards, auditing of complete runs, or result overrides.",
+   "Wraps each request to the AI model with access to raw messages and options. Use it when every model call, including tool-result round trips, must be inspected.",
+   "Wraps each tool invocation with access to the function, its arguments, and its result. Use it for tool logging, argument checks, or tool error fallbacks."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.8-02",
+  "obj": "2.4.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. must audit the exact messages that its Agent Framework agents send to the AI model. The audit must include every model call, including the calls that send tool results back to the model during a multi-turn tool calling sequence.\n\nWhich type of middleware should you implement?",
+  "choices": [
+   "Chat middleware",
+   "Function middleware",
+   "Agent middleware registered at the run level",
+   "Agent middleware registered at the agent level"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Chat middleware wraps each request to the AI model and runs inside the function invocation loop, so it sees every model call, including the follow-up calls that send tool results back. Agent middleware sees only the run as a whole.",
+  "rationale": [
+   "Correct: chat middleware intercepts every request to the model with the exact messages, and because it runs inside the function calling loop, it also sees the calls that send tool results back.",
+   "Incorrect: function middleware intercepts tool invocations, not model requests, so it never sees the messages sent to the model. Use it to log or validate tool calls.",
+   "Incorrect: run-level agent middleware wraps one whole run and sees its input and final result, not each model call inside the tool loop. Use it for per-request run checks.",
+   "Incorrect: agent-level agent middleware wraps every run but still at run level, so the intermediate model calls with tool results are not visible. Use it for policies that apply to every run."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/"
+ },
+ {
+  "id": "2.4.8-03",
+  "obj": "2.4.8",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-d",
+  "stem": "Wide World Importers has many Microsoft Agent Framework agents in Python that call an unstable shipping tool. When the tool raises a TimeoutError, every agent must return a consistent, user-friendly fallback message instead of an error. The behavior must be reusable across the solution, and the tool functions must not be modified.\n\nSolution: You register function middleware on each agent that wraps await call_next() in a try block, catches TimeoutError, and sets context.result to the fallback message.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Middleware is the reusable place for cross-cutting exception handling in Agent Framework. Function middleware can catch a tool exception and override context.result, so the model receives a controlled message and the user gets a consistent fallback.",
+  "rationale": [
+   "Correct: function middleware wraps every tool invocation, so catching TimeoutError around call_next() and setting context.result gives a consistent fallback for all agents without touching the tool code.",
+   "Incorrect: the solution does meet the goal. No would be right if the requirement were to retry the call or alert an operator, which needs extra logic in the middleware beyond setting a fallback result."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/exception-handling?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.8-04",
+  "obj": "2.4.8",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Adventure Works Cycles adds agent middleware in Python to an agent that uses Microsoft Agent Framework. After call_next(), the middleware must redact account numbers in the response by using a mask() function. The chat UI calls agent.run(..., stream=True), while a batch job calls agent.run() without streaming. One middleware function must handle both.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nasync def redact(context: AgentContext, call_next) -> None:\n    await call_next()\n    if context.result is None:\n        return\n    if [[1]]:\n        original = context.result\n        async def redacted_stream():\n            async for update in original:\n                yield [[2]]\n        context.result = redacted_stream()\n    else:\n        context.result = AgentResponse(messages=[Message(role=\"assistant\", contents=[mask(context.result.text)])])\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "context.result.messages",
+     "context.stream",
+     "context.metadata"
+    ],
+    "why": [
+     "Incorrect: context.result.messages exists only on a non-streaming AgentResponse. On a streaming result, which is an async generator, reading messages fails.",
+     "Correct: context.stream is True for streaming runs. In that case context.result is an async generator of updates, so the middleware must return a new generator instead of an AgentResponse.",
+     "Incorrect: context.metadata is a dictionary for passing data between middleware. It is truthy whenever any middleware stored data, so it cannot tell streaming from non-streaming runs."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "AgentResponseUpdate(contents=[Content.from_text(text=mask(update.text))])",
+     "AgentResponse(messages=[Message(role=\"assistant\", contents=[mask(update.text)])])",
+     "mask(update.text)"
+    ],
+    "why": [
+     "Correct: a streaming override must yield AgentResponseUpdate chunks, the type that streaming callers consume. Wrapping the masked text in Content keeps the chunk format the chat UI expects.",
+     "Incorrect: AgentResponse is the complete non-streaming result type. Yielding it from a stream gives the UI objects of the wrong type, which is the failure the redaction must avoid.",
+     "Incorrect: yielding a plain string breaks consumers that read update.text or update.contents. A string is fine only as content inside an AgentResponseUpdate."
+    ]
+   }
+  ],
+  "answer": [
+   1,
+   0
+  ],
+  "explanation": "The type of context.result depends on the run mode: an AgentResponse for non-streaming runs and an async generator of AgentResponseUpdate chunks for streaming runs. Middleware that overrides results checks context.stream and replaces the result with the matching type, so one function serves both callers.",
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.8-05",
+  "obj": "2.4.8",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-d",
+  "stem": "Wide World Importers has many Microsoft Agent Framework agents in Python that call an unstable shipping tool. When the tool raises a TimeoutError, every agent must return a consistent, user-friendly fallback message instead of an error. The behavior must be reusable across the solution, and the tool functions must not be modified.\n\nSolution: You add a try/except block inside the shipping tool function that returns the fallback message when a TimeoutError occurs.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Error handling inside each tool duplicates logic and couples tools to user-facing messages. Middleware centralizes the behavior and leaves tool code unchanged, which is why it is the reusable pattern for exception handling.",
+  "rationale": [
+   "Incorrect: a try/except block in the tool would return a fallback, but it modifies the tool function, which the goal forbids, and it does not give a reusable pattern for other tools.",
+   "Correct: the solution does not meet the goal. Handling errors inside a tool is reasonable when only that one tool needs a special fallback and you own its code; here middleware is required."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/exception-handling?pivots=programming-language-python"
+ },
+ {
+  "id": "2.4.8-06",
+  "obj": "2.4.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. hosts a multi-tenant Agent Framework solution. Tools must receive the tenant ID of the authenticated caller for authorization checks. The model must not be able to supply or change the tenant ID, and the solution must work for every agent.\n\nWhat should you do?",
+  "choices": [
+   "Set the tenant ID in context.function_invocation_kwargs in agent middleware",
+   "Add a tenant_id parameter to each tool so that the model supplies the value",
+   "Add the tenant ID of the caller to the instructions of each agent",
+   "Append a message that contains the tenant ID in chat middleware"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Values that the model must not control, such as a tenant ID for authorization, belong in runtime context rather than in tool parameters or prompts. Agent middleware can set context.function_invocation_kwargs, which are forwarded to tools and hidden from the model.",
+  "rationale": [
+   "Correct: function_invocation_kwargs are forwarded to tools at run time and are not part of the tool schema, so the model cannot supply or change the tenant ID, and one agent middleware applies to every agent.",
+   "Incorrect: a tenant_id tool parameter appears in the schema, so the model supplies the value and could change it, for example through prompt injection. Use parameters only for values the model should decide.",
+   "Incorrect: a tenant ID in the instructions is text the model reads; the model still has to pass it to tools and could alter it. Use instructions to guide behavior, never to carry authorization data.",
+   "Incorrect: a message appended in chat middleware is again model-visible text, so the model can ignore or change the value it passes to tools. Use chat middleware to inspect or adjust model requests."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/runtime-context"
+ },
+ {
+  "id": "2.4.8-07",
+  "obj": "2.4.8",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-d",
+  "stem": "Wide World Importers has many Microsoft Agent Framework agents in Python that call an unstable shipping tool. When the tool raises a TimeoutError, every agent must return a consistent, user-friendly fallback message instead of an error. The behavior must be reusable across the solution, and the tool functions must not be modified.\n\nSolution: You set include_detailed_errors to True in the function invocation configuration of each chat client.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "By default, a failed tool returns a generic error result to the model, and include_detailed_errors adds the exception text. Neither controls what the user sees; a consistent fallback needs middleware that overrides the result.",
+  "rationale": [
+   "Incorrect: include_detailed_errors only adds the exception type and message to the tool result that the model sees. The model still phrases its own reply, so the fallback is not consistent, and exception text can leak sensitive data.",
+   "Correct: the solution does not meet the goal. Enable include_detailed_errors only on trusted channels when the model or a developer needs the error details for diagnosis, not to produce a fixed user message."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/tools/function-tools"
+ },
+ {
+  "id": "2.4.8-08",
+  "obj": "2.4.8",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Northwind Traders needs audit logging for every run of its Agent Framework agents. For one troubleshooting session, the support team also wants verbose diagnostic logging that applies to a single request only. The solution must keep the agent logic unchanged.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Register the audit logging middleware at the agent level when you create the agent",
+   "Pass the diagnostic logging middleware in the middleware parameter of agent.run() for the request",
+   "Add audit logging code to each tool function",
+   "Register the diagnostic logging middleware at the agent level and remove it after the session",
+   "Register the diagnostic logging middleware as chat middleware on the chat client"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Agent-level middleware is registered when the agent is created and applies to every run; run-level middleware is passed to agent.run() and applies to that request only. Agent-level middleware wraps run-level middleware, so both can be combined without changing agent logic.",
+  "rationale": [
+   "Correct: middleware registered at the agent level runs for every run of the agent, so audit logging is applied consistently without changing the agent logic.",
+   "Correct: middleware passed in the middleware parameter of agent.run() applies only to that request, which gives verbose diagnostics for the troubleshooting session without affecting other runs.",
+   "Incorrect: logging code inside each tool function changes tool logic and only captures tool calls, not complete runs. Add logging inside a tool only for details that only the tool knows.",
+   "Incorrect: registering diagnostics at the agent level applies them to every request until someone removes them, which is not limited to one request. Use agent-level registration for permanent behavior.",
+   "Incorrect: chat middleware on the chat client applies to every model call that uses the client, so it is not scoped to one request. Use chat middleware to inspect model requests across runs."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/concepts/agents/middleware/"
+ }
+]

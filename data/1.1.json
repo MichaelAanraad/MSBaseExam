@@ -1,0 +1,1262 @@
+[
+ {
+  "id": "1.1.1-01",
+  "obj": "1.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee needs to translate short product descriptions from English to French. Each description is processed in one pass. The task needs no tools, no external data, and no multi-step reasoning. You need to use the lowest level of architectural complexity that reliably meets the requirement.\n\nWhich approach should you use?",
+  "choices": [
+   "a magentic orchestration with a manager agent",
+   "a direct model call with a well-crafted prompt",
+   "a single agent with tools and iteration limits",
+   "a sequential orchestration of specialized agents"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The Azure Architecture Center describes a complexity ladder: direct model call, single agent with tools, then multi-agent orchestration. Choose the lowest level that reliably meets the requirement, because each higher level adds latency, cost, and failure points. Move up only when the task needs tools, dynamic decisions, or separate specialized roles.",
+  "rationale": [
+   "Incorrect: magentic orchestration uses a manager agent that builds and refines a task ledger for open-ended problems with no known plan. A one-pass translation has a trivial, fixed plan, so the manager only adds cost and latency. Use it for complex problems such as incident remediation.",
+   "Correct: the task is a single pass with no tools, no external data, and no multi-step reasoning. A direct model call with a well-crafted prompt meets it at the lowest complexity level; the guidance says not to build an agent when prompt engineering solves the problem.",
+   "Incorrect: a single agent with tools fits requests that vary and need dynamic tool calls or data lookups, with iteration limits to bound the loop. This task needs no tools at all, so the agent loop adds overhead. Use it when one agent must choose tools at run time.",
+   "Incorrect: sequential orchestration chains specialized agents when a task has several dependent stages, such as draft, review, and format. Translation here is one step, so a pipeline adds model calls without benefit. Use it for multi-stage pipelines with clear dependencies."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "1.1.1-02",
+  "obj": "1.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles decomposes its expense-reimbursement process into a Microsoft Agent Framework workflow. One step calculates the reimbursement amount by applying a fixed policy table to the submitted expense lines. The result must be exact and identical for the same input.\n\nWhich type of workflow step should you use for the calculation?",
+  "choices": [
+   "an agent executor that reasons over the policy table",
+   "a deterministic executor that runs regular business logic",
+   "an agent executor that returns structured output against a JSON schema",
+   "a subagent that the calculation agent calls as a function tool"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "When you decompose a process into a workflow, decide per step whether code, a model, or a human owns the outcome. Use deterministic executors where the result must be exact and repeatable, and agent executors where interpreting varied input adds value. Mixing both in one workflow keeps the control flow explicit.",
+  "rationale": [
+   "Incorrect: an agent executor wraps a model that reasons over its input, so the same expense lines can produce different amounts on different runs. Use an agent executor for steps that need judgment, such as interpreting free-text justifications.",
+   "Correct: a deterministic executor runs ordinary business logic, so applying the fixed policy table always yields the exact same amount for the same input. Workflows let you choose code, a model, or a human per step, and a fixed calculation belongs in code.",
+   "Incorrect: structured output forces the response into a JSON schema, which fixes the format but not the values; a model still computes the amount, so exactness is not guaranteed. Use it when a model step must hand typed data to the next step.",
+   "Incorrect: exposing a subagent as a function tool still lets a model produce the result, so the amount can vary between runs. Agents as tools suit delegating open-ended subtasks to a specialist, not exact arithmetic."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/journey/workflows"
+ },
+ {
+  "id": "1.1.1-03",
+  "obj": "1.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank is designing an agent solution for payment processing. Regulations require that one component prepares transactions and a separate component validates them. Data in two different security classifications must be processed in isolated environments. The architects consider a single agent that switches personas between preparer and validator.\n\nWhich architecture should you recommend?",
+  "choices": [
+   "a single agent that uses persona switching and context gating",
+   "a comparative prototype of single-agent and multi-agent designs",
+   "a multi-agent design with a preparer agent and a validator agent",
+   "a single agent whose tools run in isolated environments per classification"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The Cloud Adoption Framework recommends starting with a single agent unless the use case crosses security or compliance boundaries, needs separate teams, or has clearly distinct scaling needs. Regulatory separation of duties and data in different security classifications are such boundaries, so a multi-agent design is justified from the start.",
+  "rationale": [
+   "Incorrect: persona switching lets one agent play preparer and validator by changing prompts, which saves cost when roles share data and permissions. It cannot enforce separation of duties or isolate two security classifications, because one identity and context handle both.",
+   "Incorrect: a comparative prototype is the right move when it is unclear whether one agent is enough. Here regulations already require a separate validator and isolated environments, so the decision is forced and prototyping only delays the design.",
+   "Correct: separate preparer and validator agents give each role its own identity, permissions, and environment, which enforces separation of duties and keeps the two data classifications isolated. The guidance says to start multi-agent when compliance boundaries are crossed.",
+   "Incorrect: running tools in isolated environments separates data access, but the same agent still prepares and validates each transaction, so separation of duties is not met. This design fits when only data isolation is required."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ai-agents/single-agent-multiple-agents"
+ },
+ {
+  "id": "1.1.1-04",
+  "obj": "1.1.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Lucerne Publishing wants an editorial assistant that plans, reviews, and edits articles. The domain is narrow, the solution must reach users quickly, and costs must stay low. A developer proposes three separate agents because the solution has three roles. You need to decide on the architecture by following Microsoft guidance.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Build a single-agent prototype that uses persona prompts for the planner, reviewer, and editor roles.",
+   "Measure the prototype against defined success metrics such as quality, latency, and cost.",
+   "Address the measured gaps by improving prompts, retrieval, and tool policies.",
+   "Split the solution into multiple agents only for the limitations that remain after tuning.",
+   "Define a group chat orchestration for three agents before any prototype exists.",
+   "Deploy both a single-agent and a three-agent design to production, and remove the design that costs more."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Microsoft guidance treats multi-agent as an escalation, not a default. Start with one agent, measure it, improve prompts, retrieval, and policies, and split into multiple agents only when measured limitations remain or when security, compliance, or team boundaries force it. This keeps time-to-market short and cost low.",
+  "rationale": [
+   "Step 1: a single agent with persona prompts is the fastest and cheapest way to cover three roles in a narrow domain, and it creates something you can measure. Clear roles alone do not justify separate agents.",
+   "Step 2: you can only judge whether one agent is enough after you measure it against defined success metrics. The measurement shows which gaps, if any, exist and gives a baseline for later changes.",
+   "Step 3: Microsoft guidance says to first try to close measured gaps with better prompts, retrieval, and policies, because those fixes cost far less than a new architecture and keep the solution simple.",
+   "Step 4: moving to multiple agents comes last and is justified only by limitations that remain after tuning, such as conflicting tool sets, distinct scaling needs, or separate security boundaries.",
+   "Incorrect: designing a three-agent group chat first commits to the most complex option before any evidence exists, which works against speed and low cost. Define an orchestration only after a measured need for multiple agents.",
+   "Incorrect: running two designs in production doubles cost and exposes users to an unproven design; the comparison belongs before release, on defined metrics. Use production comparison only for controlled A/B tests of validated variants."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ai-agents/single-agent-multiple-agents"
+ },
+ {
+  "id": "1.1.1-05",
+  "obj": "1.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys has a customer-service agent that grew to 40 tools across returns, billing, and shipping. Tool selection accuracy has degraded, and the instructions now cover too many roles. The general assistant must keep deciding when and whether to involve a specialist, based on the conversation. You do not need explicit control over the execution order between agents.\n\nWhat should you do?",
+  "choices": [
+   "Split the tools across specialist agents and run them in a handoff orchestration.",
+   "Split the tools across specialist agents and expose each specialist to the outer agent as a function tool.",
+   "Split the tools across specialist agents and run the specialists in a sequential orchestration.",
+   "Split the tools across specialist agents and run them in a concurrent orchestration that aggregates results."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Large tool sets and broad instructions degrade tool selection. Splitting the tools across specialists fixes scope, and the pattern you then choose decides who keeps control: agents as tools keep control with the outer agent, handoff transfers it, and sequential or concurrent orchestration fix which agents run.",
+  "rationale": [
+   "Incorrect: in a handoff orchestration the specialist takes over the conversation, so control leaves the general assistant. That breaks the requirement that the general assistant keeps deciding when and whether to involve a specialist. Use handoff when the specialist should own the rest of the conversation.",
+   "Correct: each specialist gets a narrow scope and its own tools, which restores tool-selection accuracy, and the outer agent calls a specialist as a function tool only when the conversation needs it. No explicit execution order is required, which fits model-driven delegation.",
+   "Incorrect: sequential orchestration runs the specialists in a fixed order on every request, which gives explicit control the scenario does not need and calls specialists that are not relevant. Use it when each stage builds on the output of the previous one.",
+   "Incorrect: concurrent orchestration sends each request to all specialists in parallel and aggregates the results, so the general assistant no longer decides whom to involve and cost rises. Use it when independent perspectives on the same input must be combined."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/journey/agents-as-tools"
+ },
+ {
+  "id": "1.1.1-06",
+  "obj": "1.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Relecloud decomposes its invoice-to-payment process. The steps are known in advance. One step sends a payment, and that side effect must not repeat when a later step fails and is retried. Compliance requires a reviewable control flow. Another step extracts fields from invoices that have widely varying layouts.\n\nWhich two design decisions should you make? Each correct answer presents part of the solution.",
+  "choices": [
+   "Use a deterministic executor with pattern matching for the invoice field extraction step.",
+   "Implement the overall process as a workflow that uses checkpointing.",
+   "Use an agent executor for the invoice field extraction step.",
+   "Implement the payment step as an agent loop in which the model decides when the task is complete.",
+   "Package the full process as an Agent Skill that runs within a single agent turn."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Workflows fit processes whose steps are known in advance: they make the control flow explicit and reviewable, and checkpoints keep side effects from being repeated on retry. Inside a workflow, use agent executors only for steps that need interpretation, such as varied document layouts, and code for the rest.",
+  "rationale": [
+   "Incorrect: a deterministic executor with pattern matching is ideal for documents with a stable, known layout, because it is exact and cheap. The invoices here have widely varying layouts, so fixed patterns would fail often; that is where model reasoning adds value.",
+   "Correct: a workflow gives the reviewable, predefined control flow that compliance requires, and checkpointing lets the workflow resume from the last successful step after a failure, so the payment step is not executed a second time on retry.",
+   "Correct: an agent executor lets a model interpret invoices with widely varying layouts, while the surrounding workflow keeps the overall path predefined. This is the recommended mix of deterministic steps and model steps.",
+   "Incorrect: an agent loop lets the model decide which step runs next and when the task is complete, which removes the reviewable control flow and risks repeating the payment. Use an agent loop for open-ended tasks without a known sequence of steps.",
+   "Incorrect: an Agent Skill packages instructions and resources that one agent applies within a turn, so there are no checkpoints between steps and a failure means redoing everything, including the payment. Use skills to give one agent reusable know-how."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/checkpoints"
+ },
+ {
+  "id": "1.1.2-01",
+  "obj": "1.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute wants one agent to write course descriptions and a second agent to evaluate each description against defined acceptance criteria. If the evaluating agent finds gaps, it returns specific feedback, and the first agent revises the description. The cycle repeats until the description is approved or an iteration limit is reached.\n\nWhich pattern should you use?",
+  "choices": [
+   "a concurrent orchestration",
+   "a handoff orchestration",
+   "a magentic orchestration",
+   "a maker-checker loop"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "A maker-checker loop, also called evaluator-optimizer or reflection, pairs a producing agent with an evaluating agent and repeats until the output meets the criteria. Always bound it with an iteration limit and a fallback. Choose other patterns by structure: parallel independent work is concurrent, routing is handoff, and open-ended planning is magentic.",
+  "rationale": [
+   "Incorrect: concurrent orchestration runs agents independently on the same input and merges their results, with no feedback from one agent to the other. Use it when you want parallel perspectives, such as several compliance checks at once.",
+   "Incorrect: handoff orchestration transfers full control of the conversation to another agent based on context, with no evaluate-and-return cycle. Use it when a request must be routed to the right specialist, such as from triage to billing.",
+   "Incorrect: magentic orchestration uses a manager agent that builds a task ledger for open-ended problems with no known plan. A write-and-review cycle with fixed acceptance criteria is far simpler. Use magentic for problems such as incident remediation.",
+   "Correct: a maker-checker loop has one agent produce output and a second agent evaluate it against acceptance criteria, sending specific feedback back until approval or an iteration limit is reached. That matches the described cycle exactly."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "1.1.2-02",
+  "obj": "1.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Nod Publishers builds a group chat workflow in Python by using GroupChatBuilder in Microsoft Agent Framework. A writer agent and a reviewer agent take turns improving a press release. The number of rounds that is needed varies per request. The conversation must end as soon as the reviewer approves the text, and it must never run more than 10 rounds.\n\nWhat should you do?",
+  "choices": [
+   "Pass a termination_condition function that returns True when the reviewer approves the text or when 10 rounds are reached.",
+   "Pass a termination_condition function that returns True after two assistant messages so that each agent speaks once.",
+   "Build a sequential workflow in which the writer agent runs first and the reviewer agent runs second, once per request.",
+   "Build a concurrent workflow in which the writer agent and the reviewer agent run in parallel and the results are merged."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Agent Framework group chat, an orchestrator selects the next speaker and evaluates a termination condition after each turn. Combine a content-based stop, such as approval, with a hard round limit so that the conversation ends early when possible and never runs unbounded.",
+  "rationale": [
+   "Correct: GroupChatBuilder accepts a termination_condition function that the orchestrator checks after each turn. Returning True on reviewer approval ends the chat early, and returning True at 10 rounds enforces the hard cap, so both requirements are met.",
+   "Incorrect: ending after two assistant messages gives each agent exactly one turn, which ignores approval and cannot support a varying number of rounds. A fixed message count fits only when one draft and one review always suffice.",
+   "Incorrect: a sequential workflow runs the writer and then the reviewer once per request, so there is no second improvement round when the reviewer rejects the text. Use it for a fixed pipeline such as draft, translate, and publish.",
+   "Incorrect: a concurrent workflow runs the writer and reviewer in parallel, so the reviewer never sees the writer's draft and no review loop exists. Use concurrent runs when agents analyze the same input independently."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/group-chat?pivots=programming-language-python"
+ },
+ {
+  "id": "1.1.2-03",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Nod Publishers runs a maker-checker loop in which a checker agent reviews marketing copy. Some runs never finish because the checker keeps rejecting the copy. The solution must still return a result for every run, and humans must stay involved when quality is uncertain.\n\nWhat should you do?",
+  "choices": [
+   "Replace the loop with a concurrent orchestration and select the majority result.",
+   "Set an iteration cap with a fallback that escalates to a human reviewer.",
+   "Set an iteration cap, and return the latest draft from the maker agent when the cap is reached.",
+   "Add a third agent to the loop that decides when the checker is too strict."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Maker-checker loops need an explicit iteration limit to prevent endless refinement, plus a defined fallback when the limit is reached. The fallback should match the risk: escalate to a human when quality must be assured, or return the best draft only when imperfect output is acceptable.",
+  "rationale": [
+   "Incorrect: concurrent orchestration with a majority vote replaces the review loop with parallel independent drafts, so feedback no longer improves the copy and no human is involved. Use it when several independent opinions should be combined.",
+   "Correct: an iteration cap guarantees that every run ends, and escalating to a human reviewer when the cap is reached keeps people involved exactly when quality is uncertain. This is the recommended bounded maker-checker design.",
+   "Incorrect: the cap guarantees a result, but returning the last rejected draft ships copy that the checker did not approve, with no human involved. This fallback fits low-risk content where an imperfect draft is acceptable.",
+   "Incorrect: a third agent that judges the checker adds another model decision and more turns, which can create new loops, and it still involves no human. Microsoft guidance favors small agent groups and explicit limits instead."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "1.1.2-04",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Contoso Suites builds a refund workflow by using Microsoft Agent Framework in Python. RefundAgent calls the issue_refund tool. A person must approve or reject every issue_refund call before the tool runs. The workflow must not pause after ordinary agent responses.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\n@tool(approval_mode=\"always_require\")\ndef issue_refund(order_id: str, amount: float) -> str:\n    return f\"Refund issued for {order_id}\"\n\nrefund_agent = Agent(client=chat_client, name=\"RefundAgent\",\n    instructions=\"You process approved refund requests.\", tools=[issue_refund])\n\nworkflow = [[1]]\n\nasync def process_event_stream(stream):\n    responses = {}\n    async for event in stream:\n        if event.type == [[2]] and event.data.type == \"function_approval_request\":\n            responses[event.request_id] = [[3]]\n    return responses if responses else None\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "SequentialBuilder(participants=[refund_agent]).build()",
+     "SequentialBuilder(participants=[refund_agent]).with_request_info(agents=[\"RefundAgent\"]).build()"
+    ],
+    "why": [
+     "Correct: SequentialBuilder supports tool approval without extra builder configuration. When RefundAgent calls a tool marked always_require, the workflow pauses and emits a request_info event, and it does not pause after ordinary responses.",
+     "Incorrect: with_request_info() pauses after RefundAgent responds so that a person can review or steer the whole response. That adds the pause after ordinary responses that the requirement forbids, and tool approval already works without it."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"request_info\"",
+     "\"output\"",
+     "\"intermediate\""
+    ],
+    "why": [
+     "Correct: a tool that requires approval makes the workflow emit an event of type request_info whose data has type function_approval_request. Your code collects the responses and resumes the workflow with them.",
+     "Incorrect: output events carry the terminal result of the workflow, such as the AgentResponse of the last participant. They never contain approval requests, so the condition would never match and the workflow would stay paused.",
+     "Incorrect: intermediate events carry outputs of participants named in intermediate_output_from, for progress display. Approval requests are not sent as intermediate events, so the handler would never answer them."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "event.data.to_function_approval_response(approved=ask_reviewer(event.data))",
+     "AgentRequestInfoResponse.approve()"
+    ],
+    "why": [
+     "Correct: to_function_approval_response() turns the pending function approval request into an approval or a rejection, so the reviewer's decision determines whether issue_refund runs when the workflow resumes.",
+     "Incorrect: AgentRequestInfoResponse.approve() answers a pause created by with_request_info() for reviewing an agent response. It is not the response type for a function approval request. Use it to approve an agent response in a review step."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Agent Framework offers two human-in-the-loop mechanisms in orchestrations. Tool approval (approval_mode=\"always_require\") pauses only when a sensitive tool is called and expects a function approval response. with_request_info() pauses after selected agents respond so that a person can review or steer the output.",
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/sequential"
+ },
+ {
+  "id": "1.1.2-05",
+  "obj": "1.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Coho Vineyard runs a long-running Microsoft Agent Framework workflow. A mandatory human approval gate can wait several hours for a response. During that time, the hosting process is often restarted for new code deployments. After a restart, the workflow must continue without replaying the agent work that was completed before the gate.\n\nWhat should you do?",
+  "choices": [
+   "Increase the timeout of the request port so that the workflow keeps waiting in memory.",
+   "Store the conversation history in an in-memory agent session and resend it after the restart.",
+   "Restart the workflow from the first executor and reuse cached model responses.",
+   "Enable checkpointing so that pending requests are saved and re-emitted when the workflow is restored."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "A human approval gate can make a workflow wait for hours, so its state must survive process restarts. Agent Framework checkpointing persists executor state, messages, and pending requests and lets the workflow resume from a checkpoint, which avoids repeating expensive or side-effecting steps.",
+  "rationale": [
+   "Incorrect: a longer timeout keeps the request port waiting, but the pending request and workflow state live in process memory and are lost at each restart. A timeout change fits only when the host process runs without interruption.",
+   "Incorrect: an in-memory agent session does not survive a process restart, and conversation history is not workflow state, so the workflow position and pending approval request are lost. Sessions hold the multi-turn context of one agent.",
+   "Incorrect: restarting from the first executor replays the completed agent work, which the requirement excludes, and cached model responses are not a supported recovery mechanism. Restarting fits only short, idempotent workflows.",
+   "Correct: checkpoints store executor state, messages, and pending requests. When you restore the workflow from a checkpoint after a restart, pending approval requests are emitted again, so the reviewer can respond and the workflow continues without redoing earlier work."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/human-in-the-loop"
+ },
+ {
+  "id": "1.1.2-06",
+  "obj": "1.1.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. automates low-risk incident response. Each incident is open-ended, and the remediation steps are not known in advance. Agents have tools that change running systems. The site reliability engineering team must review the plan before agents act, and the automation must not run endless remediation cycles.\n\nWhich three design decisions should you make? Each correct answer presents part of the solution.",
+  "choices": [
+   "Present the documented plan to a human for approval before the agents follow the tasks.",
+   "Configure the manager agent to detect stalls and to limit remediation iterations.",
+   "Use a sequential orchestration that invokes the agents in a fixed order.",
+   "Use a group chat orchestration in which the agents stay in read-only mode.",
+   "Use a magentic orchestration in which a manager agent maintains a task ledger."
+  ],
+  "answer": [
+   0,
+   1,
+   4
+  ],
+  "explanation": "Magentic orchestration is designed for open-ended, complex problems: a manager agent builds a task ledger, delegates to specialists, and adapts the plan as it learns. Because the agents take real actions, add a human plan-approval step and make the manager detect stalls and cap iterations.",
+  "rationale": [
+   "Correct: in magentic orchestration the manager produces a documented plan before the agents act, and presenting that plan for human approval lets the SRE team review it before any tool changes a running system.",
+   "Correct: the manager agent monitors progress, detects stalls, and should enforce iteration limits, which prevents endless remediation cycles when a fix does not work.",
+   "Incorrect: sequential orchestration invokes agents in a fixed order, which requires the steps to be known in advance. The remediation steps here are not known, so a fixed order cannot adapt. Use it for predictable pipelines.",
+   "Incorrect: group chat lets agents discuss a problem, and read-only mode fits analysis-only scenarios. Here the agents must change running systems, so read-only agents cannot remediate, and group chat provides no manager-maintained plan.",
+   "Correct: magentic orchestration fits open-ended problems with no predetermined plan; a manager agent builds and refines a task ledger and assigns tasks to specialized agents as the solution path emerges."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "1.1.3-01",
+  "obj": "1.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders standardizes the structure of agent instructions. One section of an instruction set contains the following text: \"Do not access payroll systems. Focus on customer support questions.\"\n\nWhich instruction component should you classify this text as?",
+  "choices": [
+   "identity and tone",
+   "scope and boundaries",
+   "tool mandates",
+   "citation rules"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The Cloud Adoption Framework structures agent instructions into components such as identity and tone, scope and boundaries, tool mandates, and citation rules. Classifying text by intent keeps instructions reviewable: rules about what is in or out of scope belong in scope and boundaries.",
+  "rationale": [
+   "Incorrect: identity and tone define who the agent is and how it speaks, such as a friendly support voice. The text restricts what the agent does and avoids, not how it sounds. Use identity and tone for persona and style rules.",
+   "Correct: scope and boundaries state what the agent must focus on and what it must not do. Forbidding payroll access and limiting the focus to customer support questions is exactly that kind of rule.",
+   "Incorrect: tool mandates tell the agent when it must use specific tools, for example always searching the knowledge base before answering. The text requires no tool use. Use tool mandates to force grounding or required lookups.",
+   "Incorrect: citation rules tell the agent how to attribute sources, such as citing the document behind each answer. The text says nothing about sources. Use citation rules when answers must be traceable to content."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ai-agents/build-secure-process"
+ },
+ {
+  "id": "1.1.3-02",
+  "obj": "1.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. deploys an autonomous agent that triages incoming events. The agent performs well in a sandbox, and the business wants this agent to take on more responsibilities over time. Each expansion must be based on how the agent performs in production.\n\nWhat should you do?",
+  "choices": [
+   "Add responsibilities in small increments, and expand further only after the agent proves reliable.",
+   "Add all planned responsibilities at once, and require human approval for every action in the first month.",
+   "Add responsibilities in small increments on a fixed monthly schedule, independent of measured results.",
+   "Add all planned responsibilities at once after a second round of sandbox tests that covers each of them."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Autonomy should grow with evidence. Start an autonomous agent with a narrow scope, monitor it in production, and add responsibilities in small increments only after it proves reliable. This limits the impact of failures and makes each expansion reviewable.",
+  "rationale": [
+   "Correct: expanding responsibilities in small steps, and only after the agent proves reliable in production, ties every expansion to observed performance. Microsoft guidance treats an autonomous agent as an evolving project that earns autonomy gradually.",
+   "Incorrect: approval for every action in the first month lowers risk, but adding all responsibilities at once means the expansion is not based on production performance. Blanket approval suits a short pilot of a fixed scope.",
+   "Incorrect: small increments are right, but a fixed monthly schedule expands scope whether or not the agent performed well. A calendar-based rollout fits only low-risk work where measurement is not required.",
+   "Incorrect: more sandbox tests improve confidence before release, but they do not show production behavior, and everything is still added at once. Use broader sandbox testing before the first release, not as the basis for expansion."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/autonomous-agents"
+ },
+ {
+  "id": "1.1.3-03",
+  "obj": "1.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House reviews the persona of its booking agent. Current responses include phrases such as \"I understand how you feel\" and \"I think this is the best trip for you.\" You need the persona to follow the Microsoft principle that agents are differentiated from humans, while keeping a helpful tone.\n\nWhat should you change in the persona guidelines?",
+  "choices": [
+   "Give the agent a human first name and a short biography to build rapport.",
+   "Instruct the agent to mirror the emotional tone of the user in each response.",
+   "Describe the agent as a virtual employee of the reservations team.",
+   "Replace words such as think and feel with words such as process and analyze."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Microsoft guidance says agents should be differentiated from humans: avoid anthropomorphic words such as understand, think, or feel, and keep personality light. First-person pronouns are still fine for a conversational tone. This sets realistic expectations and reduces over-reliance on the agent.",
+  "rationale": [
+   "Incorrect: a human first name and biography make the agent seem like a person, which encourages over-reliance and conflicts with differentiating agents from humans. A plain product name without a human backstory is the safer choice.",
+   "Incorrect: mirroring the user's emotional tone is a human social behavior that strengthens the impression that the agent has feelings. The guidance favors a helpful but neutral tone that acknowledges a problem without claiming emotions.",
+   "Incorrect: describing the agent as a virtual employee blurs the line between the agent and human staff, so users may not realize they deal with an AI system. Presenting it as a tool of the reservations team is clearer.",
+   "Correct: replacing human cognitive words such as think and feel with machine-oriented words such as process and analyze keeps the tone helpful while making clear that the agent generates responses rather than thinking or feeling."
+  ],
+  "ref": "https://learn.microsoft.com/agents/design-guidelines/human-centered-design"
+ },
+ {
+  "id": "1.1.3-04",
+  "obj": "1.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel has a booking agent that answers questions about visas, which are outside its intended domain. When its knowledge source has no answer, the agent invents one. You need the agent to respond with a defined message for topics outside its domain and to state that it does not know when information is missing.\n\nWhich combination of instruction components should you add?",
+  "choices": [
+   "citations and sources and link safety",
+   "clarifying questions and privacy and sensitive data",
+   "out-of-scope handling and fallback when uncertain",
+   "persona and tone and formatting guidelines"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Well-structured instructions explicitly handle the edges of an agent's domain: what to say for out-of-scope topics and what to do when grounding data has no answer. Without these components, agents tend to answer anyway and fabricate content. Agent review checklists include both components.",
+  "rationale": [
+   "Incorrect: citations and link safety make answers traceable and protect users from unsafe links, which helps when users must verify sources. They do not stop the agent from answering visa questions or from inventing answers when the source is empty.",
+   "Incorrect: clarifying questions help with ambiguous requests, and privacy rules protect personal data. Neither defines a response for off-domain topics or what to say when information is missing. Use them for vague input and personal data handling.",
+   "Correct: out-of-scope handling defines the message for topics outside the booking domain, such as visas, and fallback when uncertain tells the agent to say that it does not know when the knowledge source has no answer. Together they meet both requirements.",
+   "Incorrect: persona, tone, and formatting rules control how responses look and sound. They do not limit the domain or prevent fabricated answers. Use them when responses must follow a voice or layout standard."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/kit-agent-review-tool"
+ },
+ {
+  "id": "1.1.3-05",
+  "obj": "1.1.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Wide World Importers deploys an autonomous agent that reacts to incoming email messages and updates purchase orders. An attacker could send email that imitates a supplier. The agent needs to read the inventory database and to write purchase orders. Purchase orders above a defined value must be confirmed by a person. The team reviews several proposed controls.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Validating the authenticity of each triggering email message before the agent acts reduces the risk from email that imitates a supplier.",
+   "Instructing the agent not to write to the inventory database is a sufficient permission boundary when the agent identity has write access to that database.",
+   "Letting the agent decide from its instructions which purchase orders need human confirmation meets the confirmation requirement."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For autonomous agents, Microsoft recommends layered, enforced controls: validate triggers, apply least-privilege permissions, and require human approval for high-impact actions through the platform rather than through instructions alone. Instructions guide behavior; permissions and approval gates enforce it.",
+  "rationale": [
+   "Yes: an autonomous agent acts on triggers without a person in the loop, so a spoofed supplier email could start real changes. Validating the sender and message authenticity before acting is a recommended safeguard for event-triggered agents.",
+   "No: instructions shape behavior but do not enforce it; a prompt injection or model error could still cause writes if the identity has write access. Grant read access to inventory and write access only to purchase orders, so least privilege enforces the boundary.",
+   "No: the confirmation must be enforced by the system, for example an approval gate on submissions above the threshold. If the agent decides from instructions, the control is probabilistic and can be bypassed. Agent judgment is acceptable only for low-risk choices."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/autonomous-agents"
+ },
+ {
+  "id": "1.1.3-06",
+  "obj": "1.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company runs a multi-agent system. The compliance team needs one authoritative reference that maps each agent role to a business objective, prevents functional overlap between agents, and lists prohibited actions. Agent instructions must have an audit trail of changes and must be checked against safety guidelines before deployment.\n\nWhat should you do?",
+  "choices": [
+   "Create an agent charter, store the agent instructions in source control, and run automated validation before deployment.",
+   "Create an agent charter, keep the agent instructions in the Foundry portal, and review them manually each quarter.",
+   "Store the agent instructions in source control, list prohibited actions in each agent's instructions, and run automated validation before deployment.",
+   "Create an agent charter, store the agent instructions in source control, and enforce the safety guidelines through content filters at run time."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Treat agent instructions as configuration code: define responsibilities and prohibited actions in an agent charter, keep the instructions in source control for traceability, and validate them automatically in the release pipeline. Runtime controls such as content filters complement pre-deployment checks but do not replace them.",
+  "rationale": [
+   "Correct: an agent charter is one authoritative document that maps roles to objectives, prevents overlap, and lists prohibited actions. Source control gives the instructions an audit trail of changes, and automated validation checks them against safety guidelines before deployment.",
+   "Incorrect: the charter covers the reference requirement, but editing instructions in the portal gives no controlled change history, and a quarterly manual review does not check each change before deployment. Portal editing suits early prototyping.",
+   "Incorrect: source control and automated validation cover auditing and checks, but prohibited actions spread across each agent's instructions are not one authoritative reference and do not prevent overlap between agents. A charter is still needed.",
+   "Incorrect: the charter and source control are right, but content filters act on inputs and outputs at run time; they do not validate instructions against safety guidelines before deployment. Use content filters as an additional runtime safety layer."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ai-agents/build-secure-process"
+ },
+ {
+  "id": "1.1.4-01",
+  "obj": "1.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research connects a Foundry Agent Service agent to a remote Model Context Protocol (MCP) server. Each user must access the underlying service with their own account so that the permissions of that user apply to every tool call.\n\nWhich authentication method should you use?",
+  "choices": [
+   "key-based authentication",
+   "Microsoft Entra agent identity",
+   "Microsoft Entra project managed identity",
+   "OAuth identity passthrough"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "MCP authentication options differ in whose identity reaches the service. Key-based authentication, the project managed identity, and an agent identity all present a shared identity, while OAuth identity passthrough runs each call with the token of the user who signed in and consented. Microsoft Entra client user delegation is the other per-user option, for supported tools that reuse the Entra user context of the incoming agent request instead of a separate sign-in.",
+  "rationale": [
+   "Incorrect: key-based authentication sends one shared API key or token for every call, so the service sees the same identity for all users and per-user permissions cannot apply. Use it for services that support only keys and where shared access is acceptable.",
+   "Incorrect: a Microsoft Entra agent identity authenticates the agent itself, so every user's call runs with the agent's permissions. Use it when the agent needs its own auditable identity and users can share the same access.",
+   "Incorrect: the project managed identity is shared by the agents in the project and carries no user context, so the service cannot apply each user's permissions. Use it for shared, secretless access when per-agent auditing is not needed.",
+   "Correct: OAuth identity passthrough has each user sign in and consent, and the agent then calls the MCP server with that user's token, so the underlying service applies the permissions of the specific user on every tool call."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/mcp-authentication"
+ },
+ {
+  "id": "1.1.4-02",
+  "obj": "1.1.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "A. Datum Corporation connects a Foundry Agent Service prompt agent to a GitHub MCP server that exposes many tools. The agent must be able to use only the get_issue and list_issues tools. A project connection named github-conn already stores the authentication details. You use the Azure AI Projects SDK for Python inside a with AIProjectClient(...) as project block, and you must confirm that the agent can call the tools.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `pip install \"azure-ai-projects>=2.0.0\" azure-identity`.",
+   "Create `tool = MCPTool(server_label=\"github\", server_url=\"https://api.githubcopilot.com/mcp\", allowed_tools=[\"get_issue\", \"list_issues\"], require_approval=\"never\", project_connection_id=\"github-conn\")`.",
+   "Call `agent = project.agents.create_version(agent_name=\"Agent1\", definition=PromptAgentDefinition(model=\"gpt-5-mini\", instructions=\"Use the GitHub tools\", tools=[tool]))`.",
+   "Call `project.get_openai_client(agent_name=agent.name)` and send a request with `responses.create(input=\"List my open issues\")`.",
+   "Call `project.toolboxes.create_version(name=\"github-toolbox\", tools=[...])` and attach the toolbox endpoint to the agent.",
+   "Call `project.agents.delete_version(agent_name=agent.name, agent_version=agent.version)`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "An MCP tool definition controls tool scope (allowed_tools), approval behavior (require_approval), and authentication (project_connection_id). With the Azure AI Projects SDK you create the tool object, include it in a prompt agent version, and then call the agent through the OpenAI-compatible client to verify it.",
+  "rationale": [
+   "Step 1: the azure-ai-projects package provides AIProjectClient, MCPTool, and PromptAgentDefinition, and azure-identity provides DefaultAzureCredential. None of the later steps can import these classes until the packages are installed.",
+   "Step 2: the MCPTool object defines the server, the allowed_tools allow list that limits the agent to get_issue and list_issues, and the project connection that supplies authentication. It must exist before it can be passed to the agent definition.",
+   "Step 3: create_version registers a prompt agent version whose definition includes the MCP tool. The agent must exist before you can open a client that is bound to its name.",
+   "Step 4: get_openai_client(agent_name=...) returns a client for the new agent, and responses.create sends a request that makes the agent call the allowed MCP tools, which confirms the configuration.",
+   "Incorrect: a toolbox bundles tools behind one MCP-compatible endpoint that many agents can reuse. It is a different way to supply the tools and is not needed when one agent attaches the MCP server directly with allowed_tools.",
+   "Incorrect: delete_version removes an agent version, which the samples use as clean-up after a test. Running it here would delete the agent you just configured, and it is not part of configuring or confirming tool access."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol"
+ },
+ {
+  "id": "1.1.4-03",
+  "obj": "1.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a Foundry agent that calls an MCP server backed by Azure Storage. All users of the agent can share one identity. The security team does not want to manage secrets, and it requires that this agent be audited separately from the other agents in the same project.\n\nWhich authentication method should you use?",
+  "choices": [
+   "key-based authentication stored in a project connection",
+   "Microsoft Entra project managed identity",
+   "a Microsoft Entra agent identity that is distinct to this agent",
+   "OAuth identity passthrough"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Choose MCP authentication by two questions: whose permissions apply (shared or per user), and who must be auditable. A dedicated agent identity gives secretless, per-agent auditing with shared permissions, the project managed identity is shared by the project, and OAuth passthrough works per user.",
+  "rationale": [
+   "Incorrect: key-based authentication stores a shared key in a project connection, which still means creating, storing, and rotating a secret, and every agent that uses the connection looks the same in audit logs. Use it when the service supports only keys.",
+   "Incorrect: the project managed identity avoids secrets, but it is shared across the agents in the project, so calls from this agent cannot be audited separately. Use it when shared, secretless access is enough.",
+   "Correct: a distinct Microsoft Entra agent identity avoids secrets and gives this agent its own principal, so role assignments and audit logs separate its calls from other agents. All users sharing one identity is acceptable here.",
+   "Incorrect: OAuth identity passthrough runs calls as each signed-in user, which is needed for per-user permissions. Here all users can share one identity, and passthrough would audit users rather than the agent."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/agent-identity"
+ },
+ {
+  "id": "1.1.4-04",
+  "obj": "1.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. adds a workspace-private Microsoft Fabric data agent endpoint as a tool in a Foundry toolbox that several agents use. Each employee must see only the Fabric data that the employee is permitted to see. The endpoint accepts only an audience-specific Microsoft Entra access token that represents the signed-in user. Employees must not be sent through a separate OAuth authorization flow that uses its own app registration.\n\nWhich authType should you set on the project connection for the tool?",
+  "choices": [
+   "user-entra-token",
+   "oauth2",
+   "agentic-identity",
+   "project-managed-identity"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For tools in a toolbox, the authType of the project connection decides which identity reaches the downstream service. user-entra-token passes the signed-in user's audience-specific Entra token, oauth2 runs a separate OAuth flow, and agentic-identity or project-managed-identity use non-user identities.",
+  "rationale": [
+   "Correct: user-entra-token makes Foundry send an audience-specific Microsoft Entra token that represents the signed-in user, which the Fabric data agent uses to apply each employee's permissions, without a separate OAuth flow or app registration.",
+   "Incorrect: oauth2 also carries the user, but it sends users through an OAuth authorization and consent flow that is based on its own app registration, which the requirement forbids. Use it for services that need delegated OAuth with their own app.",
+   "Incorrect: agentic-identity authenticates with the agent's own identity, so Fabric sees the agent instead of the employee and per-user data permissions are lost. Use it when the agent needs its own auditable access.",
+   "Incorrect: project-managed-identity uses the shared identity of the project, which carries no user context, so every employee would see the same data. Use it for shared service access without per-user filtering."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/tool-authentication"
+ },
+ {
+  "id": "1.1.4-05",
+  "obj": "1.1.4",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "case": "C-a",
+  "stem": "You need to configure the MCP tool that IntakeAgent uses to connect to ClaimsMCP.\n\nHow should you complete the tool definition? To answer, select the appropriate options in the answer area.\n\n```json\n{\n  \"type\": \"mcp\",\n  \"server_label\": \"claims\",\n  \"server_url\": \"https://claimsmcp.example.com/mcp\",\n  \"project_connection_id\": \"claims-conn\",\n  \"allowed_tools\": [[1]],\n  \"require_approval\": [[2]]\n}\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[\"get_claim\", \"list_claims\", \"update_claim_status\"]",
+     "[\"get_claim\", \"list_claims\", \"update_claim_status\", \"issue_payment\"]",
+     "[\"get_claim\", \"list_claims\"]"
+    ],
+    "why": [
+     "Correct: IntakeAgent must read claims and update claim status, and allowed_tools limits it to exactly those tools, so issue_payment and purge_claim on ClaimsMCP are not available to it.",
+     "Incorrect: adding issue_payment gives IntakeAgent the payment tool that the case study reserves for SettlementAgent, which breaks the requirement that IntakeAgent never issues payments. A broader list fits an agent that owns payments.",
+     "Incorrect: a read-only allow list is the safest option, but IntakeAgent must also update claim status, so it could not do part of its job. Use a read-only list for agents that only answer claim status questions."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "{\"never\": [\"get_claim\", \"list_claims\"]}",
+     "\"always\"",
+     "\"never\"",
+     "{\"always\": [\"get_claim\", \"list_claims\"]}"
+    ],
+    "why": [
+     "Correct: the never list exempts the two read tools from approval, and the other allowed tool, update_claim_status, still requires approval, so an adjuster approves each status update with the fewest possible prompts.",
+     "Incorrect: always requires approval for every call, including the read tools, which creates the approval prompts that the technical requirements forbid for reading claim data. Use it for first tests or servers where every tool is high risk.",
+     "Incorrect: never disables approval for all tools, so status updates would run without adjuster approval. Use it only for servers whose allowed tools are all read-only or low risk.",
+     "Incorrect: an always list requires approval only for the listed tools, so this setting prompts for the read tools and lets update_claim_status run unapproved, the reverse of the requirement. List the write tools instead."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "An MCP tool definition sets tool scope with allowed_tools and approval behavior with require_approval. require_approval accepts always, never, or an object that lists the tools that never or always need approval. Allow only the tools an agent needs, and require approval for tools that write data.",
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol"
+ },
+ {
+  "id": "1.1.4-06",
+  "obj": "1.1.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Contoso Pharmaceuticals connects a Foundry agent to a custom MCP server that is protected by Microsoft Entra ID. The agent must call the server on behalf of each signed-in user. The users only consume the agent and do not build agents. When the team configures managed OAuth with a Microsoft audience, tool calls fail with the error \"Cannot pass Microsoft token to untrusted MCP endpoint.\"\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Configure custom OAuth with your own Microsoft Entra app registration that uses an audience you control.",
+   "Assign the users the Foundry Agent Consumer role on the project.",
+   "Assign the users the Foundry Owner role on the project.",
+   "Switch to key-based authentication that uses a shared personal access token.",
+   "Keep managed OAuth and change the audience to Microsoft Graph."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "To call a custom MCP server on behalf of users with Microsoft Entra ID, configure OAuth identity passthrough with your own app registration and an audience you control, because tokens for known Microsoft audiences are not passed to untrusted endpoints. Give users only the role they need to consume the agent.",
+  "rationale": [
+   "Correct: Agent Service blocks tokens with a known Microsoft audience from being sent to untrusted custom MCP endpoints. Custom OAuth with your own app registration and an audience you control produces a token that the service passes to your server.",
+   "Correct: users who only consume the agent need the least-privileged role that lets them use agents with OAuth passthrough, which is Foundry Agent Consumer. It grants use of agents without build or management permissions.",
+   "Incorrect: Foundry Owner grants full control of the project, including creating agents and assigning access, which violates least privilege for users who only consume the agent. Assign it to project administrators.",
+   "Incorrect: a shared personal access token removes the user context, so the server cannot act on behalf of each user, and it adds a secret to manage. Use key-based access only when shared credentials are acceptable.",
+   "Incorrect: Microsoft Graph is also a known Microsoft audience, so the token is still blocked for an untrusted MCP endpoint. Managed OAuth with a Microsoft audience fits Microsoft-hosted servers that trust that audience."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/mcp-authentication"
+ },
+ {
+  "id": "1.1.5-01",
+  "obj": "1.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Blue Yonder Airlines needs its agent to request baggage-claim decisions from an agent that a partner company builds and hosts on a different platform. The partner agent uses its own reasoning and tools, which must stay opaque to Blue Yonder Airlines.\n\nWhich protocol should you use?",
+  "choices": [
+   "OpenAPI over HTTP",
+   "Agent2Agent (A2A)",
+   "Model Context Protocol (MCP)",
+   "Activity Protocol"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Pick the protocol by who orchestrates. MCP keeps orchestration with the calling host and exposes tools and data. A2A lets a remote agent use its own reasoning and tools, which stay opaque, and supports discovery through agent cards and a task model, so it fits agents owned by other organizations.",
+  "rationale": [
+   "Incorrect: OpenAPI over HTTP calls a defined API operation, which works when the partner exposes deterministic endpoints. It has no agent card, task model, or multi-turn context for delegating a decision to an agent that reasons for itself.",
+   "Correct: A2A is designed for cross-platform collaboration between agents that are opaque to each other. The partner agent keeps its reasoning and tools hidden and exchanges tasks and results through a published contract.",
+   "Incorrect: with MCP, the calling host orchestrates which tools to invoke and synthesizes the result, so the partner's capabilities would be exposed as tools. That suits tool and data access you control, not delegating to an opaque agent.",
+   "Incorrect: Activity Protocol is how Copilot Studio integrates agents built with the Microsoft 365 Agents SDK. The partner agent runs on a different platform, so it does not fit. Use it for Agents SDK agents."
+  ],
+  "ref": "https://learn.microsoft.com/agents/architecture/multi-agent-patterns"
+ },
+ {
+  "id": "1.1.5-02",
+  "obj": "1.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. wants its agents to read data from and perform actions in an internal inventory system. A single orchestrating agent must keep control over which operations to invoke, how to filter the results, and how to synthesize the final answer. The access must support enterprise authentication and auditing.\n\nWhich protocol should you use?",
+  "choices": [
+   "Agent2Agent (A2A)",
+   "Model Context Protocol (MCP)",
+   "Activity Protocol",
+   "a custom HTTP connector"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "MCP gives a single orchestrator strong control: it discovers tools, decides which to call, filters results, and synthesizes the answer, while the platform handles authentication and auditing. Use A2A when another agent should do its own reasoning, and Activity Protocol for Microsoft 365 Agents SDK agents.",
+  "rationale": [
+   "Incorrect: A2A delegates work to another agent that uses its own reasoning, so the orchestrator loses control over which operations run and how results are filtered. Use A2A when the remote agent should remain opaque.",
+   "Correct: MCP exposes the inventory system's data and actions as tools that the orchestrating agent selects, invokes, filters, and synthesizes itself. Microsoft recommends MCP for tool and data access with enterprise-grade authentication and auditing.",
+   "Incorrect: Activity Protocol connects agents built with the Microsoft 365 Agents SDK to Copilot Studio and channels. It is not a protocol for exposing system operations as tools. Use it to integrate Agents SDK agents.",
+   "Incorrect: a custom HTTP connector can call the system, but it gives no standard tool discovery or invocation model and pushes authentication and auditing into custom code. Use connectors when the target is a plain API without MCP support."
+  ],
+  "ref": "https://learn.microsoft.com/agents/architecture/multi-agent-patterns"
+ },
+ {
+  "id": "1.1.5-03",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance has a Copilot Studio agent. The agent must orchestrate with three other components: an agent built by using the Microsoft 365 Agents SDK, an external agent that implements the A2A protocol, and a set of MCP tools. You need the correct integration approach for the Microsoft 365 Agents SDK agent.\n\nWhich integration approach should you use for that agent?",
+  "choices": [
+   "an A2A connection",
+   "an MCP server",
+   "a custom connector",
+   "Activity Protocol"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Copilot Studio offers one integration approach per component type: custom connectors for APIs, MCP servers for MCP tools, A2A connections for agents that implement A2A, and the Activity Protocol for agents built with the Microsoft 365 Agents SDK. Mixed solutions use several approaches at once.",
+  "rationale": [
+   "Incorrect: an A2A connection is the right approach for the external agent that implements the A2A protocol, not for the Microsoft 365 Agents SDK agent. Choose the integration approach per component.",
+   "Incorrect: an MCP server exposes tools and resources to an agent. It is the right approach for the set of MCP tools in the scenario, not for connecting another agent that was built with the Agents SDK.",
+   "Incorrect: a custom connector wraps a regular REST API or HTTP service for Copilot Studio. Use it for APIs that are not agents; the Agents SDK agent has a dedicated integration path.",
+   "Correct: Copilot Studio integrates agents built with the Microsoft 365 Agents SDK through the Activity Protocol, which carries conversation activities between the agents. A2A and MCP cover the other two components."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/add-agent-agent-to-agent"
+ },
+ {
+  "id": "1.1.5-04",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders hosts an A2A-compatible agent outside Foundry Agent Service. The company registers the agent in Foundry Control Plane and selects A2A as the protocol so that other agents can discover its capabilities through the generated proxy URL.\n\nWhich artifact should the agent publish so that Foundry can discover its capabilities?",
+  "choices": [
+   "an MCP tools/list response at /runtime/webhooks/mcp",
+   "a toolbox version that is promoted to default",
+   "an agent card at /.well-known/agent-card.json",
+   "an OpenAPI specification at /openapi.json"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A2A discovery is based on agent cards: each agent publishes a JSON description of its capabilities at a well-known path. Foundry Control Plane reads the agent card when you register an external A2A agent and exposes the agent to other agents through a generated proxy URL.",
+  "rationale": [
+   "Incorrect: tools/list is the MCP method that returns a server's tools, and /runtime/webhooks/mcp is the MCP endpoint path of Azure Functions. It describes MCP tools, not A2A agent capabilities. Use it when you register an MCP server.",
+   "Incorrect: a toolbox version bundles tools behind one MCP-compatible endpoint, and promoting it to default changes which version consumers get. It does not describe an A2A agent's capabilities. Use toolboxes to share curated tools.",
+   "Correct: an A2A agent publishes an agent card, a JSON document that describes its skills, endpoint, and capabilities, at /.well-known/agent-card.json. Foundry reads it to discover what the agent can do.",
+   "Incorrect: an OpenAPI specification describes REST operations for the OpenAPI tool, which turns API calls into tools. It is not the A2A discovery artifact. Use it when you expose an HTTP API as a tool."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent"
+ },
+ {
+  "id": "1.1.5-05",
+  "obj": "1.1.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. exposes a Foundry prompt agent as an A2A endpoint. A partner integrates by using an A2A client that uses the HTTP+JSON transport. The client sends no A2A-Version header and no a2a-version query string. Requests succeed, but a compliance review finds that the integration runs on a preview protocol version. The integration must run on the generally available A2A protocol version.\n\nWhat should the partner do?",
+  "choices": [
+   "Switch the client to JSONRPC and resolve the agent card from agentCard/v1.0.",
+   "Keep HTTP+JSON and add the A2A-Version: 1.0 header to every request.",
+   "Keep HTTP+JSON and resolve the agent card from /.well-known/agent-card.json.",
+   "Switch the client to gRPC and append ?a2a-version=1.0 to every request."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Foundry's A2A endpoint supports several protocol versions. Without an explicit version, clients get the preview version, and the generally available version 1.0 accepts only the JSONRPC transport. Select the version explicitly, for example through the versioned agent card, and use a transport that version supports.",
+  "rationale": [
+   "Correct: without a version selector, Foundry serves the preview A2A version. Version 1.0, the generally available version, supports only JSONRPC on the incoming endpoint, and resolving the agent card from agentCard/v1.0 makes the SDK negotiate version 1.0.",
+   "Incorrect: the A2A-Version header does select version 1.0, but version 1.0 does not support the HTTP+JSON transport on Foundry's endpoint, so the client must also switch transport. The header works for JSONRPC clients.",
+   "Incorrect: Foundry publishes agent cards at version-specific paths, so resolving the default card does not select version 1.0, and an HTTP+JSON client stays on the preview version. The well-known path fits agents that publish one version.",
+   "Incorrect: Foundry's incoming A2A endpoint does not support gRPC, so switching to gRPC breaks the integration even with a version query string. gRPC is an option only on A2A servers that implement it."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/enable-agent-to-agent-endpoint"
+ },
+ {
+  "id": "1.1.5-06",
+  "obj": "1.1.5",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Litware, Inc. designs communication for a multi-agent solution. Internal subagents run on the same platform as the orchestrator. Agents need authenticated access to tools and data, including Microsoft 365 service tools. A partner agent runs on a different runtime and processes long-running tasks that the orchestrator must track.\n\nWhich approach should you use for each communication path? To answer, drag the appropriate approaches to the correct paths. Each approach may be used once, more than once, or not at all.",
+  "choices": [
+   "Agent2Agent (A2A) with agent cards and the task model",
+   "Model Context Protocol (MCP)",
+   "Platform-native orchestration",
+   "Activity Protocol",
+   "A custom HTTP connector"
+  ],
+  "targets": [
+   "Orchestrator to the partner agent on a different runtime",
+   "Orchestrator to the internal subagents",
+   "Agents to tools and data, including Microsoft 365 service tools"
+  ],
+  "answer": [
+   0,
+   2,
+   1
+  ],
+  "explanation": "Microsoft recommends a layered protocol choice: platform-native orchestration for internal subagents, MCP for authenticated tool and data access, and A2A with agent cards and the task model for agents on other runtimes. Using A2A or custom code everywhere adds complexity and loses task tracking.",
+  "rationale": [
+   "The partner agent runs on another runtime and handles long-running tasks, so A2A fits: the agent card supports capability discovery, and the task and artifact model lets the orchestrator track task status across runtimes.",
+   "The internal subagents share the orchestrator's platform, so Microsoft recommends platform-native orchestration to keep the flow simple; a cross-platform protocol would add overhead without benefit.",
+   "MCP is the recommended way to surface tools and data, including Microsoft 365 service tools, with enterprise-grade security, authentication, and auditing, while the calling agent keeps control of which tools run."
+  ],
+  "notes": [
+   "A2A is the open agent-to-agent protocol for cross-platform agents. Agents publish agent cards, and tasks, artifacts, and contextIds track multi-turn, long-running work. Use it when the other agent is opaque or runs on another runtime.",
+   "MCP is the open protocol that exposes tools, data, and resources to an agent host, which decides which tools to call. Use it for secure, audited tool and data access, including Microsoft 365 service tools.",
+   "Platform-native orchestration uses the framework's own constructs, such as workflows or agents as tools, to coordinate agents on the same platform. Use it for internal subagent flows to keep complexity low.",
+   "Activity Protocol carries conversation activities for agents built with the Microsoft 365 Agents SDK, for example between Copilot Studio and an Agents SDK agent. Use it for that integration, not for tool access or partner runtimes.",
+   "A custom HTTP connector calls one specific API through custom code. It lacks standard capability discovery and a task model for long-running work. Use it when the target is a plain API with no MCP or A2A support."
+  ],
+  "ref": "https://learn.microsoft.com/agents/architecture/multi-agent-patterns"
+ },
+ {
+  "id": "1.1.6-01",
+  "obj": "1.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "First Up Consultants launches a research agent. Research shows that new users trust every answer, although the agent sometimes makes mistakes. You need to apply a Human-AI eXperience (HAX) guideline to the first-run experience to address this behavior.\n\nWhich guideline should you apply?",
+  "choices": [
+   "Encourage granular feedback during regular interaction.",
+   "Provide global controls over what the system monitors.",
+   "Make clear what the system can do.",
+   "Make clear how well the system can do what it can do."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The HAX guidelines are grouped by phase: initially, during interaction, when wrong, and over time. The two initial guidelines set expectations about capabilities and about reliability. Over-trust in outputs is a reliability expectation problem, so the reliability guideline applies.",
+  "rationale": [
+   "Incorrect: encouraging granular feedback lets users rate outputs during regular use, which improves the system over time. It does not set expectations about mistakes at first run. Use it in the over-time phase to collect preferences.",
+   "Incorrect: global controls let users customize what the system monitors and how it behaves over time. They do not tell new users how often the agent is wrong, so over-trust remains. Use them for user control of monitoring and behavior.",
+   "Incorrect: making clear what the system can do describes capabilities at first run, but it does not tell users how reliable the answers are, which is the cause of over-trust here. Use it when users do not know which tasks the agent supports.",
+   "Correct: making clear how well the system can do what it can do tells users how often the agent may make mistakes. Setting that expectation in the first-run experience directly targets new users who trust every answer."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/copilot/isv/ux-guidance"
+ },
+ {
+  "id": "1.1.6-02",
+  "obj": "1.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Southridge Video exposes a customer-facing support agent on its public website. Legal counsel requires that people know they are interacting with an AI system and not with a human employee.\n\nWhich mitigation should you implement?",
+  "choices": [
+   "Limit the length of inputs and outputs.",
+   "Highlight potential inaccuracies in outputs.",
+   "Disclose the role of AI in the interaction.",
+   "Cite references and information sources."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Responsible AI guidance for Foundry models lists user-experience mitigations that each target a specific risk: AI disclosure for transparency about the conversation partner, flagging inaccuracies for reliability, citations for provenance, and input and output limits for misuse.",
+  "rationale": [
+   "Incorrect: limiting input and output length reduces misuse and the room for harmful or off-topic content. It does not tell people that they are talking to an AI system. Use it as a misuse mitigation for open-ended inputs.",
+   "Incorrect: highlighting potential inaccuracies warns users to verify content, which addresses reliability. It does not state that the conversation partner is an AI. Use it when measured accuracy gaps exist, for example with numbers.",
+   "Correct: disclosing the role of AI tells people up front that they are interacting with an AI system and not with a human employee, which is exactly what legal counsel requires and a baseline transparency mitigation for public agents.",
+   "Incorrect: citing references shows where information comes from, which supports verification of content. It does not disclose that an AI produced the response. Use it for grounded answers that users may need to check."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/responsible-ai/openai/overview"
+ },
+ {
+  "id": "1.1.6-03",
+  "obj": "1.1.6",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Graphic Design Institute reviews the user experience of its content agent and defines four requirements.\n\nWhich Human-AI eXperience (HAX) guideline should you apply to each requirement? To answer, drag the appropriate guidelines to the correct requirements. Each guideline may be used once, more than once, or not at all.",
+  "choices": [
+   "Support efficient correction.",
+   "Make clear why the system did what it did.",
+   "Provide global controls.",
+   "Encourage granular feedback.",
+   "Make clear how well the system can do what it can do.",
+   "Match relevant social norms."
+  ],
+  "targets": [
+   "Users can regenerate or edit a wrong output without restarting the workflow.",
+   "Users can see why the agent produced a specific output.",
+   "Users can stop the agent from tracking their editing history in all future sessions.",
+   "Users can rate individual outputs while they work."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Microsoft groups the HAX guidelines by when they apply: initially (capabilities and reliability), during interaction (social norms and bias), when wrong (efficient correction and explanations), and over time (granular feedback and global controls). Map each requirement to its phase first, then to the specific guideline.",
+  "rationale": [
+   "Regenerating or editing a wrong output without starting over is the when-wrong guideline support efficient correction: make it easy to edit, refine, or recover when the AI system is wrong.",
+   "Seeing why the agent produced an output is the when-wrong guideline make clear why the system did what it did, which gives users access to an explanation of the system's behavior.",
+   "Stopping tracking for all future sessions is a global setting about what the system monitors, which is the over-time guideline provide global controls.",
+   "Rating individual outputs during regular work is the over-time guideline encourage granular feedback, which collects user preferences while they interact with the system."
+  ],
+  "notes": [
+   "Support efficient correction is a when-wrong guideline: make editing, refining, and recovery easy. Use it when users must fix or regenerate outputs quickly.",
+   "Make clear why the system did what it did is a when-wrong guideline: give access to an explanation of the behavior. Use it when users must understand or audit a specific output.",
+   "Provide global controls is an over-time guideline: let users customize globally what the system monitors and how it behaves. Use it for settings that persist across sessions.",
+   "Encourage granular feedback is an over-time guideline: let users signal preferences during regular interaction, such as rating outputs. Use it to collect quality signals continuously.",
+   "Make clear how well the system can do what it can do is an initial guideline: tell users how often the system may be wrong. Use it in the first-run experience to prevent over-trust.",
+   "Match relevant social norms is a during-interaction guideline: deliver the experience the way users expect in their social and cultural context. Use it when tone or etiquette matters."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/copilot/isv/ux-guidance"
+ },
+ {
+  "id": "1.1.6-04",
+  "obj": "1.1.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Best For You Organics Company runs an automated order-exception workflow that uses several agents. Users must be able to understand which steps led to a decision and where the information came from. User research shows that long explanations in every response overwhelm users.\n\nWhat should you do?",
+  "choices": [
+   "Log each agent step, and show sources and confidence in tooltips.",
+   "Display the full output of each intermediate agent in the main response.",
+   "Log each agent step for auditors, and show only the final decision to users.",
+   "Add the full list of sources and a confidence score below each decision."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Transparency in multi-agent systems has two layers: per-step logging so that decisions are traceable, and user-facing explanations of sources and confidence. The Well-Architected Framework recommends minimally disruptive, user-initiated UI, such as tooltips or expandable details, so users get explanations without being overwhelmed.",
+  "rationale": [
+   "Correct: logging each agent step makes the path to a decision traceable, and showing sources and confidence in tooltips lets users inspect them on demand without long text in every response, which matches the user research.",
+   "Incorrect: showing every intermediate agent output in the main response is transparent, but it is exactly the kind of long explanation that overwhelms users. Detailed traces fit a debugging or auditor view.",
+   "Incorrect: logging for auditors keeps the steps traceable, but users see only the final decision and cannot understand the steps or where the information came from. This fits back-office processes where users need no explanation.",
+   "Incorrect: a source list and confidence score below each decision is transparent, but it adds detail to every response, which the research shows overwhelms users. Inline detail fits expert users who always review sources."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/ai/responsible-ai"
+ },
+ {
+  "id": "1.1.6-05",
+  "obj": "1.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "case": "C-a",
+  "stem": "You need to redesign the human oversight for SettlementAgent to meet the business requirements.\n\nWhat should you do?",
+  "choices": [
+   "Keep approval for every agent response, and add more reviewers to the team during peak periods.",
+   "Remove approvals for payments, and rely on content filters to block harmful outputs from the agent.",
+   "Let the agent settle ambiguous claims automatically, and notify the reviewers after each payment.",
+   "Require approval only for hard-to-reverse payments, and route ambiguous claims to a person with full context."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Human-in-the-loop design should be risk-based. Require approval for consequential, hard-to-reverse actions, route ambiguous or sensitive cases to a person who has full context, and let routine low-risk actions run automatically. Blanket approval creates bottlenecks and reviewer fatigue.",
+  "rationale": [
+   "Incorrect: keeping approval for every response preserves oversight, but the pilot showed that blanket approval makes adjusters the bottleneck, and adding reviewers only treats the symptom. Blanket approval fits a short pilot with low volume.",
+   "Incorrect: content filters detect harmful content such as hate or violence; they do not judge whether a payment is correct. Removing approval for payments that cannot be recalled removes human control where mistakes are most costly.",
+   "Incorrect: notifying adjusters after payment means ambiguous claims, which the case study says an adjuster must decide, are settled without human judgment, and a sent payment cannot be recalled. Notification after the fact fits reversible, low-risk actions.",
+   "Correct: approval only for payments, which cannot be recalled, keeps human control where mistakes are costly, and routing ambiguous claims to an adjuster with the full claim history gives reviewers the context for fast decisions, which removes the bottleneck."
+  ],
+  "ref": "https://learn.microsoft.com/agents/center-of-excellence/responsible-ai"
+ },
+ {
+  "id": "1.1.6-06",
+  "obj": "1.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research evaluates its report-generation agent. Measurements show that the agent has lower accuracy with numbers than with text. Users often copy figures from the reports into financial documents without checking them. You need a user-experience mitigation that targets this specific risk.\n\nWhich mitigation should you implement?",
+  "choices": [
+   "Disclose that the reports are partly or fully generated by AI.",
+   "Cite the documents that the agent used as references for each report.",
+   "Mark numbers in generated outputs, and prompt users to verify them.",
+   "Limit the length of the generated reports to reduce the number of figures."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Responsible AI mitigations should follow measurement: identify where the system is weak, then design a user-experience mitigation that targets that weakness. When accuracy is lower for one type of content, such as numbers, highlight that content and prompt verification instead of relying on generic disclaimers.",
+  "rationale": [
+   "Incorrect: disclosing that reports are AI generated is a general transparency mitigation. It does not target the measured weakness with numbers, so users still copy unchecked figures. Use disclosure whenever users might not know AI is involved.",
+   "Incorrect: citing reference documents shows provenance for the report as a whole, which helps verification of text claims. It does not flag the figures that measurements show are less accurate. Use citations for grounded content.",
+   "Correct: marking numbers and prompting users to verify them targets the specific measured risk, lower accuracy with numbers, at the moment users copy figures into financial documents. Responsible AI guidance gives this as an example mitigation.",
+   "Incorrect: shorter reports contain fewer figures, but every remaining figure is just as unreliable and users still copy it unchecked. Length limits fit misuse or cost concerns, not the accuracy of specific content."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/responsible-ai/openai/overview"
+ },
+ {
+  "id": "1.1.7-01",
+  "obj": "1.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery builds a Foundry agent that must remember durable preferences of each customer, such as preferred language and dietary restrictions. The agent retrieves this information near the beginning of each conversation.\n\nWhich memory type should you use?",
+  "choices": [
+   "conversation history in the session",
+   "user profile memory",
+   "chat summary memory",
+   "procedural memory"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Foundry Agent Service memory distinguishes user profile memory (durable facts and preferences), chat summary memory (condensed earlier conversations), and procedural memory (how-to knowledge for recurring tasks). Session history covers only the current conversation. Retrieve profile memories at conversation start and contextual memories per turn.",
+  "rationale": [
+   "Incorrect: conversation history in a session is short-term memory that keeps context within one conversation. It does not carry preferences into new conversations. Use session history for context within the current chat.",
+   "Correct: user profile memory in Foundry Agent Service stores durable user facts such as preferred language and dietary restrictions, and Microsoft recommends retrieving these static memories near the beginning of each conversation.",
+   "Incorrect: chat summary memory stores condensed summaries of earlier conversations so the agent can continue a topic later. It is retrieved by relevance to the current messages, not as stable profile data. Use it to resume earlier discussions.",
+   "Incorrect: procedural memory stores reusable procedures that help the agent perform recurring tasks better over time. It does not store customer preferences. Use it when the agent should learn how to do something."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory"
+ },
+ {
+  "id": "1.1.7-02",
+  "obj": "1.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "City Power & Light builds an agent for employees. The agent must answer questions by using curated organizational HR policies that the HR department maintains. The agent must also remember facts that it learns about each employee over time.\n\nWhich component should you use to ground the agent on the HR policies?",
+  "choices": [
+   "a Foundry IQ knowledge base",
+   "a memory store",
+   "the file search tool for user-uploaded documents",
+   "a chat history provider"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Separate knowledge from memory: curated organizational content belongs in a knowledge source such as a Foundry IQ knowledge base, learned user context belongs in memory, and files that users provide belong in file search. Mixing them leads to stale, unauthorized, or inconsistent content in answers.",
+  "rationale": [
+   "Correct: a Foundry IQ knowledge base grounds the agent on curated organizational content, such as HR policies that the HR department maintains, so answers come from the authoritative source.",
+   "Incorrect: a memory store holds context the agent learns over time, such as facts about each employee, which covers the second requirement. It is not a curated source for HR policies. Use memory for user-specific learned context.",
+   "Incorrect: the file search tool for user-uploaded documents searches files that users provide during an interaction. HR maintains the policies centrally, so they are not user uploads. Use file search when users supply their own documents.",
+   "Incorrect: a chat history provider stores and reloads the messages of conversations. It contains no curated policy content. Use it to persist conversation history across sessions."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory"
+ },
+ {
+  "id": "1.1.7-03",
+  "obj": "1.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel plans two agents. A payment agent processes card transactions in a single session. A travel-advisor agent personalizes recommendations based on the history of each customer. The company wants to minimize data retention risk while keeping the value of personalization.\n\nWhich memory design should you use?",
+  "choices": [
+   "persistent long-term memory for both agents",
+   "ephemeral session-based memory for both agents",
+   "persistent long-term memory for the payment agent, and ephemeral session-based memory for the advisor agent",
+   "ephemeral session-based memory for the payment agent, and persistent long-term memory for the advisor agent"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Match memory persistence to the agent's function. Transactional agents that finish their work within one session should use ephemeral, session-based memory to minimize retention risk, while advisory agents that personalize over time justify long-term memory with retention controls.",
+  "rationale": [
+   "Incorrect: long-term memory for the advisor supports personalization, but long-term memory for the payment agent keeps card transaction data beyond the session with no business value, which increases data retention risk.",
+   "Incorrect: ephemeral memory for the payment agent limits retention, but the advisor loses the customer history it needs to personalize recommendations. Session-only memory fits agents whose tasks end with the session.",
+   "Incorrect: this reverses the recommendation: the transactional payment agent retains data it does not need, and the advisor loses the history that personalization depends on, so risk rises and value falls at the same time.",
+   "Correct: the payment agent completes each task within a session, so ephemeral memory limits data retention, and the advisor uses persistent long-term memory to personalize recommendations based on each customer's history."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ai-agents/build-secure-process"
+ },
+ {
+  "id": "1.1.7-04",
+  "obj": "1.1.7",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Wide World Importers uses the memory store APIs of Foundry Agent Service directly from Python instead of the memory search tool. An AIProjectClient named project_client exists. You must first load memories from recorded past conversations of each customer, and then use them in new conversations. New conversations must use stored user profile memories from the first turn and the most relevant memories for each response. The memories of each customer must stay separate.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Call `project_client.beta.memory_stores.create(name=\"store1\", definition=MemoryStoreDefaultDefinition(chat_model=chat_model, embedding_model=embedding_model, options=options))`.",
+   "Call `project_client.beta.memory_stores.begin_update_memories(name=\"store1\", scope=customer_id, items=conversation_items)`.",
+   "At conversation start, call `project_client.beta.memory_stores.search_memories(name=\"store1\", scope=customer_id)` without items.",
+   "For each turn, call `project_client.beta.memory_stores.search_memories(name=\"store1\", scope=customer_id, items=latest_messages)`.",
+   "Call `project_client.beta.memory_stores.begin_update_memories(name=\"store1\", scope=\"all_customers\", items=conversation_items)`.",
+   "At the end of each conversation, call `project_client.beta.memory_stores.delete_scope(name=\"store1\", scope=customer_id)`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The memory store API separates writing from reading. You write with begin_update_memories() under a per-user scope, and you read in two ways: search with only a scope to get static profile memories at conversation start, and search with the latest messages to get contextual memories on each turn.",
+  "rationale": [
+   "Step 1: memory_stores.create() creates the memory store with the chat and embedding models that it uses to extract and search memories. No memories can be added or searched before the store exists.",
+   "Step 2: begin_update_memories() extracts memories from the recorded conversation items and stores them under the customer's scope, which keeps each customer's memories separate. It returns a poller for the update operation.",
+   "Step 3: search_memories() with only a scope, without items, returns the static user profile memories of that customer, which you inject at the start of each conversation so that they apply from the first turn.",
+   "Step 4: search_memories() with items set to the latest messages returns the contextual memories, profile and chat summary, that are most relevant to the current turn, so each response uses the best matching memories.",
+   "Incorrect: one shared scope for all customers mixes everyone's memories, so facts about one customer could surface for another, which breaks the separation requirement. A shared scope fits non-personal knowledge that every user may see.",
+   "Incorrect: delete_scope() removes all memories of a scope, which is how you handle a user's data deletion request. Running it after every conversation erases the memories that later conversations must use."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "1.1.7-05",
+  "obj": "1.1.7",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys builds a Microsoft Agent Framework group chat with three participants that use different agent types. To share context, a developer passes one AgentSession instance to every participant. During testing, the participants process the conversation history inconsistently.\n\nWhat should you do?",
+  "choices": [
+   "Persist the shared session to Azure Cosmos DB, and reload it before each turn.",
+   "Give each participant its own session, and let the orchestrator broadcast each response so that every session stays synchronized.",
+   "Keep one shared session, and add a lock so that participants update it one at a time.",
+   "Keep the history in the orchestrator, and send each participant the current message without prior history."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Context sharing across agents of different types should not rely on one shared session object, because each agent type can store and interpret history in its own way. Agent Framework group chat gives each participant its own session and has the orchestrator broadcast responses to keep the sessions aligned.",
+  "rationale": [
+   "Incorrect: persisting the shared session to Azure Cosmos DB adds durability, but every participant still reads one session object that different agent types interpret differently, so the inconsistency remains. Persistence helps with restarts, not mixed agent types.",
+   "Correct: in group chat each participant keeps its own session, because agent types can implement AgentSession differently. The orchestrator broadcasts each response to the other participants so that every session stays synchronized.",
+   "Incorrect: a lock serializes updates, which fixes concurrent write conflicts, but the problem is that agent types implement sessions differently, not concurrency. Locks fit shared state that identical components edit.",
+   "Incorrect: sending only the current message removes the inconsistency but also removes shared context, so participants cannot build on earlier contributions. Stateless calls fit independent tasks, not collaborative group chat."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/workflows/orchestrations/group-chat"
+ },
+ {
+  "id": "1.1.7-06",
+  "obj": "1.1.7",
+  "difficulty": "hard",
+  "type": "yesno",
+  "case": "C-a",
+  "stem": "You are designing the memory configuration for IntakeAgent.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Setting scope to \"{{$userId}}\" in the memory search tool definition of IntakeAgent keeps the memories of each policyholder separate.",
+   "You can meet the 90-day retention requirement by calling memory_stores.update() on MemStore1 with a default_ttl_seconds value.",
+   "Calling memory_stores.delete_memory() with a memory ID removes one item that a policyholder chooses to delete."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Foundry Agent Service memory is partitioned by scope; map the scope to the end user, for example with {{$userId}} and the x-memory-user-id header when an app calls the agent on behalf of users. Set retention with default_ttl_seconds when you create the store, and expose item-level edit and delete actions to users.",
+  "rationale": [
+   "Yes: with scope set to {{$userId}}, the system resolves the scope from the x-memory-user-id header on each call, so each policyholder gets an isolated memory collection even though the portal uses one service identity. Without the header, the caller's Entra identity would be used.",
+   "No: in the latest preview, default options such as the TTL can be set only when a memory store is created, and MemStore1 was created without one. You must recreate the store with default_ttl_seconds set; update() changes properties such as the description.",
+   "Yes: delete_memory() removes a single memory item by its ID, which supports letting policyholders remove individual things the agent remembers. Use delete_scope() instead when all memories of one policyholder must be erased."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/memory-usage"
+ },
+ {
+  "id": "1.1.8-01",
+  "obj": "1.1.8",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-a",
+  "stem": "Southridge Video deploys model router in Microsoft Foundry for an editing agent that receives a mix of simple and complex prompts. Many prompts contain long transcripts that exceed the context window of the smallest model in the routing pool. The solution must keep cost-aware routing and automatic failover.\n\nSolution: You change the routing mode of the deployment to Quality.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Routing modes trade cost against quality: Balanced is the default, Cost favors cheaper models, and Quality selects the highest-quality model regardless of cost. A routing mode does not change which models are in the pool, so it cannot fix a context-window limit; a model subset does that.",
+  "rationale": [
+   "Incorrect: Quality mode selects the highest-quality model for each prompt regardless of cost, which removes the cost-aware routing that the goal requires, and it does not remove the smaller models from the pool, so the context limit remains.",
+   "Correct: the solution does not meet the goal. Quality mode is right for critical-path reasoning where cost does not matter; a context-length problem is solved with a model subset that includes only models that support the required context length."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/concepts/model-router-how-it-works"
+ },
+ {
+  "id": "1.1.8-02",
+  "obj": "1.1.8",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Relecloud builds a retrieval step for its multi-agent solution. The step must convert document chunks and user queries into vectors for semantic similarity search. You must provision a new Microsoft Foundry resource named ai1 in a new resource group named rg1, deploy the model that the step needs, and confirm that the deployment is ready. The step calls the model endpoint of the resource directly, so no Foundry project is required.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az group create --name rg1 --location eastus`.",
+   "Run `az cognitiveservices account create --name ai1 --resource-group rg1 --kind AIServices --sku S0 --location eastus --custom-domain ai1`.",
+   "Run `az cognitiveservices account deployment create --name ai1 --resource-group rg1 --deployment-name embed1 --model-name text-embedding-ada-002 --model-version \"2\" --model-format OpenAI --sku-capacity 1 --sku-name Standard`.",
+   "Run `az cognitiveservices account deployment show --name ai1 --resource-group rg1 --deployment-name embed1 --query properties.provisioningState --output tsv`.",
+   "Run `az cognitiveservices account deployment create --name ai1 --resource-group rg1 --deployment-name chat1 --model-name gpt-5-mini --model-version \"2025-08-07\" --model-format OpenAI --sku-capacity 10 --sku-name GlobalStandard`.",
+   "Run `az cognitiveservices account project create --name ai1 --resource-group rg1 --project-name proj1 --location eastus`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Model selection starts with task fit: chat, reasoning, embedding, or multimodal. Turning text into vectors for semantic search needs an embedding model. With the Azure CLI you create the resource group, then the AIServices resource, then the model deployment, and you check provisioningState before you use it.",
+  "rationale": [
+   "Step 1: the Foundry resource must be created inside a resource group, so az group create has to run before any resource can be created in rg1.",
+   "Step 2: az cognitiveservices account create with --kind AIServices creates the Foundry resource that hosts model deployments. The resource must exist before you can deploy a model to it.",
+   "Step 3: the step converts text into vectors, which is the task of an embedding model, so you deploy text-embedding-ada-002 to the resource with az cognitiveservices account deployment create.",
+   "Step 4: az cognitiveservices account deployment show with --query properties.provisioningState returns Succeeded when the deployment is ready, which confirms that the retrieval step can call it.",
+   "Incorrect: gpt-5-mini is a chat model that generates text; it does not produce vector embeddings for similarity search. Deploy a chat model for steps that generate or reason over text, such as answer synthesis.",
+   "Incorrect: az cognitiveservices account project create adds a Foundry project, which you need for agents, evaluations, and team access, and it requires a resource created with project management enabled. The step calls the model endpoint directly, so no project is needed."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/tutorials/quickstart-create-foundry-resources"
+ },
+ {
+  "id": "1.1.8-03",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-a",
+  "stem": "Southridge Video deploys model router in Microsoft Foundry for an editing agent that receives a mix of simple and complex prompts. Many prompts contain long transcripts that exceed the context window of the smallest model in the routing pool. The solution must keep cost-aware routing and automatic failover.\n\nSolution: You configure a model subset that contains two or more models that support the required context length.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The usable context window of model router is limited by the smallest model in its pool. Microsoft recommends a model subset that includes only models that support the required context length, with at least two models so that routing optimization and automatic failover keep working.",
+  "rationale": [
+   "Correct: a model subset that includes only models that support the required context length raises the context floor, and with at least two models the router still optimizes cost per prompt and can fail over automatically.",
+   "Incorrect: the solution does meet the goal. No would be right if the subset contained only one model, because a single-model subset disables routing optimization and automatic failover."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/concepts/model-router-how-it-works"
+ },
+ {
+  "id": "1.1.8-04",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House uses GPT-5 for a triage agent. Responses must be as fast as possible, and the agent must make parallel tool calls to check lift status and weather at the same time. Triage requires only light reasoning.\n\nWhich reasoning_effort value should you use?",
+  "choices": [
+   "minimal",
+   "low",
+   "medium",
+   "high"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "reasoning_effort trades speed and cost against reasoning depth. Choose the lowest value that still supports the features the task needs: for GPT-5, minimal is the fastest but does not support parallel tool calls, so low is the lowest value for agents that must call tools in parallel.",
+  "rationale": [
+   "Incorrect: minimal is the fastest reasoning_effort value, but it does not support parallel tool calls, which the triage agent needs to check lift status and weather at the same time. Use minimal for the fastest answers that need no parallel tools.",
+   "Correct: low gives light reasoning with fast responses and supports parallel tool calls, so it is the fastest value that meets both requirements of the triage agent.",
+   "Incorrect: medium supports parallel tool calls, but it spends more reasoning time than light triage needs, so responses are slower than necessary. Use medium for tasks that need moderate planning.",
+   "Incorrect: high gives the deepest reasoning and is the slowest and most expensive value. Use it for complex planning, analysis, or hard coding tasks, not for light triage where speed matters most."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/foundry-models/how-to/model-choice-guide"
+ },
+ {
+  "id": "1.1.8-05",
+  "obj": "1.1.8",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-a",
+  "stem": "Southridge Video deploys model router in Microsoft Foundry for an editing agent that receives a mix of simple and complex prompts. Many prompts contain long transcripts that exceed the context window of the smallest model in the routing pool. The solution must keep cost-aware routing and automatic failover.\n\nSolution: You configure a model subset that contains one model that supports the required context length.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A model subset is the way to raise the context floor of model router, but Microsoft says to select at least two models. A single-model subset turns the router into an expensive passthrough without routing optimization, cost savings, or failover; when one fixed model is needed, use a direct deployment.",
+  "rationale": [
+   "Incorrect: the single model supports the long transcripts, but a single-model subset disables routing optimization and automatic failover, so the router becomes an expensive passthrough. Yes would be right only if failover and cost-aware routing were not required.",
+   "Correct: the solution does not meet the goal. With only one model in the subset, cost-aware routing and automatic failover are lost. A direct deployment, not model router, fits when one model must serve every request."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/openai/concepts/model-router-how-it-works"
+ },
+ {
+  "id": "1.1.8-06",
+  "obj": "1.1.8",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wingtip Toys equips field technicians with an assistant agent. Technicians often work offline at customer sites. Customer data must stay on the device during inspections. Inspection tasks are short and focused, and results are synchronized to the cloud for central processing when a connection is available.\n\nWhich model approach should you use?",
+  "choices": [
+   "a model router in a Data Zone Standard deployment",
+   "a fine-tuned GPT model in a serverless cloud deployment",
+   "a small language model on the device, with periodic cloud processing",
+   "a frontier reasoning model in a Global Standard deployment"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Model choice depends on where the model can run, not only on its capability. Small language models on the device support offline work and keep data local, and hybrid designs sync results to the cloud later. Cloud deployment types such as Data Zone Standard or Global Standard control where cloud processing happens, not offline use.",
+  "rationale": [
+   "Incorrect: a Data Zone Standard deployment keeps processing within a geographic data zone, which helps with data residency. It still requires connectivity and sends customer data to the cloud, so it fails the offline and on-device requirements.",
+   "Incorrect: fine-tuning adapts a model to a domain, which helps with specialized wording or formats, but a serverless cloud deployment still needs a connection and sends data off the device during inspections.",
+   "Correct: a small language model on the device works offline, keeps customer data on the device during inspections, and suits short, focused tasks, while periodic cloud processing handles central synchronization when a connection is available.",
+   "Incorrect: a frontier reasoning model in a Global Standard deployment offers the highest capability, but it runs in the cloud, needs connectivity, and moves data off the device. Use it for complex reasoning when connectivity and data movement are acceptable."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/choose-ai-model"
+ }
+]

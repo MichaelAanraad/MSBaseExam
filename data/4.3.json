@@ -1,0 +1,1164 @@
+[
+ {
+  "id": "4.3.1-01",
+  "obj": "4.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs a multi-agent customer service solution on Azure. For the next release, the company wants two identical pools of infrastructure that can each handle the full production load. The new version must be tested internally in the idle pool before production traffic is moved to it.\n\nWhich release methodology should you use?",
+  "choices": [
+   "Blue-green deployment",
+   "Canary deployment",
+   "Rolling in-place update",
+   "Feature flag dark launch"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Release methodologies trade cost against risk. Blue-green runs two full environments and switches all traffic at once after testing the idle one; canary moves traffic gradually to the new version on shared infrastructure; rolling updates replace instances in place. Pick blue-green when you can pay for duplicate capacity and want instant switch and switch-back.",
+  "rationale": [
+   "Correct: blue-green keeps two identical environments that can each carry full production load. The new version is tested in the idle environment, and production traffic is then switched to it, which matches every requirement.",
+   "Incorrect: canary exposes the new version to a small share of real users first and does not require a second full-capacity pool, so the release is tested by production traffic instead of internally. Use it when you cannot fund duplicate capacity.",
+   "Incorrect: a rolling in-place update replaces instances of the same pool one batch at a time, so there is no idle pool to test before users reach it. Use it when you want to avoid duplicate infrastructure and accept mixed versions during rollout.",
+   "Incorrect: a feature flag dark launch deploys code with the feature switched off in the same environment and enables it later. It controls features, not infrastructure pools. Use it to separate deployment from feature exposure."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/safe-deployments"
+ },
+ {
+  "id": "4.3.1-02",
+  "obj": "4.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys plans to release a new version of its trip-planning agent. The company wants a small group of internal users to receive the new version first. After that group runs the version without issues, the version must be released to successively larger groups until every user runs it.\n\nWhich release methodology should you use?",
+  "choices": [
+   "Canary deployment",
+   "Development-Test-Acceptance-Production (DTAP) promotion",
+   "Recreate deployment",
+   "Big-bang release"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Safe deployment practice exposes a change progressively: start with a small, low-risk group such as internal users, observe health for a bake time, then widen to larger rings until everyone has it. That is the canary or ring-based pattern; DTAP describes environments, not how users are exposed in production.",
+  "rationale": [
+   "Correct: canary deployment releases to a small group first and then to successively larger groups after each group runs the version without issues, which is exactly the progressive exposure described.",
+   "Incorrect: DTAP promotes a release through development, test, acceptance, and production environments. It says nothing about exposing production users in stages. Use it to structure pre-production validation.",
+   "Incorrect: a recreate deployment stops the old version and starts the new one for everyone, which causes downtime and exposes all users at once. Use it only when two versions cannot run side by side.",
+   "Incorrect: a big-bang release switches every user to the new version at the same time, so a defect hits everyone. Use it only for low-risk changes or when versions cannot coexist."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/safe-deployments"
+ },
+ {
+  "id": "4.3.1-03",
+  "obj": "4.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank uses a Development-Test-Acceptance-Production (DTAP) release methodology for its multi-agent loan advisory solution. Business owners must validate the new release in a production-like environment before it is released to customers.\n\nWhich environment should the business owners use for this validation?",
+  "choices": [
+   "Acceptance",
+   "Development",
+   "Test",
+   "Production"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In DTAP, each environment has a purpose: Development for building, Test for automated and technical testing, Acceptance for business validation in a production-like environment, and Production for customers. Matching the activity to the environment is what makes promotions meaningful.",
+  "rationale": [
+   "Correct: Acceptance is the production-like environment in which business owners validate a release before it reaches customers, which is exactly the validation described.",
+   "Incorrect: Development is where engineers build and run unit tests, and it is not production-like. Use it for fast iteration on new code.",
+   "Incorrect: Test runs automated regression and integration tests by the delivery team, not business acceptance. Use it to validate technical quality before acceptance.",
+   "Incorrect: Production serves customers, so validating there means customers see an unaccepted release. Use production rings, such as canary, only after acceptance."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/considerations/environments"
+ },
+ {
+  "id": "4.3.1-04",
+  "obj": "4.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud is launching a brand-new multi-agent travel assistant. The solution has no existing users. Relecloud wants real-world validation before the assistant is available to every customer.\n\nWhich approach should you recommend?",
+  "choices": [
+   "Deploy to production and expose the solution to internal users or a pilot group first",
+   "Keep the solution in the test environment and run synthetic load tests that simulate customer traffic",
+   "Keep the solution in the acceptance environment until every planned feature is complete",
+   "Use a blue-green deployment and switch every customer to the new environment after internal testing"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For a brand-new solution with no users, there is nothing to switch from, so the safest real-world validation is to deploy to production and expose it to internal users or a pilot group first, then widen. Synthetic tests and staging environments catch technical issues but not real user behavior.",
+  "rationale": [
+   "Correct: deploying to production but exposing only internal users or a pilot group gives real-world validation with limited blast radius, and the audience grows once the assistant proves itself.",
+   "Incorrect: synthetic load tests in the test environment validate performance and scale but not real user behavior. Use them alongside a pilot to check capacity before the launch.",
+   "Incorrect: holding the solution in acceptance until every feature is done delays feedback and still provides no real-world usage. Use acceptance for business sign-off before the pilot.",
+   "Incorrect: blue-green switches all customers at once from one environment to another, and a new solution has no existing environment to switch from. Use it for releases of an existing production system."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/cloud-native/plan-cloud-native-solutions"
+ },
+ {
+  "id": "4.3.1-05",
+  "obj": "4.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. deploys a multi-agent claims solution through development, test, and production environments. Compliance requires a clear management and identity boundary between production and lower environments. Load tests in the test environment must not consume production quotas.\n\nWhich isolation approach should you use for the environments?",
+  "choices": [
+   "Place each environment in a dedicated Azure subscription",
+   "Place each environment in a separate resource group in one subscription",
+   "Create a separate management group per environment with different Azure Policy assignments",
+   "Use a separate Microsoft Foundry project per environment in one Foundry resource"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Subscriptions are the strongest practical boundary in Azure for management, identity (RBAC), billing, and quotas. Placing each environment in its own subscription keeps production access separate and stops test load from consuming production quota, which resource groups or projects in one subscription cannot do.",
+  "rationale": [
+   "Correct: separate subscriptions give each environment its own management and RBAC boundary and its own quotas and limits, so test load cannot consume production quota and production access stays separate.",
+   "Incorrect: resource groups in one subscription share the subscription's quotas, so test load can still exhaust production capacity, and the identity boundary is weaker. Use resource groups to organize resources within one environment.",
+   "Incorrect: management groups apply policy and RBAC to subscriptions beneath them but do not isolate quotas by themselves; environments still need separate subscriptions underneath. Use them to govern many subscriptions.",
+   "Incorrect: projects in one Foundry resource share the resource's model quota and management boundary, so load tests could affect production. Use separate projects for teams or workloads within one environment."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/mission-critical/mission-critical-deployment-testing"
+ },
+ {
+  "id": "4.3.1-06",
+  "obj": "4.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lamna Healthcare Company runs a business-critical triage agent solution that requires zero-downtime releases. If a release fails, traffic must be moved back to the previous version immediately, without redeploying anything. Lamna accepts the cost of running duplicate infrastructure during a release.\n\nWhich release methodology should you choose?",
+  "choices": [
+   "Blue-green deployment",
+   "Canary deployment with feature flags",
+   "Rolling in-place update",
+   "Recreate deployment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Blue-green deployment keeps the previous version running in a parallel environment, so rollback is a traffic switch, not a redeployment. That gives zero-downtime releases and instant rollback at the cost of temporarily duplicated infrastructure.",
+  "rationale": [
+   "Correct: blue-green keeps the previous version fully running in the other environment, so a failed release is rolled back immediately by moving traffic back, without redeploying anything. The accepted duplicate cost is the price.",
+   "Incorrect: canary with feature flags limits exposure and can turn features off quickly, but the old version is not kept at full capacity for an immediate full switch-back. Use it when duplicate infrastructure is too expensive.",
+   "Incorrect: a rolling in-place update replaces instances, so rolling back means deploying the previous version again, which the requirement forbids. Use it when duplicate capacity is not available.",
+   "Incorrect: a recreate deployment stops the old version before starting the new one, which causes downtime and needs a redeployment to roll back. Use it only when versions cannot run side by side."
+  ],
+  "ref": "https://learn.microsoft.com/power-platform/well-architected/operational-excellence/mitigation-strategy"
+ },
+ {
+  "id": "4.3.1-07",
+  "obj": "4.3.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "case": "C-g",
+  "stem": "You need to start the canary release of version v42 of the SkyHelp orchestrator. The solution must meet the business requirements.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```bash\naz containerapp revision set-mode --name skyhelp-api --resource-group rg-skyhelp --mode [[1]]\naz containerapp ingress traffic set --name skyhelp-api --resource-group rg-skyhelp --revision-weight skyhelp-api--v41=100\naz containerapp update --name skyhelp-api --resource-group rg-skyhelp --image $IMAGE_V42 --revision-suffix v42\naz containerapp ingress traffic set --name skyhelp-api --resource-group rg-skyhelp [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "multiple",
+     "single"
+    ],
+    "why": [
+     "Correct: traffic splitting needs several active revisions, which only multiple revision mode allows. Without it, v41 and v42 cannot serve traffic at the same time.",
+     "Incorrect: single revision mode keeps only one active revision and sends all traffic to the latest one, so v42 would replace v41 instead of receiving 10 percent. Use it when each deployment should fully replace the previous one."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "--revision-weight skyhelp-api--v41=90 skyhelp-api--v42=10",
+     "--label-weight v41=90 v42=10",
+     "--revision-weight skyhelp-api--v42=10"
+    ],
+    "why": [
+     "Correct: revision weights by revision name send 90 percent to the current revision and 10 percent to v42 on the app URL, and the weights add up to 100 as required.",
+     "Incorrect: --label-weight routes by revision label, and the case states that the revisions have no labels, so there is nothing to match. Use label weights in blue-green setups after you add labels such as blue and green.",
+     "Incorrect: the combined weight of all traffic rules must equal 100 percent, so a single 10 percent rule is incomplete and the remaining 90 percent is not assigned to v41. List every revision that should receive traffic."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Azure Container Apps canary releases combine multiple revision mode with traffic weights. Pin the current revision to 100 percent before you create the new revision, so the new revision starts with no traffic, then shift a small share with az containerapp ingress traffic set. Weights can target revision names (--revision-weight) or labels (--label-weight) and must total 100.",
+  "ref": "https://learn.microsoft.com/azure/container-apps/traffic-splitting"
+ },
+ {
+  "id": "4.3.1-08",
+  "obj": "4.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House wants to validate a new booking agent version with a small percentage of real production users and compare error rates with the current version. The budget does not allow a second pool of infrastructure that can handle the full production load.\n\nWhich release methodology should you choose?",
+  "choices": [
+   "Canary deployment",
+   "Blue-green deployment",
+   "Recreate deployment",
+   "DTAP promotion through an acceptance environment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Canary deployment routes a small share of real production traffic to the new version on the existing infrastructure, so you can compare error rates between versions without paying for a full second environment. Blue-green gives instant switch-back but needs duplicate full capacity.",
+  "rationale": [
+   "Correct: a canary sends a small percentage of production users to the new version alongside the current one, so error rates can be compared, and it does not need a second full-capacity pool, which fits the budget.",
+   "Incorrect: blue-green needs a second environment that can carry the full production load, which the budget rules out, and it usually switches all traffic at once. Use it when duplicate capacity is affordable and instant rollback matters.",
+   "Incorrect: a recreate deployment replaces the old version for all users at once, so there is no small group and no side-by-side comparison. Use it when versions cannot coexist.",
+   "Incorrect: DTAP promotion validates in acceptance before production, but acceptance users are not real production users. Use it for business sign-off before the canary starts."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/safe-deployments"
+ },
+ {
+  "id": "4.3.1-09",
+  "obj": "4.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wide World Importers uses a canary methodology to release a new version of its procurement agents to users in Europe, Asia, and North America. Each rollout group must be observed long enough that users in different regions and with different tasks use the agents in their normal capacity.\n\nWhich bake time configuration should you use between rollout groups?",
+  "choices": [
+   "Measure bake times in hours or days and increase the bake time for each successive rollout group",
+   "Use a fixed bake time of 10 minutes for every rollout group",
+   "Use the same bake time of several hours for every rollout group",
+   "Use the longest bake time for the first group and shorten it for each later group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Bake time is the observation period between rollout stages. Safe deployment guidance measures it in hours or days so the change sees normal usage across time zones and tasks, and it grows as groups get larger and more critical, because later groups carry more risk.",
+  "rationale": [
+   "Correct: hours or days let users in Europe, Asia, and North America use the agents in their normal capacity, and increasing the bake time for each larger group matches the growing risk of later rings.",
+   "Incorrect: ten minutes catches only crash-level failures and misses issues that appear during a full business day in each region. Short bake times suit the earliest internal ring of a low-risk change.",
+   "Incorrect: a fixed bake time of several hours can be long enough for one region but treats the largest, most critical groups the same as the first group. Use a constant bake time only for simple, low-risk rollouts.",
+   "Incorrect: shortening the bake time for later groups exposes the largest audiences with the least observation, which is the opposite of safe deployment practice. The first ring can be short because it is small."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/safe-deployments"
+ },
+ {
+  "id": "4.3.1-10",
+  "obj": "4.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fourth Coffee hosts its ordering agents in a container app named app1 that uses single revision mode. The current revision app1--fb699ef serves all traffic. You need to implement a blue-green release of commit c6f1515: testers must reach the new revision through a stable label URL before it receives production traffic, and production traffic must then switch to the new revision without redeploying the app.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az containerapp revision set-mode --name app1 --resource-group rg1 --mode multiple`.",
+   "Run `az containerapp ingress traffic set --name app1 --resource-group rg1 --revision-weight app1--fb699ef=100`.",
+   "Run `az containerapp update --name app1 --resource-group rg1 --image $REGISTRY/app1:c6f1515 --revision-suffix c6f1515`.",
+   "Run `az containerapp revision label add --name app1 --resource-group rg1 --label green --revision app1--c6f1515`, and let testers use the green label URL.",
+   "Run `az containerapp ingress traffic set --name app1 --resource-group rg1 --revision-weight app1--fb699ef=0 app1--c6f1515=100`.",
+   "Run `az containerapp revision set-mode --name app1 --resource-group rg1 --mode single`.",
+   "Run `az containerapp env create --name env-green --resource-group rg1 --location westeurope` for the green revision."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Blue-green in Azure Container Apps uses revisions instead of separate environments: multiple revision mode keeps both revisions active, a fixed traffic weight keeps production on the stable revision, a label gives the new revision its own URL for testing, and a weight change switches production. Rollback is the same weight change in reverse.",
+  "rationale": [
+   "Step 1: traffic weights and several active revisions require multiple revision mode. In single mode, the new revision would replace the current one immediately.",
+   "Step 2: by default, all traffic goes to the latest revision. Fixing 100 percent on app1--fb699ef before the update ensures that the new revision starts with no production traffic.",
+   "Step 3: the update creates the green revision with a deterministic name from the revision suffix, while the fixed weight keeps users on the blue revision.",
+   "Step 4: the green label gives the new revision its own label FQDN, so testers reach it through a stable URL before it serves production traffic. The revision must exist before you label it.",
+   "Step 5: after testing, the weight change sends all production traffic to app1--c6f1515 without a redeployment, and the blue revision stays active for an instant rollback.",
+   "Incorrect: single revision mode routes all traffic to the latest revision and deactivates the previous one, which removes both the test window and the instant rollback. Use it for apps that do not need side-by-side revisions.",
+   "Incorrect: blue-green in Container Apps is built from revisions, labels, and traffic weights inside one app, so a second environment is not needed. Use a separate environment when you need network or workload isolation."
+  ],
+  "ref": "https://learn.microsoft.com/azure/container-apps/blue-green-deployment"
+ },
+ {
+  "id": "4.3.1-11",
+  "obj": "4.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Adatum Corporation adopts a Development-Test-Acceptance-Production (DTAP) methodology combined with a canary release for its multi-agent research solution. Every change must pass automated regression and integration tests before business validation, business owners must approve in a production-like environment, and production exposure must start with a small user group.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Deploy the change to the development environment and run unit tests.",
+   "Promote the change to the test environment and run automated regression and integration tests.",
+   "Promote the change to the acceptance environment and obtain business approval.",
+   "Release the change to a small production user group, and then expand the audience in stages.",
+   "Release the change to every production user at the same time after business approval.",
+   "Obtain business approval in the development environment so that feedback arrives earlier."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "DTAP defines where a release is validated, and canary defines how production users are exposed. Each gate builds on the one before: unit tests in development, technical regression and integration tests in test, business sign-off in a production-like acceptance environment, and then progressive exposure in production.",
+  "rationale": [
+   "Step 1: development is where the change is built and checked with fast unit tests, and it is the entry point of every DTAP promotion.",
+   "Step 2: the requirement puts automated regression and integration tests before business validation, and the test environment is where the delivery team runs them.",
+   "Step 3: acceptance is the production-like environment in which business owners validate and approve, and it comes after the technical tests pass.",
+   "Step 4: the canary part starts production exposure with a small group and widens it in stages, which can only happen after acceptance approval.",
+   "Incorrect: releasing to every user at once is a big-bang release, which breaks the requirement that exposure starts with a small group. Use it only for low-risk changes.",
+   "Incorrect: development is not production-like and comes before the regression and integration tests, so approval there does not meet either requirement. Use development for early demos, not acceptance."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/considerations/environments"
+ },
+ {
+  "id": "4.3.2-01",
+  "obj": "4.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Litware, Inc. deploys a hosted agent named my-agent in Foundry Agent Service by using the Azure Developer CLI. The production endpoint uses the default routing policy, which follows the latest version. Production consumers must keep receiving the current version until the exact candidate version is tested and approved.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `azd ai agent endpoint show my-agent -e production --output json --no-prompt` and record the stable version.",
+   "Add one FixedRatio rule for the stable version at 100 percent under agentEndpoint.versionSelector in azure.yaml, and run `azd ai agent endpoint update my-agent -e production --no-prompt`.",
+   "Run `azd deploy my-agent -e production --no-prompt` and record the candidate version number.",
+   "Run `azd ai agent invoke my-agent \"<test-prompt>\" -e production --protocol responses --version <candidate> --new-session --new-conversation --no-prompt` and check the expected response content.",
+   "After approval, change the rule to the candidate version at 100 percent and run `azd ai agent endpoint update my-agent -e production --no-prompt`.",
+   "Run `azd ai agent invoke my-agent \"ping\" -e production --no-prompt` and pass the test when the command returns any output.",
+   "Run `azd provision -e production --no-prompt` to apply the candidate to the production endpoint."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Because the default endpoint follows the latest version, deploying first would change production immediately. Gated releases separate deployment from promotion: record and pin the stable version, deploy the candidate, test that exact version in a fresh pinned session with content checks, and promote only after approval. Endpoint updates change routing without creating a version.",
+  "rationale": [
+   "Step 1: you must know which concrete version production serves before you can pin it, so read the endpoint configuration and record the stable version and its settings.",
+   "Step 2: one FixedRatio rule at 100 percent pins production to the stable version, so the next deployment cannot move traffic. It must be applied before deploying new code.",
+   "Step 3: with the pin in place, azd deploy creates the candidate version without changing what consumers receive. Record its version number for the test and the promotion.",
+   "Step 4: --version selects the candidate for a fresh session and conversation without changing routing, and checking the expected content proves the candidate behaves correctly, not only that it is active.",
+   "Step 5: only after the test and approval do you point the selector at the candidate at 100 percent. The stable version stays available for a rollback.",
+   "Incorrect: any nonempty output is not a passing smoke test, and without --version the call goes to the pinned stable version, not the candidate. Use a plain invoke only for connectivity checks.",
+   "Incorrect: azd provision creates or updates infrastructure and does not select an agent version for the endpoint. Run it when the infrastructure configuration changes."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-02",
+  "obj": "4.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-g",
+  "stem": "VanArsdel, Ltd. promoted version 7 of a hosted agent in Foundry Agent Service to production by setting the agentEndpoint version selector in the production azure.yaml to one FixedRatio rule for version 7 at 100 percent. Production checks now fail. Version 6 is retained in the production project. You need to route production traffic back to version 6. The rollback must not rebuild code or create another agent version.\n\nSolution: You check out the source commit of version 6 and run `azd deploy my-agent -e production --no-prompt`.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A hosted-agent rollback is a routing change: set the version selector back to the retained stable version at 100 percent and apply it with azd ai agent endpoint update. Redeploying old source code packages it again and can create another version, which is a roll-forward, not a rollback.",
+  "rationale": [
+   "Incorrect: azd deploy packages and uploads the version 6 source again, which rebuilds the code and can create a new agent version. It also applies the endpoint settings in azure.yaml, which still point at version 7.",
+   "Correct: the solution does not meet the goal. Redeploying source is right for releasing a fix as a new version; to roll back, change the version selector to version 6 and run azd ai agent endpoint update."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-03",
+  "obj": "4.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research defines a rollback strategy for its multi-agent analytics solution. The team must agree on the target state that a rollback restores.\n\nWhich state should the team define as the rollback target?",
+  "choices": [
+   "The last healthy workload state before deployment",
+   "The immediately prior application version",
+   "The most recent build that passed unit tests",
+   "The first production release of the solution"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A rollback plan needs an agreed target. Well-Architected incident guidance defines it as the last known healthy state of the workload, which can include configuration, infrastructure, and data, not only the previous application build. Defining it in advance makes rollback fast and predictable.",
+  "rationale": [
+   "Correct: the last healthy workload state covers code, configuration, infrastructure, and data as they were before the deployment, so a rollback returns the whole system to a state that is known to work.",
+   "Incorrect: the immediately prior application version ignores configuration, infrastructure, and data changes that shipped with the release, and that version might not have been healthy. Use it as the target only when the release changed nothing but code.",
+   "Incorrect: a build that passed unit tests was never proven in production, so returning to it can introduce new failures. Use unit test status as a promotion gate, not as a rollback target.",
+   "Incorrect: the first production release discards every later fix and feature, which causes needless disruption. Restore it only in a disaster recovery scenario where nothing later is usable."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/design-guides/incident-management"
+ },
+ {
+  "id": "4.3.2-04",
+  "obj": "4.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-g",
+  "stem": "VanArsdel, Ltd. promoted version 7 of a hosted agent in Foundry Agent Service to production by setting the agentEndpoint version selector in the production azure.yaml to one FixedRatio rule for version 7 at 100 percent. Production checks now fail. Version 6 is retained in the production project. You need to route production traffic back to version 6. The rollback must not rebuild code or create another agent version.\n\nSolution: You change the version selector in the production azure.yaml to one FixedRatio rule for version 6 at 100 percent, and you run `azd ai agent endpoint update my-agent -e production --no-prompt`.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A hosted-agent rollback is a routing change: set the version selector back to the retained stable version at 100 percent and apply it with azd ai agent endpoint update. Redeploying old source code packages it again and can create another version, which is a roll-forward, not a rollback.",
+  "rationale": [
+   "Correct: endpoint updates change routing without rebuilding code or creating another version, so pointing the selector at the retained version 6 at 100 percent is the documented return to the stable version.",
+   "Incorrect: the solution does meet the goal. No would be right if version 6 had been deleted from the project, in which case you would have to deploy a fixed version instead."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-05",
+  "obj": "4.3.2",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Proseware, Inc. rolled back a hosted agent from version 9 to version 8 by updating the endpoint version selector. The endpoint show command confirms that version 8 receives 100 percent of the traffic, and new sessions behave as expected. Users who started conversations before the rollback still receive responses with the version 9 behavior.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The sessions that were created before the rollback remain bound to version 9.",
+   "Running the endpoint update command again migrates the existing sessions to version 8.",
+   "Deleting version 9 is a supported rollback operation for the remaining sessions."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A hosted-agent session is bound to the version it was created with. Changing the endpoint selector affects only new sessions and never migrates existing ones, so retain earlier versions while sessions depend on them. Deleting an agent or a version is not a rollback operation.",
+  "rationale": [
+   "Yes: an existing session is bound to its version when it is created, so sessions started before the rollback keep using version 9 while new sessions use version 8.",
+   "No: changing the endpoint selector does not migrate existing sessions, so reapplying the same rule has no effect on them. Users get version 8 when they start a new session.",
+   "No: Microsoft states that deleting the agent or a version is not a rollback operation, and deleting a version that sessions still use breaks those sessions. Delete a version only after nothing depends on it."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-agent"
+ },
+ {
+  "id": "4.3.2-06",
+  "obj": "4.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. pinned the production endpoint of a hosted agent to version 4 and promoted version 5 manually after approval. A later routine pipeline run with azd deploy changed the production routing back to an outdated configuration.\n\nWhat should you do to prevent this issue?",
+  "choices": [
+   "Keep the final routing configuration in the production agentEndpoint settings",
+   "Remove the version selector so that the endpoint follows the latest version",
+   "Add the --no-prompt flag to the azd deploy command",
+   "Add a concurrency group to the deployment workflow so that runs do not overlap"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "During azd deploy, azd applies the endpoint settings configured for the agent. If the production azure.yaml still contains an old version selector, a routine pipeline run reapplies it. Save the final routing configuration with the production release settings so the next deployment starts from the current state.",
+  "rationale": [
+   "Correct: azd deploy applies the configured agentEndpoint settings, so keeping the final routing in the production configuration means a later run reapplies the current route instead of an outdated one.",
+   "Incorrect: without a selector, the endpoint follows the latest version, so every deployment would move production traffic to the new version before it is tested. Use the default only when every deployment may go live at once.",
+   "Incorrect: --no-prompt makes azd fail fast instead of waiting for input, but it does not change which endpoint settings azd applies. Use it on every unattended azd command.",
+   "Incorrect: a concurrency group stops two workflow runs from deploying at the same time, but the problem here was one run reapplying stale settings. Use concurrency to serialize production releases."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-07",
+  "obj": "4.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud uses source-code deployment for a hosted agent in Foundry Agent Service across development, test, and production. Each environment is bound to its own Foundry project. Auditors require that the code released to production is exactly the code that passed regression and integration tests in test.\n\nWhich release approach should you use?",
+  "choices": [
+   "Record the tested source commit and deploy that same commit separately to each environment",
+   "Build one package in development and copy that package to the test and production projects",
+   "Deploy the latest commit on the main branch to each environment at release time",
+   "Trigger production from the main branch and test from the develop branch"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For source-code deployment of hosted agents, Microsoft recommends promoting the tested source revision and dependency files and packaging them separately for each environment, instead of sharing one build artifact. Recording the commit that passed test and deploying exactly that commit gives auditors a traceable chain.",
+  "rationale": [
+   "Correct: deploying the same recorded commit separately to each environment is the documented approach for source-code deployment, and it proves that production runs exactly the code that passed regression and integration tests.",
+   "Incorrect: sharing one build package across projects is the opposite of the documented guidance, which packages the source separately per environment. A shared artifact fits container deployment, where one image is promoted.",
+   "Incorrect: the latest commit on main at release time might include changes that never passed tests in test, which breaks the audit requirement. Use the latest commit only for continuous deployment to development.",
+   "Incorrect: separate branches for test and production mean the tested code and the released code can differ. Use branch-based triggers to select environments, but promote the same commit through them."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-08",
+  "obj": "4.3.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys deploys a hosted agent from GitHub Actions by using azd. The workflow signs in to Azure with federated credentials (OpenID Connect). Two workflow runs recently changed the production agent at the same time. A deployment that is already running must finish before the next one starts.\n\nHow should you complete the workflow? To answer, select the appropriate options in the answer area.\n\n```yaml\nname: Azure Developer CLI\non:\n  push:\n    branches: [main]\npermissions:\n  id-token: [[1]]\n  contents: read\nconcurrency:\n  group: hosted-agent-deployment\n  cancel-in-progress: [[2]]\njobs:\n  build:\n    runs-on: ubuntu-latest\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "write",
+     "read",
+     "none"
+    ],
+    "why": [
+     "Correct: requesting an OIDC token from GitHub requires the id-token: write permission, so the azd auth login step with the github federated credential provider can sign in without a secret.",
+     "Incorrect: id-token: read does not allow the job to request an OIDC token, so the federated sign-in fails. Read is a valid level for scopes such as contents.",
+     "Incorrect: none removes access to the OIDC token entirely, which you would use only for workflows that never authenticate to Azure with federated credentials."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "false",
+     "true"
+    ],
+    "why": [
+     "Correct: with cancel-in-progress: false, a new run in the same concurrency group waits until the running deployment finishes, which serializes production changes without interrupting a deployment.",
+     "Incorrect: true cancels the deployment that is already running when a new run starts, which can leave the agent half deployed. Use it for jobs such as pull request checks, where only the newest run matters."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The generated azd workflow for hosted agents grants id-token: write for OIDC and uses a concurrency group with cancel-in-progress: false so deployments run one at a time. A concurrency group serializes only this workflow; other tools or repositories that deploy the same agent need their own coordination.",
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.2-09",
+  "obj": "4.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-g",
+  "stem": "VanArsdel, Ltd. promoted version 7 of a hosted agent in Foundry Agent Service to production by setting the agentEndpoint version selector in the production azure.yaml to one FixedRatio rule for version 7 at 100 percent. Production checks now fail. Version 6 is retained in the production project. You need to route production traffic back to version 6. The rollback must not rebuild code or create another agent version.\n\nSolution: You ask each affected user to run `azd ai agent invoke my-agent \"<prompt>\" -e production --version 6 --new-session --no-prompt`.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A hosted-agent rollback is a routing change: set the version selector back to the retained stable version at 100 percent and apply it with azd ai agent endpoint update. The --version flag only selects a version for one test session and does not change the endpoint traffic.",
+  "rationale": [
+   "Incorrect: --version selects the version for that one session and does not change the configured traffic percentages, so the production endpoint still routes every other request to version 7.",
+   "Correct: the solution does not meet the goal. Use --version to test a specific candidate in a fresh session; to roll back, change the endpoint selector to version 6 and apply it."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/deploy-hosted-agent-production"
+ },
+ {
+  "id": "4.3.2-10",
+  "obj": "4.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. deploys its multi-agent solution by using GitHub Actions. Release management requires that a designated reviewer approve each deployment to production before it runs.\n\nWhat should you configure?",
+  "choices": [
+   "Required reviewers on the production GitHub environment",
+   "A branch protection rule on the main branch",
+   "A concurrency group for the deployment workflow",
+   "A wait timer on the production GitHub environment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "GitHub environments carry deployment protection rules. Required reviewers pause any job that targets the environment until a designated person approves, which implements a release approval gate. Branch protection governs merges, wait timers add a delay, and concurrency serializes runs.",
+  "rationale": [
+   "Correct: required reviewers on the production environment hold every deployment job that targets production until a designated reviewer approves it, which is exactly the release management requirement.",
+   "Incorrect: a branch protection rule controls how changes are merged into main, for example with pull request reviews, but does not gate the deployment job itself. Use it to protect code quality before merge.",
+   "Incorrect: a concurrency group makes deployments run one at a time but approves nothing. Use it to stop overlapping deployments to the same target.",
+   "Incorrect: a wait timer delays a job for a fixed time after it is triggered, with no human decision. Use it to allow a bake period before a deployment proceeds."
+  ],
+  "ref": "https://learn.microsoft.com/devops/deliver/iac-github-actions"
+ },
+ {
+  "id": "4.3.2-11",
+  "obj": "4.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation stores agent conversation state in Azure Cosmos DB. The next release changes the shape of the stored records. The release must remain safe to roll back if the new agent version fails in production.\n\nWhich approach should you use to implement the data change?",
+  "choices": [
+   "Add the new record shape alongside the old records and deprecate the old ones later",
+   "Replace the existing records with records in the new schema during the deployment",
+   "Plan to roll forward with a hotfix because rollback is not possible after schema changes",
+   "Restore a database backup as a standard step in every rollback"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Rollback is only safe if the previous version can still read the data. Use expand-and-contract schema changes: add the new shape alongside the old one, let both versions work during the release, and remove the old shape in a later release once rollback is no longer needed.",
+  "rationale": [
+   "Correct: keeping the old record shape while adding the new one means the previous agent version still reads its data, so a rollback works, and the old shape is deprecated later when the new version is proven.",
+   "Incorrect: replacing the records in place means the previous version cannot read the converted data, so rolling back the code would break the agents. Use in-place migration only when rollback is not required.",
+   "Incorrect: giving up on rollback contradicts the requirement. Roll forward is a fallback for failures where rollback is impossible, not a plan for an avoidable schema problem.",
+   "Incorrect: restoring a backup on every rollback loses conversation state written since the backup and slows recovery. Keep backups for disaster recovery and data corruption."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/design-guides/incident-management"
+ },
+ {
+  "id": "4.3.3-01",
+  "obj": "4.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. builds a multi-agent solution in which a deterministic router selects the next agent based on parsed user intent. The team needs fast tests that validate the routing logic and prompt templates in isolation on every build.\n\nWhich type of test should you use?",
+  "choices": [
+   "Unit tests",
+   "Integration tests",
+   "End-to-end tests",
+   "Load tests"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A layered test strategy for AI workloads uses fast deterministic unit tests for code such as routers, parsers, and prompt templates, integration tests for interactions between components, end-to-end tests for full user flows, and evaluations for non-deterministic model output. Unit tests run on every build because they are fast and isolated.",
+  "rationale": [
+   "Correct: unit tests check one component in isolation, such as the deterministic router and the prompt templates, and they are fast enough to run on every build.",
+   "Incorrect: integration tests verify that components such as agents, tools, and services work together, which needs deployed dependencies and runs slower. Use them in the test environment after unit tests pass.",
+   "Incorrect: end-to-end tests exercise a full user flow across the deployed system, which is slow and not isolated. Use them before release to validate complete scenarios.",
+   "Incorrect: load tests measure behavior under volume, such as latency and throttling, not the correctness of routing logic. Use them to validate capacity before peak events."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/ai/test"
+ },
+ {
+  "id": "4.3.3-02",
+  "obj": "4.3.3",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Fabrikam, Inc. defines the test strategy for a multi-agent solution in which an orchestrator agent calls a retrieval agent and an MCP server. You must pick the type of test for each need.\n\nWhich type of test should you use for each need? To answer, drag the appropriate test types to the correct needs. Each test type may be used once, more than once, or not at all.",
+  "choices": [
+   "Unit tests",
+   "Integration tests",
+   "Regression tests",
+   "Automated evaluations",
+   "Load tests"
+  ],
+  "targets": [
+   "Validate the function that maps a parsed intent to an agent name, in isolation, on every build",
+   "Verify that the orchestrator, the retrieval agent, and the MCP server interact correctly in the test environment",
+   "Make sure that a fixed production bug, in which the billing agent selected the wrong tool, does not return in later releases",
+   "Score varied answers for task adherence and relevance against a dataset before each release"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Each test type answers a different question: does one unit work (unit), do components work together (integration), did a known defect come back (regression), and is non-deterministic output good enough (automated evaluation). Load tests answer a capacity question. Combine them in the pipeline from fastest to slowest.",
+  "rationale": [
+   "The intent-to-agent mapping is deterministic code that can be tested alone and quickly, so unit tests fit and can run on every build.",
+   "The need is about components talking to each other and to shared services, which is what integration tests verify in an environment where those components are deployed.",
+   "A test case that reproduces the incident, added to the regression suite, runs automatically on every later release and catches the defect if it returns.",
+   "Agent answers vary in wording, so exact assertions fail. Automated evaluations score quality dimensions such as task adherence and relevance over a dataset instead."
+  ],
+  "notes": [
+   "Fast, isolated checks of one function or component, often with dependencies replaced by fakes. Use them for deterministic code on every build.",
+   "Checks that several deployed components and shared services work together correctly. Use them in the test environment after unit tests pass.",
+   "A suite of tests that protects existing behavior, including cases that reproduce past defects. Run it on every release so fixed bugs stay fixed.",
+   "Model-based or rule-based scoring of agent output against a dataset, such as task adherence or tool call accuracy. Use it where output is non-deterministic.",
+   "Tests that apply high volume to measure latency, throughput, and throttling. Use them to validate capacity; they do not check correctness of a single interaction."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/testing"
+ },
+ {
+  "id": "4.3.3-03",
+  "obj": "4.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders had a production incident in which its billing agent selected the wrong tool for refund requests. The bug is now fixed. Northwind wants to make sure that the same defect is caught automatically in future releases.\n\nWhat should you do?",
+  "choices": [
+   "Add a test case that reproduces the incident to the automated regression suite",
+   "Add the scenario to the load test plan",
+   "Add the scenario to the attack objectives of an AI Red Teaming Agent scan",
+   "Add a continuous evaluation rule for tool call accuracy in production"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Every fixed production defect should become an automated regression test. The test reproduces the failing scenario and runs on every later release, so the same defect cannot silently return. Evaluations and monitoring detect quality trends, but a regression test targets a specific known failure.",
+  "rationale": [
+   "Correct: a test case that reproduces the incident in the automated regression suite runs on every release and fails if the billing agent picks the wrong tool for refund requests again.",
+   "Incorrect: load tests measure performance under volume and would not check which tool the agent selects. Use them to validate capacity and throttling behavior.",
+   "Incorrect: red teaming attack objectives probe adversarial safety risks such as jailbreaks, not ordinary functional correctness. Use the AI Red Teaming Agent for safety testing before deployment.",
+   "Incorrect: continuous evaluation in production detects the problem after users are affected, not before a release ships. Use it to monitor production quality in addition to regression tests."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/testing"
+ },
+ {
+  "id": "4.3.3-04",
+  "obj": "4.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud must probe its travel agents for prompt injection and jailbreak vulnerabilities at scale before each deployment. The results must include an attack success rate.\n\nWhich tool should you use?",
+  "choices": [
+   "AI Red Teaming Agent",
+   "Continuous evaluation",
+   "Groundedness evaluator",
+   "Azure Load Testing"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI Red Teaming Agent automates adversarial probing with curated attack objectives and PyRIT attack strategies, scores responses with safety evaluators, and reports attack success rate. It is the shift-left tool for prompt injection and jailbreak testing before deployment.",
+  "rationale": [
+   "Correct: the AI Red Teaming Agent runs adversarial attacks, including jailbreak and indirect prompt injection strategies, at scale and reports the attack success rate for each risk category.",
+   "Incorrect: continuous evaluation samples production responses and scores quality and safety, but it does not generate attacks and runs after deployment. Use it to monitor live agents.",
+   "Incorrect: the groundedness evaluator checks whether answers are supported by retrieved context, which is a RAG quality signal, not an attack success rate. Use it to evaluate retrieval-based answers.",
+   "Incorrect: Azure Load Testing generates high request volume to measure performance and scale. It does not craft adversarial prompts. Use it for capacity testing."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "4.3.3-05",
+  "obj": "4.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys builds agents with Microsoft Agent Framework. The answers of a support agent vary in wording between runs. The test suite must determine whether each answer follows the instructions and constraints of the agent, and exact text assertions keep failing.\n\nWhich evaluator should you use?",
+  "choices": [
+   "The Foundry task adherence evaluator",
+   "The keyword_check local evaluator",
+   "The tool_called_check local evaluator",
+   "An exact-match comparison against expected output"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent output varies between runs, so tests should score properties instead of exact strings. Model-based evaluators such as task adherence judge whether a response follows the agent's instructions and constraints, while local checks such as keyword_check or tool_called_check verify simple deterministic facts.",
+  "rationale": [
+   "Correct: the task adherence evaluator uses a judge model to assess whether the response follows the agent's instructions and constraints, so it tolerates different wording and still fails non-compliant answers.",
+   "Incorrect: keyword_check only verifies that specific words appear in the response, which cannot judge instruction-following and fails on valid rewordings. Use it for cheap smoke checks of required terms.",
+   "Incorrect: tool_called_check verifies that the agent called a named tool, which says nothing about whether the answer follows the instructions. Use it to confirm tool usage.",
+   "Incorrect: exact-match comparison is what keeps failing, because the wording varies between runs. Use exact match only for deterministic outputs such as structured fields."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/evaluation"
+ },
+ {
+  "id": "4.3.3-06",
+  "obj": "4.3.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Contoso, Ltd. runs CI smoke tests for an inventory agent built with Microsoft Agent Framework in Python. The check must confirm that the agent called the search_inventory tool and must run locally without a cloud evaluation service. The test data does not include expected tool calls. Each query must run three times independently to detect inconsistent behavior.\n\nHow should you complete the code? To answer, select the appropriate options in the answer area.\n\n```python\nfrom agent_framework import ConversationSplit, LocalEvaluator, evaluate_agent, evaluate_workflow\nfrom agent_framework import keyword_check, tool_called_check, tool_calls_present\n\nlocal = LocalEvaluator(\n    [[1]],\n)\nresults = await [[2]](\n    agent=agent,\n    queries=queries,\n    evaluators=local,\n    [[3]],\n)\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "tool_called_check(\"search_inventory\")",
+     "tool_calls_present",
+     "keyword_check(\"search_inventory\")"
+    ],
+    "why": [
+     "Correct: tool_called_check verifies that the agent called the named tools, it runs locally inside LocalEvaluator, and it does not need expected tool calls in the test data.",
+     "Incorrect: tool_calls_present checks that all expected_tool_calls names appear in the conversation, so it needs expected tool calls that the test data does not have. Use it when the dataset defines expected calls.",
+     "Incorrect: keyword_check only checks that the response text contains the word, which an answer can do without ever calling the tool. Use it to require terms in the response."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "evaluate_agent",
+     "evaluate_workflow"
+    ],
+    "why": [
+     "Correct: evaluate_agent runs a single agent once per query, converts each interaction to an EvalItem, and passes the batch to the evaluators, which fits one inventory agent.",
+     "Incorrect: evaluate_workflow evaluates a multi-agent workflow with per-agent sub-results and takes a workflow, not an agent. Use it when you need a breakdown by sub-agent."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "num_repetitions=3",
+     "conversation_split=ConversationSplit.FULL",
+     "expected_output=[\"search_inventory\"]"
+    ],
+    "why": [
+     "Correct: num_repetitions=3 runs each query three times independently, which is the documented way to detect non-deterministic behavior.",
+     "Incorrect: the FULL split evaluates the whole conversation after the first user message as the response, which changes what is scored, not how often queries run. Use it to judge task completion over a trajectory.",
+     "Incorrect: expected_output pairs ground-truth answers with queries for correctness checks, and a tool name is not an expected answer. Use it with evaluators that compare responses with ground truth."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Agent Framework evaluation combines evaluators (local checks such as keyword_check, tool_called_check, tool_calls_present, and tool_call_args_match, or FoundryEvals) with orchestration functions: evaluate_agent for one agent and evaluate_workflow for multi-agent workflows. Options such as num_repetitions, expected_output, expected_tool_calls, and conversation_split control the run.",
+  "ref": "https://learn.microsoft.com/agent-framework/agents/evaluation"
+ },
+ {
+  "id": "4.3.3-07",
+  "obj": "4.3.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Woodgrove Bank deploys a hosted agent by using the Azure Developer CLI. You must add an automated regression gate: an evaluation suite is created once from the deployed agent and stored with the project, and every pipeline run must run that stored suite against the current agent and fail the job if scores drop below the threshold, without regenerating datasets or evaluators. The first pipeline run after the change must pass the gate.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `azd deploy --no-prompt` to deploy the agent to the development environment.",
+   "Run `azd ai agent eval generate` against the deployed agent to create the evaluation suite.",
+   "Review the generated eval.yaml and commit it to the repository with the project.",
+   "Add a step that runs `azd ai agent eval run --config eval.yaml --no-prompt` after the deploy step, and push the change so that the pipeline runs.",
+   "Add a pipeline step that runs `azd ai agent eval generate --no-prompt` before every evaluation.",
+   "Add a pipeline step that runs `azd ai agent invoke my-agent \"ping\" --no-prompt --output raw` as the quality gate."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Automated evaluations work as regression tests only if the suite is stable. Generate the suite once from a deployed agent, review and version it with the code, and let the pipeline run the stored eval.yaml on every deployment. eval run resolves eval.yaml in the project root by default, or a path given with --config.",
+  "rationale": [
+   "Step 1: azd ai agent eval generate requires a deployed agent that you can invoke, so the agent must be deployed first.",
+   "Step 2: eval generate creates the dataset, the evaluators, and a runnable eval.yaml in the agent project root (the default --out-file). It runs once, outside the per-run pipeline, so datasets and evaluators stay stable.",
+   "Step 3: Microsoft recommends reviewing the generated artifacts and source-controlling eval.yaml. The pipeline runner checks out the repository, so eval.yaml must be committed before the first gated run.",
+   "Step 4: eval run uses the stored eval.yaml, runs it against the current agent, and fails the job if scores drop below the threshold without regenerating datasets or evaluators. It can pass only after eval.yaml is in the repository.",
+   "Incorrect: running eval generate in every run regenerates datasets and evaluators, so results are not comparable between releases, which the requirement forbids. Run it when you intentionally refresh the suite.",
+   "Incorrect: an invoke that returns any output proves only that the agent answers, not that quality meets a threshold. Use invoke with content assertions as a smoke test, in addition to evaluations."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/observability/how-to/azure-developer-cli-evaluation"
+ },
+ {
+  "id": "4.3.3-08",
+  "obj": "4.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House needs to test how its agent orchestration code handles HTTP 429 throttling and timeouts from the model inference endpoint. The tests must exercise the real retry and backoff behavior of the HTTP client, and the team wants to avoid paying for large numbers of model calls.\n\nWhat should you use to simulate the inference endpoint?",
+  "choices": [
+   "Dev Proxy",
+   "The test model deployment with a reduced tokens-per-minute quota",
+   "Azure Load Testing against the production model deployment",
+   "Unit tests that replace the client with an in-memory stub"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "To test resilience to throttling and timeouts without real load or cost, simulate the failing dependency at the network level. Dev Proxy intercepts HTTP requests and returns errors such as 429 or delays, so the real HTTP client, retry policy, and backoff code run unchanged.",
+  "rationale": [
+   "Correct: Dev Proxy sits between the app and the endpoint and can return 429 responses and simulate latency or failures, so the real client and its retry and backoff logic run without paying for many model calls.",
+   "Incorrect: a deployment with a reduced quota produces real 429 responses, but only after you spend real model calls to hit the limit, and timeouts are hard to control. Use it to validate quota settings.",
+   "Incorrect: Azure Load Testing against production generates real calls at high volume, which costs money and can disrupt users. Use it against a test environment to measure capacity.",
+   "Incorrect: an in-memory stub replaces the HTTP client, so the real retry and backoff behavior of the client is never exercised. Use stubs in unit tests of your own logic."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/ai/test"
+ },
+ {
+  "id": "4.3.3-09",
+  "obj": "4.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company compares two versions of a Foundry agent by using the AI agent evaluation GitHub Action with a dataset of five test queries. Version B scores 0.1 higher than version A on task adherence. The team must decide whether the difference is meaningful and must keep evaluation costs under control.\n\nWhat should you do?",
+  "choices": [
+   "Expand the dataset for confidence intervals and compare both agents in one run",
+   "Run the five-query evaluation on every commit and average the results",
+   "Repeat the five-query evaluation once and keep the version with the higher score",
+   "Replace the automated evaluation with human review of the five responses"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Small evaluation datasets give noisy scores, so a 0.1 difference on five queries is not evidence. The AI agent evaluation GitHub Action can compare several agent versions in one run and report statistics such as confidence intervals, which tell you whether a difference is significant; a larger dataset narrows the intervals.",
+  "rationale": [
+   "Correct: a larger dataset produces confidence intervals narrow enough to judge the 0.1 difference, and comparing both agents in one run evaluates them under the same conditions without paying for repeated separate runs.",
+   "Incorrect: running five queries on every commit multiplies cost, and averaging many noisy runs still says nothing about statistical significance between the versions. Use per-commit evaluation for regression gates with a fixed suite.",
+   "Incorrect: repeating a five-query evaluation once adds one more noisy sample, so keeping the higher score is close to a coin toss. Use repetitions to measure consistency, with a dataset big enough to compare.",
+   "Incorrect: human review of five responses is subjective and does not scale, and it gives no statistical basis for the comparison. Use human review to calibrate evaluators or inspect edge cases."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/how-to/evaluation-github-action"
+ },
+ {
+  "id": "4.3.3-10",
+  "obj": "4.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Wide World Importers uses Microsoft Agent Framework. Overall quality scores of a multi-agent procurement workflow dropped after a release, and the team must identify which sub-agent causes the drop. Separately, the team must detect whether a standalone FAQ agent answers the same query inconsistently across repeated runs.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Evaluate the workflow by using evaluate_workflow and review the per-agent sub-results",
+   "Evaluate the FAQ agent by using evaluate_agent with num_repetitions set so that each query runs multiple times",
+   "Evaluate the final output of the procurement orchestrator agent by using evaluate_agent",
+   "Use the full conversation split strategy on the final output",
+   "Add keyword_check to the local evaluator"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "For multi-agent workflows, evaluate_workflow scores the overall output and extracts each sub-agent's interactions for per-agent sub-results, which localizes a regression. For a single agent, evaluate_agent with num_repetitions runs each query several times independently, which reveals non-deterministic behavior. Evaluating only the final output hides which agent caused a drop.",
+  "rationale": [
+   "Correct: evaluate_workflow returns per-agent sub-results along with the overall score, so the team can see which sub-agent's scores dropped after the release.",
+   "Correct: evaluate_agent with num_repetitions runs each query several times independently, so differing results for the same query show that the FAQ agent behaves inconsistently.",
+   "Incorrect: evaluate_agent on the orchestrator scores only the final output, so it confirms the drop but cannot show which sub-agent caused it. Use it for single agents.",
+   "Incorrect: the full conversation split changes how a conversation is divided into query and response, which helps judge task completion but does not break results down by agent or detect inconsistency.",
+   "Incorrect: keyword_check verifies that specific words appear in a response. It cannot attribute a quality drop to an agent or measure run-to-run consistency. Use it for simple smoke checks."
+  ],
+  "ref": "https://learn.microsoft.com/agent-framework/agents/evaluation"
+ },
+ {
+  "id": "4.3.3-11",
+  "obj": "4.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research tuned the instructions of its research agents by iterating against a golden dataset. The same golden dataset is now used as the release gate, and every release passes with high scores. However, quality regressions keep appearing in production.\n\nWhat should you change in the testing strategy?",
+  "choices": [
+   "Use a separate test dataset that is distinct from the evaluation dataset used during tuning",
+   "Raise the pass threshold on the existing golden dataset",
+   "Add more evaluators to the release gate that use the same golden dataset",
+   "Replace the golden dataset with raw production conversations that are not anonymized"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "If you tune prompts against a dataset, scores on that dataset are optimistic because the system was fitted to it. Keep a separate held-out test dataset for release gates, so results reflect how the agents generalize to new inputs, and refresh it with anonymized production scenarios over time.",
+  "rationale": [
+   "Correct: a test dataset that is distinct from the tuning dataset measures how the agents handle inputs they were not optimized for, so the release gate catches the regressions that the tuned golden set misses.",
+   "Incorrect: a higher threshold on the same tuned dataset still measures data the instructions were fitted to, so releases can pass while generalization regresses. Raise thresholds only on a held-out set.",
+   "Incorrect: more evaluators on the same dataset add dimensions but keep the overfitting problem, because the inputs are unchanged. Add evaluators when quality dimensions are missing, not when the data is biased.",
+   "Incorrect: raw production conversations that are not anonymized can contain personal data, which creates privacy and compliance risk. Use production scenarios only after anonymization and review."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/ai/test"
+ },
+ {
+  "id": "4.3.4-01",
+  "obj": "4.3.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Fabrikam, Inc. deploys Bicep templates and agent code from GitHub Actions to a resource group named rg-agents. Security policy prohibits storing client secrets or other long-lived credentials in GitHub. No Microsoft Entra application exists yet for the pipeline, and the first workflow run must deploy successfully.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az ad app create --display-name gh-agents-deploy`, and then run `az ad app federated-credential create --id $APP_OBJECT_ID --parameters credential.json`, where the file trusts the issuer https://token.actions.githubusercontent.com for the Production environment of the repository.",
+   "Run `az ad sp create --id $APP_ID` and record the object ID of the service principal.",
+   "Run `az role assignment create --assignee-object-id $SP_OBJECT_ID --assignee-principal-type ServicePrincipal --role Contributor --scope /subscriptions/$SUB_ID/resourceGroups/rg-agents`.",
+   "Store AZURE_CLIENT_ID, AZURE_TENANT_ID, and AZURE_SUBSCRIPTION_ID as GitHub secrets, and push a workflow that grants `id-token: write`, signs in with `azure/login@v2`, and deploys to rg-agents.",
+   "Run `az ad sp create-for-rbac --name gh-agents-deploy --role contributor --scopes /subscriptions/$SUB_ID/resourceGroups/rg-agents`.",
+   "Run `az ad app credential reset --id $APP_ID` and store the output as a GitHub secret."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "OpenID Connect from GitHub Actions uses workload identity federation: a Microsoft Entra application (or user-assigned managed identity) trusts tokens that GitHub issues for a specific repository and environment, so no secret is stored. The chain is app, then service principal, then role assignment on that principal, and only then a workflow run with id-token: write that can sign in and deploy.",
+  "rationale": [
+   "Step 1: the app registration provides the client ID and the object ID, and the federated credential can be added only to an app that exists. The credential makes Microsoft Entra ID accept GitHub tokens for the Production environment subject instead of a secret.",
+   "Step 2: az ad sp create needs the appId from step 1 and creates the service principal in the tenant. Role assignments are made to that service principal, so its object ID is needed next.",
+   "Step 3: the role assignment needs the service principal object ID from step 2. Contributor at rg-agents authorizes the deployments, and --assignee-principal-type ServicePrincipal avoids a Graph lookup delay.",
+   "Step 4: pushing the workflow triggers a run that exchanges the GitHub OIDC token (id-token: write) for an Entra token and deploys. It can succeed only after the federated credential and the role assignment exist.",
+   "Incorrect: create-for-rbac creates a service principal with a client secret by default, which is a long-lived credential the policy prohibits. Use it for quick setups where a secret is acceptable.",
+   "Incorrect: credential reset generates a new client secret for the app, and storing it in GitHub breaks the policy. Use it only to rotate secrets for apps that still rely on them."
+  ],
+  "ref": "https://learn.microsoft.com/azure/developer/github/connect-from-azure-openid-connect"
+ },
+ {
+  "id": "4.3.4-02",
+  "obj": "4.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. deploys the infrastructure for its multi-agent solution by using Bicep. Before each production deployment, an operator must review a list of the resources that will be created, modified, or deleted.\n\nWhich operation should you add to the pipeline?",
+  "choices": [
+   "What-if",
+   "Bicep linter",
+   "Bicep build",
+   "Preflight validation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Bicep has three pre-deployment checks with different depth: the linter is offline static analysis, preflight validation asks Resource Manager whether the deployment would succeed, and what-if predicts which resources would be created, modified, or deleted. Only what-if produces the change list an approver can review.",
+  "rationale": [
+   "Correct: the what-if operation predicts the changes that the deployment would make, listing resources to create, modify, or delete without changing anything, which is what the operator must review before production.",
+   "Incorrect: the Bicep linter checks syntax and best-practice rules offline and does not know the current state in Azure, so it cannot list resource changes. Use it early in CI for fast feedback.",
+   "Incorrect: bicep build compiles Bicep to an ARM JSON template and surfaces syntax errors, but it does not compare with deployed resources. Use it to produce or inspect the ARM template.",
+   "Incorrect: preflight validation checks with Resource Manager whether the deployment is likely to succeed, for example quota or provider registration, but it does not list the planned changes. Use it before what-if to catch deployability issues."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-resource-manager/bicep/deploy-what-if"
+ },
+ {
+  "id": "4.3.4-03",
+  "obj": "4.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys wants the continuous integration stage of its pipeline to detect Bicep best-practice violations, such as insecure handling of secure inputs. The check must run without connecting to Azure.\n\nWhat should you use?",
+  "choices": [
+   "The Bicep linter",
+   "The what-if operation",
+   "Preflight validation",
+   "A post-deployment smoke test"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Use the cheapest check that catches a class of problem. The Bicep linter runs in the Bicep CLI without an Azure connection and flags best-practice violations such as secure parameters with default values or secrets in outputs, so it belongs at the start of continuous integration.",
+  "rationale": [
+   "Correct: the Bicep linter is integrated into the Bicep CLI, runs offline, and reports best-practice violations, including insecure handling of secure parameters, so it fits a CI stage that cannot connect to Azure.",
+   "Incorrect: what-if needs a connection to Azure Resource Manager to compare the template with deployed resources. Use it before deployment to preview changes.",
+   "Incorrect: preflight validation is a server-side check by Resource Manager, so it requires an Azure connection. Use it to catch deployability problems such as unregistered providers.",
+   "Incorrect: a post-deployment smoke test runs after resources exist, which is far too late for code-quality issues and needs Azure access. Use it to verify the deployed environment works."
+  ],
+  "ref": "https://learn.microsoft.com/azure/azure-resource-manager/bicep/linter"
+ },
+ {
+  "id": "4.3.4-04",
+  "obj": "4.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud provisions the infrastructure for a hosted agent by using Terraform through the Azure Developer CLI. The pipeline deploys to development, test, and production. Terraform state must be shared by pipeline runs, must be kept separate per environment, and must not be exposed in the repository.\n\nWhich Terraform state configuration should you use?",
+  "choices": [
+   "Use a remote azurerm backend with a separate state key per environment",
+   "Use the local backend and keep the state file on the pipeline runner",
+   "Use one shared state key in the storage account for every environment",
+   "Use a separate Terraform workspace per environment with the local backend"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Terraform state for CI/CD belongs in a remote backend outside the workload deployment. With azd, you declare an azurerm backend, point provider.conf.json at a storage account and container through RS_* environment values, and use a key that includes the azd environment name so each environment has its own state.",
+  "rationale": [
+   "Correct: a remote azurerm backend in Azure Storage is shared by every runner, keeps state out of the repository, and a key such as hosted-agent-ci/${AZURE_ENV_NAME}.tfstate gives each environment a separate state file.",
+   "Incorrect: a local backend keeps state on the runner, which is discarded after the job, so later runs cannot share it. Use the local backend only for individual experiments.",
+   "Incorrect: one key for every environment makes development, test, and production overwrite the same state, so a test run could plan changes against production. Use one key only when a single environment exists.",
+   "Incorrect: workspaces separate state, but with the local backend the state still lives on the runner and is lost between runs. Workspaces help only when combined with a shared remote backend."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.4-05",
+  "obj": "4.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation runs azd ai commands in an unattended CI job for a hosted agent. When a required value is missing from the environment, the job hangs until it times out. The job must fail fast with an error instead.\n\nWhich flag should you add to the azd ai commands?",
+  "choices": [
+   "--no-prompt",
+   "--debug",
+   "--output json",
+   "--project-endpoint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Unattended azd ai jobs need pipeline-friendly flags. --no-prompt disables interactive prompts so a missing value fails fast with an error; --output json gives parseable output; --project-endpoint pins the Foundry project for resource commands; and --debug adds diagnostics. Every azd ai command supports --no-prompt.",
+  "rationale": [
+   "Correct: --no-prompt disables interactive prompts, so a command that lacks a required value fails fast with a helpful error instead of waiting for input until the job times out.",
+   "Incorrect: --debug emits verbose diagnostic output, which helps investigate a CI failure but does not stop the command from waiting for input. Add it temporarily when troubleshooting.",
+   "Incorrect: --output json emits structured output for parsing with tools such as jq, but the command still prompts when a value is missing. Use it when a later step reads the result.",
+   "Incorrect: --project-endpoint pins the Foundry project for connection, toolbox, skill, or routine commands, which supplies one value but leaves prompting enabled for others. Use it to target a project explicitly."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.4-06",
+  "obj": "4.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders releases a code change to a hosted agent. The infrastructure configuration is unchanged, and a platform team owns the lifecycle of the shared Foundry resources.\n\nWhich command should the application release pipeline run?",
+  "choices": [
+   "azd deploy",
+   "azd up",
+   "azd provision",
+   "azd pipeline config"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "azd separates infrastructure from application deployment: azd provision creates or updates infrastructure, azd deploy builds and deploys the code (for hosted agents, a new agent version), and azd up runs both. For application-only releases against infrastructure that a platform team owns, run azd deploy.",
+  "rationale": [
+   "Correct: azd deploy packages the code and creates a new hosted agent version without repeating provisioning, which fits an unchanged infrastructure configuration owned by the platform team.",
+   "Incorrect: azd up runs provisioning and deployment, so the application pipeline would also touch the shared Foundry resources that the platform team owns. Use it for a first deployment or local end-to-end setup.",
+   "Incorrect: azd provision only creates or updates infrastructure and does not release the code change. Keep it in the platform team's workflow.",
+   "Incorrect: azd pipeline config sets up the pipeline, service principal, and repository secrets once. It does not deploy anything. Run it when you first configure CI/CD."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.4-07",
+  "obj": "4.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Proseware, Inc. has a pipeline step that runs azd ai agent invoke after each deployment and marks the release as successful when the command returns any output. A defective agent version passed this step and reached users.\n\nWhat should you change in the smoke test?",
+  "choices": [
+   "Assert the expected response content in a fresh version-pinned session",
+   "Mark the step as successful when the command exits with code 0",
+   "Rely on azd deploy to wait for version activation",
+   "Check that the agent session log stream is not empty"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A deployment that activates is not proof of correct behavior. A meaningful smoke test runs in a fresh session pinned to the deployed version and asserts expected response content. Exit codes, nonempty output, and log activity show only that something answered.",
+  "rationale": [
+   "Correct: a fresh session pinned to the new version tests exactly the deployed candidate, and asserting the expected response content fails the step when the agent answers incorrectly.",
+   "Incorrect: an exit code of 0 shows that the CLI call succeeded, and a defective agent still returns a response with exit code 0. Use exit codes to detect failed commands, not wrong answers.",
+   "Incorrect: azd deploy waits for version activation, but readiness does not establish that the agent behaves correctly. Rely on it to know when to start the smoke test.",
+   "Incorrect: a nonempty session log stream proves the container is running and logging, not that the answers are right. Use logs to diagnose failures after a test fails."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.4-08",
+  "obj": "4.3.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank deploys the Bicep template main.bicep for its agent platform from GitHub Actions to a new resource group named rg-agents, which does not exist yet. The template declares an output named agentEndpoint. An approver must review the predicted resource changes and then approve the deployment job, which targets the Production GitHub environment that has required reviewers. After the deployment, the workflow must verify that the deployed agent endpoint responds.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `az group create --name rg-agents --location westeurope`.",
+   "Run `az deployment group what-if --resource-group rg-agents --template-file main.bicep` in a preview job.",
+   "Run `az deployment group create --resource-group rg-agents --name agents-deploy --template-file main.bicep` in a deploy job that targets the Production environment.",
+   "Run `ENDPOINT=$(az deployment group show --resource-group rg-agents --name agents-deploy --query properties.outputs.agentEndpoint.value --output tsv)`.",
+   "Run a smoke test that sends a request to $ENDPOINT and fails the job if the endpoint does not respond.",
+   "Run `az deployment group create --resource-group rg-agents --template-file main.bicep --confirm-with-what-if`.",
+   "Run `az deployment sub what-if --location westeurope --template-file main.bicep`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "A Bicep release in GitHub Actions separates preview from deployment: a preview job runs what-if so reviewers see the predicted changes, and the deploy job targets an environment with required reviewers so it waits for approval. Resource group deployments need an existing resource group, and post-deployment tests can read Bicep outputs from the named deployment with az deployment group show.",
+  "rationale": [
+   "Step 1: resource group deployments, including what-if, need an existing target resource group. rg-agents does not exist yet, so it must be created first.",
+   "Step 2: what-if predicts the creates, modifies, and deletes against rg-agents without changing anything. A preview of planned changes is only meaningful before they are applied, and the approver reads it before approving the deploy job.",
+   "Step 3: the Production environment pauses the deploy job until a required reviewer approves, and the command then applies the template. Naming the deployment agents-deploy lets the next step read its outputs.",
+   "Step 4: az deployment group show reads properties.outputs.agentEndpoint.value from the deployment named agents-deploy, which exists only after step 3.",
+   "Step 5: the smoke test needs the endpoint from step 4. It proves that the deployed resources actually work, which the preview and the deployment result cannot prove.",
+   "Incorrect: --confirm-with-what-if shows the changes and waits for an interactive confirmation in the terminal, which an unattended GitHub Actions job cannot answer, and it bypasses the environment approval. Use it for manual deployments from a shell.",
+   "Incorrect: az deployment sub what-if previews a subscription-scope deployment, but this template targets the rg-agents resource group, so the preview would not match the deployment. Use it for templates that deploy at subscription scope."
+  ],
+  "ref": "https://learn.microsoft.com/training/modules/test-bicep-code-using-github-actions/"
+ },
+ {
+  "id": "4.3.4-09",
+  "obj": "4.3.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fourth Coffee has the source code of a hosted agent that is not yet set up for the Azure Developer CLI. You must deliver a GitHub Actions pipeline that provisions the Foundry resources by using Bicep and deploys the agent on each push to main. A previous attempt failed with AuthorizationFailed during azd provision because the pipeline service principal had only the Contributor role on the resource group.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run `azd ai agent init --infra=bicep` and commit the generated infrastructure files.",
+   "Run `azd up` to deploy the project successfully once.",
+   "Run `azd pipeline config` to create the service principal, the repository variables, and the workflow file.",
+   "Run `az role assignment create --assignee $AZURE_CLIENT_ID --role \"Foundry Owner\" --scope /subscriptions/$SUB_ID/resourceGroups/rg-agents`.",
+   "Push a commit to main so that the workflow runs `azd provision --no-prompt` and `azd deploy --no-prompt`.",
+   "Add a workflow step that runs `azd ai agent init --infra=bicep` before `azd provision`.",
+   "Run `az role assignment create --assignee $AZURE_CLIENT_ID --role \"Foundry User\" --scope /subscriptions/$SUB_ID/resourceGroups/rg-agents`."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The azd CI/CD path for hosted agents is: initialize the project once (choosing Bicep or Terraform), prove it with a successful azd up, run azd pipeline config to create the identity and workflow, and grant that identity the roles provisioning needs. The CI/CD troubleshooting table on Learn resolves AuthorizationFailed during provision by verifying that the service principal has both Contributor and Foundry Owner.",
+  "rationale": [
+   "Step 1: initialization writes azure.yaml and, with --infra=bicep, the Bicep files. It is a one-time authoring step, and every later azd command needs the project files.",
+   "Step 2: the CI/CD setup expects a project that has been deployed at least once with azd up, which proves the configuration works before it is automated.",
+   "Step 3: azd pipeline config creates the service principal used by the pipeline, stores the environment values as repository variables, and generates the workflow file.",
+   "Step 4: the service principal from step 3 must exist before it can be assigned a role. Foundry Owner fixes the AuthorizationFailed error, because provisioning Foundry resources needs it in addition to Contributor.",
+   "Step 5: a push to main triggers the generated workflow, which signs in with federated credentials and runs provision and deploy with --no-prompt.",
+   "Incorrect: initialization is a project-authoring step and must not be rerun in every CI deployment, because it regenerates files that are already committed. Run it once on a developer machine.",
+   "Incorrect: Foundry User grants build-and-develop data actions in projects but not the management rights to provision Foundry resources, so provisioning still fails. Assign it to developers who build agents."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/agents/how-to/set-up-ci-cd-cli"
+ },
+ {
+  "id": "4.3.4-10",
+  "obj": "4.3.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "case": "C-g",
+  "stem": "You are defining the CI/CD requirements for the SkyHelp infrastructure and agents. The requirements must address the issue from the last release and the technical requirements.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Running unit tests and validation on the Bicep templates during continuous integration meets the fast-feedback requirement.",
+   "A cross-layer smoke test that deploys the application and makes the agents query the provisioned Azure AI Search index would have caught the issue from the last release.",
+   "Running the full end-to-end test suite on every commit is required to catch the issue while meeting the continuous integration duration limit."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Infrastructure-as-code testing has layers: fast unit tests and validation of templates in CI, and slower integration or smoke tests that deploy the application on the provisioned infrastructure and exercise it. Infrastructure tests can pass while the application cannot use a resource, so a cross-layer test before release closes that gap without slowing every commit.",
+  "rationale": [
+   "Yes: unit tests and template validation run in minutes and catch template errors early, so they fit the 10-minute continuous integration limit in the case. They do not catch cross-layer issues by themselves.",
+   "Yes: in the last release every infrastructure test passed, but the agents could not use the index. A smoke test that deploys the app and makes the agents query the provisioned index tests exactly that interaction before release.",
+   "No: the full end-to-end suite on every commit would exceed the 10-minute continuous integration limit, and the cross-layer smoke test before release already catches the issue. Run the full suite before release or nightly."
+  ],
+  "ref": "https://learn.microsoft.com/azure/well-architected/operational-excellence/testing"
+ }
+]
