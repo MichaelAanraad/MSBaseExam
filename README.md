@@ -73,6 +73,8 @@ Open this folder in Claude Code and the project skills load automatically:
 
 - `ai500-buddy`: interactive AI-500 quiz partner in chat, with score and
   weak-domain tracking. Say "AI-500" or "ai500 buddy".
+- `ab650-buddy`: the same for AB-650 (Administering Microsoft 365 and AI
+  Services), with Microsoft Graph PowerShell instead of Python. Say "AB-650".
 - `ms-cert-item-creator`: writes exam-realistic questions for any Microsoft
   exam, following the WWL style guide.
 - `/cert-quiz exam=AI-102 count=5`: slash command wrapper around the item
