@@ -1,25 +1,26 @@
 # Question-writing brief
 
-Project folder: the folder that contains this file. Exam and objective map:
-`EXAM`, `EXAM_TITLE`, `STUDY_GUIDE` and `GROUPS` in `objectives.py` (source of
-truth: the official study guide at `STUDY_GUIDE`).
+Project folder: the folder that contains this file. Each exam has its own
+folder `exams/<exam>/` (for example `exams/ab650/`) with:
 
-For another exam, rewrite the audience paragraph below from the study guide's
-audience profile; the writing rules after it apply to every exam.
+- `objectives.py`: `EXAM`, `EXAM_TITLE`, `STUDY_GUIDE`, domains and objectives
+  (source of truth: the official study guide at `STUDY_GUIDE`).
+- `AUDIENCE.md`: the audience, the code/command language, current product
+  names, and exam-specific rules. Read it before writing; it overrides the
+  generic examples in this brief.
+- `data/`: the questions.
 
-Audience (AI-500, expert level): expert practitioner who designs, builds and runs production multi-agent
-systems on Microsoft Foundry; proficient in Python; knows Azure compute, network,
-storage and data services; familiar with Microsoft Agent Framework, MCP, RAG and
-LangGraph.
+All commands below run from the project folder and take the exam folder name
+as first argument.
 
 ## Your job
 
-Write the questions for ONE objective group, save them as `data/<group>.json`
-(for example `data/2.3.json`), and run `python validate.py <group>` until it
+Write the questions for ONE objective group, save them as `exams/<exam>/data/<group>.json`
+(for example `exams/ab650/data/2.3.json`), and run `python validate.py <exam> <group>` until it
 prints `0 errors`.
 
 For every objective in your group write EXACTLY the target count from
-`objectives.py` (`python objectives.py` prints it). Split difficulty as evenly
+`objectives.py` (`python exams/<exam>/objectives.py` prints it). Split difficulty as evenly
 as possible: easy / medium / hard about one third each.
 
 ## Scope rule: no more, no less
@@ -41,16 +42,13 @@ saw in a tool result; never invent one. If a fact (parameter name, API, limit,
 role name) cannot be verified on Learn, do not test it. Prefer concepts and
 design decisions that are stable over exact SDK signatures. Code snippets are
 allowed only when the syntax is verified by `microsoft_code_sample_search` or a
-fetched page. For open-source frameworks (LangGraph, LangChain, A2A, MCP, Hugging
-Face) test well-established concepts only, and use the closest Learn page as ref.
+fetched page.
 
-Use current product names: Microsoft Foundry (not Azure AI Foundry / AI Studio),
-Microsoft Entra ID (not Azure AD), Foundry Agent Service, Microsoft Agent
-Framework, Azure AI Search, Azure AI Content Safety, Azure API Management.
+Use current product names; `AUDIENCE.md` lists the ones that matter for the exam.
 
 ## Style (Microsoft WWL exam style, short version)
 
-Full rules: `~/.claude/skills/ms-cert-item-creator/SKILL.md` (read it once).
+Full rules: `.claude/skills/ms-cert-item-creator/SKILL.md` (read it once).
 
 - Scenario first, then one question sentence: starts with **What** or **Which**,
   uses **should**: "Which service should you use?", "What should you do?",
@@ -113,7 +111,7 @@ A single JSON array. Each item:
 - `rationale`: one entry per choice, same order as `choices`.
 - `id`: `<obj>-<two-digit sequence>`.
 
-Write UTF-8 JSON. Then run `python validate.py <group>` and fix every error.
+Write UTF-8 JSON. Then run `python validate.py <exam> <group>` and fix every error.
 Finally re-read your file once as a strict reviewer: is every answer correct per
 Learn, is exactly one answer defensible, is every sub-topic covered? Fix, re-run
 the validator, and report the per-objective sub-topic coverage in 1 line each.

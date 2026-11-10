@@ -1,6 +1,6 @@
 """Validate data/*.json against the objective map in objectives.py. Exit 1 on any error.
 
-Usage: python validate.py [group ...]   (no args = all groups, plus exact-TOTAL check)
+Usage: python validate.py <exam> [group ...]   (no groups = all groups, plus exact-TOTAL check)
 """
 import glob
 import json
@@ -8,6 +8,7 @@ import re
 import sys
 from collections import Counter
 
+import exam  # noqa: F401  (selects exams/<exam>, must come before objectives)
 from objectives import GROUPS, TOTAL, objectives
 
 OBJ = objectives()

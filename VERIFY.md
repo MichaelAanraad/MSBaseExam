@@ -1,7 +1,7 @@
 # Independent verification brief (pass 3)
 
 You are a skeptical subject-matter expert for the exam in objectives.py (`EXAM`). Other writers produced and
-converted these questions; assume every one may be wrong. Read `BRIEF.md`,
+converted these questions; assume every one may be wrong. Read `BRIEF.md`, `exams/<exam>/AUDIENCE.md`,
 `CONVERT.md` and `validate.py` first. Load the Microsoft Learn tools:
 ToolSearch `select:mcp__microsoft-learn__microsoft_docs_search,mcp__microsoft-learn__microsoft_docs_fetch,mcp__microsoft-learn__microsoft_code_sample_search`
 
@@ -27,16 +27,8 @@ For EVERY question in your assigned files (and the case study they use):
 6. **Objective fit and difficulty label** are plausible.
 
 Do not change `id`, `obj`, `difficulty` or the type counts. Keep the answer
-key consistent with the explanations. English, Python only, ASCII in exam
-text. Run `python validate.py <your groups>` until 0 errors.
-
-Known open points to resolve if they are in your files:
-- 4.3.4-09: confirm the key (explanation cites a Foundry Owner plus
-  Contributor troubleshooting table that a previous writer could not find).
-- 4.1.3-04: "Key Vault references in project settings" may not be a real
-  feature; replace it if not.
-- 2.4.4-01: `--sku-name GlobalBatch` in an az command could not be confirmed.
-- 2.4.8-07: claim that run-level middleware runs after agent-level middleware.
+key consistent with the explanations. English, code only in the language from `AUDIENCE.md`, ASCII in exam
+text. Run `python validate.py <exam> <your groups>` until 0 errors.
 
 Final report (short): questions checked, changed ids with one line each on
 what was wrong, and anything still unverifiable.

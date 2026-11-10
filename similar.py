@@ -1,5 +1,6 @@
 """List cross-objective question pairs that look alike (TF-IDF cosine > 0.30). Review the top ones by hand."""
 import json,glob,re,math
+import exam  # python similar.py <exam>
 from collections import Counter
 qs=[]
 for f in sorted(glob.glob('data/[0-9]*.json')): qs+=json.load(open(f,encoding='utf-8'))

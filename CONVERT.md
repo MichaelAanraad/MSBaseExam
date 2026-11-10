@@ -4,7 +4,7 @@ Goal: make this practice exam as close to the real exam (`EXAM` in objectives.py
 The learner studies by trial and error, so **the explanation of every wrong
 answer is the most important text in the file.**
 
-Read first: `BRIEF.md` (writing rules), `DISTRACTORS.md` (plausible
+Read first: `BRIEF.md` (writing rules), `exams/<exam>/AUDIENCE.md`, `DISTRACTORS.md` (plausible
 distractors), `validate.py` (the exact format rules), and the format examples
 `examples/examples.json` and `examples/cases_example.json` (one of each new
 type; format only, do not copy their content).
@@ -24,10 +24,13 @@ questions -> `order`, code snippets -> `dropdown`, multi-select -> `yesno` or
 
 - **order (build list)**: 3-6 steps plus at least 2 extra actions that do not
   belong. At least two thirds of your order questions must be **command or
-  code sequences to provision, deploy, or configure resources**: real `az`,
-  `azd`, `func`, `pip`, `git`, GitHub Actions or Python SDK calls, written in
+  code sequences to provision, deploy, or configure resources**: real
+  commands from the platform named in `AUDIENCE.md` (for AI-500: `az`, `azd`,
+  `func`, `pip`, `git`, GitHub Actions or Python SDK calls; for AB-650:
+  Microsoft Graph PowerShell and Exchange Online PowerShell cmdlets), written in
   backticks inside each choice, for example
-  `` `az cognitiveservices account create --kind AIServices ...` ``.
+  `` `Connect-MgGraph -Scopes "User.ReadWrite.All"` ``. When an exam is
+  portal-driven, ordered admin-center steps are fine too.
   The learner struggled most with exactly this on a previous exam.
   Extra actions must be real commands that are wrong here (wrong order
   dependency, wrong command group, a step for a different hosting option, a
@@ -37,7 +40,7 @@ questions -> `order`, code snippets -> `dropdown`, multi-select -> `yesno` or
   The order must be forced by real dependencies (a resource must exist before
   a role assignment on it, a package before an import), so exactly one order
   is defensible.
-- **dropdown (hot area / code completion)**: Python code or a CLI command in a
+- **dropdown (hot area / code completion)**: code in the language from `AUDIENCE.md` or a CLI/PowerShell command in a
   fenced block with `[[1]]`, `[[2]]` markers; each target has 2-4 options that
   are all real and type-correct, and a `why` per option.
 - **dragdrop**: values to targets; at least one value unused; `notes` explain
@@ -47,7 +50,7 @@ questions -> `order`, code snippets -> `dropdown`, multi-select -> `yesno` or
   statement and goal, each with a different `Solution:`; same objective; give
   them one `series` id `S-<tag>`; mix Yes and No answers. They replace 3
   existing questions of that objective (keep each one's difficulty).
-- **case study**: write one case study `C-<tag>` in `data/cases_<tag>.json`
+- **case study**: write one case study `C-<tag>` in `exams/<exam>/data/cases_<tag>.json`
   (title = an approved fictional company; 4-6 sections such as Overview,
   Existing environment, Business requirements, Technical requirements,
   Constraints; 500-900 words; realistic details the questions depend on, plus
@@ -80,12 +83,12 @@ that each one teaches:
   you actually saw. Do not invent parameters, commands, or limits.
 - Never create a second defensible answer. Keep the answer key consistent with
   the explanations.
-- English, Python only, plain ASCII in stem/choices/targets/case text.
+- English, code only in the language from `AUDIENCE.md`, plain ASCII in stem/choices/targets/case text.
 - Work file by file and save often (a small Python script that loads, edits,
   and dumps the JSON with `indent=1, ensure_ascii=False` is fine).
 - Validate ALL your assigned groups together, because your case study spans
-  them: `python validate.py <group1> <group2>`, until 0 errors.
-- Edit only your assigned files plus your own `data/cases_<tag>.json`.
+  them: `python validate.py <exam> <group1> <group2>`, until 0 errors.
+- Edit only your assigned files plus your own `exams/<exam>/data/cases_<tag>.json`.
 
 Final report (short): per type, the ids converted; the case study id and its
 question ids; number of explanations rewritten; any fact you could not verify.

@@ -2,9 +2,9 @@
 
 You are an independent, skeptical technical reviewer (a subject-matter
 expert). Another writer produced the questions; assume each one may be wrong.
-Read BRIEF.md (writing rules) and objectives.py (official objective list) first.
+Read BRIEF.md (writing rules) , `exams/<exam>/AUDIENCE.md` and `exams/<exam>/objectives.py` (official objective list) first.
 
-For EVERY question in your assigned `data/<group>.json` files:
+For EVERY question in your assigned `exams/<exam>/data/<group>.json` files:
 
 1. **Correctness.** Open the `ref` with `microsoft_docs_fetch` (load the
    Microsoft Learn tools via ToolSearch:
@@ -32,7 +32,7 @@ to the stem or rationale, or enrich distractors). Do not pad with filler.
 
 Fix problems directly in the JSON file (keep `id`, `obj` and counts unchanged;
 replace a broken question with a new one for the same objective and
-difficulty). Run `python validate.py <group>` after editing until 0 errors.
+difficulty). Run `python validate.py <exam> <group>` after editing until 0 errors.
 Only edit your assigned files.
 
 Final report (short): per file, number of questions checked, number changed,

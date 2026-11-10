@@ -4,7 +4,7 @@ Goal: a candidate must not be able to answer a question by common sense,
 elimination of nonsense, or wording tells. Only real knowledge of the exam
 material should get them to the key. Read BRIEF.md (writing rules) first.
 
-For EVERY question in your assigned `data/<group>.json` files, check each
+For EVERY question in your assigned `exams/<exam>/data/<group>.json` files, check each
 wrong choice and the question as a whole for these tells, and fix them:
 
 1. **Nonsense / off-topic distractor**: a choice that is obviously wrong to
@@ -40,9 +40,9 @@ Rules:
 - Update `rationale` for every choice you change (starts with "Correct:" for
   keyed choices, "Incorrect:" otherwise, and names the constraint that rules it
   out), and update `explanation` if needed. Everything in English.
-- Python only, no C#/.NET. Plain ASCII in stem and choices.
+- Code only in the language named in `AUDIENCE.md`. Plain ASCII in stem and choices.
 - Leave good questions alone; do not rewrite for the sake of it.
-- Run `python validate.py <group>` after editing until 0 errors. Edit only
+- Run `python validate.py <exam> <group>` after editing until 0 errors. Edit only
   your assigned files.
 
 Final report (short): per file, questions checked, questions changed, and the
