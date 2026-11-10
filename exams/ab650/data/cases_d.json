@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-d",
+  "title": "Northwind Traders",
+  "sections": [
+   [
+    "Overview",
+    "Northwind Traders is a food distributor with a head office in Seattle and 12 regional warehouses. The company has about 4,800 employees, including 3,100 warehouse and delivery staff. A central IT team of 15 people manages identity and Microsoft 365. The company plans to open a new warehouse in Vancouver next year and wants to reduce password-related help desk calls by 40 percent before then."
+   ],
+   [
+    "Existing environment",
+    "**Identity**\n\nNorthwind Traders has a single AD DS forest named northwindtraders.com that contains one domain. The domain has six writable domain controllers that run Windows Server 2022, and sysvol replication uses DFSR. Two member servers named SRV1 and SRV2 run Windows Server 2022 and are available for new infrastructure roles. Microsoft Entra Connect Sync synchronizes all users to Microsoft Entra ID by using password hash synchronization. Password writeback is not configured.\n\n**Licensing**\n\nAll users have Microsoft 365 E3 licenses and Microsoft Entra ID P1. In addition, 300 Microsoft Entra ID P2 licenses are assigned through group-based licensing to a group named FIN-IT, which contains the Finance and IT staff.\n\n**Authentication**\n\nThe Manage migration setting of the Authentication methods policy is Migration Complete. Microsoft Authenticator is enabled for all users, SMS is enabled for a group named WarehouseLeads, and passkeys (FIDO2) are enabled for the IT administrators. Temporary Access Pass is disabled.\n\nSelf-service password reset (SSPR) is enabled for a group named SSPR-Pilot that contains 150 users. One method is required to reset.\n\n**Conditional Access**\n\nSecurity defaults are disabled. Two Conditional Access policies exist: CA01 requires MFA for all users, and CA02 blocks legacy authentication. Both policies exclude two emergency access accounts named BreakGlass1 and BreakGlass2.\n\n**Help desk**\n\nA group named HelpDesk contains six help desk employees. To troubleshoot sign-in problems, the help desk employees currently hold the Global Administrator role, which the security team wants removed.\n\n**Other systems**\n\nWarehouse supervisors use shared Windows tablets that run a route planning app. Sales staff use Microsoft Teams Phone. Power BI dashboards show daily delivery performance."
+   ],
+   [
+    "Business requirements",
+    "- New employees must register a passkey on their first day without ever receiving a password. The onboarding session lasts about two hours and includes Windows device setup followed by passkey registration later in the session. Administrative effort for onboarding must be minimized.\n- Members of FIN-IT whose user risk is High must be required to remediate the risk before they can access any resource.\n- Help desk employees must be able to investigate failed sign-ins, including which Conditional Access policies applied, but must be unable to change any configuration."
+   ],
+   [
+    "Technical requirements",
+    "- Passwords that contain the terms Northwind, Tradewinds (the private-label product brand), or Seattle must be blocked for cloud password changes and for on-premises AD DS password changes.\n- The impact on on-premises password changes must be measured for 30 days before weak on-premises passwords are rejected.\n- All users must be able to reset forgotten passwords by using SSPR, two methods must be required, and the new password must be used for on-premises sign-ins.\n- Every new Conditional Access policy must be evaluated before it is enforced, and BreakGlass1 and BreakGlass2 must be excluded from every policy."
+   ],
+   [
+    "Constraints",
+    "- Do not purchase additional licenses.\n- Use the principle of least privilege for every role assignment.\n- Minimize administrative effort."
+   ]
+  ]
+ }
+]

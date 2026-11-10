@@ -1,0 +1,1068 @@
+[
+ {
+  "id": "2.3.1-01",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses Microsoft Defender for Office 365 Plan 2. The security team needs a new custom alert policy in the Threat management category that generates an alert every time a user sends email to a specific external domain.\n\nWhich location should you use to create the alert policy?",
+  "choices": [
+   "Microsoft Defender portal > Email & collaboration > Policies & rules > Alert policy",
+   "Microsoft Defender portal > Incidents & alerts > Alerts",
+   "Exchange admin center > Mail flow > Alert policies",
+   "Microsoft Defender portal > System > Settings > Microsoft Defender XDR > Alert tuning"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom and default alert policies for email and collaboration activity are managed on the Alert policy page under Email & collaboration > Policies & rules in the Microsoft Defender portal. The Alerts queue shows the alerts that those policies generate, and alert tuning only suppresses or resolves alerts. Remember the split: policies define when an alert fires, the queue is where you triage it.",
+  "rationale": [
+   "Correct: the Alert policy page (security.microsoft.com/alertpolicies) is where you create a new alert policy, choose its category, severity, activity, trigger and email recipients.",
+   "Incorrect: Incidents & alerts > Alerts is the alert queue where you view, assign, classify and resolve alerts after they are generated. You cannot define a new alert policy there; use it for triage.",
+   "Incorrect: alert policies in the new Exchange admin center track mail flow events only, such as delayed messages, and support aggregated alert configurations. They cannot create a Threat management policy. Use them for mail flow monitoring.",
+   "Incorrect: the Alert tuning page creates rules that hide or resolve alerts to reduce noise. It does not create alerts. Use it when a known benign activity keeps generating alerts."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/alert-policies-defender-portal"
+ },
+ {
+  "id": "2.3.1-02",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on for every user. The security team wants an alert only when more than 100 files are deleted from SharePoint by a single user within one hour. When you create the alert policy, the threshold options are unavailable.\n\nWhat should you do to meet the requirement?",
+  "choices": [
+   "Add Microsoft Defender for Office 365 Plan 2 licenses to the subscription.",
+   "Assign the Manage Alerts role to the administrator who creates the policy.",
+   "Set the policy to trigger every time an activity matches the rule.",
+   "Assign Microsoft Defender for Office 365 Plan 1 licenses to the administrator."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Alert policies that trigger on a threshold or on unusual activity are advanced functionality. They need Microsoft 365 E5, or E1/E3 plus Defender for Office 365 Plan 2, Microsoft 365 E5 Compliance, or the eDiscovery and Audit add-on. With E3 and Plan 1, you can only create policies that alert every time the activity occurs.",
+  "rationale": [
+   "Correct: Defender for Office 365 Plan 2 on top of E3 unlocks threshold-based and unusual-activity triggers, so the policy can count 100 deletions per user per hour.",
+   "Incorrect: Manage Alerts is the role that lets you create and edit alert policies, and the administrator can already create the policy. A role does not unlock a licensed trigger type. Assign it when an administrator cannot open or save alert policies at all.",
+   "Incorrect: an every-time trigger generates an alert for each deletion, which breaks the only-above-100 requirement. It is the right setting when every single occurrence matters, such as malware detected in a file.",
+   "Incorrect: everyone already has Plan 1, and Plan 1 does not include the advanced alert policy options. Plan 1 licenses are relevant for Safe Links, Safe Attachments and Real-time detections, not for threshold alerts."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-03",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Microsoft Defender for Office 365. A new administrator named Admin1 must create and manage alert policies in the Threat management category and manage the resulting alerts. The solution must follow the principle of least privilege.\n\nWhich Microsoft Entra role should you assign to Admin1?",
+  "choices": [
+   "Security Administrator",
+   "Global Administrator",
+   "Security Reader",
+   "Compliance Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Security Administrator role (Entra or the Email & collaboration role group) can create and manage Threat management alert policies and see their alerts. Which alerts a role can see depends on the alert category: Compliance Administrator, for example, cannot see Threat management alerts.",
+  "rationale": [
+   "Correct: Security Administrator can create and manage alert policies in the Threat management category and can view and manage those alerts, without the tenant-wide rights of Global Administrator.",
+   "Incorrect: Global Administrator can do this, but it is a highly privileged role that Microsoft recommends only for emergency scenarios. Least privilege rules it out; use it only when no narrower role covers the task.",
+   "Incorrect: Security Reader can view Threat management alerts and alert policies, but cannot create or edit policies. Use it for analysts who only need read access.",
+   "Incorrect: Compliance Administrator sees alerts in categories such as Data loss prevention and Information governance, but not in Threat management. Use it for Purview compliance alerting."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-04",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys uses Microsoft 365 E5. Two hours ago, an administrator created a custom alert policy that should trigger every time a mailbox permission is added. A test permission was added 30 minutes ago, but no alert appears on the Alerts page. The policy is turned on and the conditions are correct.\n\nWhat should you do?",
+  "choices": [
+   "Wait until the policy syncs to the alert detection engine.",
+   "Raise the daily notification limit of the alert policy.",
+   "Change the trigger to unusual activity for the organization.",
+   "Change the category of the alert policy to Threat management."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "After you create or update an alert policy, it can take up to 24 hours before the policy can trigger alerts, because it must be synced to the alert detection engine. Notification limits only affect email, and unusual-activity triggers first need a baseline of up to seven days.",
+  "rationale": [
+   "Correct: a new or changed alert policy can take up to 24 hours to sync to the alert detection engine, so activity in the first hours might not generate an alert even when the policy is correct.",
+   "Incorrect: the daily notification limit caps how many email notifications are sent per day. It does not decide whether an alert appears on the Alerts page. Raise it when recipients stop getting email after the limit is reached.",
+   "Incorrect: an unusual-activity trigger needs up to seven days to establish a baseline and then fires only on unusual volume, so it would delay and reduce alerts. Use it when single events are normal and only spikes matter.",
+   "Incorrect: the category controls filtering and which roles can see the alert. It does not affect whether the policy fires. Change it when the wrong team sees or cannot see the alerts."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-05",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank uses Microsoft 365 E5. When users report phishing with the built-in Report button, the default alert policy named Email reported by user as malware or phish generates an alert and starts an automated investigation. The SOC team now wants an email notification to the soc@woodgrovebank.com mailbox for each of these alerts, and automated investigations must keep starting.\n\nWhat should you do?",
+  "choices": [
+   "Edit the default alert policy and add soc@woodgrovebank.com as an email recipient.",
+   "Turn off the default policy and create a copy of it with soc@woodgrovebank.com as recipient.",
+   "Set soc@woodgrovebank.com as the reporting mailbox in the user reported settings.",
+   "Assign the Security Reader role to the members of the SOC team."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Default (system) alert policies cannot be fully edited, but you can turn them on or off, set email notification recipients and set a daily notification limit. Automated investigation and response is triggered by the specific default alert policies, so disabling or replacing them with custom alerts stops AIR.",
+  "rationale": [
+   "Correct: email recipients and the daily notification limit are the settings you can change on a default alert policy, and keeping the default policy on keeps the AIR trigger intact.",
+   "Incorrect: AIR is not triggered when the AIR-enabled default alerts are disabled or replaced by custom alerts, so this breaks the investigation requirement. A custom copy is fine for activities that do not rely on AIR.",
+   "Incorrect: the reporting mailbox receives copies of the reported messages, not alert notifications. Use it when the SOC wants to review the user-reported messages themselves.",
+   "Incorrect: Security Reader lets the team view alerts on the Alerts page, but it does not send any email notification. Assign it when the team only needs read access to alerts."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-06",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud uses Microsoft Defender for Office 365 Plan 2. An analyst reviews an alert for a credential phishing message. The investigation shows that the message was sent by an approved red team as part of a security test, and the detection was technically accurate. The analyst must resolve the alert so that similar real attacks are still detected later.\n\nWhich classification should the analyst select?",
+  "choices": [
+   "Informational, expected activity",
+   "False positive",
+   "True positive",
+   "Not set"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In the Manage alert pane you set the status (New, In progress, Resolved) and a classification. True positive means a real threat, False positive means no malicious activity was present, and Informational, expected activity covers accurate detections of benign or simulated activity such as red team tests.",
+  "rationale": [
+   "Correct: Informational, expected activity is meant for alerts that are technically accurate but represent security tests, red team activity or expected behavior, so the detection logic stays useful for real attackers.",
+   "Incorrect: False positive means the alert fired although there was no malicious or suspicious activity, which is not the case here because the detection was accurate. Use it for false alarms you do not want to see again.",
+   "Incorrect: True positive means the alert indicates a real threat that the team must act on. The message came from an approved test, so no real threat exists. Use it for confirmed attacks.",
+   "Incorrect: Not set is the default classification and records no verdict, so resolving the alert this way loses the feedback that improves detection quality. It is only the starting value."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/investigate-alerts"
+ },
+ {
+  "id": "2.3.1-07",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation uses Microsoft Defender XDR with several Defender products. On the Alerts page in the Microsoft Defender portal, an administrator needs to show only alerts that were generated by Microsoft Defender for Office 365.\n\nWhich filter should the administrator use?",
+  "choices": [
+   "Service/detection sources",
+   "Categories",
+   "Policy/policy rule",
+   "Automated investigation state"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Alerts page offers filters such as Severity, Status, Categories, Service/detection sources, Tags, Policy/policy rule, Automated investigation state and Entities. Service/detection sources filters by the product or service that raised the alert, for example Defender for Office 365 or Defender for Identity.",
+  "rationale": [
+   "Correct: Service/detection sources shows alerts triggered by a specific service or detection source, such as Microsoft Defender for Office 365.",
+   "Incorrect: Categories filters by the alert category of the policy (for example Threat management or Mail flow). Several products can raise alerts in one category, so it does not isolate Defender for Office 365.",
+   "Incorrect: Policy/policy rule shows alerts that match one or more specific alert policies. Use it to follow one policy, not to show every alert from a product.",
+   "Incorrect: Automated investigation state filters alerts by the state of the automated investigation that they started. Use it to find alerts whose investigations are pending or failed, not to isolate one product."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-08",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. uses Microsoft Defender for Office 365 Plan 2. Safe Attachments for SharePoint, OneDrive, and Microsoft Teams is already turned on. You need an alert policy that notifies the security team by email every time a malicious file is detected in those services.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Alert policy page in the Microsoft Defender portal, select New alert policy.",
+   "Enter a name, select the Threat management category, and choose a severity.",
+   "Select the activity Detected malware in file and the trigger Every time an activity matches the rule.",
+   "Opt in for email notifications, add the security team as recipients, and set the daily notification limit.",
+   "Review the settings and submit the policy.",
+   "Run `Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $true` in Exchange Online PowerShell.",
+   "On the Alert tuning page, create a rule that resolves alerts for detected files."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The new alert policy wizard runs in a fixed order: name, category and severity first, then the activity, conditions and trigger, then notification recipients, then review. Safe Attachments for SharePoint, OneDrive, and Teams must already be on so that malicious files are detected at all.",
+  "rationale": [
+   "Step 1: the Alert policy page under Email & collaboration > Policies & rules is where New alert policy starts the wizard.",
+   "Step 2: the first wizard page is Name your alert, categorize it, and choose a severity; Threat management is the category for malware detections.",
+   "Step 3: the next page sets what to alert on and how the alert is triggered; Detected malware in file with an every-time trigger fires for each detection.",
+   "Step 4: the notification page is where you opt in to email notifications, choose the recipients and optionally cap notifications per day.",
+   "Step 5: the review page summarizes the settings before you submit, after which the policy appears on the Alert policy page.",
+   "Incorrect: this command turns on Safe Attachments for SharePoint, OneDrive, and Teams, which the stem says is already on. Run it first when the feature is still off, because without it no file detections occur.",
+   "Incorrect: an alert tuning rule hides or resolves matching alerts, which would defeat the purpose of notifying the team. Use it to suppress known benign alerts."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-attachments-for-spo-odfb-teams-configure"
+ },
+ {
+  "id": "2.3.1-09",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Fabrikam, Inc. uses Microsoft 365 E5. The SOC team asks which default alert policy covers each of its monitoring requirements.\n\nWhich default alert policy should you identify for each requirement? To answer, drag the appropriate alert policies to the correct requirements. Each alert policy may be used once, more than once, or not at all.",
+  "choices": [
+   "A potentially malicious URL click was detected",
+   "User restricted from sending email",
+   "Email reported by user as malware or phish",
+   "Suspicious email forwarding activity",
+   "Messages have been delayed"
+  ],
+  "targets": [
+   "A user clicked a Safe Links protected link whose verdict later changed to malicious",
+   "An account was blocked from sending outbound mail, which often indicates compromise",
+   "A user selected the Report button in Outlook to report a phishing message"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "A potentially malicious URL click was detected fires when a Safe Links protected user clicks a link that is later identified as malicious, including clicks in the 48 hours before the verdict change.",
+   "User restricted from sending email fires when someone is restricted from sending outbound mail, which typically indicates a compromised account sending spam.",
+   "Email reported by user as malware or phish fires when users report messages as phishing with the built-in Report button or the add-ins, and it starts AIR in Plan 2 organizations."
+  ],
+  "notes": [
+   "Default Threat management policy for clicks on links that Safe Links later identifies as malicious; requires E5 or Defender for Office 365 Plan 2. Use it to find users who might have been compromised by a link.",
+   "Default Threat management policy that fires when an account is blocked from sending outbound mail. Use it as an early signal of a compromised account.",
+   "Default Threat management policy for user-reported phishing or malware. Use it to triage user reports; it triggers automated investigation in Plan 2.",
+   "Default Threat management policy that fires on unusual automatic forwarding of email to external recipients. Use it to detect data exfiltration through forwarding, not reports or clicks.",
+   "Default Mail flow policy that fires when 2,000 or more messages are queued for over an hour on a connector. Use it to monitor delivery to on-premises or partner servers."
+  ],
+  "explanation": "Default alert policies are system policies that are on by default. Know which event each one watches: link clicks, outbound sending restrictions, user reports, forwarding and mail flow queues. Some of them, such as Email reported by user as malware or phish, also start automated investigations in Plan 2.",
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.1-10",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Northwind Traders has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on. It has no other add-on subscriptions. An administrator plans to use alert policies in the Microsoft Defender portal.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The administrator can add email notification recipients to the default alert policies.",
+   "The administrator can create an alert policy that triggers when activity becomes unusual for the organization.",
+   "A newly created alert policy can trigger alerts as soon as it is saved."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Default alert policies allow only on/off, notification recipients and a daily notification limit to be changed. Threshold and unusual-activity triggers need E5 or a qualifying add-on such as Defender for Office 365 Plan 2; with E3 and Plan 1 a policy can only alert every time an activity occurs. Any new or updated policy can take up to 24 hours to start triggering.",
+  "rationale": [
+   "Yes: for default (system) alert policies you can turn the policy on or off, set email notification recipients and set a daily notification limit, in any subscription that has alert policies. The other settings cannot be edited.",
+   "No: unusual-activity and threshold triggers require E5 or an add-on such as Defender for Office 365 Plan 2, Microsoft 365 E5 Compliance or eDiscovery and Audit. This tenant can only alert every time an activity occurs.",
+   "No: a new or updated alert policy can take up to 24 hours to sync to the alert detection engine before it triggers alerts. Plan tests with that delay in mind."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/alert-policies"
+ },
+ {
+  "id": "2.3.2-01",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. uses Microsoft Defender for Office 365 Plan 1. You need to use PowerShell to create a Safe Links policy named Finance for all recipients in the fabrikam.com domain. Links in email must be scanned before delivery, and users must not be able to click through to blocked URLs. You must then confirm the configuration.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-ExchangeOnline`",
+   "`New-SafeLinksPolicy -Name \"Finance\" -EnableSafeLinksForEmail $true -ScanUrls $true -DeliverMessageAfterScan $true -AllowClickThrough $false`",
+   "`New-SafeLinksRule -Name \"Finance\" -SafeLinksPolicy \"Finance\" -RecipientDomainIs fabrikam.com`",
+   "`Get-SafeLinksPolicy -Identity \"Finance\"; Get-SafeLinksRule -Identity \"Finance\"`",
+   "`Connect-IPPSSession`",
+   "`Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $true`",
+   "`New-ATPProtectionPolicyRule -Name \"Finance\"`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "In PowerShell, a Safe Links policy has two parts: the policy (settings, managed by the *-SafeLinksPolicy cmdlets) and the rule (recipients and priority, managed by the *-SafeLinksRule cmdlets). You create the policy first and then the rule that references it; a policy without a rule applies to nobody and is not visible in the portal. The same pattern applies to Safe Attachments and anti-phishing policies.",
+  "rationale": [
+   "Step 1: Safe Links policies are managed in Exchange Online PowerShell, so you connect with Connect-ExchangeOnline before running any SafeLinks cmdlet.",
+   "Step 2: the policy holds the settings: Safe Links for email, real-time URL scanning, waiting for the scan before delivery, and no click-through. It must exist before a rule can reference it.",
+   "Step 3: the rule links the Finance policy to recipients in fabrikam.com. Without a rule, the policy applies to no one and does not appear in the Defender portal.",
+   "Step 4: running both Get cmdlets verifies the policy settings and the rule conditions, which is the documented way to confirm the configuration.",
+   "Incorrect: Connect-IPPSSession connects to Security & Compliance PowerShell, which is used for cmdlets such as New-ProtectionAlert, not for Safe Links. Use it for alert policies or Purview cmdlets.",
+   "Incorrect: Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB turns on Safe Attachments for SharePoint, OneDrive, and Teams. It does not create Safe Links policies. Use it when files in those services must be scanned.",
+   "Incorrect: the ATPProtectionPolicyRule cmdlets manage the rules of the Standard and Strict preset security policies, which are created when you first turn on the preset in the portal. Use them to change preset recipients, not to create a custom policy."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-links-policies-configure"
+ },
+ {
+  "id": "2.3.2-02",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. has Microsoft Defender for Office 365 Plan 2. The Standard preset security policy has never been turned on. You need to apply the Standard protection profile to the members of the Sales group only, and you must add the sales director as a user who is protected from impersonation.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Preset security policies page, turn on Standard protection and select Manage protection settings.",
+   "On the Apply Exchange Online Protection page, select Specific recipients and add the Sales group.",
+   "On the Apply Defender for Office 365 protection page, select Previously selected recipients.",
+   "On the page to add email addresses to flag when impersonated, add the sales director.",
+   "Review and confirm the changes.",
+   "Run `New-ATPProtectionPolicyRule` in Exchange Online PowerShell to create the Standard rule.",
+   "Create a custom anti-phishing policy for the Sales group with the sales director as a protected user."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Preset security policies apply Microsoft-recommended settings that you cannot tune, except for recipients and impersonation entries. The wizard first asks who gets the built-in (EOP) protections, then who gets Defender for Office 365 protections, then the users and domains to protect from impersonation. The rules for Standard and Strict are created the first time you turn on the preset in the portal.",
+  "rationale": [
+   "Step 1: turning on the Standard protection toggle and selecting Manage protection settings starts the configuration wizard; the first time, this also creates the underlying rules.",
+   "Step 2: the Apply Exchange Online Protection page sets who receives the built-in protections; Specific recipients limits it to the Sales group.",
+   "Step 3: the Apply Defender for Office 365 protection page sets who receives Safe Links, Safe Attachments and impersonation protection; Previously selected recipients reuses the Sales group.",
+   "Step 4: the wizard then lets you add internal and external senders to protect from user impersonation, up to 350 entries.",
+   "Step 5: the Review and confirm your changes page applies the assignment.",
+   "Incorrect: Microsoft supports creating the Standard and Strict rules only by turning on the preset in the Defender portal for the first time. Use the ATPProtectionPolicyRule cmdlets afterward to view or change recipients.",
+   "Incorrect: a custom anti-phishing policy can protect the sales director, but it does not apply the Standard protection profile, and the Standard preset is applied before custom policies anyway. Use custom policies when you need settings that presets do not allow."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/preset-security-policies"
+ },
+ {
+  "id": "2.3.2-03",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Tailspin Toys uses Microsoft Defender for Office 365 Plan 1. Users in the sales.tailspintoys.com domain complain that messages with attachments arrive late. The body of each message must be delivered immediately, and the attachments must become available only after Safe Attachments scanning completes.\n\nHow should you complete the PowerShell commands? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-ExchangeOnline\nNew-SafeAttachmentPolicy -Name \"Sales DD\" -Enable $true -Action [[1]]\n[[2]] -Name \"Sales DD\" -SafeAttachmentPolicy \"Sales DD\" -RecipientDomainIs sales.tailspintoys.com\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "DynamicDelivery",
+     "Block"
+    ],
+    "why": [
+     "Correct: Dynamic Delivery delivers the message body immediately with a placeholder for each attachment, and the attachment becomes available after scanning finds it safe. Malicious attachments cause the message to be quarantined.",
+     "Incorrect: Block holds the whole message until scanning completes and quarantines it if the attachment is malicious. It is the default and the preset recommendation, but it causes the delay that users complain about."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "New-SafeAttachmentRule",
+     "New-SafeLinksRule",
+     "Set-AtpPolicyForO365"
+    ],
+    "why": [
+     "Correct: the safe attachment rule assigns the policy to recipients and sets the priority; the SafeAttachmentPolicy and RecipientDomainIs parameters belong to this cmdlet.",
+     "Incorrect: a safe links rule assigns a Safe Links policy, not a Safe Attachments policy. Use it after New-SafeLinksPolicy when you configure URL protection.",
+     "Incorrect: Set-AtpPolicyForO365 changes tenant-wide settings such as Safe Attachments for SharePoint, OneDrive, and Teams and Safe Documents. It has no recipient conditions."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Safe Attachments actions trade delay against protection: Block holds the message, Dynamic Delivery sends the body right away with attachment placeholders, and Monitor delivers and tracks detections. In PowerShell the policy holds the action and the rule holds the recipients, so you always pair New-SafeAttachmentPolicy with New-SafeAttachmentRule.",
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-attachments-policies-configure"
+ },
+ {
+  "id": "2.3.2-04",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-e",
+  "stem": "Tailspin Toys has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on for every user. Attackers send messages from external lookalike addresses that display the name of the chief financial officer, User1, to members of the Finance group. You need to ensure that messages that impersonate User1 and are sent to members of the Finance group are quarantined.\n\nSolution: You create a custom anti-phishing policy that applies to the Finance group, add User1 to the users to protect from impersonation, and set the action for impersonated users to quarantine the message.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "User impersonation protection is part of anti-phishing policies in Defender for Office 365, and it is included in Plan 1. You add the protected senders (up to 350) to the policy, scope the policy to the recipients, and choose the action, such as quarantine.",
+  "rationale": [
+   "Correct: Plan 1 includes anti-phishing policies with impersonation protection. Adding User1 as a protected sender, scoping the policy to Finance and setting Quarantine as the action quarantines messages that impersonate User1.",
+   "Incorrect: the solution does meet the goal. No would be right if the tenant had only the built-in protection for cloud mailboxes (EOP), because user impersonation protection requires Defender for Office 365."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/anti-phishing-policies-about"
+ },
+ {
+  "id": "2.3.2-05",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-e",
+  "stem": "Tailspin Toys has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on for every user. Attackers send messages from external lookalike addresses that display the name of the chief financial officer, User1, to members of the Finance group. You need to ensure that messages that impersonate User1 and are sent to members of the Finance group are quarantined.\n\nSolution: You add the email address of User1 as a block entry on the Domains & addresses tab of the Tenant Allow/Block List.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A Tenant Allow/Block List entry matches the exact sender address or domain. Impersonation uses different lookalike addresses, so detecting it needs the impersonation checks in an anti-phishing policy.",
+  "rationale": [
+   "Incorrect: a block entry for User1's real address does not match the attackers' lookalike addresses, and it would also block legitimate mail from User1 and stop users from sending mail to User1.",
+   "Correct: the solution does not meet the goal. Block entries are right for a known malicious sender or domain; impersonation of a person needs user impersonation protection in an anti-phishing policy."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/tenant-allow-block-list-about"
+ },
+ {
+  "id": "2.3.2-06",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-e",
+  "stem": "Tailspin Toys has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on for every user. Attackers send messages from external lookalike addresses that display the name of the chief financial officer, User1, to members of the Finance group. You need to ensure that messages that impersonate User1 and are sent to members of the Finance group are quarantined.\n\nSolution: You create a Safe Links policy that applies to the Finance group and turns on real-time URL scanning with Wait for URL scanning to complete before delivering the message.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Safe Links checks URLs in messages at delivery and at time of click. It does not evaluate whether the sender impersonates a person, so it cannot detect or quarantine impersonation messages that might contain no link at all.",
+  "rationale": [
+   "Incorrect: Safe Links scans and rewrites links, but it does not inspect the sender for impersonation. A message that impersonates User1 without a malicious link is delivered normally.",
+   "Correct: the solution does not meet the goal. Safe Links is right when the threat is malicious URLs; for impersonation of User1, use an anti-phishing policy with User1 as a protected user."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-links-policies-configure"
+ },
+ {
+  "id": "2.3.2-07",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses Microsoft Defender for Office 365 Plan 2. User1 is included in the Strict preset security policy and in a custom Safe Links policy that has priority 0. The Standard preset security policy is also turned on for all users.\n\nWhich Safe Links settings should you expect to apply to User1?",
+  "choices": [
+   "The settings of the Strict preset security policy",
+   "The settings of the custom Safe Links policy",
+   "The settings of the Standard preset security policy",
+   "The settings of the Built-in protection preset policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Safe Links policies are applied in this order: Strict preset, Standard preset, custom policies by priority, then Built-in protection. Protection stops after the first policy that applies to the recipient, so preset policies always win over custom policies.",
+  "rationale": [
+   "Correct: the Strict preset security policy is always applied first when a recipient is assigned to it, and processing stops after the first matching policy.",
+   "Incorrect: priority 0 is the highest priority among custom policies, but custom policies are evaluated only after the Strict and Standard presets. It would apply to users who are not in a preset.",
+   "Incorrect: the Standard preset applies after Strict, so it only wins for users who are in Standard but not in Strict.",
+   "Incorrect: Built-in protection always has the Lowest priority and applies only to users who are not in a preset or custom Safe Links policy."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-links-policies-configure"
+ },
+ {
+  "id": "2.3.2-08",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation uses Microsoft Defender for Office 365 Plan 1. Users upload files to SharePoint, OneDrive, and Microsoft Teams. You need malicious files in those services to be detected and blocked from being opened or shared. You plan to use Exchange Online PowerShell.\n\nWhich command should you run?",
+  "choices": [
+   "`Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $true`",
+   "`New-SafeAttachmentPolicy -Name \"Files\" -Enable $true`",
+   "`Set-SPOTenant -DisallowInfectedFileDownload $true`",
+   "`New-SafeAttachmentRule -Name \"Files\" -RecipientDomainIs adatum.com`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Safe Attachments for SharePoint, OneDrive, and Teams is a global setting, not part of Safe Attachments policies. You turn it on in the Safe Attachments global settings or with Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $true. Blocking downloads of detected files is an extra step in SharePoint Online PowerShell.",
+  "rationale": [
+   "Correct: EnableATPForSPOTeamsODB turns on Defender for Office 365 protection for files in SharePoint, OneDrive, and Teams, so malicious files are detected and users cannot open, move, copy or share them.",
+   "Incorrect: Safe Attachments policies scan email attachments only. They do not cover files stored in SharePoint, OneDrive, or Teams. Use them for detonation of attachments in mail.",
+   "Incorrect: DisallowInfectedFileDownload is a SharePoint Online PowerShell setting that also blocks downloads of files that were already detected. It does not detect files itself and is not an Exchange Online cmdlet; run it after protection is on.",
+   "Incorrect: a safe attachment rule assigns an email Safe Attachments policy to recipients. It has no effect on stored files and needs an existing policy."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-attachments-for-spo-odfb-teams-configure"
+ },
+ {
+  "id": "2.3.2-09",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders uses Microsoft Defender for Office 365 Plan 1. A compromised internal mailbox sent phishing links to colleagues, and Safe Links did not rewrite those links. The custom Safe Links policy for all users already scans links in messages from external senders.\n\nWhich setting should you turn on in the Safe Links policy?",
+  "choices": [
+   "Apply Safe Links to email messages sent within the organization",
+   "Apply real-time URL scanning for suspicious links and links that point to files",
+   "Wait for URL scanning to complete before delivering the message",
+   "Display the organization branding on notification and warning pages"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, a Safe Links policy acts on messages from external senders. The setting Apply Safe Links to email messages sent within the organization extends link wrapping and time-of-click checks to messages between internal senders and internal recipients, which covers a compromised internal account.",
+  "rationale": [
+   "Correct: this setting applies the Safe Links policy to messages between internal senders and recipients and turns on link wrapping for intra-organization messages, so the internal phishing links are rewritten and checked.",
+   "Incorrect: real-time URL scanning checks suspicious links and links to files in messages from external senders before delivery. It does not extend protection to internal senders. Use it to scan external links more deeply.",
+   "Incorrect: waiting for scanning delays delivery until real-time scanning of external messages finishes. It depends on real-time scanning and still does not cover internal mail.",
+   "Incorrect: organization branding only changes the look of Safe Links notification and warning pages. Use it so users recognize warnings as genuine."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/safe-links-policies-configure"
+ },
+ {
+  "id": "2.3.2-10",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has 1,000 users. All users must receive the built-in email protections of the Standard preset security policy. Only the 300 users in the MDO-Licensed group have Microsoft Defender for Office 365 Plan 1 licenses, and only those users may receive Defender for Office 365 protections from the Standard preset.\n\nHow should you configure the Standard preset security policy?",
+  "choices": [
+   "Apply Exchange Online Protection to all recipients and Defender for Office 365 protection to MDO-Licensed.",
+   "Apply Exchange Online Protection and Defender for Office 365 protection to MDO-Licensed only.",
+   "Apply both protections to all recipients and add MDO-Licensed as an exclusion of Built-in protection.",
+   "Apply Exchange Online Protection to MDO-Licensed and Defender for Office 365 protection to all recipients."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The preset wizard has separate recipient pages for the built-in (EOP) protections and the Defender for Office 365 protections. When not all users are licensed, you scope the Defender for Office 365 page to the eligible users or exclude the ineligible ones, while the EOP page can still cover everyone.",
+  "rationale": [
+   "Correct: the Apply Exchange Online Protection page can target all recipients, and the Apply Defender for Office 365 protection page can target only the licensed group, which meets both requirements.",
+   "Incorrect: this licenses correctly, but the 700 unlicensed users lose the Standard built-in protections, which breaks the all-users requirement. Use it only when the preset should cover a single group.",
+   "Incorrect: it gives Defender for Office 365 protections to unlicensed users, and Built-in protection exclusions do not change preset assignments. Exclude unlicensed users from Built-in protection only if they must not get its Safe Links and Safe Attachments.",
+   "Incorrect: this reverses the scopes, so unlicensed users get Defender protections and most users lose EOP protections."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/preset-security-policies"
+ },
+ {
+  "id": "2.3.3-01",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Relecloud uses Microsoft Defender for Office 365 Plan 2. A phishing message from an external sender was delivered to the Inbox of 40 users. You are a member of a role group that has the Search and Purge role. You must remove the messages from the mailboxes immediately so that users and admins can still recover them, without waiting for a second approver, and then track the result.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In Explorer, open the All email view and filter by the sender address and subject.",
+   "Select the matching messages and select Take action.",
+   "Select Move or delete, and then select Soft deleted items.",
+   "Enter a name and description for the action, review the impacted assets, and submit.",
+   "Track the action on the History tab of the Action center.",
+   "Open Real-time detections and filter by the sender address and subject.",
+   "Select Propose remediation, and then select Create new."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Manual email remediation in Threat Explorer follows this flow: find the messages with filters, select them, open the Take action wizard, choose the response action, name and submit it, then follow it in the Action center. Direct Move or delete needs the Search and Purge role; Propose remediation creates a pending action that someone with permissions must approve.",
+  "rationale": [
+   "Step 1: Threat Explorer (Plan 2) is where you hunt; filtering the All email view by sender and subject finds every delivered copy.",
+   "Step 2: Take action becomes available after you select the messages in the Email tab, and it opens the Take action wizard.",
+   "Step 3: Soft delete moves the messages to Recoverable Items\\Deletions, so users and admins can still recover them, which matches the requirement. Move or delete requires the Search and Purge role.",
+   "Step 4: on the Choose target entities page you name the action for tracking, then review and submit it on the Review and submit page.",
+   "Step 5: direct remediation actions created in Explorer are listed with their status on the Action center History tab.",
+   "Incorrect: Real-time detections is the Plan 1 tool, and its Take action wizard offers only submissions and Tenant Allow/Block List entries, not Move or delete. Use it when the tenant has Plan 1.",
+   "Incorrect: Propose remediation creates a soft delete action that waits for approval in the Action center (two-step approval), which breaks the no-second-approver requirement. Use it when the analyst lacks Search and Purge."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/threat-explorer-threat-hunting"
+ },
+ {
+  "id": "2.3.3-02",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Fabrikam, Inc. receives phishing messages from the domain contoso-billing.com. You need to use Exchange Online PowerShell to block all email from that domain, and the block must stay in place until an administrator removes it.\n\nHow should you complete the command? To answer, select the appropriate options in the answer area.\n\n```powershell\nNew-TenantAllowBlockListItems -ListType [[1]] -Block -Entries \"contoso-billing.com\" [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Sender",
+     "Url",
+     "FileHash"
+    ],
+    "why": [
+     "Correct: the Sender list type holds domains and email addresses on the Domains & addresses tab; messages from a blocked sender domain are marked as high confidence phishing and quarantined.",
+     "Incorrect: Url blocks links to a domain or URL inside messages and at time of click. It does not block mail sent from the domain. Use it when the threat is a malicious link.",
+     "Incorrect: FileHash blocks files by their SHA256 hash, which treats matching attachments as malware. Use it for a known malicious attachment."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "-NoExpiration",
+     "-RemoveAfter 45",
+     "-ExpirationDate (Get-Date).AddDays(30)"
+    ],
+    "why": [
+     "Correct: NoExpiration keeps the block entry until it is removed, which matches the until-an-administrator-removes-it requirement.",
+     "Incorrect: RemoveAfter sets the remove-after-last-used behavior that is used for allow entries, such as 45 days after last use. It does not create a permanent block.",
+     "Incorrect: an expiration date ends the block after 30 days. Use it for a temporary block while you investigate."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The Tenant Allow/Block List holds entries for senders (domains and addresses), URLs, files and spoofed senders. Block entries take precedence over allow entries. You can create block entries directly or from the Submissions page, but allow entries for malware or high confidence phishing must come from submissions.",
+  "ref": "https://learn.microsoft.com/defender-office-365/tenant-allow-block-list-email-spoof-configure"
+ },
+ {
+  "id": "2.3.3-03",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Contoso, Ltd. uses Microsoft Defender for Office 365 Plan 2. You review three groups of messages in Threat Explorer and must choose a Move or delete action for each.\n\nWhich action should you use for each group? To answer, drag the appropriate actions to the correct groups. Each action may be used once, more than once, or not at all.",
+  "choices": [
+   "Soft delete",
+   "Hard delete",
+   "Inbox",
+   "Junk",
+   "Deleted items"
+  ],
+  "targets": [
+   "Group1: malicious messages that must be removed from user view but stay recoverable by users and admins",
+   "Group2: malicious meeting invitations whose messages and calendar entries must be purged",
+   "Group3: legitimate messages that a remediation wrongly moved out of users' inboxes"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Soft delete moves the messages from the Deleted Items folder to Recoverable Items\\Deletions, where both users and admins can recover them.",
+   "Hard delete purges the message and the corresponding calendar entry of meeting invitations; only admins can recover it through single item recovery.",
+   "Inbox moves messages back to the users' Inbox and is the undo action for a remediation that moved legitimate mail."
+  ],
+  "notes": [
+   "Moves messages to Recoverable Items\\Deletions; recoverable by users and admins. Use it as the default removal action for malicious mail.",
+   "Purges messages and calendar entries of meeting invitations; admins can recover them with single item recovery. Use it when items must be gone from the mailbox.",
+   "Moves messages to the Inbox, including releasing quarantined messages. Use it to undo a remediation of good mail.",
+   "Moves messages to the Junk Email folder. Use it for unwanted mail that is low risk, such as spam, where users can still review it.",
+   "Moves messages to the Deleted Items folder, where users can still open them. Use it for low-risk cleanup, not for active threats."
+  ],
+  "explanation": "Remediation actions differ in how far they move a message and who can recover it: Junk and Deleted items keep it visible, Soft delete hides it but keeps it recoverable, and Hard delete purges it. Move to Inbox reverses earlier actions. Direct execution of these actions requires the Search and Purge role.",
+  "ref": "https://learn.microsoft.com/defender-office-365/remediate-malicious-email-delivered-office-365"
+ },
+ {
+  "id": "2.3.3-04",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Adatum Corporation has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on. An analyst finds 20 delivered phishing messages in Real-time detections and opens the Take action wizard.\n\nWhich two actions should the analyst expect to be available? Each correct answer presents a complete solution.",
+  "choices": [
+   "Submit the messages to Microsoft for review.",
+   "Create block entries in the Tenant Allow/Block List.",
+   "Move the messages to the Soft deleted items folder.",
+   "Initiate an automated investigation of the recipients.",
+   "Propose a remediation for approval in the Action center."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Real-time detections (Plan 1) and Threat Explorer (Plan 2) share the Take action wizard, but Plan 1 gets only Submit to Microsoft for review and the related Tenant Allow/Block List entries. Move or delete, automated investigation and Propose remediation are Plan 2 capabilities.",
+  "rationale": [
+   "Correct: Submit to Microsoft for review is available in both Plan 1 and Plan 2, so the analyst can report the messages as phishing.",
+   "Correct: allow or block entries in the Tenant Allow/Block List are available in Plan 1 as part of the submission, for example blocking the sender, URL or attachment.",
+   "Incorrect: Move or delete, including soft delete, is available only in Threat Explorer with Plan 2 and requires the Search and Purge role. With Plan 1, rely on ZAP or upgrade.",
+   "Incorrect: Initiate automated investigation is Threat Explorer only, because AIR is a Plan 2 feature. Use it in Plan 2 to investigate an email, recipient or sender.",
+   "Incorrect: Propose remediation is a Plan 2 option that creates a pending soft delete action for approval. Use it in Plan 2 when the analyst lacks direct remediation permissions."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/threat-explorer-threat-hunting"
+ },
+ {
+  "id": "2.3.3-05",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys uses Microsoft Defender for Office 365 Plan 2. An analyst who is a member of the Security Administrator role group can search in Threat Explorer, but Move or delete is unavailable in the Take action wizard. The analyst must be able to remove messages from mailboxes directly.\n\nWhat should you do?",
+  "choices": [
+   "Add the analyst to a role group that has the Search and Purge role.",
+   "Add the analyst to a role group that has the Preview role.",
+   "Add the analyst to the Security Reader role group.",
+   "Add the analyst to the Global Reader role group."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Security Administrator gives access to Threat Explorer, but moving or deleting messages in mailboxes needs the Search and Purge role. By default it is in the Data Investigator and Organization Management role groups, or you can create a custom role group with it.",
+  "rationale": [
+   "Correct: the Search and Purge role (Email & collaboration permissions) is required for Move or delete. Adding the analyst to Data Investigator or a custom role group with this role enables direct remediation.",
+   "Incorrect: the Preview role allows previewing and downloading email messages, not moving or deleting them. Assign it when analysts must read message content.",
+   "Incorrect: Security Reader gives read-only access to Threat Explorer and removes no restriction. Use it for viewers who must not take actions.",
+   "Incorrect: Global Reader is a read-only role across Microsoft 365 and cannot remediate. Use it for auditors."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/threat-explorer-real-time-detections-about"
+ },
+ {
+  "id": "2.3.3-06",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses Microsoft Defender for Office 365 Plan 2. A junior analyst without the Search and Purge role found malicious messages in Threat Explorer and selected Propose remediation > Create new. You have the required permissions.\n\nWhich location should you use to approve the action?",
+  "choices": [
+   "The Pending tab of the Action center",
+   "The History tab of the Action center",
+   "The Emails tab of the Submissions page",
+   "The Email tab of the Quarantine page"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Propose remediation creates a pending soft delete action (two-step approval). Pending manual and automated actions appear on the Action center Pending tab; after approval they move to the History tab, which also lists direct actions.",
+  "rationale": [
+   "Correct: actions waiting for approval, including two-step manual remediations from Threat Explorer, are listed on the Pending tab of the Action center, where you select Approve or Reject.",
+   "Incorrect: the History tab shows completed and already approved actions for the past 30 days. Use it to track results after approval.",
+   "Incorrect: the Submissions page holds messages, URLs and files submitted to Microsoft for analysis. It is where you report false positives or negatives, not where you approve remediation.",
+   "Incorrect: the Quarantine page lets you release or delete messages that were quarantined. The proposed action targets delivered mail, so it is not listed there."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/remediate-malicious-email-delivered-office-365"
+ },
+ {
+  "id": "2.3.3-07",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank uses Microsoft Defender for Office 365 Plan 2. Legitimate messages from a partner domain are quarantined as high confidence phishing. After review, you confirm that the messages are safe. Future messages from the partner must be delivered while Microsoft analyzes the false positive.\n\nWhat should you do?",
+  "choices": [
+   "Submit a message on the Submissions page as I've confirmed it's clean and select Allow this message.",
+   "Create an allow entry for the partner domain on the Domains & addresses tab of the Tenant Allow/Block List.",
+   "Create an allow entry for the partner domain on the Spoofed senders tab of the Tenant Allow/Block List.",
+   "Release the quarantined messages from the Quarantine page to all original recipients."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Allow entries that override malware or high confidence phishing verdicts can be created only through admin submissions. Direct allow entries in the Tenant Allow/Block List override only bulk, spam, high confidence spam and phishing (not high confidence phishing). By default, allow entries from submissions are kept for 45 days after the filtering system determines that the entity is clean.",
+  "rationale": [
+   "Correct: reporting the message as clean and selecting Allow this message creates the allow entry from the submission, which is the required method to override a high confidence phishing verdict.",
+   "Incorrect: direct allow entries for domains and addresses can override bulk, spam, high confidence spam and phishing, but not high confidence phishing. They are fine for a spam false positive.",
+   "Incorrect: spoofed sender allow entries apply when spoof intelligence blocks a message as spoofing. The verdict here is high confidence phishing, not spoofing.",
+   "Incorrect: releasing delivers the messages already in quarantine but does nothing for future messages. Use it together with a submission when users need the current messages."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/tenant-allow-block-list-about"
+ },
+ {
+  "id": "2.3.3-08",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders uses Microsoft Defender for Office 365 Plan 2. Several users report that messages disappeared from their Inbox after delivery. You suspect zero-hour auto purge (ZAP) moved them. You need the list of the affected messages and their recipients.\n\nWhich tool should you use?",
+  "choices": [
+   "Threat Explorer filtered by the Additional action value ZAP",
+   "The Mailflow view of the Mailflow status report",
+   "An Exchange mailbox audit log search for the affected mailboxes",
+   "The History tab of the Action center, filtered by action type"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "ZAP retroactively moves delivered spam, phishing and malware messages to Junk or quarantine, based on the policy verdict actions. To see message-level details, filter Threat Explorer by the Additional action value ZAP; the Mailflow status report shows only counts, and ZAP is not logged in mailbox audit logs.",
+  "rationale": [
+   "Correct: in Threat Explorer the All email tab can be filtered by the value ZAP in the Additional action column, which lists each affected message with its recipients.",
+   "Incorrect: the Mailflow view of the Mailflow status report shows the number of ZAP-affected messages for a date range, not the individual messages. Use it to measure ZAP volume.",
+   "Incorrect: ZAP is not logged in the Exchange mailbox audit logs as a system action, so the search returns nothing useful. Use audit logs for user or delegate actions.",
+   "Incorrect: the Action center History tab lists manual and AIR remediation actions. ZAP moves are automatic filtering actions, not Action center remediations."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/zero-hour-auto-purge"
+ },
+ {
+  "id": "2.3.3-09",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud uses Microsoft 365 E5. An automated investigation recommended soft deleting an email cluster 10 days ago, but nobody approved the action. The action can no longer be approved, and the messages are still in users' mailboxes. You have the Search and Purge role and must remove the messages now without another approval step.\n\nWhat should you do?",
+  "choices": [
+   "Remediate the messages in Threat Explorer by using Move or delete.",
+   "Approve the action from the History tab of the Action center.",
+   "Initiate a new automated investigation of the email from Threat Explorer.",
+   "Submit the messages to Microsoft from the Submissions page."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "AIR remediation actions for email, such as soft deleting a cluster, are not taken automatically; they need approval, and pending actions time out after one week. When an action expires, an analyst with the Search and Purge role can still remediate the messages directly in Threat Explorer.",
+  "rationale": [
+   "Correct: pending AIR actions time out after awaiting approval for one week, so the remaining messages must be remediated manually, for example with Move or delete > Soft deleted items in Threat Explorer.",
+   "Incorrect: the History tab shows completed actions and does not offer approval of expired ones. Approve actions on the Pending tab before they time out.",
+   "Incorrect: a new automated investigation would again produce recommended email actions that wait for approval, which breaks the no-approval-step requirement. Use it when you want AIR to scope the threat before you act.",
+   "Incorrect: a submission asks Microsoft to analyze the messages and can create block entries, but it does not remove messages already delivered. Use it to improve future filtering."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/air-review-approve-pending-completed-actions"
+ },
+ {
+  "id": "2.3.3-10",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on. An administrator needs to find the email messages that contained malware and were delivered during the last seven days.\n\nWhich tool should the administrator use?",
+  "choices": [
+   "Real-time detections",
+   "Threat Explorer",
+   "Campaigns",
+   "Threat trackers"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Real-time detections is the investigation tool in Defender for Office 365 Plan 1. Threat Explorer, Campaigns and Threat trackers are Plan 2 features. The presence of Explorer or Real-time detections under Email & collaboration is a quick way to see which plan a tenant has.",
+  "rationale": [
+   "Correct: Real-time detections is included in Plan 1 and provides the Malware, Phish and All email views to find delivered malicious messages.",
+   "Incorrect: Threat Explorer has the same data plus more views, filters and remediation actions, but it requires Plan 2. Use it in E5 or Plan 2 tenants.",
+   "Incorrect: Campaigns groups related phishing and malware messages into attack campaigns and is a Plan 2 feature. Use it to understand a coordinated attack.",
+   "Incorrect: Threat trackers are saved Threat Explorer queries and require Plan 2. Use them to monitor recurring threats."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/mdo-about"
+ },
+ {
+  "id": "2.3.4-01",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. has Microsoft 365 E5. You need to run a credential phishing simulation against the members of the Finance group in Attack simulation training. Users who are compromised must be assigned training, and the simulation must start next Monday and end after seven days.\n\nWhich six actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Simulations tab, select Launch a simulation and select the Credential Harvest technique.",
+   "Select a payload and, optionally, a different login page.",
+   "Select Include only specific users and groups and add the Finance group.",
+   "Configure the training assignment for compromised users and set a due date.",
+   "Schedule the launch date and set the number of days to end the simulation to 7.",
+   "Review the simulation, send a test if needed, and submit it.",
+   "On the Training tab, create a Training campaign for the Finance group.",
+   "On the Advanced delivery page, add the simulation domain and sending IP."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "explanation": "The simulation wizard always runs in this order: technique, name, payload and login page, target users, exclusions, training, landing page, end user notifications, launch details and review. Training is part of the simulation, so a separate Training campaign is not needed, and the advanced delivery policy is only for non-Microsoft simulation vendors.",
+  "rationale": [
+   "Step 1: Launch a simulation starts the wizard, and the first page is Select technique; Credential Harvest simulates a fake sign-in page that captures credentials.",
+   "Step 2: after naming the simulation, you select a global or tenant payload; for Credential Harvest you can also change the login page.",
+   "Step 3: the Target users page sets who receives the simulation; supported groups include Microsoft 365 Groups and static distribution and mail-enabled security groups.",
+   "Step 4: on Assign training you choose Microsoft training experience and, when you select the modules yourself, assign them to Compromised users with a due date.",
+   "Step 5: the Launch details page schedules the start and sets the number of days to end the simulation, from 2 (default) to 30.",
+   "Step 6: the Review simulation page lets you send a test copy, and Submit schedules the simulation.",
+   "Incorrect: a Training campaign assigns training directly without a simulation. The training here is part of the simulation, so a separate campaign would duplicate assignments. Use it when no simulation is needed.",
+   "Incorrect: the advanced delivery policy keeps phishing simulations from non-Microsoft vendors from being filtered. Attack simulation training does not need it. Configure it when you use a third-party simulation service."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-simulations"
+ },
+ {
+  "id": "2.3.4-02",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Tailspin Toys has Microsoft Defender for Office 365 Plan 2. An administrator plans to use Training campaigns in Attack simulation training. The default Attack simulation training settings are unchanged.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A Training campaign can assign training modules to users who were not targeted by any simulation.",
+   "A user who was assigned a training module 30 days ago can be assigned the same module again by a new Training campaign.",
+   "If the administrator clears Send training with an end date, users receive no reminder notifications after the initial training assignment notice."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Training campaigns assign built-in training modules or a custom training URL directly to users, without a simulation. The training threshold (default 90 days, set on the Settings tab) prevents the same module from being reassigned within that interval. Reminder notifications depend on the campaign having an end date.",
+  "rationale": [
+   "Yes: Training campaigns are a direct way to assign training to users instead of launching simulated attacks that lead to training.",
+   "No: the training threshold defaults to 90 days and starts when a module is assigned, so the same module is not reassigned after 30 days. The user report shows Training Previously Assigned. Set the threshold to 0 to always reassign.",
+   "Yes: when Send training with an end date is cleared, no reminder notifications are sent to the targeted users outside of the initial training assignment notice."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-training-campaigns"
+ },
+ {
+  "id": "2.3.4-03",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Contoso, Ltd. has Microsoft 365 E5. User1 must create, launch and manage all aspects of attack simulation campaigns. User2 must create custom attack payloads that User1 launches later, but must not launch simulations. The solution must follow the principle of least privilege.\n\nWhich two role assignments should you make? Each correct answer presents part of the solution.",
+  "choices": [
+   "Assign the Attack Simulation Administrator role to User1.",
+   "Assign the Attack Payload Author role to User2.",
+   "Assign the Security Administrator role to User1.",
+   "Assign the Security Operator role to User2.",
+   "Assign the Attack Payload Author role to User1."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Attack simulation training has two dedicated Microsoft Entra roles: Attack Simulation Administrator manages all aspects of campaigns, and Attack Payload Author only creates payloads that an admin launches later. Security Administrator and Global Administrator also work but grant far more, and Security Operator and Security Reader only view campaigns.",
+  "rationale": [
+   "Correct: Attack Simulation Administrator can create and manage all aspects of attack simulation campaigns, which covers User1 without broader security rights.",
+   "Correct: Attack Payload Author can create attack payloads that an admin initiates later, which is exactly User2's task and nothing more.",
+   "Incorrect: Security Administrator can run Attack simulation training, but it also manages security policies across Microsoft 365, so it breaks least privilege. Use it for administrators who manage all of Defender.",
+   "Incorrect: Security Operator, like Security Reader, can view all aspects of attack simulation campaigns but cannot create payloads. Use it for SOC staff who monitor results.",
+   "Incorrect: Attack Payload Author can only author payloads, so User1 could not launch or manage simulations. Assign it to content authors such as User2."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-get-started"
+ },
+ {
+  "id": "2.3.4-04",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation has Microsoft 365 E3 licenses and a Microsoft Defender for Office 365 Plan 1 add-on. The company wants to run phishing simulations with all social engineering techniques and assign training to users who fail.\n\nWhich license should Adatum Corporation add?",
+  "choices": [
+   "Microsoft Defender for Office 365 Plan 2",
+   "Microsoft Entra ID P2",
+   "Microsoft 365 E5 Compliance",
+   "Microsoft Defender for Endpoint Plan 2"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Attack simulation training requires Microsoft 365 E5 or Microsoft Defender for Office 365 Plan 2. E3 customers get only a limited trial (a Credential Harvest payload and a few training experiences), and Plan 1 does not include the feature.",
+  "rationale": [
+   "Correct: Attack simulation training is a Defender for Office 365 Plan 2 capability, so adding Plan 2 (or moving to E5) unlocks all techniques and training.",
+   "Incorrect: Microsoft Entra ID P2 adds identity features such as ID Protection and PIM. It does not include Attack simulation training. Add it for risk-based Conditional Access.",
+   "Incorrect: Microsoft 365 E5 Compliance adds Purview capabilities such as advanced audit and eDiscovery and unlocks advanced alert policies, but not Attack simulation training.",
+   "Incorrect: Defender for Endpoint Plan 2 protects devices with EDR and automated investigation for endpoints. It does not include email phishing simulations."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-get-started"
+ },
+ {
+  "id": "2.3.4-05",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has Microsoft 365 E5. New employees must complete security awareness modules during their first month. HR does not want new employees to receive simulated phishing messages.\n\nWhich Attack simulation training feature should you use?",
+  "choices": [
+   "Training campaigns",
+   "Simulation automations",
+   "Payload automations",
+   "How-to Guide simulations"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Attack simulation training includes simulations, simulation automations, payload automations and Training campaigns. Only Training campaigns assign training modules directly, without sending a simulated attack first.",
+  "rationale": [
+   "Correct: Training campaigns assign built-in training modules or a custom training URL directly to users, without a simulation.",
+   "Incorrect: simulation automations create recurring phishing simulations from one configuration, so users would receive simulated phishing messages. Use them for scheduled ongoing testing.",
+   "Incorrect: payload automations harvest payloads from real user-reported phishing to use in simulations. They do not assign training. Use them to make simulations realistic.",
+   "Incorrect: How-to Guide is a simulation technique that delivers a lightweight teaching guide, such as how to report phishing, to the users' Inbox. It does not assign training modules that users must complete. Use it for quick in-Inbox guidance."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-training-campaigns"
+ },
+ {
+  "id": "2.3.4-06",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. has Microsoft Defender for Office 365 Plan 2. The security team wants to test whether users grant permissions such as reading their mail to an unknown application that requests access.\n\nWhich social engineering technique should you select for the simulation?",
+  "choices": [
+   "OAuth Consent Grant",
+   "Credential Harvest",
+   "Link in Attachment",
+   "Drive-by URL"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Each simulation technique tests a different user behavior: entering credentials, opening attachments, visiting a site or granting app consent. OAuth Consent Grant lets you configure an app name, logo and requested scope, such as Read user mail.",
+  "rationale": [
+   "Correct: OAuth Consent Grant simulates a malicious app that asks users to grant permissions; you choose scopes such as Read user mail or Send mail as a user.",
+   "Incorrect: Credential Harvest sends users to a fake sign-in page to capture user names and passwords. Use it to test whether users enter credentials.",
+   "Incorrect: Link in Attachment puts a credential harvesting link inside an attachment. Use it to test whether users open attachments and follow links in them.",
+   "Incorrect: Drive-by URL takes users to a website that could run code in the background. Use it to test whether users visit unknown sites."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-simulations"
+ },
+ {
+  "id": "2.3.4-07",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders has Microsoft 365 E5 and runs monthly phishing simulations. The next simulation must target only users who were compromised in consecutive previous simulations, based on the threshold that is configured in Attack simulation training. The list must update automatically from simulation results.\n\nWhich target option should you use?",
+  "choices": [
+   "Suggested user groups > Repeat offenders",
+   "Suggested user groups > Users not targeted in the last three months",
+   "User tags > Priority account",
+   "Import a CSV file of the users"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "On the Target users page, Add users offers search and category filters, including suggested user groups (Repeat offenders and users not targeted recently), user tags, city, country, department and title. The repeat offender threshold is set on the Attack simulation training Settings tab.",
+  "rationale": [
+   "Correct: Repeat offenders selects users who were compromised in consecutive simulations according to the repeat offender threshold (default 2), so the selection follows the simulation results.",
+   "Incorrect: this group selects users who were not targeted by a simulation in the last three months, which is the opposite of targeting users who failed before. Use it to spread coverage.",
+   "Incorrect: Priority account selects users tagged as high value, such as executives, regardless of past results. Use it to test priority accounts.",
+   "Incorrect: a CSV import is a static list that you maintain manually, so it does not update from simulation results. Use it for one-off target lists."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-simulations"
+ },
+ {
+  "id": "2.3.4-08",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft 365 E5. The security team creates a phishing simulation for employees who often travel. Interactions with the simulation message, such as clicks, must be captured for three weeks after the launch.\n\nWhich setting should you configure?",
+  "choices": [
+   "Number of days to end simulation after",
+   "Region aware time zone delivery",
+   "Training due date after simulation ends",
+   "Schedule this simulation to be launched later"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "On the Launch details page you choose when the simulation starts and how many days it runs. Interactions are no longer captured after the end date. The default and minimum is two days and the maximum is 30 days.",
+  "rationale": [
+   "Correct: setting the number of days to end the simulation to 21 keeps capturing interactions for three weeks; the value can range from 2 (default) to 30 days.",
+   "Incorrect: region aware time zone delivery sends the messages during each user's regional working hours. It changes delivery timing, not how long interactions are captured. Use it for global workforces.",
+   "Incorrect: the training due date (7, 15 or 30 days after the simulation ends) sets when assigned training must be completed. It does not extend the simulation.",
+   "Incorrect: scheduling a later launch changes the start date only, and the default end of two days after launch still applies. Use it to start at a planned time."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-simulations"
+ },
+ {
+  "id": "2.3.4-09",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has Microsoft Defender for Office 365 Plan 2. The company also uses a non-Microsoft phishing simulation vendor. Messages from the vendor are quarantined as high confidence phishing, and Safe Links blocks the simulation links. The vendor messages must be delivered unfiltered, and the configuration must not create general allow entries for the vendor domain.\n\nWhat should you configure?",
+  "choices": [
+   "The Phishing simulation tab of the advanced delivery policy",
+   "An allow entry for the vendor domain in the Tenant Allow/Block List",
+   "A Safe Links policy that lists the vendor URLs as do not rewrite",
+   "A payload automation that collects the vendor payloads"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The advanced delivery policy identifies non-Microsoft phishing simulations by domain and sending IP (at least one of each must match), so those messages bypass filtering and are not acted on by ZAP. Optional simulation URLs cover non-email simulations. Microsoft's own Attack simulation training does not need this configuration.",
+  "rationale": [
+   "Correct: entering the vendor's domain and sending IP on the Phishing simulation tab of the advanced delivery policy delivers the simulation messages without filtering and without a broad allow entry.",
+   "Incorrect: direct allow entries in the Tenant Allow/Block List cannot override high confidence phishing verdicts and would allow the domain in general. Use them for spam false positives.",
+   "Incorrect: the do not rewrite list stops Safe Links from wrapping the URLs during mail flow, but the messages are still quarantined as high confidence phishing. Use it for trusted internal URLs.",
+   "Incorrect: payload automations harvest real phishing reported by users to build Attack simulation training payloads. They do not change filtering for an external vendor."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/advanced-delivery-policy-configure"
+ },
+ {
+  "id": "2.3.4-10",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 E5. Auditors require that every user who is compromised in a simulation completes the assigned training module again, even if the same module was assigned in a previous simulation one month earlier. Currently, users see the status Training Previously Assigned.\n\nWhat should you do?",
+  "choices": [
+   "Set the training threshold on the Settings tab to 0.",
+   "Lower the repeat offender threshold on the Settings tab.",
+   "Select training courses and modules myself in the simulation.",
+   "Change the training due date to 7 days after the simulation ends."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The training threshold prevents users from being reassigned the same training module during a specific interval (default 90 days). Setting it to 0 removes the threshold so training is always assigned. The repeat offender threshold is a different setting that defines who counts as a repeat offender.",
+  "rationale": [
+   "Correct: a training threshold of 0 removes the reassignment interval, so the same module is assigned again after each compromise.",
+   "Incorrect: the repeat offender threshold controls how many compromises make a user a repeat offender for targeting. It does not affect training reassignment.",
+   "Incorrect: choosing modules manually changes which trainings are assigned, but the training threshold still blocks a module that was assigned within the interval.",
+   "Incorrect: the due date changes when training must be finished, not whether it is assigned again. Shorten it when users need to complete training sooner."
+  ],
+  "ref": "https://learn.microsoft.com/defender-office-365/attack-simulation-training-training-campaigns"
+ }
+]

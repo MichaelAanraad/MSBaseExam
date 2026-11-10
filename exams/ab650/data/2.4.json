@@ -1,0 +1,1334 @@
+[
+ {
+  "id": "2.4.1-01",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Microsoft 365 Copilot. When a user prompt contains credit card numbers, Copilot must not send the prompt to external web search providers. Copilot must still answer the prompt by using internal Microsoft 365 data.\n\nYou create a DLP policy for the Microsoft Copilot, Copilot Chat, and Copilot Cowork location with a rule that uses the Content contains > Sensitive information types condition.\n\nWhich rule action should you configure?",
+  "choices": [
+   "Prevent Copilot from processing content > Performing Web Searches",
+   "Prevent Copilot from processing content > Processing prompts",
+   "Restrict access or encrypt the content in Microsoft 365 locations",
+   "Audit or restrict activities on devices for the prompt text"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot DLP location supports two actions for sensitive information types in prompts. Performing Web Searches only removes external web grounding for that prompt, so Copilot still answers from internal data. Processing prompts blocks the whole response. Sensitivity label conditions are used for files and emails, not for prompt text.",
+  "rationale": [
+   "Correct: this action blocks external web search as a grounding source when the prompt matches the SITs, and Copilot keeps generating the answer from permitted internal Microsoft 365 sources, which meets both requirements.",
+   "Incorrect: Processing prompts makes Copilot return no response at all when the prompt contains the SITs, and the prompt is not used for internal searches either. Use it when sensitive prompts must be blocked completely.",
+   "Incorrect: Restrict access or encrypt is the action for Exchange, SharePoint, OneDrive and Teams locations. It is not available when the Copilot location is selected, because that location disables all other locations in the policy.",
+   "Incorrect: Audit or restrict activities on devices is an Endpoint DLP action for onboarded Windows and macOS devices, such as copy to USB. It does not control how Copilot grounds a prompt; use it for file activities on endpoints."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-microsoft365-copilot-location-learn-about"
+ },
+ {
+  "id": "2.4.1-02",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has Microsoft 365 E5. Users exchange project details in one-to-one Microsoft Teams chats. You must prevent users from sending chat messages whose text contains bank account numbers to guests.\n\nWhich location should you include in the DLP policy?",
+  "choices": [
+   "Teams chat and channel messages",
+   "OneDrive accounts of the chat members",
+   "SharePoint sites of the teams",
+   "Exchange email for all users"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "DLP treats the text of Teams messages and the files shared in Teams differently. Message text is evaluated by the Teams chat and channel messages location. Files shared in a chat live in the sender's OneDrive, and files shared in a channel live in the team's SharePoint site.",
+  "rationale": [
+   "Correct: the Teams chat and channel messages location evaluates the text of 1:1 and group chats and channel messages, so DLP can block a chat message that contains the sensitive information type before guests see it.",
+   "Incorrect: OneDrive accounts protects files that users share in a one-to-one or group chat, because those files are stored in the sender's OneDrive. It does not inspect the chat text; add it when attachments must be protected.",
+   "Incorrect: SharePoint sites protects files that are shared in Teams channels, because those files are stored in the team's SharePoint site. It does not inspect chat text; use it for channel files and site documents.",
+   "Incorrect: Exchange email evaluates mail messages in transit. Teams chat text is not sent as email, so this location never sees it. Use it for outbound email that contains sensitive data."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-microsoft-teams"
+ },
+ {
+  "id": "2.4.1-03",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 E3 for all users. An existing DLP policy protects Exchange email, SharePoint sites and OneDrive accounts. A new requirement states that Teams chat messages that contain passport numbers must be blocked. You must meet the requirement while keeping the existing policy.\n\nWhat should you do first?",
+  "choices": [
+   "Assign Microsoft 365 E5 Information Protection and Governance licenses",
+   "Add the OneDrive accounts location to a new DLP policy for chats",
+   "Turn on the Teams chat and channel messages location in the policy",
+   "Create a mail flow rule in the Exchange admin center for chats"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 E3 includes DLP for Exchange, SharePoint and OneDrive, which also covers files shared through Teams. DLP for the text of Teams chat and channel messages requires an E5-level license, such as Microsoft 365 E5 or the E5 Information Protection and Governance add-on.",
+  "rationale": [
+   "Correct: DLP protection for Teams chat requires an E5 license. Microsoft 365 E5 Information Protection and Governance adds the Microsoft Communications DLP capability, after which the Teams location can be used.",
+   "Incorrect: OneDrive accounts already covers files that users share in chats, which E3 supports. It does not inspect the chat text itself, so passport numbers typed into a chat are not blocked. Use it for chat attachments.",
+   "Incorrect: this is the configuration you need eventually, but with only E3 licenses the users are not licensed for Teams DLP, so the chat text is not protected. Turn it on after the E5 licensing is in place.",
+   "Incorrect: Exchange mail flow rules act on email in transit. Teams chat messages do not flow through Exchange transport, so a mail flow rule cannot block them. Use mail flow rules for message handling in Exchange Online."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-microsoft-teams"
+ },
+ {
+  "id": "2.4.1-04",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. has Microsoft 365 E5 and 600 Windows 11 devices that are enrolled in Microsoft Intune. The devices are not onboarded to Microsoft Defender for Endpoint. You must block users from copying files that contain U.S. Social Security numbers to USB drives.\n\nWhat should you do before you create the DLP policy for the Devices location?",
+  "choices": [
+   "Onboard the devices to Microsoft Purview by using Intune",
+   "Deploy the Microsoft Purview extension for Chrome",
+   "Turn on Advanced classification scanning and protection",
+   "Install the Microsoft Purview Information Protection client"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Endpoint DLP only evaluates devices that are onboarded, because onboarding is what lets the device send activity to the service and receive policies. Device onboarding is shared with Defender for Endpoint, and Intune is one of the supported onboarding methods.",
+  "rationale": [
+   "Correct: Endpoint DLP can only monitor and block activities such as copy to USB on onboarded devices. Intune can deploy the onboarding package, and the devices are not yet onboarded through Defender for Endpoint.",
+   "Incorrect: the Purview extension for Chrome extends Endpoint DLP to activities in the Chrome browser, and it requires the device to be onboarded first. Copy to USB is a file activity, not a browser activity.",
+   "Incorrect: Advanced classification scanning is an Endpoint DLP setting needed for features such as bundled named entity SITs or document fingerprinting on devices. The built-in SSN type does not need it, and devices must be onboarded anyway.",
+   "Incorrect: the Purview Information Protection client adds labeling in File Explorer and PowerShell and the on-premises scanner. It does not onboard devices to Endpoint DLP. Use it when users must label files outside Office apps."
+  ],
+  "ref": "https://learn.microsoft.com/purview/device-onboarding-overview"
+ },
+ {
+  "id": "2.4.1-05",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank creates one DLP policy that includes the SharePoint sites and Teams chat and channel messages locations. When the administrator adds a rule, the Content contains > Sensitivity labels condition is unavailable. The bank needs SharePoint files labeled Restricted blocked from external sharing, and credit card numbers in Teams chats blocked.\n\nWhat should you do?",
+  "choices": [
+   "Use a separate policy for SharePoint with the label condition",
+   "Replace the label condition with a retention label condition",
+   "Add the OneDrive accounts location to the existing policy",
+   "Add a trainable classifier condition to the existing rule"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a policy combines locations, a content definition that one location does not support is unavailable for the whole policy. Teams chat and channel messages support sensitive information types (and trainable classifiers) but not sensitivity labels or retention labels, so a combined policy loses those conditions. Split the requirements into separate policies.",
+  "rationale": [
+   "Correct: SharePoint supports sensitivity label conditions on its own, but a policy that also includes Teams does not. Move the label requirement to a SharePoint policy and keep the credit card SIT rule for Teams.",
+   "Incorrect: retention labels are supported for SharePoint and OneDrive but not for Teams chat, so the combined policy also hides this condition, and it tests a different label. Use it in a SharePoint-only policy to protect items that have a retention label.",
+   "Incorrect: adding OneDrive does not remove the Teams limitation; the combined policy still cannot use label conditions. Add OneDrive when files shared in chats must also be protected.",
+   "Incorrect: Teams supports trainable classifiers, but a classifier detects a category of content, not the Restricted sensitivity label, so labeled files would not be matched reliably. Use a classifier for content categories such as source code."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-policy-reference"
+ },
+ {
+  "id": "2.4.1-06",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud must meet two requirements for Microsoft 365 Copilot in one DLP policy: Copilot must not respond to prompts that contain EU debit card numbers, and Copilot must not use the content of files labeled Highly Confidential.\n\nHow should you configure the policy for the Microsoft Copilot, Copilot Chat, and Copilot Cowork location?",
+  "choices": [
+   "Two rules, one for the SIT condition and one for the label condition",
+   "One rule that combines the SIT and label conditions with an OR group",
+   "One rule with the label condition, plus SharePoint sites in the policy",
+   "Two rules that both use the SIT condition with different actions"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In the Copilot location, a rule cannot contain both the sensitive information types condition and the sensitivity labels condition. You can put one rule per condition in the same policy. The Copilot location also disables all other locations in the policy.",
+  "rationale": [
+   "Correct: the Copilot location supports both conditions but not in the same rule. A rule with the SIT condition and Processing prompts, and a second rule with the label condition and Prevent Copilot from processing content, meet both requirements in one policy.",
+   "Incorrect: Learn states that the Content contains SITs and Content contains sensitivity labels conditions cannot be used in the same rule, so a condition group in one rule is not possible. Condition groups work for supported combinations of conditions.",
+   "Incorrect: when you select the Copilot location, all other locations are disabled for that policy, and the label rule alone does not stop prompts with debit card numbers. Protect SharePoint files in a separate policy.",
+   "Incorrect: a SIT condition only evaluates the text typed into the prompt. It cannot detect that a referenced file carries the Highly Confidential label, so the second requirement is not met. Use two SIT rules when different SITs need different actions."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-microsoft365-copilot-location-learn-about"
+ },
+ {
+  "id": "2.4.1-07",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Northwind Traders must create a DLP policy named PII by using Security & Compliance PowerShell. The policy must cover all Exchange email, SharePoint sites and OneDrive accounts, run in simulation mode with policy tips, and block access to items that contain U.S. Social Security numbers. You must then confirm that the policy was distributed.\n\nWhich four commands should you run in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-IPPSSession -UserPrincipalName admin@northwindtraders.com`",
+   "`New-DlpCompliancePolicy -Name \"PII\" -ExchangeLocation All -SharePointLocation All -OneDriveLocation All -Mode TestWithNotifications`",
+   "`New-DlpComplianceRule -Name \"SSN\" -Policy \"PII\" -ContentContainsSensitiveInformation @{Name=\"U.S. Social Security Number (SSN)\"} -BlockAccess $true`",
+   "`Get-DlpCompliancePolicy -DistributionDetail \"PII\" | Format-List Name,DistributionStatus`",
+   "`Connect-ExchangeOnline -UserPrincipalName admin@northwindtraders.com`",
+   "`New-AutoSensitivityLabelPolicy -Name \"PII\" -SharePointLocation All -ApplySensitivityLabel \"Confidential\" -Mode TestWithoutNotifications`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "DLP cmdlets exist only in Security & Compliance PowerShell, so the session comes first. A DLP policy defines locations and mode, a rule must reference an existing policy, and the distribution status can only be checked for a policy that exists. TestWithNotifications is simulation mode with notifications.",
+  "rationale": [
+   "Step 1: Connect-IPPSSession opens Security & Compliance PowerShell, the only session where the DLP cmdlets are available. Nothing else can run before it.",
+   "Step 2: New-DlpCompliancePolicy creates the container with the three locations. TestWithNotifications runs the policy in simulation without taking actions but still sends notifications, as required.",
+   "Step 3: New-DlpComplianceRule must point to an existing policy with -Policy. The SSN sensitive information type is the condition and -BlockAccess $true is the action that takes effect when the policy is enabled.",
+   "Step 4: Get-DlpCompliancePolicy -DistributionDetail returns DistributionStatus, which confirms that the policy reached the workloads. It can only run after the policy exists.",
+   "Incorrect: Connect-ExchangeOnline opens Exchange Online PowerShell, which does not contain New-DlpCompliancePolicy or New-DlpComplianceRule. Use it for mailbox and mail flow tasks.",
+   "Incorrect: New-AutoSensitivityLabelPolicy creates a service-side auto-labeling policy that applies a sensitivity label. It does not block access, and the requirement is a DLP policy. Use it to label files at rest at scale."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/exchangepowershell/new-dlpcompliancepolicy?view=exchange-ps"
+ },
+ {
+  "id": "2.4.1-08",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Adatum Corporation must create a DLP policy by using PowerShell that prevents Microsoft 365 Copilot from processing items that have the sensitivity label stored in $guidVar. You already connected to Security & Compliance PowerShell and stored the Copilot location in $loc and the label condition in $advRule.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```powershell\nNew-DlpCompliancePolicy -Name \"Copilot Policy\" -Locations $loc -EnforcementPlanes @(\"[[1]]\")\n\nNew-DlpComplianceRule -Name \"Copilot Rule\" -Policy \"Copilot Policy\" -AdvancedRule $advRule `\n  -RestrictAccess @(@{setting=\"[[2]]\";value=\"Block\"})\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "CopilotExperiences",
+     "Application",
+     "Browser"
+    ],
+    "why": [
+     "Correct: CopilotExperiences is the enforcement plane for policies that use the Microsoft 365 Copilot location (Location 470f2276-e011-4e9d-a6ec-20768be3a4b0) in the Locations parameter.",
+     "Incorrect: Application is the enforcement plane for DLP policies applied to Entra-registered enterprise applications, where the Locations value is the Entra app ID. Use it to protect a registered app, not Copilot.",
+     "Incorrect: Browser is the enforcement plane for policies applied to unmanaged cloud apps in Edge for Business. Use it to inspect what users send to third-party apps in the browser, not Microsoft 365 Copilot."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "ExcludeContentProcessing",
+     "UploadText"
+    ],
+    "why": [
+     "Correct: the ExcludeContentProcessing setting with value Block stops Copilot from using the content of items that match the label condition, which is the Prevent Copilot from processing content action.",
+     "Incorrect: UploadText with Block is the restriction used in the Learn example for an Entra-registered application policy, where it blocks text uploads to that app. It does not exclude labeled items from Copilot processing."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "In PowerShell, the Copilot location is defined with -Locations (Workload Applications, Copilot location ID) and -EnforcementPlanes CopilotExperiences. The rule uses -AdvancedRule for the sensitivity label condition and -RestrictAccess with ExcludeContentProcessing to keep labeled items out of Copilot responses.",
+  "ref": "https://learn.microsoft.com/powershell/module/exchangepowershell/new-dlpcompliancepolicy?view=exchange-ps"
+ },
+ {
+  "id": "2.4.1-09",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Fourth Coffee has Microsoft 365 E5 and onboarded Windows devices. You must choose a DLP location for each requirement.\n\nWhich location should you use for each requirement? To answer, drag the appropriate locations to the correct requirements. Each location may be used once, more than once, or not at all.",
+  "choices": [
+   "Exchange email",
+   "Devices",
+   "Teams chat and channel messages",
+   "Microsoft Copilot, Copilot Chat, and Copilot Cowork",
+   "SharePoint sites",
+   "OneDrive accounts"
+  ],
+  "targets": [
+   "Requirement1: block outbound email messages that contain customer account numbers",
+   "Requirement2: block copying files that contain health records to removable USB drives",
+   "Requirement3: block chat messages that contain credit card numbers",
+   "Requirement4: stop Copilot from summarizing files labeled Highly Confidential"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "rationale": [
+   "Requirement1: outbound email is data in motion in Exchange Online, so the Exchange email location evaluates the message and its attachments before delivery.",
+   "Requirement2: copy to a USB drive is an activity on the endpoint, so only the Devices location (Endpoint DLP on onboarded devices) can audit or block it.",
+   "Requirement3: chat text is evaluated by the Teams chat and channel messages location; the file locations only see attachments, not the message itself.",
+   "Requirement4: the Copilot location with the sensitivity labels condition and Prevent Copilot from processing content keeps labeled items out of Copilot responses."
+  ],
+  "notes": [
+   "Exchange email: evaluates email in transit, including attachments. Use it for outbound or internal mail that contains sensitive data.",
+   "Devices: Endpoint DLP for onboarded Windows and macOS devices. Use it for file activities such as copy to USB, print, or upload from the device.",
+   "Teams chat and channel messages: evaluates the text of Teams chats and channel posts. Requires an E5-level license. Use it for sensitive data typed into Teams.",
+   "Microsoft Copilot, Copilot Chat, and Copilot Cowork: Custom template only; supports label and SIT conditions for Copilot. Use it to control what Copilot processes.",
+   "SharePoint sites: evaluates files at rest and shared from SharePoint, including Teams channel files. Use it to block external sharing of site documents.",
+   "OneDrive accounts: evaluates files in users' OneDrive, including files shared in Teams chats. Use it to block sharing of sensitive personal files."
+  ],
+  "explanation": "Pick the DLP location by where the data is when the risky action happens: email in transit (Exchange), chat text (Teams), files at rest (SharePoint, OneDrive), activities on a device (Devices), and Copilot interactions (the Copilot location).",
+  "ref": "https://learn.microsoft.com/purview/dlp-policy-reference"
+ },
+ {
+  "id": "2.4.1-10",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-e",
+  "stem": "You need to meet the business requirement for Microsoft 365 Copilot and items that are labeled Highly Confidential.\n\nWhich DLP configuration should you use?",
+  "choices": [
+   "Copilot location, sensitivity label condition, prevent processing",
+   "Copilot location, sensitive info types condition, block prompts",
+   "SharePoint sites location, sensitivity label condition, block everyone",
+   "Restricted Content Discovery for the TrialDocs SharePoint site"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot DLP location with the Content contains > Sensitivity labels condition excludes labeled files and emails from Copilot responses wherever they are stored, while users keep their normal access to the items. Access-blocking DLP actions or site-level discovery controls change much more than Copilot processing.",
+  "rationale": [
+   "Correct: the label condition with Prevent Copilot from processing content keeps Highly Confidential items out of Copilot summaries in every location, and it does not change who can open or edit the files, so researchers keep working as required.",
+   "Incorrect: the SIT condition only inspects the text that users type into prompts. It cannot detect the label on a referenced file. Use it when prompts that contain sensitive data types must be blocked.",
+   "Incorrect: Block everyone leaves access only to the owner, last modifier and site admin, so most researchers could no longer open the files, which breaks the requirement. Use it to stop sharing of sensitive site content.",
+   "Incorrect: Restricted Content Discovery hides a whole site from Copilot search, including unlabeled items, and does not cover Highly Confidential items stored in other sites. Use it when an entire site must be excluded from Copilot."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-microsoft365-copilot-location-learn-about"
+ },
+ {
+  "id": "2.4.2-01",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals must detect patient record numbers in email and documents. The numbers must match the actual values in the patient database, which changes every day, and false positives must be kept to a minimum.\n\nWhich type of sensitive information type should you create?",
+  "choices": [
+   "An exact data match (EDM) sensitive information type",
+   "A custom sensitive information type with a regular expression",
+   "A document fingerprinting sensitive information type",
+   "A custom trainable classifier for patient records"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Pattern-based SITs match anything that looks like the pattern. Exact data match compares detected values with a hashed copy of your own database, which can be refreshed daily and has far fewer false positives. Fingerprinting and classifiers recognize document shapes or categories, not specific values.",
+  "rationale": [
+   "Correct: EDM looks up detected values in a hashed table of your real patient numbers, so only actual records match. The table can be refreshed daily, which fits a database that changes every day.",
+   "Incorrect: a regex SIT matches every string with the right format, including numbers that are not real patients, so false positives stay high. Use it when values follow a pattern and no source table is available.",
+   "Incorrect: document fingerprinting creates a SIT from a standard blank form and detects documents built from that form. It does not check individual record numbers. Use it for templates such as patent or HR forms.",
+   "Incorrect: a trainable classifier learns a category of content from samples, such as medical forms. It cannot confirm that a number exists in the database. Use it when content is recognized by meaning, not by exact values."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sit-learn-about-exact-data-match-based-sits"
+ },
+ {
+  "id": "2.4.2-02",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. uses a standard Word form for patent applications. Employees fill in the form and sometimes email it outside the company. A DLP policy must detect completed copies of this form.\n\nWhich classification method should you use?",
+  "choices": [
+   "Document fingerprinting based on the blank patent form",
+   "An exact data match type built from the patent database",
+   "A keyword dictionary sensitive information type",
+   "The built-in Intellectual property trainable classifier"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Document fingerprinting converts the word pattern of a standard form into a SIT. Any document that was created from that form contains the same words and is detected, and the SIT can be used in DLP and auto-labeling policies.",
+  "rationale": [
+   "Correct: you upload the empty form, Purview stores a hash of its word pattern, and completed copies that contain the form text match the fingerprint SIT in the DLP policy. This is the documented patent template scenario.",
+   "Incorrect: EDM matches exact values from a table, such as patent numbers. Completed forms can contain new data that is not yet in any table, and EDM does not recognize the form layout. Use EDM for known structured values.",
+   "Incorrect: a keyword dictionary matches lists of terms. Generic patent words also occur in many unrelated documents, so detection would be noisy. Use dictionaries for large term lists such as product code names.",
+   "Incorrect: the Intellectual property classifier detects a broad category of documents, not copies of one specific form, so it would also flag unrelated IP content. Use it when you need category-level detection."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sit-document-fingerprinting"
+ },
+ {
+  "id": "2.4.2-03",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has one sensitivity label policy that publishes the labels Public, General and Confidential to all users. A new label named Highly Confidential must be available only to members of the Legal security group.\n\nWhat should you do?",
+  "choices": [
+   "Publish Highly Confidential in a new label policy scoped to Legal",
+   "Add Highly Confidential to the existing policy for all users",
+   "Move Highly Confidential to the bottom of the label priority list",
+   "Create an auto-labeling policy that targets the Legal group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Labels become visible to users through label policies, which are scoped to users and groups. Multiple label policies let different groups see different labels; users who are in several policies get all labels from those policies.",
+  "rationale": [
+   "Correct: a second label policy that publishes Highly Confidential and is scoped to the Legal group makes the label visible only to Legal members, while everyone keeps the labels from the existing policy.",
+   "Incorrect: the existing policy is published to all users, so adding the label there makes it available to everyone. Add labels to an org-wide policy when every user needs them.",
+   "Incorrect: label priority defines which label is more sensitive, for example for downgrade justification and Copilot inheritance. It does not control who can see a label. Put the most restrictive label at the bottom for that reason.",
+   "Incorrect: an auto-labeling policy applies a label automatically to content in Exchange, SharePoint or OneDrive. It does not make the label available for users to select manually. Use it to label content at scale."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sensitivity-labels"
+ },
+ {
+  "id": "2.4.2-04",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys must apply the Confidential sensitivity label to existing Word and PDF files in all SharePoint sites when the files contain passport numbers. Some users run older Office versions, and the files must be labeled without users opening them. You must preview the results before labeling.\n\nWhat should you configure?",
+  "choices": [
+   "An auto-labeling policy in simulation mode for SharePoint",
+   "The Auto-labeling for files and emails setting in the label",
+   "A default sensitivity label for each SharePoint document library",
+   "A recommended label setting with a policy tip for passports"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Client-side auto-labeling (a label setting) works only when users edit files in supported Office apps and does not support PDF files or simulation. Service-side auto-labeling policies label files at rest in SharePoint and OneDrive, support PDF files, and must run in simulation before they label content.",
+  "rationale": [
+   "Correct: an auto-labeling policy runs in the service, so it labels files at rest without users or app versions, supports PDF files, and its simulation mode shows the matching files before you turn it on.",
+   "Incorrect: the label setting is client-side labeling. It applies only while users work in supported Office app versions, does not support PDF files and has no simulation mode. Use it to label or recommend while users edit.",
+   "Incorrect: a default library label applies to new and edited files in that library regardless of content, so it would label files without passport numbers and leave unedited files unlabeled. Use it for a baseline label per library.",
+   "Incorrect: recommended labeling prompts the user in the Office app to apply the label. Users must open the file and accept, which contradicts the requirement. Use it when users should decide the final label."
+  ],
+  "ref": "https://learn.microsoft.com/purview/apply-sensitivity-label-automatically"
+ },
+ {
+  "id": "2.4.2-05",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank uses a label named Sales Restricted that encrypts content and grants the Sales group the Viewer permissions level. Sales users report that Microsoft 365 Copilot does not summarize documents with this label. Copilot must summarize them for Sales, and Sales users must still be unable to edit the documents.\n\nWhat should you change in the label encryption settings?",
+  "choices": [
+   "Grant the Sales group the Copy and extract content (EXTRACT) right",
+   "Grant the Sales group the Co-Author permissions level instead",
+   "Publish the label to the Sales group in a label policy",
+   "Change the label encryption to Let users assign permissions"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a sensitivity label applies encryption, Copilot checks the user's usage rights and returns data from the item only if the user has the EXTRACT (copy) usage right. Viewer does not include EXTRACT. You can add EXTRACT with custom permissions without granting edit rights.",
+  "rationale": [
+   "Correct: Copilot returns content from an encrypted item only when the user has the EXTRACT usage right. Adding Copy and extract content to the Sales permissions enables summaries while edit rights stay excluded.",
+   "Incorrect: Co-Author includes EXTRACT, so Copilot would work, but it also grants edit rights, which breaks the requirement that Sales cannot edit. Use Co-Author when the group must collaborate on the content.",
+   "Incorrect: publishing controls who can select and apply the label. It does not change the usage rights in the encryption settings, so Copilot still lacks EXTRACT. Publish labels so users can apply them.",
+   "Incorrect: with Let users assign permissions, the person who applies the label chooses permissions each time, so the outcome is inconsistent and existing items keep their current rights. Use it for ad hoc protection such as Do Not Forward."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sensitivity-labels"
+ },
+ {
+  "id": "2.4.2-06",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. creates an auto-labeling policy for all SharePoint sites and OneDrive accounts that applies the label Confidential Partner. The policy cannot be saved with this label. The label applies encryption with Let users assign permissions, and the business requires encryption to stay.\n\nWhat should you change so that the policy can use the label?",
+  "choices": [
+   "Assign permissions now with access that never expires",
+   "Restrict the auto-labeling policy to the Exchange location",
+   "Turn on visual markings such as a header and watermark",
+   "Add the Meetings scope to the label configuration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Labels that encrypt have extra requirements in auto-labeling policies. For SharePoint and OneDrive locations, the label must use Assign permissions now and User access to content expires must be Never. An Exchange-only policy can also use Let users assign permissions.",
+  "rationale": [
+   "Correct: for SharePoint or OneDrive locations, an auto-applied encrypting label must be configured for Assign permissions now and User access to content expires set to Never. This keeps encryption and makes the label valid for the policy.",
+   "Incorrect: an Exchange-only policy can use Let users assign permissions, but then files at rest in SharePoint and OneDrive are not labeled, which is the requirement. Use Exchange-only policies to label email in transit.",
+   "Incorrect: visual markings are not applied to documents by auto-labeling, and they do not affect whether an encrypting label is valid for the policy. Configure markings for labels that users apply in Office apps.",
+   "Incorrect: the Meetings scope makes a label available for calendar items and Teams meetings and requires the files and email scopes. It does not change the encryption requirement. Use it to protect meeting invites and chat."
+  ],
+  "ref": "https://learn.microsoft.com/purview/apply-sensitivity-label-automatically"
+ },
+ {
+  "id": "2.4.2-07",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Alpine Ski House has never used sensitivity labels for Microsoft 365 groups and Teams sites. You must make a label that blocks guest access available for new teams by using PowerShell, and then configure that label in the Microsoft Purview portal.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Directory.ReadWrite.All\"`",
+   "Run `Update-MgBetaDirectorySetting` to set `EnableMIPLabels` to `True` in the Group.Unified setting.",
+   "`Connect-IPPSSession -UserPrincipalName admin@alpineskihouse.com`",
+   "`Execute-AzureADLabelSync`",
+   "Create the label with the Groups & sites scope, block guests, and publish it in a label policy.",
+   "`Connect-AzureAD`",
+   "Run `Set-Label -AdvancedSettings @{DefaultSubLabelId=\"<GUID>\"}` for the parent label."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Container labels depend on Microsoft Entra ID: first turn on EnableMIPLabels in the group directory settings with Microsoft Graph PowerShell, then synchronize labels to Entra ID with Execute-AzureADLabelSync in Security & Compliance PowerShell. After that the Groups & sites scope can be configured and published.",
+  "rationale": [
+   "Step 1: Connect-MgGraph with Directory.ReadWrite.All gives the permission needed to read and update the tenant directory settings for groups.",
+   "Step 2: setting EnableMIPLabels to True in the Group.Unified directory setting turns on sensitivity label support for Microsoft 365 groups in Entra ID.",
+   "Step 3: Execute-AzureADLabelSync exists only in Security & Compliance PowerShell, so you connect with Connect-IPPSSession before you run it.",
+   "Step 4: Execute-AzureADLabelSync synchronizes the sensitivity labels to Microsoft Entra ID so that they can be applied to groups, teams and sites.",
+   "Step 5: once support is enabled and labels are synced, the Groups & sites scope becomes available. Configure the guest setting and publish the label so users can pick it when they create a team.",
+   "Incorrect: Connect-AzureAD belongs to the retired AzureAD module. Use Connect-MgGraph from Microsoft Graph PowerShell for directory settings instead.",
+   "Incorrect: DefaultSubLabelId sets a default sublabel for a parent label or label group in Office apps. It has nothing to do with container label support. Use it when users select a parent label."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sensitivity-labels-teams-groups-sites"
+ },
+ {
+  "id": "2.4.2-08",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys must create a service-side auto-labeling policy for the HR SharePoint site that applies the label Confidential to files that contain the sensitive information type stored in $sitId. The results must be reviewed before any file is labeled.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-IPPSSession -EnableSearchOnlySession -UserPrincipalName admin@tailspintoys.com\n\n[[1]] -Name \"HR-AL\" -SharePointLocation \"https://tailspintoys.sharepoint.com/sites/HR\" `\n  -ApplySensitivityLabel \"Confidential\" -Mode [[2]]\n\n[[3]] -Policy \"HR-AL\" -Name \"HR-AL-Rule\" `\n  -ContentContainsSensitiveInformation @{\"name\"=$sitId; \"mincount\"=\"1\"} -Workload SharePoint\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "New-AutoSensitivityLabelPolicy",
+     "New-LabelPolicy",
+     "New-DlpCompliancePolicy"
+    ],
+    "why": [
+     "Correct: New-AutoSensitivityLabelPolicy creates a service-side auto-labeling policy with locations such as -SharePointLocation and the label to apply in -ApplySensitivityLabel.",
+     "Incorrect: New-LabelPolicy creates a publishing label policy that makes labels available to users and groups. It does not label files automatically. Use it to publish labels.",
+     "Incorrect: New-DlpCompliancePolicy creates a DLP policy, which protects content with actions such as block access. It cannot apply a sensitivity label. Use it to prevent risky sharing."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "TestWithoutNotifications",
+     "Enable",
+     "Disable"
+    ],
+    "why": [
+     "Correct: TestWithoutNotifications runs the policy in simulation, so matches can be reviewed on the Items to review tab before any file is labeled. A policy must simulate at least once before it can label.",
+     "Incorrect: Enable turns on labeling. Learn states that auto-labeling cannot label content until the policy has run at least one simulation, and the requirement asks for a review first. Use Enable after you review the simulation.",
+     "Incorrect: Disable creates the policy turned off, so no simulation runs and no results are available to review. Use it to pause a policy."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "New-AutoSensitivityLabelRule",
+     "New-DlpComplianceRule",
+     "New-RetentionComplianceRule"
+    ],
+    "why": [
+     "Correct: New-AutoSensitivityLabelRule adds the condition (the SIT with mincount) and the workload to an auto-labeling policy, which completes the policy.",
+     "Incorrect: New-DlpComplianceRule adds a rule to a DLP policy. It cannot be attached to an auto-labeling policy. Use it with New-DlpCompliancePolicy.",
+     "Incorrect: New-RetentionComplianceRule adds retention settings or a retention label to a retention policy. It does not apply sensitivity labels. Use it for data lifecycle management."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "An auto-labeling policy has two parts: the policy (locations, label, mode) and one or more rules (conditions per workload). New policies start in simulation mode so that you can review matches before labeling, and simulation submitted from PowerShell needs Connect-IPPSSession -EnableSearchOnlySession.",
+  "ref": "https://learn.microsoft.com/purview/apply-sensitivity-label-automatically"
+ },
+ {
+  "id": "2.4.2-09",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Relecloud has two sensitivity label policies. Policy1 has order number 0 and applies to all users with the default label General. Policy2 has order number 1, applies to the Finance group and has the default label Confidential. User1 is a member of Finance.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "New documents that User1 creates get the Confidential label by default.",
+   "Users who are not in Policy2 cannot see the name of the Confidential label on documents they open.",
+   "If you delete the Confidential label in the Microsoft Purview portal, the label is removed from documents that already have it."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A user in several label policies gets all their labels, and conflicting settings are taken from the policy with the highest order number. Publishing controls who can apply a label, not who can see it on content. Deleting a label does not automatically remove it from content.",
+  "rationale": [
+   "Yes: User1 is in both policies, and for conflicting settings the policy with the highest order number wins. Policy2 has order number 1, so its default label Confidential applies.",
+   "No: all users in the organization can see the name of a sensitivity label applied to content, even when the label is not published to them. Publishing only controls who can select and apply it.",
+   "No: deleting a label does not automatically remove it from content; the label metadata stays on the item, although apps can no longer show its name, and encryption from an archived template still opens. To only stop users from applying a label, remove it from the label policy instead."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sensitivity-labels"
+ },
+ {
+  "id": "2.4.2-10",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-e",
+  "stem": "You need to meet the default labeling requirement for documents that are created by Research members.\n\nWhat should you do?",
+  "choices": [
+   "Add a Research policy with default Confidential at a higher order",
+   "Add a Research policy with default Confidential at a lower order",
+   "Create an auto-labeling policy for the OneDrive of Research members",
+   "Set Confidential as the default label on the Research libraries"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a user is included in several sensitivity label policies, conflicting settings such as the default label come from the policy with the highest order number. A group-scoped policy for Research placed below the all-employees policy in the list changes the default only for Research.",
+  "rationale": [
+   "Correct: a label policy scoped to the Research group with default label Confidential and a higher order number than All Employees wins the conflict for Research members, while other users keep General.",
+   "Incorrect: with a lower order number than All Employees, the Research policy loses the conflict and Research members keep the General default. Lower order numbers fit org-wide baseline policies.",
+   "Incorrect: an auto-labeling policy labels files at rest in OneDrive based on conditions after they are saved. It is not a default label for new documents and does not cover files saved elsewhere. Use it for content at rest.",
+   "Incorrect: a default library label applies only to files saved in those libraries, so documents saved in other locations or sent by email are not labeled. Use it as a baseline for a specific library."
+  ],
+  "ref": "https://learn.microsoft.com/purview/sensitivity-labels"
+ },
+ {
+  "id": "2.4.3-01",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing must permanently delete Microsoft Teams chat messages one year after they are created. Users must not be able to change this behavior.\n\nWhat should you create?",
+  "choices": [
+   "A retention policy for the Teams chats location",
+   "A retention label published to the Teams chats location",
+   "An auto-apply retention label policy for Teams chats",
+   "A sensitivity label with the Meetings scope for chats"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Retention labels can be published or auto-applied only to Exchange, SharePoint, OneDrive and Microsoft 365 Groups. Teams chats, Teams channel messages and Viva Engage messages support only retention policies, which apply to the whole location without user interaction.",
+  "rationale": [
+   "Correct: a retention policy for the Teams chats location with a delete-only setting of one year applies to all chat messages and needs no user action, so users cannot change it.",
+   "Incorrect: retention labels are not supported for Teams messages; label policies can only target Exchange, SharePoint, OneDrive and Microsoft 365 Groups. Publish labels when users must classify individual documents or emails.",
+   "Incorrect: auto-apply retention label policies also target only Exchange, SharePoint, OneDrive and Microsoft 365 Groups, so Teams chat messages cannot be labeled. Use them to label items that match SITs, keywords or classifiers.",
+   "Incorrect: a sensitivity label with the Meetings scope protects meeting invites and Teams meeting options and can encrypt content. It has no retention or deletion settings. Use it to protect meetings and chat access."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-02",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. must keep signed contracts for seven years. Users often move contracts between SharePoint sites in the tenant, and the retention settings must stay with each contract after it is moved.\n\nWhat should you use?",
+  "choices": [
+   "A retention label applied to each contract",
+   "A retention policy for all SharePoint sites",
+   "A retention policy with an adaptive site scope",
+   "A retention policy with Preservation Lock"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Retention policies apply retention settings from the container, so an item that is moved out of the container no longer gets them (a copy may be kept in the secured location). Retention labels are applied to the item itself and persist when the item moves within the Microsoft 365 tenant.",
+  "rationale": [
+   "Correct: a retention label is stored with the item, so it keeps its retention settings when the contract is moved to another site in the tenant. Labels do not persist outside Microsoft 365.",
+   "Incorrect: an org-wide SharePoint retention policy covers the contract in every site, but its settings come from the container and do not travel with the item. Use it for baseline retention of all site content.",
+   "Incorrect: an adaptive scope picks sites dynamically by properties, but the settings still apply from the site, not the item, so they do not move with the contract. Use adaptive scopes when the set of sites changes often.",
+   "Incorrect: Preservation Lock stops anyone from turning off a policy or making it less restrictive. It does not make settings follow moved items. Use it for regulations such as SEC Rule 17a-4."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-03",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "An email message at Contoso, Ltd. is subject to a retention policy for all Exchange mailboxes that deletes items three years after they are created. The message also has a retention label that retains items for five years after they are created and then takes no action.\n\nWhat should you expect to happen to the message?",
+  "choices": [
+   "It is retained for five years and then permanently deleted",
+   "It is permanently deleted after three years by the policy",
+   "It is retained for five years and is never deleted",
+   "It is retained for eight years and then permanently deleted"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The principles of retention are applied in order: retention wins over deletion, the longest retention period wins, explicit (label) deletion wins over implicit (policy) deletion, and the shortest deletion period wins. Retain and delete actions from different settings are combined, not chosen as one winner.",
+  "rationale": [
+   "Correct: retention wins over deletion, so the label keeps the message for five years. The policy's delete action is suspended during that time and runs when the five-year retention period ends.",
+   "Incorrect: a delete action never wins over an active retain action, so the message cannot be permanently deleted at three years while the label retains it. This would happen only if no retain setting applied.",
+   "Incorrect: the label only retains, but the policy still has a delete action. After the label's retention ends, that suspended deletion applies. The message would stay forever only if no setting deleted it.",
+   "Incorrect: retention periods from different settings are not added together. The longest single retention period (five years) wins, and the suspended delete action runs at its end. Eight years would need a setting that retains for eight years."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-04",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A document at Litware, Inc. has these retention settings, and all of them start when the item is created:\n\n- An org-wide retention policy that deletes items after 10 years\n- A retention policy scoped to specific sites that retains items for five years and then deletes them\n- A retention label that retains items for three years and then deletes them\n\nWhat outcome should you expect for the document?",
+  "choices": [
+   "Retained for five years, then deleted at the end of year five",
+   "Retained for three years, then deleted at the end of year three",
+   "Retained for five years, then deleted at the end of year ten",
+   "Retained for ten years, then deleted at the end of year ten"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "First the longest retention period wins (five years from the scoped policy). For deletion, the delete action of a retention label takes precedence over the delete actions of retention policies, but it cannot run before retention ends. So the label's deletion runs as soon as the five-year retention period ends.",
+  "rationale": [
+   "Correct: the longest retention is five years, so the item is kept that long. The label's delete action wins over both policy deletions, and because its three years have passed, the item is deleted when retention ends at five years.",
+   "Incorrect: the label deletes at three years, but retention wins over deletion and the scoped policy still retains the item until year five. Deletion at three years needs no longer retain setting.",
+   "Incorrect: the org-wide policy deletes at ten years, but explicit label deletion takes precedence over any policy deletion, so the ten-year delete action is not used. It would apply only if no label applied.",
+   "Incorrect: the org-wide policy only deletes; it does not retain. The longest retention period is five years. Ten years would apply only if a setting retained for ten years."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-05",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys must keep email and OneDrive documents of executives for 10 years. Executives are identified by the Microsoft Entra job title attribute. New executives must be covered automatically without editing the policy, and you must avoid listing OneDrive URLs.\n\nWhat should you use?",
+  "choices": [
+   "A retention policy with an adaptive scope for the job title",
+   "A retention policy with a static scope that includes a group",
+   "A retention policy with a static scope for all locations",
+   "An auto-apply retention label policy with a KQL query"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An adaptive scope runs a query against attributes such as job title every day, so the policy membership changes automatically for Exchange and OneDrive. Static scopes are fixed at the time they are configured, and OneDrive in a static scope must be specified by URL.",
+  "rationale": [
+   "Correct: an adaptive scope with the job title query selects executives' mailboxes and OneDrive accounts dynamically, so new executives are included without editing the policy and no OneDrive URLs are needed.",
+   "Incorrect: a static scope can include a group for Exchange, but OneDrive accounts must be specified by URL, and the policy must be reconfigured for new executives. Use static includes for small, stable sets.",
+   "Incorrect: a static scope for all instances applies the 10-year period to every user, not only executives. Use org-wide scopes when the same retention applies to everyone.",
+   "Incorrect: a KQL query in an auto-apply label policy matches item content or properties, not the job title of the owner, so it does not reliably select executives' items. Use it to label items by keywords or properties."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-06",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank must comply with SEC Rule 17a-4. A retention policy for all Exchange mailboxes must retain email for seven years, and after it is turned on nobody, including administrators, can turn it off or make it less restrictive. The compliance team wants to scope the policy by department attribute.\n\nWhich configuration should you use?",
+  "choices": [
+   "A static scope policy with Preservation Lock applied",
+   "An adaptive scope policy with Preservation Lock applied",
+   "An adaptive scope policy with a regulatory record label",
+   "A static scope policy that uses an eDiscovery hold"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Preservation Lock locks a retention policy or retention label policy so that nobody can turn it off, delete it, or make it less restrictive. Adaptive scopes currently do not support Preservation Lock, so a locked policy must use a static scope even if scoping by attribute is preferred.",
+  "rationale": [
+   "Correct: Preservation Lock meets the requirement that nobody can disable the policy or make it less restrictive, and it is supported only with static scopes, so the department-based adaptive scope cannot be used.",
+   "Incorrect: Learn states that adaptive scopes currently do not support Preservation Lock, so this policy cannot be locked. Use an adaptive scope when the lock is not required and membership changes often.",
+   "Incorrect: a regulatory record label restricts actions on individual labeled items, but it does not lock a retention policy, and labels must first be applied to every item. Use regulatory records for item-level immutability.",
+   "Incorrect: an eDiscovery hold preserves content for a case and can be released by an administrator at any time, so it does not meet the lock requirement. Use holds for litigation or investigations."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-07",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud must retain the prompts and responses of Microsoft 365 Copilot interactions for seven years for regulatory reasons, and then delete them.\n\nWhat should you create?",
+  "choices": [
+   "A retention policy for the Microsoft Copilot experiences location",
+   "A retention policy for the Teams chats location",
+   "A retention label published to all Exchange mailboxes for users",
+   "An eDiscovery hold on all user mailboxes in a new case"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot prompts and responses are stored in a hidden folder of the user's mailbox and are governed by retention policies for the Microsoft Copilot experiences location. New policies must use the separate locations, and from January 15, 2027, older Teams chats and Copilot interactions policies cover Teams content only.",
+  "rationale": [
+   "Correct: a retention policy for the Microsoft Copilot experiences location retains and then deletes Microsoft 365 Copilot prompts and responses, which are stored in a hidden mailbox folder.",
+   "Incorrect: when the tenant supports separate locations, the Teams chats location covers only Teams chat messages, not Copilot interactions. Use it for retention of Teams chats.",
+   "Incorrect: retention labels for Exchange apply to email items that users or policies label. Copilot interaction messages are not labeled this way. Use published labels for user-classified email.",
+   "Incorrect: an eDiscovery hold preserves content until the hold is released and has no delete action, so the seven-year deletion is not met. Use holds to preserve content for legal cases and investigations."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-m365-copilot"
+ },
+ {
+  "id": "2.4.3-08",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Alpine Ski House must use Security & Compliance PowerShell to create a retention label named Contracts that marks items as a record, keeps them for seven years after creation and then deletes them. The label must be published to all SharePoint sites so that site owners can apply it.\n\nWhich four commands should you run in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-IPPSSession -UserPrincipalName admin@alpineskihouse.com`",
+   "`New-ComplianceTag -Name \"Contracts\" -IsRecordLabel $true -RetentionAction KeepAndDelete -RetentionDuration 2555 -RetentionType CreationAgeInDays`",
+   "`New-RetentionCompliancePolicy -Name \"Publish Contracts\" -SharePointLocation All`",
+   "`New-RetentionComplianceRule -Policy \"Publish Contracts\" -PublishComplianceTag \"Contracts\"`",
+   "`New-RetentionPolicyTag -Name \"Contracts\" -Type All -AgeLimitForRetention 2555 -RetentionAction DeleteAndAllowRecovery`",
+   "`New-RetentionComplianceRule -Name \"Contracts\" -Policy \"Publish Contracts\" -RetentionDuration 2555 -RetentionComplianceAction KeepAndDelete`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Retention labels are created with New-ComplianceTag. A label policy is created with New-RetentionCompliancePolicy (locations only), and the label is added to it with New-RetentionComplianceRule -PublishComplianceTag. A policy is not valid until a rule or label is added, and each policy has only one rule.",
+  "rationale": [
+   "Step 1: retention label and policy cmdlets are available only in Security & Compliance PowerShell, so Connect-IPPSSession runs first.",
+   "Step 2: New-ComplianceTag creates the label. -IsRecordLabel $true marks items as a record, and KeepAndDelete with 2555 days from CreationAgeInDays keeps items seven years after creation and then deletes them.",
+   "Step 3: New-RetentionCompliancePolicy creates the label policy and defines the locations, here all SharePoint sites. It is not valid until a label is added.",
+   "Step 4: New-RetentionComplianceRule -PublishComplianceTag adds the existing label to the existing policy, which publishes it to the sites. It needs both objects from the previous steps.",
+   "Incorrect: New-RetentionPolicyTag creates an Exchange messaging records management tag in Exchange Online PowerShell. It does not create a Purview retention label and cannot be published to SharePoint.",
+   "Incorrect: a rule with -RetentionDuration and -RetentionComplianceAction turns the policy into a retention policy for the whole location instead of publishing a label, and it cannot mark items as records. Use it for location-wide retention."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/exchangepowershell/new-compliancetag?view=exchange-ps"
+ },
+ {
+  "id": "2.4.3-09",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Northwind Traders has Microsoft 365 E5. You must choose the data lifecycle management feature for each requirement.\n\nWhich feature should you use for each requirement? To answer, drag the appropriate features to the correct requirements. Each feature may be used once, more than once, or not at all.",
+  "choices": [
+   "Retention policy",
+   "Published retention label",
+   "Auto-apply retention label policy",
+   "Event-based retention label",
+   "Preservation Lock",
+   "Sensitivity label"
+  ],
+  "targets": [
+   "Requirement1: delete Teams channel messages three years after they are created",
+   "Requirement2: let project managers mark individual contracts as records",
+   "Requirement3: label every document that contains a U.S. bank account number for retention",
+   "Requirement4: start a seven-year retention period when an employee leaves"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "rationale": [
+   "Requirement1: Teams channel messages support retention policies only, so a retention policy for the Teams channel messages location is the only option.",
+   "Requirement2: users can apply only labels that are published to them, and a retention label can mark items as a record, which a policy cannot do.",
+   "Requirement3: an auto-apply retention label policy applies a label to content that matches sensitive information types, without user action.",
+   "Requirement4: only retention labels configured for event-based retention start the period when an event, such as an employee leaving, occurs."
+  ],
+  "notes": [
+   "Retention policy: applies retain or delete settings to a whole location such as Exchange, SharePoint, Teams or Copilot. Use it for broad, container-level retention.",
+   "Published retention label: available for users and admins to apply manually; can mark items as records. Use it when people classify items.",
+   "Auto-apply retention label policy: applies one retention label automatically based on SITs, keywords or KQL, trainable classifiers, or cloud attachments.",
+   "Event-based retention label: starts the retention period when a specified event type occurs, such as an employee leaving or a contract ending.",
+   "Preservation Lock: locks a retention policy or label policy so nobody can turn it off or make it less restrictive. Use it for strict regulations.",
+   "Sensitivity label: classifies and protects content with encryption and markings. It has no retention settings; use it for information protection."
+  ],
+  "explanation": "Use retention policies for location-wide settings and for workloads that do not support labels, such as Teams and Copilot. Use retention labels for item-level settings, records, event-based retention, and labels that follow content; publish them for users or auto-apply them by conditions.",
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.3-10",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-e",
+  "stem": "You need to meet the data lifecycle requirements for the clinical trial master files and for Teams chats.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Create a retention label that marks items as records, keeps them 10 years from when labeled and then deletes them, and set it as the default label for the TrialDocs library.",
+   "Create a retention policy for the Teams chats location that deletes items two years after they are created.",
+   "Create a retention label that deletes items after two years and publish it to the Teams chats location.",
+   "Create a retention policy for the TrialDocs site that retains items for 10 years and then deletes them.",
+   "Apply Preservation Lock to a retention policy for all SharePoint sites that retains items for 10 years."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Item-level needs, such as marking items as records and starting retention when an item is labeled, require retention labels. Teams chats support only retention policies. Combining a label for SharePoint records with a policy for Teams is the standard pattern.",
+  "rationale": [
+   "Correct: only a retention label can mark items as records and start the retention period when the item is labeled. A default label on the TrialDocs library applies it to files saved there, which meets the 10-year record requirement.",
+   "Correct: Teams chats support retention policies, and a delete-only setting of two years from creation deletes the chat messages as required without any user action.",
+   "Incorrect: retention labels cannot be published to Teams chats; label policies target only Exchange, SharePoint, OneDrive and Microsoft 365 Groups. Publish a label when users classify documents or email.",
+   "Incorrect: a retention policy keeps and deletes the files, but it cannot mark them as records or start the period when labeled, so files could still be edited. Use a policy for baseline site retention.",
+   "Incorrect: Preservation Lock prevents the policy from being turned off, but a policy still cannot declare records, and locking all sites affects far more content than TrialDocs. Use the lock for regulations that forbid policy changes."
+  ],
+  "ref": "https://learn.microsoft.com/purview/retention"
+ },
+ {
+  "id": "2.4.4-01",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 E5, and the built-in DLP alert tuning rule in Microsoft Defender XDR is disabled. The security team wants to see DLP alerts grouped into incidents together with related alerts from Microsoft Defender for Endpoint and Defender for Office 365, and to hunt across compliance and security logs.\n\nWhich tool should you use to manage the DLP alerts?",
+  "choices": [
+   "The Incidents queue in the Microsoft Defender portal",
+   "The DLP alerts dashboard in the Microsoft Purview portal",
+   "Activity explorer in the Microsoft Purview portal",
+   "Content explorer in the Microsoft Purview portal"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "DLP alerts go to both the Purview DLP alerts dashboard and the Defender portal. Microsoft recommends the Defender portal incident queue because it correlates DLP alerts with alerts from other solutions, offers advanced hunting, and keeps six months of history.",
+  "rationale": [
+   "Correct: the Defender portal groups DLP alerts into incidents, correlates them with Defender for Endpoint and Defender for Office 365 alerts, and supports advanced hunting over compliance and security data.",
+   "Incorrect: the Purview DLP alerts dashboard lets you triage DLP alerts and set status, but it does not correlate them with other Defender solutions or offer advanced hunting. Use it for DLP-only triage.",
+   "Incorrect: Activity explorer shows labeling and DLP activities for analysis and reporting. It does not manage alerts or incidents. Use it to review what users did with sensitive items.",
+   "Incorrect: Content explorer shows where sensitive and labeled items are stored and lets permitted users view them. It does not list or correlate alerts. Use it to inspect content in an investigation."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-alert-investigation-learn"
+ },
+ {
+  "id": "2.4.4-02",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers must review a DLP alert that was generated four months ago for an email sent to an external domain.\n\nWhich portal page should you use to review the alert?",
+  "choices": [
+   "Microsoft Defender portal, Incidents & alerts",
+   "Microsoft Purview portal, DLP Alerts dashboard",
+   "Microsoft Purview portal, DLP Overview page",
+   "Exchange admin center, Message trace"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "DLP alerts are kept for six months in the Microsoft Defender portal but only 30 days in the Purview DLP alerts dashboard. For older alerts, use the Defender portal.",
+  "rationale": [
+   "Correct: the Defender portal retains DLP incidents and alerts for six months, so an alert from four months ago is still available there.",
+   "Incorrect: the Purview DLP alerts dashboard keeps alerts for only 30 days, so a four-month-old alert is no longer shown. Use it for recent DLP alert triage.",
+   "Incorrect: the DLP Overview page shows policy sync status, device status and top activities. It does not list individual alerts. Use it to check overall DLP health.",
+   "Incorrect: message trace shows delivery events for messages and is limited to recent data. It does not show DLP alerts or their details. Use it to troubleshoot mail delivery."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-learn-about-dlp"
+ },
+ {
+  "id": "2.4.4-03",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has Microsoft 365 E3 without add-ons. Compliance wants one DLP alert when 10 or more emails that each contain one credit card number are sent outside the company by any users within 48 hours. Today the rule can only alert on every match.\n\nWhat should you do?",
+  "choices": [
+   "Add Microsoft Purview Suite licenses, then set a threshold alert",
+   "Set the rule to send an alert every time an activity matches",
+   "Turn on user-based alert aggregation in the DLP settings",
+   "Increase the instance count of the credit card condition to 10"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Every DLP subscription can raise single-event alerts. Threshold-based (aggregated) alerts that count matches or volume over a time window require E5, A5 or G5, or E3 with an add-on such as Microsoft Purview Suite (formerly E5 Compliance).",
+  "rationale": [
+   "Correct: aggregate alert configuration needs E5-level licensing or E3 plus an add-on such as Microsoft Purview Suite. After that, a threshold of 10 matches within the time window raises one alert for all users.",
+   "Incorrect: single-event alerts are what the E3 tenant already has. They raise an alert per match, not one alert after 10 matches in 48 hours. Use them for rare, high-impact events.",
+   "Incorrect: user-based aggregation (preview) groups single-event matches per user within 15 to 60 minutes. It does not count matches across users over 48 hours. Use it to get one alert per sender per rule.",
+   "Incorrect: the instance count applies to one item, so it would match only single emails that contain 10 or more card numbers. Emails with one number each would never match. Use it to detect bulk data in one item."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-alerts-get-started"
+ },
+ {
+  "id": "2.4.4-04",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Relecloud, User1 must triage DLP alerts in the Microsoft Purview DLP alerts dashboard and change their status. User1 must not see the matched sensitive content or content preview. You must follow the principle of least privilege.\n\nWhat should you assign to User1?",
+  "choices": [
+   "A custom role group with Manage alerts and View-Only DLP Compliance Management",
+   "The Content Explorer Content Viewer and Security Operator role groups",
+   "The Microsoft Purview Compliance Administrator role group",
+   "The Microsoft Purview Security Reader role group for the dashboard"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Access to the DLP alert management dashboard needs the Manage alerts role plus DLP Compliance Management or View-Only DLP Compliance Management. Seeing matched content and previews needs the Data classification content viewer role, which you leave out of a custom role group when analysts must not see content.",
+  "rationale": [
+   "Correct: Manage alerts plus View-Only DLP Compliance Management is the documented minimum for the alert dashboard, and leaving out Data classification content viewer keeps matched content hidden, as required.",
+   "Incorrect: this role group contains the Data classification content viewer role, which grants exactly the content preview that User1 must not see, and it does not grant alert management. Use it for investigators who must view content.",
+   "Incorrect: Compliance Administrator can manage alerts, but it also grants broad policy management across Purview, which exceeds least privilege. Use it for administrators who configure compliance solutions.",
+   "Incorrect: Security Reader can view the dashboard but is read-only, so User1 could not change alert status. Use it for people who only need to monitor alerts."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-alerts-get-started"
+ },
+ {
+  "id": "2.4.4-05",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation assigns User1 to the Information Protection Analysts role group, scoped to an administrative unit for Europe. User1 reports that the Microsoft Defender portal shows DLP alerts only for European users. User1 must investigate DLP alerts for all users, without gaining permissions to manage DLP policies.\n\nWhat should you do?",
+  "choices": [
+   "Add User1 to the role group as an unrestricted member",
+   "Assign User1 the Compliance Administrator role group",
+   "Add the Manage alerts role to User1 for the Europe unit",
+   "Disable the built-in DLP alert tuning rule in Defender XDR"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Administrative unit restrictions in DLP flow into the Microsoft Defender portal: an administrative unit restricted admin sees only DLP alerts for the assigned unit. To see all alerts, the user needs the same role without an administrative unit scope.",
+  "rationale": [
+   "Correct: removing the administrative unit restriction, by adding User1 to the same role group as an unrestricted member, lets User1 see DLP alerts for the whole tenant without adding policy management rights.",
+   "Incorrect: Compliance Administrator would show all alerts if assigned unrestricted, but it also grants DLP policy management, which the requirement forbids. Use it for administrators who configure policies.",
+   "Incorrect: adding Manage alerts while keeping the Europe scope still limits visibility to European users, because the scope, not the role, causes the filter. Use scoped roles for regional analysts.",
+   "Incorrect: the built-in alert tuning rule turns DLP signals into behaviors for every user, not only for some regions. Disable it when no DLP alerts appear in the incident queue at all."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/dlp-investigate-alerts-defender"
+ },
+ {
+  "id": "2.4.4-06",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys investigates a DLP alert in the Microsoft Defender portal for a SharePoint file that a user shared with an external partner. The file content and its labels must not change, and internal users must keep access.\n\nWhich remediation action should you take from the alert?",
+  "choices": [
+   "Unshare",
+   "Delete",
+   "Apply sensitivity label",
+   "Apply retention label"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For DLP alerts about files in SharePoint or OneDrive, the Defender portal offers remediation actions such as apply retention label, unshare, delete and apply sensitivity label. Choose the action that removes the risk with the least side effects for the stated constraints.",
+  "rationale": [
+   "Correct: Unshare removes the external sharing that caused the risk, while the file, its content and its labels stay unchanged and internal users keep their access.",
+   "Incorrect: Delete removes the file for everyone, including internal users, which breaks the requirement. Use it when the file must not exist in the tenant, for example after a confirmed leak of prohibited data.",
+   "Incorrect: applying a sensitivity label changes the labels of the file and can add encryption, which the constraint forbids. Use it when the file is unlabeled and needs protection that travels with it.",
+   "Incorrect: a retention label changes how long the file is kept or deleted. It does not remove the external sharing link. Use it when the file must be retained or disposed of on a schedule."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/dlp-investigate-alerts-defender"
+ },
+ {
+  "id": "2.4.4-07",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company has DLP alerts in the Microsoft Defender portal. An analyst reviews a SharePoint event in an alert and must quickly see all DLP violations of the same user in the last 30 days, without writing a query or exporting data.\n\nWhat should you do from the event details pane?",
+  "choices": [
+   "Select Go Hunt and run the User DLP violations query",
+   "Export the events with Export-ActivityExplorerData",
+   "Open Content explorer and filter by the user name",
+   "Select Summarize to have Security Copilot summarize it"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "From an event in a DLP alert, the Go Hunt control opens built-in advanced hunting queries that match the event source. For SharePoint events they include File shared with, File activities, Site activity and User DLP violations for last 30 days. Advanced hunting needs access to the CloudAppEvents table.",
+  "rationale": [
+   "Correct: Go Hunt lists built-in queries for the event's source location, including User DLP violations for last 30 days, which you can run immediately without writing KQL.",
+   "Incorrect: Export-ActivityExplorerData exports activity data for reporting, which means scripting and analysis outside the portal. Use it to feed reports or a SIEM, not for a quick in-alert pivot.",
+   "Incorrect: Content explorer shows where sensitive and labeled items are stored. It does not list a user's DLP violations over time. Use it to inspect sensitive content in locations.",
+   "Incorrect: Summarize generates a summary of the current alert, such as severity, policy and file. It does not list other violations of the user. Use it to quickly understand one alert."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/dlp-investigate-alerts-defender"
+ },
+ {
+  "id": "2.4.4-08",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders has Microsoft 365 E5. A DLP rule uses single-event alerts. When 20 users each send an email with customer data within one minute, the security team receives one combined alert. The team needs a separate alert for each sender, still aggregated per rule over 30 minutes.\n\nWhat should you configure?",
+  "choices": [
+   "User-based alert aggregation at the tenant level",
+   "A threshold alert based on the number of matches",
+   "A threshold alert based on the volume of data",
+   "An alert for every match without aggregation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, single-event alerts from one rule are aggregated across users in a fixed window (one minute for E5, 15 minutes for E3). User and rule based alert aggregation (preview) is turned on at the tenant level and groups matches per user and per rule within a configurable 15 to 60 minute window.",
+  "rationale": [
+   "Correct: with user-based aggregation turned on in the DLP settings, single-event matches are grouped per sender and per rule within the configurable window, here 30 minutes, which gives one alert per sender.",
+   "Incorrect: threshold alerts based on match count aggregate across all users for one rule and work only with All users, so senders are still combined. Use them to alert when many matches occur in a time window.",
+   "Incorrect: volume thresholds also pivot on the rule across users and count megabytes of exfiltrated data, not individual senders. Use them to detect large data transfers.",
+   "Incorrect: this is the current single-event setting, and its fixed default aggregation window combines matches from many users. It does not create a per-sender alert over 30 minutes."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dlp-alerts-get-started"
+ },
+ {
+  "id": "2.4.4-09",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Proseware, Inc. must investigate a DLP incident in the Microsoft Defender portal for the policy named Finance PII, review which sensitive information types were detected, and close the incident after the review.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Open Incidents & alerts > Incidents in the Microsoft Defender portal.",
+   "Add the Service/detection sources filter and select Microsoft Data Loss Prevention.",
+   "Open the incident for Finance PII and select its DLP alert.",
+   "Review the Sensitive info types tab of the alert.",
+   "Select Manage incident and set the status to Resolved.",
+   "Open Activity explorer in the Microsoft Purview portal and filter by DLP rule matched.",
+   "Edit the Finance PII policy and turn off incident reports."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "In the Defender portal you start from the incident queue, filter by the DLP detection source, open the incident and its alert, review the alert story and sensitive information types, and finally use Manage incident to tag, assign or resolve it.",
+  "rationale": [
+   "Step 1: DLP incidents are managed from Incidents & alerts > Incidents in the Defender portal, so you start at the incident queue.",
+   "Step 2: the Service/detection sources filter set to Microsoft Data Loss Prevention narrows the queue to incidents that contain DLP alerts.",
+   "Step 3: selecting the incident opens its summary page, and selecting the alert opens the DLP alert page with the alert story and details.",
+   "Step 4: the Sensitive info types tab on the alert shows which SITs were matched, which is the review the scenario asks for.",
+   "Step 5: Manage incident on the incident summary page lets you assign, tag and resolve the incident after the review is complete.",
+   "Incorrect: Activity explorer shows DLP activities in Purview, but it does not open or close Defender incidents. Use it for broader activity analysis outside the incident workflow.",
+   "Incorrect: turning off incident reports stops future alerts for the policy. It does not investigate or close the current incident. Change alert settings only when tuning a noisy policy."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/dlp-investigate-alerts-defender"
+ },
+ {
+  "id": "2.4.4-10",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-e",
+  "stem": "You need to meet the requirements of the security operations center (SOC) for DLP incidents.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "SOC analysts can review a DLP incident from four months ago in the Microsoft Defender portal.",
+   "To make new DLP signals appear as alerts in the Defender incident queue again, the SOC must turn on incident reports in every DLP rule.",
+   "An analyst who has only the Manage alerts and View-Only DLP Compliance Management roles can view the matched sensitive content of an alert."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Defender portal keeps DLP incidents for six months. Since early October 2026, a built-in alert tuning rule in Defender XDR turns DLP signals into behaviors that appear only in advanced hunting; disabling it in Settings > Microsoft Defender XDR > Alert tuning restores alerts. Viewing matched content requires the Data classification content viewer role.",
+  "rationale": [
+   "Yes: Defender retains DLP incidents for six months, so a four-month-old incident is still available there, while the Purview DLP alerts dashboard keeps only 30 days.",
+   "No: the signals already reach BehaviorInfo, so the rules do generate them. The built-in DLP alert tuning rule turns them into behaviors; disable it in Settings > Microsoft Defender XDR > Alert tuning.",
+   "No: these two roles give access to the alert dashboard but not to content. Matched sensitive content and content preview require the Content Explorer Content Viewer role group (Data classification content viewer)."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/dlp-investigate-alerts-defender"
+ },
+ {
+  "id": "2.4.5-01",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. assigned Microsoft 365 Copilot licenses to 500 users. DSPM for AI (classic) shows no insights about Copilot and agent activity in its reports.\n\nWhich prerequisite should you verify first?",
+  "choices": [
+   "Microsoft Purview Audit is turned on for the tenant",
+   "The Microsoft Purview browser extension is deployed",
+   "Windows devices are onboarded to Microsoft Purview",
+   "A collection policy for Copilot experiences exists"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For Microsoft 365 Copilot and agents, DSPM for AI needs only auditing turned on and users licensed for Copilot. Device onboarding and the browser extension are prerequisites for third-party AI sites, and collection policies are needed for Copilot in Fabric, Security Copilot and non-Microsoft AI apps.",
+  "rationale": [
+   "Correct: monitoring Copilot and agent interactions requires Microsoft Purview auditing. With audit on and users licensed, insights start to appear in the Reports section.",
+   "Incorrect: the browser extension is needed to discover visits to third-party generative AI sites and for Endpoint DLP in Chrome. It is not needed for Microsoft 365 Copilot activity.",
+   "Incorrect: device onboarding gives visibility into sensitive data shared with third-party AI sites and enables Endpoint DLP for them. Microsoft 365 Copilot activity comes from audit, not from devices.",
+   "Incorrect: the collection policy Capture interactions for Copilot experiences captures prompts and responses for Copilot in Fabric and Security Copilot. Microsoft 365 Copilot does not depend on it."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dspm-for-ai-considerations"
+ },
+ {
+  "id": "2.4.5-02",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Before a broad rollout of Microsoft 365 Copilot, Litware, Inc. wants to find SharePoint sites with sensitive files that are shared with anyone or with everyone in the organization. You must use a feature that runs automatically without setup.\n\nWhich DSPM feature should you use?",
+  "choices": [
+   "The default data risk assessment",
+   "Activity explorer events",
+   "The Apps and agents page",
+   "The AI usage Reports page"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "DSPM (Discover > Data risk assessments) automatically runs a weekly default data risk assessment for the top 100 SharePoint sites by usage. It shows sensitive items and sharing links, and offers remediation such as DLP for Copilot, Restricted Content Discovery, auto-labeling and retention policies.",
+  "rationale": [
+   "Correct: the default data risk assessment runs weekly without activation for the top 100 SharePoint sites and reports sensitive data and sharing links such as Anyone links, which identifies oversharing before Copilot surfaces it.",
+   "Incorrect: Activity explorer shows events such as AI interactions, AI website visits and DLP rule matches after they happen. It does not assess site sharing. Use it to review AI activity.",
+   "Incorrect: Apps and agents shows AI apps and agents used in the organization and the sensitive data they accessed. It does not scan site permissions. Use it to see which agents touch sensitive data.",
+   "Incorrect: Reports show trends of AI usage and sensitive interactions from the policies. They do not evaluate oversharing of sites. Use them to track AI activity over time."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "2.4.5-03",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. suspects that users paste customer data into consumer generative AI websites in Google Chrome on Windows 11 devices. You must use DSPM for AI (classic) to gain visibility into this activity.\n\nWhat should you do first?",
+  "choices": [
+   "Onboard the devices and deploy the Purview browser extension",
+   "Turn on Microsoft Purview Audit for the tenant",
+   "Register the ChatGPT Enterprise workspace in DSPM for AI",
+   "Create the collection policy for enterprise AI apps"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Visibility into sensitive data shared with third-party generative AI sites depends on Endpoint DLP signals from onboarded devices, and in Chrome on Windows the Microsoft Purview browser extension is required. Enterprise connectors and collection policies cover managed enterprise AI apps, not consumer sites.",
+  "rationale": [
+   "Correct: onboarded devices send the paste and upload signals for third-party AI sites, and the Purview browser extension is required for Chrome on Windows. Then the one-click discovery policies can show the activity.",
+   "Incorrect: audit is needed for Microsoft 365 Copilot and agents, and it is usually already on. It does not capture pastes into third-party websites in Chrome. Turn it on for Copilot insights.",
+   "Incorrect: registering a ChatGPT Enterprise workspace discovers risk in that managed enterprise service. Consumer AI websites are not covered. Use it when the company licenses ChatGPT Enterprise.",
+   "Incorrect: Capture interactions for enterprise AI apps captures prompts and responses from Entra-registered apps, ChatGPT Enterprise and Foundry apps. It does not see consumer sites in Chrome."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dspm-for-ai-considerations"
+ },
+ {
+  "id": "2.4.5-04",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys uses Copilot in Fabric and Security Copilot, and the tenant has the enterprise version of Microsoft Purview data governance. In DSPM for AI (classic), audit events for these Copilots appear, but the prompts and responses do not.\n\nWhat should you do?",
+  "choices": [
+   "Create the collection policy for Copilot experiences",
+   "Assign Microsoft 365 Copilot licenses to the users",
+   "Create a DLP policy for the Copilot location",
+   "Create a retention policy for Copilot experiences"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For Copilot in Fabric and Security Copilot, auditing captures events but not prompts and responses. The recommendation Secure interactions for Microsoft Copilot experiences creates the collection policy DSPM for AI - Capture interactions for Copilot experiences, which captures them.",
+  "rationale": [
+   "Correct: without a collection policy such as DSPM for AI - Capture interactions for Copilot experiences, only audit events are captured for Copilot in Fabric and Security Copilot. The policy captures the prompts and responses.",
+   "Incorrect: Microsoft 365 Copilot licenses are a prerequisite for Microsoft 365 Copilot and agent insights. They do not affect content capture for Copilot in Fabric or Security Copilot.",
+   "Incorrect: a DLP policy for the Copilot location controls what Microsoft 365 Copilot can process. It does not capture interactions of other Copilots. Use it to protect labeled content from Copilot.",
+   "Incorrect: a retention policy keeps or deletes captured interactions, but it cannot retain content that was never captured. Create it after capture works, to meet retention requirements."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dspm-for-ai"
+ },
+ {
+  "id": "2.4.5-05",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A data risk assessment in Data Security Posture Management (DSPM) shows that the Mergers SharePoint site at Woodgrove Bank contains many unlabeled files with sensitive data. Microsoft 365 Copilot must not surface any content from this site, and site permissions must stay unchanged until a review is complete.\n\nWhich remediation option on the Protect tab should you use?",
+  "choices": [
+   "Restrict all items",
+   "Restrict access by label",
+   "Create an auto-labeling policy",
+   "Create retention policies"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Protect tab of a data risk assessment offers Restrict access by label (DLP for Copilot), Restrict all items (SharePoint Restricted Content Discovery), auto-labeling and retention policies. Restricted Content Discovery excludes a whole site from Copilot without changing permissions, which suits unlabeled content.",
+  "rationale": [
+   "Correct: Restrict all items uses SharePoint Restricted Content Discovery to exclude the listed site from Microsoft 365 Copilot, and it does not change who can access the site, so permissions stay as they are.",
+   "Incorrect: Restrict access by label creates a DLP policy that keeps labeled items out of Copilot. The files are unlabeled, so nothing would be excluded. Use it when sensitive content already has labels.",
+   "Incorrect: an auto-labeling policy labels sensitive files over time, but labeling alone does not stop Copilot, and simulation must run first. Use it to fix unlabeled sensitive data at scale.",
+   "Incorrect: retention policies from the Protect tab delete content that has not been accessed for years. They do not stop Copilot from using current files. Use them to remove stale data."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "2.4.5-06",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud must find individual files in five SharePoint sites that have sharing links for external or anonymous users, and remove those links from Data Security Posture Management (DSPM). The default data risk assessment shows only site-level results.\n\nWhat should you do?",
+  "choices": [
+   "Run a custom item-level assessment that uses a registered Entra app",
+   "Run a custom assessment for the five sites at the site level",
+   "Run a custom item-level assessment for the users' OneDrive accounts",
+   "Run an on-demand classification scan from the Identify tab"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In DSPM and DSPM for AI (classic), custom data risk assessments can scan at item level for SharePoint sites (up to 10) after a one-time authentication with a registered Microsoft Entra app that has Microsoft Graph application permissions. Item-level results list potentially overshared items with actions such as Remove sharing link.",
+  "rationale": [
+   "Correct: an item-level custom assessment, authenticated with a registered Entra app, lists potentially overshared items in up to 10 SharePoint sites and offers Remove sharing link as a remediation action.",
+   "Incorrect: a site-level custom assessment has the same granularity as the default one and gives no per-file remediation. Use it to check sites or users that the default assessment does not cover.",
+   "Incorrect: OneDrive currently is not supported for item-level scanning, and the files are in SharePoint sites. Use a OneDrive assessment only for site-level insights.",
+   "Incorrect: an on-demand classification scan detects sensitive information types in items that were not scanned. It does not list sharing links or remove them. Use it when files are unclassified."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "2.4.5-07",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation uses the current version of Microsoft Purview Data Security Posture Management. The security team needs an inventory of all AI apps and agents with activity in the last 30 days, including Microsoft Agent 365 agents, and how many are high risk.\n\nWhich page should you use?",
+  "choices": [
+   "AI observability",
+   "Discover > Apps and agents",
+   "Asset explorer",
+   "Reports"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In the current DSPM, AI observability inventories AI apps and agents, including Microsoft Agent 365, with risk and sensitive-interaction counts. Discover > Apps and agents shows a dashboard of AI apps and agents but does not include Agent 365.",
+  "rationale": [
+   "Correct: AI observability lists all AI apps and agents with activity in the last 30 days, including Agent 365, with how many are high risk and how many had sensitive interactions.",
+   "Incorrect: Apps and agents shows AI apps and their agents and details for the top 20 recently used agents, but Learn states it does not include Agent 365. Use it for agent details outside Agent 365.",
+   "Incorrect: Asset explorer gives a unified view of labeled and classified data by workload and location. It is a data inventory, not an AI app inventory.",
+   "Incorrect: Reports track sensitive data usage, labeling, policy usage and risky behavior over time. They do not inventory each AI app and agent with its risk level."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-learn-about"
+ },
+ {
+  "id": "2.4.5-08",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys wants Data Security Posture Management (DSPM) to scan individual files in three SharePoint sites for oversharing and to remove risky sharing links.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Register an app in the Microsoft Entra admin center for accounts in this organizational directory only.",
+   "Add Microsoft Graph application permissions such as Sites.ReadWrite.All and Files.ReadWrite.All, grant admin consent, and create a client secret.",
+   "Create a custom data risk assessment, select Item-level on the Scan level page, and select Authenticate.",
+   "Open the Potentially overshared items tab and select Remove sharing link for the items.",
+   "Enable Service principals can access read-only admin APIs in the Fabric admin portal.",
+   "Run an on-demand classification scan from the Identify tab of the default assessment."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Item-level scanning needs a one-time authentication with a registered Entra app: register it, add the Microsoft Graph application permissions with admin consent, create a client secret, and provide the app ID and secret when you create the item-level custom assessment. Results with remediation actions appear after the scan completes.",
+  "rationale": [
+   "Step 1: item-level scanning authenticates with a registered Entra app, so the app must exist first. It uses the single-tenant account type.",
+   "Step 2: the app needs Microsoft Graph application permissions such as Sites.ReadWrite.All, Files.ReadWrite.All and SensitivityLabels.Read.All with admin consent, plus a client secret that you save now because it is shown only once.",
+   "Step 3: in DSPM > Discover > Data risk assessments, the custom assessment with Item-level scan level and Authenticate uses the app values to scan the selected SharePoint sites.",
+   "Step 4: after the scan is complete, the Potentially overshared items tab lists items with sharing links for external or anonymous users, and Remove sharing link remediates them.",
+   "Incorrect: the Fabric Admin API settings are part of the one-time setup for Fabric data risk assessments. SharePoint item-level scanning does not need them.",
+   "Incorrect: an on-demand classification scan finds sensitive information types in unscanned items. It is not required for item-level oversharing scans. Use it when data is not yet classified."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "2.4.5-09",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Lucerne Publishing uses Data Security Posture Management (DSPM). The company must first discover, in audit mode, when users paste or upload sensitive content to third-party AI sites in Edge, Chrome and Firefox. It must also give users with elevated risk a block with override when they paste sensitive information into those sites.\n\nWhich two one-click policies should you create? Each correct answer presents part of the solution.",
+  "choices": [
+   "DSPM for AI: Detect sensitive info added to AI sites",
+   "DSPM for AI - Block sensitive info from AI sites",
+   "DSPM for AI - Capture interactions for enterprise AI apps",
+   "DSPM for AI - Protect sensitive data from Copilot processing",
+   "DSPM for AI - Unethical behavior in AI apps"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "DSPM (Tasks and actions > Remediation actions) and DSPM for AI (classic) create one-click policies in other Purview solutions. Discovery policies run in audit mode, and protection policies such as Block sensitive info from AI sites use Adaptive Protection to block risky users with override. Collection, Copilot DLP and communication compliance policies cover other scenarios.",
+  "rationale": [
+   "Correct: this DLP policy discovers sensitive content pasted or uploaded to AI sites in Edge, Chrome and Firefox for all users in audit mode only, which meets the discovery requirement.",
+   "Correct: this DLP policy uses Adaptive Protection to give elevated-risk users a block with override when they paste or upload sensitive information to AI sites in Edge, Chrome and Firefox. It is created in test mode, so turn it on after you review the results.",
+   "Incorrect: this collection policy captures prompts and responses from enterprise AI apps such as ChatGPT Enterprise and Entra-registered or Foundry apps. It does not cover third-party consumer sites or block anything.",
+   "Incorrect: this DLP policy stops Microsoft 365 Copilot and agents from processing items with selected sensitivity labels. It does not act on third-party AI sites. Use it to protect labeled data from Copilot.",
+   "Incorrect: this communication compliance policy detects sensitive information and unethical behavior in prompts and responses for review. It does not block pastes. Use it for conduct monitoring."
+  ],
+  "ref": "https://learn.microsoft.com/purview/dspm-for-ai-considerations"
+ },
+ {
+  "id": "2.4.5-10",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-e",
+  "stem": "You need to meet the requirement for User1 and the review of Copilot prompts and responses.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "Purview Data Security AI Content Viewer",
+   "Purview Data Security AI Viewer",
+   "Microsoft Purview Compliance Administrator",
+   "Microsoft Entra AI Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Viewing the text of prompts and responses in AI interaction events of activity explorer is not included in the admin or view-only roles of DSPM for AI. It requires Content Explorer Content Viewer or the narrower Purview Data Security AI Content Viewer role, which is limited to AI interactions.",
+  "rationale": [
+   "Correct: Data Security AI Content Viewer grants access to prompts and responses in AI interaction events only, so it is the narrowest role that adds what User1 lacks while keeping least privilege.",
+   "Incorrect: Data Security AI Viewer is a view-only role for DSPM for AI pages, similar to the Security Reader access User1 already has. It does not show prompt and response text.",
+   "Incorrect: the Compliance Administrator role group can create and edit in DSPM for AI, but the permissions table shows that it cannot view prompts and responses, and it is broader than needed.",
+   "Incorrect: the Entra AI Administrator role has view-only access in DSPM for AI and manages Copilot settings tenant-wide. It does not show prompt text and exceeds least privilege."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-microsoft-purview-permissions"
+ }
+]

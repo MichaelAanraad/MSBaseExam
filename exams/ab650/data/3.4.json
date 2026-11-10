@@ -1,0 +1,625 @@
+[
+ {
+  "id": "3.4.1-01",
+  "obj": "3.4.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Fabrikam, Inc. bills the use of agents in Microsoft Copilot Chat through a pay-as-you-go billing policy named Policy1, which uses a resource group named RG-Copilot in an Azure subscription. The finance team must be warned when the forecasted cost of RG-Copilot is likely to exceed 80 percent of a 2,000 USD monthly budget. The warning must also trigger an existing Azure Monitor action group named AG-Finance that opens a ticket.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Azure portal, search for Resource groups, and open RG-Copilot.",
+   "Select Budgets, and then select Add.",
+   "Confirm the scope, enter a budget name, select the Monthly reset period and an expiration date, and enter 2,000 as the amount.",
+   "Select Next, add an alert condition with Type set to Forecasted at 80 percent, add the finance email address, and select AG-Finance.",
+   "Select Create to save the budget.",
+   "In the Microsoft 365 admin center, go to Copilot > Billing & usage, open Policy1, and add an 80 percent alert on the Budget tab.",
+   "In the Azure portal, open Cost analysis for RG-Copilot, filter by the m365copilotchat tag, and save the view."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Copilot pay-as-you-go charges are billed to the Azure subscription and resource group of the billing policy, so you can monitor them in Microsoft Cost Management as well as in the Microsoft 365 admin center. An Azure budget at resource group scope supports actual and forecasted alerts and can call an action group. Budgets in both places only notify; they do not stop usage.",
+  "rationale": [
+   "Step 1: Copilot Chat pay-as-you-go charges land in the subscription and resource group of Policy1. To create a resource group budget, you open the resource group first so that Budgets appears in its menu.",
+   "Step 2: the Budgets page of RG-Copilot lists existing budgets, and Add opens the Create budget window. Budgets at resource group scope can call action groups.",
+   "Step 3: in Create budget you confirm that the scope is RG-Copilot, name the budget, and choose the Monthly reset period, an expiration date, and the 2,000 USD amount. The amount must exist before thresholds can be set as a percentage of it.",
+   "Step 4: on the alerts page, Type Forecasted warns when the projected cost is likely to cross 80 percent. A budget needs at least one email recipient, and selecting AG-Finance makes the alert open the ticket.",
+   "Step 5: Create saves the budget. Cost Management evaluates budgets every 24 hours; like every budget, it only notifies and does not stop Copilot Chat usage.",
+   "Incorrect: a budget on a Copilot billing policy in the Microsoft 365 admin center sends email to mail-enabled security groups when spending reaches a percentage of the budget. It cannot call an Azure Monitor action group. Use it when finance needs only spending email alerts per billing policy.",
+   "Incorrect: Cost analysis filtered by the m365copilotchat tag shows accumulated Copilot Chat costs, and you can save the view, but it sends no alerts. Use it to analyze or report Copilot Chat spending in the Azure portal."
+  ],
+  "ref": "https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-acm-create-budgets"
+ },
+ {
+  "id": "3.4.1-02",
+  "obj": "3.4.1",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys configures billing for agents in Microsoft Copilot Chat for three departments. The company bought Microsoft Copilot Studio capacity packs.\n\nWhich billing configuration should you use for each department? To answer, drag the appropriate configurations to the correct departments. Each configuration may be used once, more than once, or not at all.",
+  "choices": [
+   "Copilot credit policy only",
+   "Copilot credit policy paired with a pay-as-you-go billing policy",
+   "Pay-as-you-go billing policy only",
+   "Microsoft 365 Copilot licenses for the department"
+  ],
+  "targets": [
+   "Research: must use only prepaid credits, has no Azure subscription, and accepts losing access until credits replenish",
+   "Sales: must use prepaid credits first and must keep working when the prepaid credits run out",
+   "Support: must not use prepaid credits and must pay per credit through an Azure subscription"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Research has no Azure subscription and accepts an outage when credits run out. A standalone Copilot credit policy uses only capacity pack credits and needs no Azure subscription.",
+   "Sales needs prepaid credits first and business continuity. Pairing the credit policy with a pay-as-you-go billing policy switches overage to the per-credit rate without interruption.",
+   "Support must not consume prepaid credits and must pay per credit. A pay-as-you-go billing policy alone bills all usage to the connected Azure subscription."
+  ],
+  "notes": [
+   "Connects capacity pack credits to a set of users, needs no Azure subscription, and up to 10 can exist per tenant. When credits are exhausted, Copilot Chat stops for covered users until the next monthly replenishment.",
+   "Uses capacity pack credits first and then bills overage at the pay-as-you-go rate to Azure. Use it when users must never lose access.",
+   "Bills every credit to the connected Azure subscription with no prepaid capacity. Use it to pay only for what is used, or to measure usage before buying capacity or licenses.",
+   "A per-user add-on that includes agents grounded in tenant data without metered charges. Use it for frequent Copilot users, not as a billing configuration for metered agents."
+  ],
+  "explanation": "Copilot Chat agents can be paid with capacity pack credits (through a Copilot credit policy), with pay-as-you-go billing to Azure, or both. A standalone credit policy stops service when credits run out, while pairing with pay-as-you-go keeps service running.",
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-capacity-packs"
+ },
+ {
+  "id": "3.4.1-03",
+  "obj": "3.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "An administrator at Relecloud has the Billing Administrator role and already created a pay-as-you-go billing policy for Microsoft Copilot Chat. The administrator now must create a Copilot credit policy that uses capacity pack credits for Copilot Chat.\n\nWhich role should the administrator use?",
+  "choices": [
+   "Global Administrator",
+   "Billing Administrator",
+   "AI Administrator",
+   "License Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Billing Administrators and AI Administrators can set up pay-as-you-go billing but cannot activate a capacity pack. Creating a Copilot credit policy and enabling capacity pack usage requires a Global Administrator, so least privilege here still means Global Administrator.",
+  "rationale": [
+   "Correct: Learn states that you must be a Global Administrator to enable capacity pack usage and to create a Copilot credit policy. No narrower role is listed for this task.",
+   "Incorrect: Billing Administrator can buy capacity packs and set up pay-as-you-go billing, but Learn states it cannot activate a capacity pack. It was enough for the existing billing policy.",
+   "Incorrect: AI Administrator can manage pay-as-you-go billing for Copilot services, but, like Billing Administrator, it cannot activate a capacity pack.",
+   "Incorrect: License Administrator assigns and removes licenses for users and groups. It does not manage billing policies or capacity pack credit policies."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-capacity-packs"
+ },
+ {
+  "id": "3.4.1-04",
+  "obj": "3.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation set a 1,000 USD monthly budget with a 100 percent alert on the billing policy that is connected to Microsoft Copilot Chat. Spending reaches 1,200 USD on day 20 of the month.\n\nWhich outcome should you expect?",
+  "choices": [
+   "Alert recipients get an email, and metered agents keep working",
+   "Metered agents stop working until the budget resets next month",
+   "Usage over the budget is charged to capacity pack credits",
+   "The billing policy is disconnected from Microsoft Copilot Chat"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A budget on a pay-as-you-go billing policy only triggers email notifications at the configured percentages. The system does not enforce the budget, so usage continues and is billed to the Azure subscription.",
+  "rationale": [
+   "Correct: Learn states that the budget triggers email notifications but does not prevent the organization from exceeding it, so usage continues without disruption.",
+   "Incorrect: budgets are not enforced, so service does not stop. A stop at exhaustion happens with a standalone Copilot credit policy when prepaid credits run out.",
+   "Incorrect: there is no automatic move from a pay-as-you-go budget to capacity packs. Credits are used first only when a Copilot credit policy is paired with pay-as-you-go.",
+   "Incorrect: a policy is disconnected only when an admin disconnects or deletes it, which removes access to metered agents. Reaching a budget does not do that."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/setup-pay-as-you-go"
+ },
+ {
+  "id": "3.4.1-05",
+  "obj": "3.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders enabled pay-as-you-go billing for Microsoft Copilot Chat. User1 has no Microsoft 365 Copilot license and uses several declarative agents. User2 has a Microsoft 365 Copilot license.\n\nWhich agent use should you expect to generate usage-based charges?",
+  "choices": [
+   "User1 uses an agent grounded in a SharePoint site of the tenant",
+   "User1 uses an agent that relies only on its instructions",
+   "User1 uses an agent grounded only in public websites",
+   "User2 uses an agent grounded in a SharePoint site of the tenant"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Users without a Copilot license can use instruction-only and public-web agents at no extra cost. Agents that access shared tenant data, such as SharePoint or Copilot connectors, are metered in Copilot Credits. Users with a Copilot license incur no extra charges.",
+  "rationale": [
+   "Correct: for users without a Copilot license, agents that access shared tenant data such as SharePoint generate usage-based charges metered in Copilot Credits.",
+   "Incorrect: Learn states that agents relying on instructions incur no extra cost for Copilot Chat users. They would be metered only if they also grounded in tenant data.",
+   "Incorrect: public website grounding is free for Copilot Chat users. Use such agents when you want agents without metered consumption.",
+   "Incorrect: users with a Microsoft 365 Copilot license incur no additional charges for agents grounded in tenant data. The same agent is metered only for unlicensed users."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/extensibility/cost-considerations"
+ },
+ {
+  "id": "3.4.1-06",
+  "obj": "3.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has a billing policy named Policy1 that applies to All users and is connected to Microsoft Copilot Chat. You create Policy2 for the Finance group so that Finance costs go to a separate Azure subscription, but you cannot connect Policy2 to Copilot Chat. Policy1 must stay available for SharePoint agents.\n\nWhat should you do first?",
+  "choices": [
+   "Disconnect Policy1 from Microsoft Copilot Chat",
+   "Delete Policy1 from the Billing policies tab",
+   "Change the subscription of Policy2 to that of Policy1",
+   "Remove the budget from Policy1 and save the policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Before you connect a user-specific billing policy to a Copilot service, you must disconnect any existing All users billing policy from that service. Connections are changed one policy at a time, and a policy can still serve other services.",
+  "rationale": [
+   "Correct: Learn states that you must disconnect any existing All users billing policy before you connect a user-specific policy. Disconnecting from Copilot Chat keeps Policy1 for SharePoint agents.",
+   "Incorrect: deleting Policy1 would disconnect it, but it also removes the billing infrastructure that SharePoint agents must keep using. Delete a policy only when no service needs it.",
+   "Incorrect: you cannot edit the subscription or resource group of a billing policy, and Finance needs a separate subscription anyway.",
+   "Incorrect: a budget only sends notifications and does not block other connections. Removing it does not change the All users conflict."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/pay-as-you-go-overview"
+ },
+ {
+  "id": "3.4.2-01",
+  "obj": "3.4.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. needs a per-user export of Microsoft 365 Copilot usage, including user principal names, for the last 28 days. The usage reports currently show concealed names, and the privacy team approved showing them. You use a new workstation and Microsoft Graph PowerShell.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Install-Module Microsoft.Graph -Scope CurrentUser`",
+   "`Connect-MgGraph -Scopes \"ReportSettings.ReadWrite.All\",\"Reports.Read.All\"`",
+   "`Update-MgAdminReportSetting -BodyParameter @{ displayConcealedNames = $false }`",
+   "`$r = Invoke-MgGraphRequest -Method GET -Uri \"https://graph.microsoft.com/v1.0/copilot/reports/getMicrosoft365CopilotUsageUserDetail(period='D28')\"`",
+   "`Connect-MsolService`",
+   "`Connect-ExchangeOnline`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The adminReportSettings resource controls whether all usage reports, including the Graph reports APIs, conceal user information. Turn displayConcealedNames off with ReportSettings.ReadWrite.All, then read the Copilot user detail report with Reports.Read.All.",
+  "rationale": [
+   "Step 1: on a new workstation the Microsoft Graph PowerShell SDK must be installed before Connect-MgGraph and the report cmdlets are available.",
+   "Step 2: the session needs ReportSettings.ReadWrite.All to change the report privacy setting and Reports.Read.All to read usage reports, so both scopes are requested at sign-in.",
+   "Step 3: displayConcealedNames = $false makes reports show identifiable information. It must run before the export, otherwise the report returns concealed user names.",
+   "Step 4: getMicrosoft365CopilotUsageUserDetail returns per-user Copilot usage, and D28 is a supported period for the default v2 report. It runs last, after names are revealed.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module and cannot change report settings or call Copilot report APIs. Use Microsoft Graph PowerShell instead.",
+   "Incorrect: Connect-ExchangeOnline opens an Exchange Online PowerShell session, for example to search the unified audit log. It does not manage Microsoft 365 usage report settings."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/extensibility/api/admin-settings/reports/copilotreportroot-getmicrosoft365copilotusageuserdetail"
+ },
+ {
+  "id": "3.4.2-02",
+  "obj": "3.4.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Fabrikam, Inc. schedules a script that reads the daily number of enabled and active users per Microsoft 365 app for Microsoft 365 Copilot over the last 90 days. The script must use the least privileged permission.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes [[1]]\n$uri = \"https://graph.microsoft.com/v1.0/copilot/reports/[[2]](period='D90')\"\nInvoke-MgGraphRequest -Method GET -Uri $uri\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"Reports.Read.All\"",
+     "\"ReportSettings.ReadWrite.All\"",
+     "\"AuditLog.Read.All\""
+    ],
+    "why": [
+     "Correct: Reports.Read.All is the least privileged permission for the Copilot usage report functions, and the signed-in user also needs a supported role such as Reports Reader or AI Administrator.",
+     "Incorrect: ReportSettings.ReadWrite.All updates tenant report settings such as displayConcealedNames. It is the right scope to reveal names, not to read usage data.",
+     "Incorrect: AuditLog.Read.All reads Microsoft Entra audit and sign-in logs. Use it with Get-MgAuditLogSignIn, not with Copilot usage reports."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "getMicrosoft365CopilotUserCountTrend",
+     "getMicrosoft365CopilotUserCountSummary",
+     "getMicrosoft365CopilotUsageUserDetail"
+    ],
+    "why": [
+     "Correct: the UserCountTrend function returns the daily trend of enabled and active users per app, such as Teams, Word and Outlook, which matches the daily per-app requirement.",
+     "Incorrect: UserCountSummary returns aggregated enabled and active users per app for the whole period, not one value per day. Use it for a single summary figure.",
+     "Incorrect: UsageUserDetail returns per-user last activity dates and prompt counts, not daily per-app user counts. Use it for user-level exports."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Microsoft Graph exposes the Copilot usage report as three functions: UsageUserDetail (per user), UserCountSummary (aggregate per app) and UserCountTrend (daily per app). All need Reports.Read.All, and only licensed Copilot usage is returned.",
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/extensibility/api/admin-settings/reports/copilotreportroot-getmicrosoft365copilotusercounttrend"
+ },
+ {
+  "id": "3.4.2-03",
+  "obj": "3.4.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Litware, Inc. has users with and without Microsoft 365 Copilot licenses. You review the Microsoft Copilot reports in Reports > Usage in the Microsoft 365 admin center.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The Copilot Chat usage report shows prompts submitted by users who do not have a Microsoft 365 Copilot license.",
+   "The Agents usage report can be filtered to show the last 90 days.",
+   "In the Copilot usage report, opening the Copilot pane in Word without submitting a prompt counts as active usage."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot Chat usage report covers only users without a Copilot license, while the Copilot usage report covers licensed users and counts only intentional actions such as submitting a prompt. The Agents report currently offers only 7 and 30 days.",
+  "rationale": [
+   "Yes: the Copilot Chat usage report currently supports only users without a Microsoft 365 Copilot license and shows prompts submitted, active days and last activity per user.",
+   "No: the Agents usage report offers only the last 7 or 30 days; 90 and 180 days are planned. Use the Copilot or Copilot Chat usage reports for 90-day views.",
+   "No: a user is active only after an intentional action. Selecting the Copilot icon to open the pane does not count, but submitting a prompt in the pane does."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage"
+ },
+ {
+  "id": "3.4.2-04",
+  "obj": "3.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research wants to know how many users without a Microsoft 365 Copilot license submitted prompts to Copilot Chat in Teams and Outlook during the last 90 days.\n\nWhich report should you open in Reports > Usage?",
+  "choices": [
+   "Microsoft Copilot > Copilot Chat",
+   "Microsoft Copilot > Copilot, Usage tab",
+   "Microsoft Copilot > Agents",
+   "Microsoft Copilot > Copilot, Readiness tab"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Usage of unlicensed users in Copilot Chat appears in the Copilot Chat usage report, with 7, 28, 90 or 180 days and entry points such as Teams and Outlook. Licensed usage appears in the Copilot usage report.",
+  "rationale": [
+   "Correct: the Copilot Chat usage report covers users without a Copilot license, offers a 90-day period, and breaks usage down by entry point, including Teams and Outlook.",
+   "Incorrect: the Usage tab of the Copilot report covers users with a Microsoft 365 Copilot license. Use it for licensed adoption by app.",
+   "Incorrect: the Agents report shows agent usage, not Copilot Chat prompts in general, and it supports only 7 or 30 days.",
+   "Incorrect: the Readiness tab shows which users are technically eligible for Copilot and the usage of the apps Copilot integrates with. Use it to plan license assignment."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-copilot-usage"
+ },
+ {
+  "id": "3.4.2-05",
+  "obj": "3.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Proseware, Inc. assigned Microsoft 365 Copilot licenses to 800 users. The CIO wants enabled users and active users per app, such as Teams, Word, and Outlook, plus each user's last Copilot activity date in Excel.\n\nWhich report should you use?",
+  "choices": [
+   "The Microsoft Copilot usage report",
+   "The Microsoft Copilot Chat usage report",
+   "The Microsoft Copilot readiness report",
+   "The Microsoft 365 Apps usage report"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Microsoft Copilot usage report shows enabled users, active users and the active users rate, Adoption by app for Microsoft 365 apps, and a user table with the last activity date per app, such as Last activity date of Excel Copilot.",
+  "rationale": [
+   "Correct: the Copilot usage report has Adoption by app with enabled and active users per app and a per-user table that includes the last activity date of Excel Copilot.",
+   "Incorrect: the Copilot Chat usage report covers only users without a Copilot license, and these users are licensed. Use it for Copilot Chat adoption of unlicensed users.",
+   "Incorrect: the readiness report shows license eligibility and usage of the apps that Copilot integrates with, before deployment. It has no Copilot activity per app.",
+   "Incorrect: the Microsoft 365 Apps usage report shows use of the Office apps themselves, not Copilot activity inside them. Use it to judge app adoption in general."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage"
+ },
+ {
+  "id": "3.4.2-06",
+  "obj": "3.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee admins see hashed values instead of user names in the Microsoft Copilot usage report. The company privacy policy allows identifiable usage data.\n\nWhat should you do?",
+  "choices": [
+   "In Org settings > Services > Reports, clear Conceal user, group, and site names",
+   "Export the report to a CSV file, which includes the real user names",
+   "Assign the Reports Reader role to the admins who view the report",
+   "In the Microsoft Purview portal, turn on auditing for the organization"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, usage reports conceal user names, groups and sites. A Global Administrator can clear the Conceal user, group, and site names setting in Org settings > Services > Reports, which also applies to Graph and Power BI usage data.",
+  "rationale": [
+   "Correct: clearing Conceal user, group, and site names in Org settings > Services > Reports shows identifiable data in all usage reports, which the privacy policy allows.",
+   "Incorrect: the concealment setting applies to the reports and their exports, so the CSV file contains the same concealed values. Export after the setting is changed.",
+   "Incorrect: Reports Reader gives access to usage reports but does not reveal concealed names. Use it to grant least-privilege report access.",
+   "Incorrect: auditing records user and admin activity in the unified audit log; it does not change how usage reports display names. Turn it on for compliance investigations."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/activity-reports"
+ },
+ {
+  "id": "3.4.3-01",
+  "obj": "3.4.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Coho Winery has Microsoft 365 Copilot licenses. Department leaders must view Copilot adoption and impact trends in the Copilot Dashboard in Viva Insights. You are an AI Administrator.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Enable the Copilot Dashboard from the Microsoft 365 admin center.",
+   "Delegate access to the Copilot Dashboard to the department leaders.",
+   "Assign the Insights Analyst role to the department leaders.",
+   "Assign the Reports Reader role to the department leaders.",
+   "Clear Conceal user, group, and site names in Org settings."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "In the measurement and reporting pillar of the Copilot Control System, the AI Administrator enables the Copilot Dashboard and delegates access to the people who need it. Insights Analyst is for custom analysis in the Advanced Insights Analyst workbench.",
+  "rationale": [
+   "Correct: Learn lists enabling the Copilot Dashboard as an AI Administrator task in the Microsoft 365 admin center before anyone can use it.",
+   "Correct: the AI Administrator delegates access to the dashboard and organizational insights, so leaders who do not get automatic access can open it in Viva Insights.",
+   "Incorrect: Insights Analyst is assigned by a Global Administrator for the Advanced Insights Analyst workbench, where analysts build custom Copilot queries and Power BI reports. Leaders only need the dashboard.",
+   "Incorrect: Reports Reader gives access to usage reports in the Microsoft 365 admin center, not to the Copilot Dashboard in Viva Insights.",
+   "Incorrect: this setting reveals user names in Microsoft 365 usage reports. It does not grant anyone access to the Copilot Dashboard."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-admin-reports"
+ },
+ {
+  "id": "3.4.3-02",
+  "obj": "3.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Leaders at Blue Yonder Airlines want to see whether time spent in meetings and sending email changed after the Copilot rollout.\n\nWhich view should you use?",
+  "choices": [
+   "The Impact tab of the Copilot Dashboard",
+   "The Adoption tab of the Copilot Dashboard",
+   "The Microsoft Copilot readiness report",
+   "The Microsoft Copilot Chat usage report"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot Dashboard in Viva Insights has an Adoption tab for usage trends per app and feature, and an Impact tab for workplace patterns such as time in meetings, email and Teams chat. Admin center reports focus on operational usage.",
+  "rationale": [
+   "Correct: the Impact tab shows workplace patterns and collaboration trends over time, such as time in meetings and sending email, which is the productivity question in the stem.",
+   "Incorrect: the Adoption tab tracks user adoption trends per Microsoft 365 app and Copilot feature. Use it to see who uses which Copilot features, not changes in work patterns.",
+   "Incorrect: the readiness report shows license eligibility and app readiness before deployment. Use it when you plan who gets Copilot licenses.",
+   "Incorrect: the Copilot Chat usage report counts prompts and active users of unlicensed users. It does not measure time spent in meetings or email."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-controls-measurement-reporting"
+ },
+ {
+  "id": "3.4.3-03",
+  "obj": "3.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. wants to see how many people use agents that employees created with agent builder and shared by link. These agents are not listed in the organization-wide catalog.\n\nWhich creator type should you filter on in the Microsoft Copilot Agents usage report?",
+  "choices": [
+   "Your Users",
+   "Your org",
+   "Third-party",
+   "Microsoft"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Agents usage report groups usage by creator type: Your Users (agent builder agents shared by link), Your org (admin-approved agents built with Copilot Studio or Agents Toolkit), Microsoft, and Third-party.",
+  "rationale": [
+   "Correct: Your Users covers agents created by individuals with agent builder, which are not in the organization-wide catalog and are shared by link.",
+   "Incorrect: Your org covers agents built with Microsoft 365 Agents Toolkit or Copilot Studio and approved by an admin for the organization. Use it for catalog agents built in-house.",
+   "Incorrect: Third-party covers agents built by non-Microsoft developers and approved by an admin. Use it to track partner agents.",
+   "Incorrect: Microsoft covers agents built by Microsoft, such as Researcher. Use it to track adoption of first-party agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-agents-new"
+ },
+ {
+  "id": "3.4.3-04",
+  "obj": "3.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Consolidated Messenger wants one page in the Microsoft 365 admin center that shows the total number of agents in the registry, agent run-time for the last 30 days, agents without owners, and agents with exceptions.\n\nWhich page should you use?",
+  "choices": [
+   "Agents > Overview",
+   "Reports > Usage > Microsoft Copilot > Agents",
+   "Copilot > Billing & usage",
+   "Health > Service health"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Agent overview in the Microsoft 365 admin center shows hero metrics (agent registry count, active users, agent run-time) and top actions such as pending requests, agents without owners and agents with exceptions, for the last 30 days.",
+  "rationale": [
+   "Correct: the Agent overview combines registry count, run-time, Agents without owners and Agent with exceptions on one dashboard with direct actions.",
+   "Incorrect: the Agents usage report shows active users and responses per agent in Copilot Chat and Office apps, but no run-time, ownership or exceptions. Use it for Copilot adoption of agents.",
+   "Incorrect: Billing & usage manages billing policies and pay-as-you-go services for Copilot. Use it for costs, not agent governance metrics.",
+   "Incorrect: Service health shows incidents and advisories for Microsoft cloud services. It has no agent inventory or ownership data."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-365-overview"
+ },
+ {
+  "id": "3.4.3-05",
+  "obj": "3.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Munson's Pickles and Preserves Farm enabled pay-as-you-go billing for Microsoft Copilot Chat. Finance wants to find users without a Microsoft 365 Copilot license who used more than 2,000 credits through metered agents during the last 30 days.\n\nWhich report should you use?",
+  "choices": [
+   "The Microsoft Copilot Credits report",
+   "The Microsoft Copilot Agents usage report",
+   "The Microsoft Copilot Chat usage report",
+   "The Capacity summary in the Power Platform admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "After pay-as-you-go is set up for Copilot Chat, the Copilot Credits report shows the credits that users without a Copilot license use on metered agents, for 7 or 30 days, broken down per user, per agent, per billing policy and per agent-user pair. It also shows alerts when users consume a high number of credits.",
+  "rationale": [
+   "Correct: the Copilot Credits report measures credits used by unlicensed users on metered agents, and its Users table lists the credits of each user for the past 30 days, so Finance can find the users above 2,000 credits.",
+   "Incorrect: the Agents usage report counts active users and responses per agent. It shows no credit consumption. Use it for agent adoption.",
+   "Incorrect: the Copilot Chat usage report counts prompts and active days of unlicensed users, not credits spent on metered agents.",
+   "Incorrect: the Capacity summary shows prepaid capacity pack consumption at tenant and environment level. It does not identify individual users or pay-as-you-go credit use."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-credits"
+ },
+ {
+  "id": "3.4.3-06",
+  "obj": "3.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Best For You Organics Company built Agent1 in Microsoft Copilot Studio. The agent owner wants to see user satisfaction and which topics Agent1 handles poorly.\n\nWhich tool should the owner use?",
+  "choices": [
+   "The Analytics tab of Agent1 in Copilot Studio",
+   "The Microsoft Copilot Agents usage report",
+   "The Adoption tab of the Copilot Dashboard",
+   "The Activity tab of Agent1 in the agent registry"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Studio Analytics covers individual agents: agent performance, user satisfaction, session metrics and topic effectiveness, plus trace data. Admin center reports and the Copilot Dashboard measure adoption, not topic quality.",
+  "rationale": [
+   "Correct: the Analytics tab in Copilot Studio tracks satisfaction ratings and topic effectiveness for one agent, which is what the owner needs.",
+   "Incorrect: the Agents usage report shows active users and responses per agent in Copilot Chat and Office apps. It has no satisfaction or topic data.",
+   "Incorrect: the Adoption tab shows adoption trends per Microsoft 365 app and Copilot feature for the organization. Use it for Copilot adoption, not one agent's topics.",
+   "Incorrect: the Activity tab shows active users, sessions, exceptions and run-time. Use it for operational health, not user satisfaction."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-admin-reports"
+ },
+ {
+  "id": "3.4.4-01",
+  "obj": "3.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Users at Lamna Healthcare Company report that Microsoft 365 Copilot returns errors in Teams. You must check whether Microsoft is already working on an issue that affects Copilot.\n\nWhich location should you check?",
+  "choices": [
+   "Health > Service health, Active issues Microsoft is working on",
+   "Health > Message center, messages tagged Plan for change",
+   "Copilot > Settings, under Other settings",
+   "Reports > Usage > Microsoft Copilot, Usage tab"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Service health page lists each cloud service with its current state. The Active issues Microsoft is working on section shows active incidents and advisories, and each issue page has a feed of updates until resolution.",
+  "rationale": [
+   "Correct: Active issues Microsoft is working on, on the Overview tab of Service health, lists the incidents and advisories that Microsoft is resolving, including those that affect Copilot.",
+   "Incorrect: Message center announces new features and planned changes. Planned maintenance appears there, but active service problems appear in Service health.",
+   "Incorrect: Copilot > Settings configures user access, data access and Copilot actions. It does not report service problems.",
+   "Incorrect: the Copilot usage report shows adoption and activity with up to 48 hours of delay. A usage drop might hint at a problem but does not show Microsoft's incident status."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "3.4.4-02",
+  "obj": "3.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys wants advance notice of planned changes and maintenance that affect Microsoft 365 Copilot.\n\nWhich feature should you monitor?",
+  "choices": [
+   "Message center",
+   "The Service health Overview tab",
+   "The Service health Issue history tab",
+   "The Service health Reported issues tab"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Planned maintenance events are not shown in Service health. Track them in Message center, for example by filtering to messages categorized as Plan for change. Service health is for incidents and advisories.",
+  "rationale": [
+   "Correct: Learn states that planned maintenance is not shown in Service health and that you track it in Message center, including Plan for change messages.",
+   "Incorrect: the Overview tab shows current health and active incidents and advisories. Use it when something is broken now, not for advance notice.",
+   "Incorrect: Issue history shows incidents and advisories resolved in the last 7 or 30 days. Use it for post-incident review.",
+   "Incorrect: Reported issues shows issues that your tenant reported with Report an issue and their status. Use it to track problems you raised."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "3.4.4-03",
+  "obj": "3.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "On the Service health page, a Copilot issue affects some users intermittently. The service stays available, and Microsoft describes a workaround.\n\nWhich issue type should you expect the issue to have?",
+  "choices": [
+   "Advisory",
+   "Incident",
+   "Plan for change",
+   "Reported issue"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An advisory means Microsoft knows about a problem that affects some users while the service remains available, often with a workaround. An incident is a critical issue where the service or a major function is unavailable.",
+  "rationale": [
+   "Correct: an advisory describes a problem limited in scope or intermittent, with the service still available and often a workaround, exactly as described.",
+   "Incorrect: an incident is critical, with the service or a major function unavailable and noticeable user impact. It would fit if Copilot were down for everyone.",
+   "Incorrect: Plan for change is a Message center category for upcoming changes. It is not an issue type on the Service health page.",
+   "Incorrect: Reported issues is a tab that lists issues your tenant submitted. Microsoft classifies confirmed problems as incidents or advisories."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "3.4.4-04",
+  "obj": "3.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "An administrator at Relecloud named Admin1 monitors Microsoft 365 Copilot and Microsoft Teams. When Admin1 opens the Service health page in the Microsoft 365 admin center, the dashboard must show only these two services. Admin1 must not receive any new email notifications.\n\nWhat should Admin1 configure?",
+  "choices": [
+   "Customize > Custom view on the Service health page, with only Copilot and Teams selected",
+   "Customize > Email on the Service health page, with only Copilot and Teams selected",
+   "Preferences > Custom view in Message center, with only Copilot and Teams selected",
+   "Manage notifications for this issue, on each active Copilot and Teams issue"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Service health page has two per-admin customizations: Custom view filters which services the dashboard shows, and Email sets up notifications about incidents or advisories for selected services. Message center has its own preferences with a separate Custom view and Email tab. Choose the setting by what must change: the dashboard view or the notifications.",
+  "rationale": [
+   "Correct: Customize > Custom view filters the Service health dashboard. You clear the services that you do not want and keep Copilot and Teams selected. It changes only the view of the admin who sets it and sends no email.",
+   "Incorrect: Customize > Email signs the admin up for email notifications about incidents or advisories for the selected services. It does not filter the dashboard, and it sends email, which the stem forbids. Use it when an admin wants mail about new incidents.",
+   "Incorrect: the Custom view tab in Message center preferences filters which posts about changes and new features appear in Message center. It does not filter the Service health dashboard. Use it to hide posts about services that an admin does not manage.",
+   "Incorrect: Manage notifications for this issue subscribes up to two email addresses to updates for one active issue. It sends email and does not change which services the dashboard shows. Use it to follow one specific incident."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "3.4.4-05",
+  "obj": "3.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Alpine Ski House tracks a Microsoft 365 Copilot incident on the Service health page. Microsoft has identified the cause and applied a temporary fix that reduces the impact while it waits to apply a permanent fix. The corrective action still has to reach some of the affected systems. Leadership asks whether the incident is over.\n\nWhich status should you expect the incident to show?",
+  "choices": [
+   "Extended recovery",
+   "Service restored",
+   "Restoring service",
+   "Service degradation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Service health statuses describe where Microsoft is with an issue: Investigating, Service degradation, and Service interruption describe detection and impact; Restoring service and Extended recovery describe recovery work in progress; Service restored confirms that the problem is resolved. Extended recovery also covers a temporary fix that limits impact until a permanent fix is applied, so the incident is not over yet.",
+  "rationale": [
+   "Correct: Extended recovery means corrective action is in progress but takes time to reach all affected systems, and it is also used when Microsoft applied a temporary fix to reduce impact while it waits for a permanent fix. Both details are in the stem.",
+   "Incorrect: Service restored means Microsoft confirmed that corrective action resolved the underlying problem and the service is healthy again. The stem says the fix is temporary and has not reached all systems. Expect it when the incident is closed.",
+   "Incorrect: Restoring service means the cause is identified, the corrective action is known, and Microsoft is bringing the service back to health. It does not describe a temporary fix that limits impact while a permanent fix is pending. Expect it right after the cause is found.",
+   "Incorrect: Service degradation means Microsoft confirmed an issue that slows a service or makes a feature fail intermittently. It describes the impact, not recovery progress, and the stem says the cause is found and a fix is applied. Expect it early in an issue."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "3.4.4-06",
+  "obj": "3.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance must review a Copilot incident that Microsoft resolved 18 days ago, to prepare a post-incident report for its leadership.\n\nWhat should you do?",
+  "choices": [
+   "Open the Issue history tab and select the 30-day period",
+   "Open the Issue history tab and select the 7-day period",
+   "Open the Overview tab and review the active issues",
+   "Open the Reported issues tab and review its status"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Issue history shows incidents and advisories resolved within the last 7 or 30 days. Choose the period that covers the date of resolution, and open the issue to read all its posted updates.",
+  "rationale": [
+   "Correct: the incident was resolved 18 days ago, which is inside the 30-day Issue history period, so it appears there with its full update feed.",
+   "Incorrect: the 7-day period covers only issues resolved in the last week, so an incident resolved 18 days ago would not appear. Use it for very recent issues.",
+   "Incorrect: the Overview tab shows current health and active issues. A resolved incident has left that list.",
+   "Incorrect: Reported issues lists only issues your tenant reported through the form. Microsoft-posted incidents appear in Issue history after resolution."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ }
+]

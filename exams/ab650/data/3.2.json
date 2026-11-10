@@ -1,0 +1,1772 @@
+[
+ {
+  "id": "3.2.1-01",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Microsoft Entra Agent ID and has Microsoft Agent 365 licenses. Many agent identities were created for pilot projects that ended months ago. You plan an Agent ID lifecycle policy.\n\nYou need the policy to flag agent identities for which no tokens were issued during the last 90 days.\n\nWhich lifecycle rule should you enable?",
+  "choices": [
+   "Inactivity monitoring",
+   "Periodic reconfirmation",
+   "Minimum sponsor requirement",
+   "Fallback recipient notification"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An Agent ID lifecycle policy has three rules: periodic reconfirmation (is the agent still needed), minimum sponsor requirement (is someone accountable) and inactivity monitoring (has the identity been used). Inactivity is measured by token issuance, so it is the rule for stale identities.",
+  "rationale": [
+   "Correct: inactivity monitoring treats an agent identity as inactive when no tokens were issued for it during the configured duration, which is exactly the 90-day unused signal the stem asks for.",
+   "Incorrect: periodic reconfirmation asks the sponsor or owner to confirm every 30 to 730 days that the agent is still required, whether or not it is used. Use it when the business must re-attest need on a schedule.",
+   "Incorrect: the minimum sponsor requirement flags agent identities that have fewer sponsors than the configured number. Use it to prevent orphaned agents, not to detect agents that stopped requesting tokens.",
+   "Incorrect: fallback recipients are a notification setting of the policy, not a rule. They receive notices when an agent identity has no sponsor or owner. Add them in addition to a rule, never instead of one."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies"
+ },
+ {
+  "id": "3.2.1-02",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft Agent 365 licenses and Microsoft Entra ID P1. You are an AI Administrator.\n\nYou need to create an Agent ID lifecycle policy that disables agent identities that their sponsors no longer confirm.\n\nWhich location should you use to create the policy?",
+  "choices": [
+   "Entra admin center > ID Governance > Lifecycle Workflows > Lifecycle Policies",
+   "Entra admin center > Entra ID > Agents > Agent identities",
+   "Entra admin center > ID Governance > Entitlement management",
+   "Microsoft 365 admin center > Agents > Settings > Agent management rules"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent ID lifecycle policies live under Lifecycle Workflows in ID Governance of the Microsoft Entra admin center (Lifecycle Policies > Agent ID (Preview)). The Lifecycle Workflows Administrator and AI Administrator roles can create them. The policy evaluates rules, notifies sponsors and then disables or deletes the identity.",
+  "rationale": [
+   "Correct: Agent ID lifecycle policies are created under ID Governance > Lifecycle Workflows > Lifecycle Policies > Agent ID (Preview), and the AI Administrator role is one of the two roles that can create them.",
+   "Incorrect: the Agent identities page lets an administrator view agents and disable selected ones manually, including several at once. Use it for an immediate one-off action, not for an automatic rule based on sponsor confirmation.",
+   "Incorrect: entitlement management access packages grant time-bound group memberships, roles and API permissions to agent identities. Their expiration removes access, not the identity. Use them to govern what an agent can reach.",
+   "Incorrect: agent management rules run bulk actions on registry entries, such as blocking ownerless agents. They do not evaluate sponsor reconfirmation of Entra agent identities. Use them for registry governance at scale."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies"
+ },
+ {
+  "id": "3.2.1-03",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. has Microsoft Agent 365 licenses. Employees sponsor many agent identities. HR sets the employeeLeaveDateTime attribute for each employee who leaves.\n\nOn the last day of a departing sponsor, the sponsorships of that user must move to the user's manager automatically, and cosponsors must be notified.\n\nWhat should you create?",
+  "choices": [
+   "A workflow from the Transition agent sponsorships when a sponsor leaves template",
+   "A workflow from the Transition agent sponsorships when a sponsor changes roles template",
+   "An Agent ID lifecycle policy that has the minimum sponsor requirement rule enabled",
+   "A workflow from the Onboard new hire employee template with the sponsor tasks added"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Two Lifecycle Workflows templates handle agent sponsorship: a leaver template (time based on employeeLeaveDateTime by default) and a mover template (attribute or group membership changes). Both contain the tasks to notify the manager, notify cosponsors and transfer sponsorships to the manager. Sponsor tasks exist only in mover and leaver workflows.",
+  "rationale": [
+   "Correct: the leaver template triggers on employeeLeaveDateTime by default and includes Send email to co-sponsors about sponsor changes and Transfer agent sponsorships to manager, so both requirements are met on the last day.",
+   "Incorrect: the mover template triggers on attribute or group membership changes when a sponsor changes roles. The users in the stem leave the company, so the leave date trigger of the leaver template fits instead.",
+   "Incorrect: the minimum sponsor requirement only detects agent identities with too few sponsors and notifies or acts on them. It does not transfer sponsorship to a manager. Use it as a safety net for orphaned agents.",
+   "Incorrect: the sponsor tasks are mover and leaver tasks and cannot be added to a joiner template such as Onboard new hire employee. Use joiner templates for tasks that run when a user starts."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/lifecycle-workflow-templates"
+ },
+ {
+  "id": "3.2.1-04",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys configures an Agent ID lifecycle policy that has periodic reconfirmation enabled.\n\nWhen a sponsor does not reconfirm an agent identity in time, the identity must stop working immediately. If nobody acts during the following 30 days, the identity must then be deleted.\n\nWhich policy action should you select?",
+  "choices": [
+   "Disable and delete, with a 30-day delete delay",
+   "Disable, with a grace period of 30 days",
+   "Delete, with a grace period of 30 days",
+   "Disable, with a fallback recipient added"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Policy actions are Disable, Delete (soft delete) and Disable and delete. Disable and delete disables at once and deletes after a configurable number of days. A separate grace period delays the action itself to give sponsors time to remediate.",
+  "rationale": [
+   "Correct: Disable and delete disables the agent identity immediately and deletes it after the number of days that you specify, which matches stop now and delete after 30 days.",
+   "Incorrect: Disable stops sign-ins but never deletes the identity, and a grace period only delays the disable itself. Use it when stale identities must stay recoverable indefinitely.",
+   "Incorrect: Delete soft deletes the identity, and the grace period postpones that action, so the agent keeps working during the 30 days. Use it when there is no need for an intermediate disabled state.",
+   "Incorrect: a fallback recipient only receives notifications when an agent has no sponsor or owner. It adds no deletion step. Add it when unaccountable agents must still reach a human."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies"
+ },
+ {
+  "id": "3.2.1-05",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank has an Agent ID lifecycle policy named Policy1 that covers all agent identities. You need to test a stricter policy on three test agent identities. Sponsors must reconfirm the agents every 30 days, unconfirmed agents must be disabled after a short grace period, and the new policy must win over Policy1 for the test agents.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Microsoft Entra admin center, browse to ID Governance > Lifecycle Workflows > Lifecycle Policies > Agent ID (Preview), and select New policy.",
+   "Enter a name, enable the policy, and select Specific agents as the scope with the three test agent identities.",
+   "Enable Periodic reconfirmation and set the frequency to 30 days.",
+   "Select the Disable policy action, enable the grace period, and then select Save.",
+   "In the policy list, move the new policy above Policy1.",
+   "Create a workflow from the Transition agent sponsorships when a sponsor leaves template.",
+   "Create an access package for the test agents that expires after 30 days."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "A lifecycle policy is built in wizard order: create, scope, rules, action, save. Priority only exists for saved policies, and the highest-priority matching policy applies when an agent is in more than one policy. Testing with Specific agents and the minimum 30-day frequency is the pattern that Learn recommends.",
+  "rationale": [
+   "Step 1: Agent ID lifecycle policies are created from the Agent ID (Preview) page under Lifecycle Policies, so you start there with New policy.",
+   "Step 2: the basics of the policy come first, and Specific agents limits it to the three test identities so that the test does not affect production agents.",
+   "Step 3: periodic reconfirmation is the rule that asks sponsors to confirm need; 30 days is the minimum allowed frequency and the one Learn suggests for tests.",
+   "Step 4: the action defines what happens to unconfirmed agents; Disable with a grace period gives sponsors a short window, and saving creates the policy.",
+   "Step 5: priority can only be set on existing policies. Moving the new policy above Policy1 makes it the highest-priority match for the overlapping test agents.",
+   "Incorrect: this leaver workflow transfers sponsorships when a sponsor leaves the company. It does not ask for reconfirmation or disable agents. Use it to keep sponsorship current when people leave.",
+   "Incorrect: an expiring access package removes the access it granted, but the agent identity stays enabled and nobody is asked to reconfirm. Use access packages for time-bound resource access."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies"
+ },
+ {
+  "id": "3.2.1-06",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Relecloud has Microsoft Agent 365 licenses and Microsoft Entra ID P1. You are creating an Agent ID lifecycle policy with these requirements:\n\n- Sponsors must confirm every 180 days that each agent identity is still needed.\n- An agent identity that is not confirmed must be blocked from sign-in but must never be deleted by the policy.\n- Sponsors must be able to confirm agents without an admin role.\n\nHow should you configure the policy? To answer, select the appropriate options in the answer area.",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Pick the rule by the question it answers (still needed, still accountable, still used), the action by how reversible it must be, and remember that sponsors act in the Manage agents experience of the My Account portal.",
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies",
+  "targets": [
+   {
+    "label": "Lifecycle rule",
+    "options": [
+     "Periodic reconfirmation",
+     "Inactivity monitoring",
+     "Minimum sponsor requirement"
+    ],
+    "why": [
+     "Correct: periodic reconfirmation asks the sponsor or owner to confirm at a set frequency (30 to 730 days) that the agent is still required, so 180 days fits.",
+     "Incorrect: inactivity monitoring reacts to agents that received no tokens for a period, so an agent in daily use would never be reviewed. Use it to catch stale identities.",
+     "Incorrect: the minimum sponsor requirement checks how many sponsors an agent has and never asks anyone to confirm need. Use it to prevent orphaned agents."
+    ]
+   },
+   {
+    "label": "Policy action",
+    "options": [
+     "Disable",
+     "Delete",
+     "Disable and delete"
+    ],
+    "why": [
+     "Correct: Disable prevents future sign-ins and usage but keeps the identity, which meets blocked but never deleted.",
+     "Incorrect: Delete soft deletes the agent identity, which the requirement forbids. Use it when unconfirmed agents should be removed directly.",
+     "Incorrect: Disable and delete removes the identity after a set number of days. Use it when disabled agents must be cleaned up later."
+    ]
+   },
+   {
+    "label": "Where sponsors confirm",
+    "options": [
+     "Manage agents in the My Account portal",
+     "Access packages in the My Access portal",
+     "Requests tab in the Microsoft 365 admin center"
+    ],
+    "why": [
+     "Correct: sponsors and owners reconfirm (Extend) or disable agent identities in the Manage agents experience at myaccount.microsoft.com/agents, without an admin role.",
+     "Incorrect: in My Access, sponsors request access packages on behalf of agents; reconfirmation is not done there. Use it when an agent needs more access.",
+     "Incorrect: the Requests tab is where AI Administrators review publish and activation requests. Sponsors without an admin role cannot use it."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "3.2.1-07",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Refer to the case study. You need to meet the agent identity lifecycle requirements.\n\nWhat should you configure?",
+  "choices": [
+   "An Agent ID lifecycle policy with 60-day inactivity monitoring, the Disable action, and User5 as fallback recipient",
+   "A workflow from the Transition agent sponsorships when a sponsor leaves template, scoped to all sponsors",
+   "An access review of all agent identities that uses sponsors as reviewers and auto-applies deny results",
+   "An agent management rule that blocks ownerless agents without usage, run by User5 every 60 days"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent ID lifecycle policies combine a rule (here inactivity, measured by token issuance), an action (Disable keeps the identity recoverable) and notifications that go to sponsors, owners or fallback recipients. Fallback recipients cover agents that have no accountable person.",
+  "rationale": [
+   "Correct: inactivity monitoring catches agent identities without token issuance for 60 days, Disable blocks them without deletion, sponsors are notified, and User5 as fallback recipient covers agents that have no sponsor.",
+   "Incorrect: this leaver workflow moves sponsorships to a manager when a sponsor leaves. It never looks at agent usage and never disables an agent. Use it to keep sponsorship current.",
+   "Incorrect: an access review removes access assignments, such as group memberships, based on reviewer decisions. It does not detect token inactivity or disable the identity. Use it for periodic attestation of access.",
+   "Incorrect: this agent management rule in the Microsoft 365 admin center blocks registry entries of ownerless agents that have no usage. It does not evaluate token issuance of Entra agent identities, ignores inactive agents that still have a sponsor, and does not disable the identity. Use it to contain abandoned ownerless agents in the registry."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/agent-lifecycle-policies",
+  "case": "C-g"
+ },
+ {
+  "id": "3.2.1-08",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. is building a leaver workflow in Lifecycle Workflows for employees who sponsor agent identities.\n\nThe workflow must add each departing user's manager as a sponsor of the agent identities and remove the departing user as a sponsor.\n\nWhich task should you add to the workflow?",
+  "choices": [
+   "Transfer agent identity sponsorships to manager",
+   "Send email to manager about sponsorship changes",
+   "Send email to co-sponsors about sponsor changes",
+   "Revoke all refresh tokens for user"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Lifecycle Workflows has three sponsor tasks: two notification tasks and one transfer task. Only the transfer task changes the sponsor relationship, and it needs a populated manager attribute on the departing user.",
+  "rationale": [
+   "Correct: this task finds every agent identity the user sponsors, adds the user's manager as a sponsor and removes the user, which is exactly the required change.",
+   "Incorrect: this task only emails the manager that the user sponsored agent identities, so the manager can choose a new sponsor. It changes nothing by itself. Use it when a human must decide.",
+   "Incorrect: this task informs the other sponsors of each agent about the change. It does not add or remove sponsors. Use it so cosponsors know they are now accountable.",
+   "Incorrect: this leaver task revokes the user's refresh tokens to end the user's sessions. It does not touch sponsorships. Use it to cut off access of a departing user."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/lifecycle-workflow-tasks"
+ },
+ {
+  "id": "3.2.2-01",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a fleet of customer support agents that use Microsoft Entra Agent ID agent identities. You create an access package that grants membership in a security group. The agents must be able to request the access package programmatically.\n\nIn the access package policy, you select For users, service principals, and agent identities in your directory.\n\nWhich scope should you select?",
+  "choices": [
+   "All agents",
+   "All service principals",
+   "All members (excluding guests)",
+   "Specific users and groups"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An access package policy decides who can request it. For agents that use Entra agent identities, choose For users, service principals, and agent identities in your directory and then All agents. Agents that still use plain service principals need a separate policy with All service principals.",
+  "rationale": [
+   "Correct: All agents lets every agent identity in the directory request the package, which is what the support agents with Entra agent identities need to submit their own assignment requests.",
+   "Incorrect: All service principals covers agents that authenticate with classic service principals instead of agent identities. Add a second policy with this scope only when some agents are not on Agent ID.",
+   "Incorrect: All members (excluding guests) lets human member users request the package. Agent identities are not users, so the agents could not request it. Use it for employee access packages.",
+   "Incorrect: Specific users and groups limits requests to selected users or group members. Agent identities are not added this way. Use it to restrict a package to one team of people."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-access-packages"
+ },
+ {
+  "id": "3.2.2-02",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has an agent named Agent1 that uses a Microsoft Entra agent identity. Agent1 must read documents in a SharePoint Online site named Site1. Members of a security group named Group1 have read permission on Site1.\n\nYou create a new access package for Agent1.\n\nWhich resource role should you add to the access package?",
+  "choices": [
+   "Member of Group1",
+   "Read role on the Site1 SharePoint Online site",
+   "An application role of the SharePoint app",
+   "A role in the SAP cloud application"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Access packages for agent identities can contain security group memberships, Microsoft Entra roles and OAuth API permissions. They cannot contain application roles, SAP roles or SharePoint Online site roles. Use a group that already has the site permission to reach SharePoint content.",
+  "rationale": [
+   "Correct: security group membership is a supported resource role for agent identities, and Group1 already has read permission on Site1, so membership gives Agent1 the access it needs.",
+   "Incorrect: SharePoint Online site roles cannot be assigned to agent identities through access packages. Use a site role in access packages for human users only.",
+   "Incorrect: application roles cannot be assigned to agent identities or service principals through access packages. Use them in packages for users who sign in to an enterprise application.",
+   "Incorrect: SAP roles are also excluded for agent identities, and SAP is unrelated to SharePoint access. Use SAP roles in access packages that govern SAP access for users."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-access-packages"
+ },
+ {
+  "id": "3.2.2-03",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud must create an access package for agent identities that contains only membership in two security groups. Agents will request it, and a manager will approve each request.\n\nYou need to create the access package by using the least privileged role.\n\nWhich role should you use?",
+  "choices": [
+   "Identity Governance Administrator",
+   "Global Administrator",
+   "Conditional Access Administrator",
+   "Lifecycle Workflows Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Creating access packages requires at least Identity Governance Administrator. Only when OAuth API permissions or directory roles are added as resource roles does Learn require Global Administrator, and the catalog becomes privileged.",
+  "rationale": [
+   "Correct: Identity Governance Administrator can create catalogs and access packages with group resource roles, which is all this package contains, so it is the narrowest role that works.",
+   "Incorrect: Global Administrator is required only when the package includes OAuth API permissions or directory roles. For group memberships it is broader than needed.",
+   "Incorrect: Conditional Access Administrator manages Conditional Access policies, including policies for agents, but not entitlement management. Use it to block or allow agent token issuance.",
+   "Incorrect: Lifecycle Workflows Administrator manages workflows and Agent ID lifecycle policies, not access packages. Use it for sponsor transfer and inactivity automation."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-access-packages"
+ },
+ {
+  "id": "3.2.2-04",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Northwind Traders has an agent named Agent1. Agent1 reads the mailbox of the signed-in user when the user chats with it. At night, Agent1 also processes orders by using its own agent's user account. Agent1 calls a partner service that authenticates by using an API key.\n\nYou create a Conditional Access policy that is assigned to Agents and includes the agent identity of Agent1.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The policy applies when Agent1 signs in with its agent's user account.",
+   "When Agent1 reads mail for a signed-in user, the policies assigned to that user are evaluated.",
+   "The policy applies when Agent1 calls the partner service with the API key."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Conditional Access evaluates the token subject: the user in on-behalf-of access, the agent identity in app-only access and the agent's user account in agent-user access. Each subject needs its own policy, and resources that do not use Microsoft Entra tokens are outside Conditional Access.",
+  "rationale": [
+   "No: a policy that targets an agent identity does not apply to the agent's user account. To cover the night processing, create a separate policy that targets agent users.",
+   "Yes: in the on-behalf-of flow the signed-in user is the token subject, so Conditional Access evaluates policies assigned to that user, not the policy that targets the agent identity.",
+   "No: Conditional Access only protects token issuance by Microsoft Entra ID. A call that uses an API key bypasses that pipeline, so no policy applies. Move the service to Entra authentication to control it."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/agent-id"
+ },
+ {
+  "id": "3.2.2-05",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys has an access package named Agent Mail Access. Its first assignment policy allows All agents to get access. You need to directly assign the agent identity of Agent1 to the access package by using Microsoft Graph PowerShell.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"EntitlementManagement.ReadWrite.All\"`",
+   "`$ap = Get-MgEntitlementManagementAccessPackage -Filter \"displayName eq 'Agent Mail Access'\" -ExpandProperty \"assignmentPolicies\"`",
+   "Build `$params` with `requestType = \"adminAdd\"`, the object ID of Agent1 as `targetId`, `$ap.AssignmentPolicies[0].Id` and `$ap.Id`.",
+   "`New-MgEntitlementManagementAssignmentRequest -BodyParameter $params`",
+   "`New-MgEntitlementManagementAssignmentPolicy -BodyParameter $params`",
+   "`Connect-MgGraph -Scopes \"Application.ReadWrite.All\"`",
+   "`New-MgEntitlementManagementResourceRequest -BodyParameter $params`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Direct assignment is one of three ways an agent identity gets an access package (the agent requests it, a sponsor requests it, or an admin assigns it). In Graph PowerShell an admin assignment is an assignment request with requestType adminAdd that names the target, the policy and the access package.",
+  "rationale": [
+   "Step 1: entitlement management cmdlets need the EntitlementManagement.ReadWrite.All scope, so you connect with it before any other call.",
+   "Step 2: the request needs the IDs of the access package and of its policy, so you read the package and expand assignmentPolicies.",
+   "Step 3: the body uses the values from step 2: adminAdd marks an administrator assignment, targetId is the agent identity, and the policy and package IDs come from $ap.",
+   "Step 4: New-MgEntitlementManagementAssignmentRequest submits the adminAdd request, and the agent identity receives the resource roles of the package.",
+   "Incorrect: this cmdlet creates a new assignment policy. The package already has a policy that allows All agents, so no new policy is needed. Use it when agents must be allowed to request a package.",
+   "Incorrect: Application.ReadWrite.All manages app registrations and service principals, not access package assignments, so the later cmdlets would fail. Use it to manage applications.",
+   "Incorrect: a resource request adds a resource such as a group to a catalog. The package already exists with its resources. Use it when you build a catalog before creating a package."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/entitlement-management-access-package-assignments"
+ },
+ {
+  "id": "3.2.2-06",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft Agent 365 licenses and Microsoft Entra ID P2. An autonomous agent named Agent1 runs on a schedule and uses its own agent identity, created from an agent identity blueprint, to call Microsoft Graph. No user signs in to Agent1, and Agent1 has no agent's user account.\n\nYou need to block Agent1 from accessing all resources whenever Microsoft Entra ID Protection rates Agent1 as high risk.\n\nSolution: You create a Conditional Access policy that is assigned to Agents and includes All agent identities, targets All resources, sets the Agent risk condition to High, and uses the Block grant control.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For app-only agents the agent identity is the token subject, so the policy must be assigned to agent identities. The Agent risk condition uses ID Protection signals, and Block denies the token when the risk is high.",
+  "rationale": [
+   "Correct: Agent1 requests tokens as its agent identity, so a policy assigned to agent identities with Agent risk set to High and a Block control denies access whenever ID Protection rates Agent1 high risk.",
+   "Incorrect: the solution does meet the goal. No would be right if the policy targeted users or agent users, because those subjects are not used by an app-only agent."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/policy-autonomous-agents",
+  "series": "S-g"
+ },
+ {
+  "id": "3.2.2-07",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft Agent 365 licenses and Microsoft Entra ID P2. An autonomous agent named Agent1 runs on a schedule and uses its own agent identity, created from an agent identity blueprint, to call Microsoft Graph. No user signs in to Agent1, and Agent1 has no agent's user account.\n\nYou need to block Agent1 from accessing all resources whenever Microsoft Entra ID Protection rates Agent1 as high risk.\n\nSolution: You create a Conditional Access policy that is assigned to Users and includes the sponsors of Agent1, targets All resources, sets the Sign-in risk condition to High, and uses the Block grant control.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Policies assigned to users only cover agents that act on behalf of a signed-in user. An autonomous agent gets tokens as its own agent identity, so user policies and user sign-in risk never apply to it.",
+  "rationale": [
+   "Incorrect: the sponsors are not the token subject. Agent1 signs in as its agent identity without a user, so this user policy is never evaluated for Agent1 and agent risk is not considered.",
+   "Correct: the solution does not meet the goal. A user policy with sign-in risk is right for agents that use the on-behalf-of flow; for Agent1 assign the policy to agent identities with the Agent risk condition."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/agent-id",
+  "series": "S-g"
+ },
+ {
+  "id": "3.2.2-08",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft Agent 365 licenses and Microsoft Entra ID P2. An autonomous agent named Agent1 runs on a schedule and uses its own agent identity, created from an agent identity blueprint, to call Microsoft Graph. No user signs in to Agent1, and Agent1 has no agent's user account.\n\nYou need to block Agent1 from accessing all resources whenever Microsoft Entra ID Protection rates Agent1 as high risk.\n\nSolution: You create a Conditional Access policy that is assigned to Agents and includes All agent users, targets All resources, sets the Agent risk condition to High, and uses the Block grant control.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Agent identities and agents' user accounts are different token subjects. A policy that targets agent users does not apply to agent identities, and Agent1 has no agent's user account at all.",
+  "rationale": [
+   "Incorrect: the policy covers agents' user accounts only. Agent1 authenticates with its agent identity, which this policy does not include, so a high-risk Agent1 still receives tokens.",
+   "Correct: the solution does not meet the goal. Targeting agent users is right for agents that act as digital workers with their own user account; Agent1 needs a policy that includes agent identities."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/agent-id",
+  "series": "S-g"
+ },
+ {
+  "id": "3.2.3-01",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing uses an app that creates agent identities in Microsoft Entra Agent ID by using app-only requests. No user context is present when the app creates an agent identity.\n\nYou need to make sure that each create request succeeds.\n\nWhich relationship should the app set on each new agent identity?",
+  "choices": [
+   "A sponsor",
+   "An owner",
+   "A manager",
+   "A service principal as owner"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Sponsors are required when an agent identity or agent blueprint is created; owners and managers are optional. In delegated creation the calling user becomes sponsor automatically, but app-only creation must name at least one user or supported group as sponsor. Owners can be users or service principals, never groups.",
+  "rationale": [
+   "Correct: a sponsor is mandatory at creation, and for app-only requests the creating service must set one or more users or supported groups as sponsor because no calling user can be added automatically.",
+   "Incorrect: owners are technical administrators of the agent and are optional for every agent identity object. Add owners when someone must manage credentials and configuration.",
+   "Incorrect: a manager places the agent in the organization hierarchy and can request access packages for the agent's user account. Managers are always optional.",
+   "Incorrect: a service principal can be an owner of an agent identity, which lets another service manage or delete it without user intervention, but owners are optional and do not satisfy the sponsor requirement. Use it when an automation service must administer the agents it creates."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-owners-sponsors-managers"
+ },
+ {
+  "id": "3.2.3-02",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Bellows College wants every member of the research IT team to have sponsor rights over an agent identity named Agent1. Membership of the team changes often and is managed by assigning users to a group manually.\n\nWhich group should you assign as the sponsor of Agent1?",
+  "choices": [
+   "A Microsoft 365 group with assigned membership",
+   "A security group with assigned membership",
+   "A role-assignable security group",
+   "A role-assignable Microsoft 365 group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent identity sponsors can be users (including guests) or supported groups: dynamic membership groups (security or Microsoft 365) and assigned membership Microsoft 365 groups. Assigned security groups and role-assignable groups are not allowed. Every member of a sponsor group has sponsor rights.",
+  "rationale": [
+   "Correct: an assigned membership Microsoft 365 group is a supported sponsor type, so every current member of the team gets sponsor rights and manual membership changes take effect.",
+   "Incorrect: assigned membership security groups are not allowed as sponsors of agent identities. A security group works only with dynamic membership. Use assigned security groups for resource access instead.",
+   "Incorrect: role-assignable groups are not supported as sponsors, whether security or Microsoft 365. Use them when the group must hold Microsoft Entra role assignments.",
+   "Incorrect: role-assignable Microsoft 365 groups are also excluded as sponsors. Use them only to assign directory roles to a group of people."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-owners-sponsors-managers"
+ },
+ {
+  "id": "3.2.3-03",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Margie's Travel has an agent identity named Agent1. User1 is a sponsor of Agent1 and has no admin role. During an incident, User1 disabled Agent1 from Manage agents in the My Account portal. The incident is now closed, and Agent1 must run again.\n\nWhat should User1 do?",
+  "choices": [
+   "Ask an owner of Agent1 to enable the agent",
+   "Select Enable agent for Agent1 in My Account",
+   "Request an access package for Agent1 in My Access",
+   "Add User1 as an owner of Agent1 in My Account"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Sponsors hold business accountability with limited rights: they can disable, soft-delete and change sponsors, but they cannot re-enable or restore. Owners (or administrators) can re-enable, restore and hard-delete agent identities.",
+  "rationale": [
+   "Correct: sponsors cannot re-enable an agent identity. An owner, or an administrator such as an Agent ID Administrator, must enable Agent1 again, which is the documented recovery path for sponsors.",
+   "Incorrect: Enable agent is available to owners, not sponsors. A sponsor who disabled an agent by mistake must contact an owner or admin. Use this option when you own the agent.",
+   "Incorrect: an access package grants resource access such as groups or roles. A disabled agent identity cannot obtain tokens regardless of its access. Use My Access when an enabled agent needs more access.",
+   "Incorrect: sponsors can modify the sponsors of an agent, not its owners. Owners, not sponsors, can add other owners. Ask an existing owner to add a new owner when needed."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/manage-agent-identities-end-user"
+ },
+ {
+  "id": "3.2.3-04",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery deleted the account of an employee who left the company. The employee had built a shared agent with Microsoft Copilot Agent Builder, and the agent now appears under Agents without owners in the Microsoft 365 admin center.\n\nUser2 must get full edit and delete permissions for the agent.\n\nWhich action should you use?",
+  "choices": [
+   "Assign new owner",
+   "Add owner",
+   "Pin for users",
+   "Update in store"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For ownerless Agent Builder and Copilot Studio agents, administrators use Assign new owner. The new owner gets full edit and delete rights plus access to files that the previous owner uploaded. Add owner and Remove owner are for Agent Builder agents that still have an owner.",
+  "rationale": [
+   "Correct: Assign new owner reassigns ownership of ownerless or active shared agents and gives the new owner full edit and delete permissions and the files of the previous owner.",
+   "Incorrect: Add owner adds another owner to an Agent Builder agent that already has an owner. For an ownerless agent, Learn directs you to the reassignment experience instead.",
+   "Incorrect: Pin for users makes a deployed agent more visible in Microsoft 365 Copilot. It changes visibility, not ownership. Use it to promote important agents.",
+   "Incorrect: Update in store replaces an existing agent in the Agent Store from a ZIP package. It does not change ownership. Use it to publish a new version of an agent."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-actions"
+ },
+ {
+  "id": "3.2.3-05",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wide World Importers restructured several departments. More than 200 shared agents built with Microsoft Copilot Agent Builder lost their owners because their creators left. Each agent must be owned by the manager of its previous owner, as recorded in Microsoft Entra ID. Administrators must review the affected agents first, must complete the reassignment in a single bulk operation, and must not write scripts.\n\nWhat should you do?",
+  "choices": [
+   "Create and run an agent management rule that reassigns ownerless agents to manager",
+   "Create a leaver workflow that includes Transfer agent identity sponsorships to manager",
+   "Use Assign new owner on each agent that is listed under Agents without owners",
+   "Create and run an agent management rule that blocks ownerless agents without usage"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent management rules in Agents > Settings run bulk governance actions after an admin reviews the impacted agents. The reassign rule supports only Agent Builder agents and moves ownership to the previous owner's manager based on the Entra hierarchy.",
+  "rationale": [
+   "Correct: the Reassign ownerless agents rule identifies ownerless Agent Builder agents, lets you review them, and transfers ownership to the manager of the previous owner in bulk without scripting.",
+   "Incorrect: this Lifecycle Workflows task transfers sponsorship of Microsoft Entra agent identities, not ownership of Agent Builder agents in the registry, and it runs only for future leavers. Use it to keep agent identity sponsorship current.",
+   "Incorrect: Assign new owner works per agent and you would choose each new owner by hand, which does not scale to 200 agents. Use it for a single ownerless agent.",
+   "Incorrect: this rule blocks unused ownerless agents rather than assigning owners, so the agents would stop working. Use it to contain abandoned agents that nobody needs."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.3-06",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Graphic Design Institute uses Microsoft Entra Agent ID. You must give each person the narrowest administrative relationship on an agent identity named Agent1, without assigning any Microsoft Entra role.\n\nWhich relationship should you assign to each person? To answer, drag the appropriate relationships to the correct people. Each relationship may be used once, more than once, or not at all.",
+  "choices": [
+   "Owner",
+   "Sponsor",
+   "Manager",
+   "Agent ID Administrator"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Agent ID separates technical administration (owners), business accountability (sponsors) and organizational hierarchy (managers). These relationships are set per object and are separate from directory roles such as Agent ID Administrator.",
+  "rationale": [
+   "User1 must restore Agent1 after a soft delete and manage its credentials, which only owners can do without a directory role.",
+   "User2 is accountable for the business purpose of Agent1 and must be able to disable it during an incident but must not change its configuration, which is the sponsor scope.",
+   "User3 must see Agent1's user account in the reporting line and request access packages for it, but must not modify or delete the agent, which matches the manager relationship."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-owners-sponsors-managers",
+  "targets": [
+   "User1: restores Agent1 after a soft delete and manages its credentials",
+   "User2: accountable for Agent1's purpose and can disable it, but cannot change its settings",
+   "User3: sees Agent1's user account as a direct report and requests access packages for it"
+  ],
+  "notes": [
+   "Owner: technical administrator scoped to one agent object. Can edit settings, manage credentials, add owners and sponsors, re-enable, restore and hard-delete. Use it for developers or IT staff who run the agent.",
+   "Sponsor: business owner who is required at creation. Can disable, soft-delete and change sponsors, and requests access packages, but cannot change settings or re-enable. Use it for the accountable business person.",
+   "Manager: a user set in the hierarchy, usually on the agent's user account. Can request access packages for it and sees it as a report, but cannot modify or delete it. Use it for line accountability.",
+   "Agent ID Administrator: a Microsoft Entra directory role that manages all agent identities in the tenant. It is a role assignment, not a per-agent relationship, so the stem rules it out. Use it for central agent admins."
+  ]
+ },
+ {
+  "id": "3.2.3-07",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Trey Research has an agent identity named Agent1. User1 is the only sponsor of Agent1 and has no admin role and no ownership of Agent1. During a suspected incident, User1 must stop Agent1 from obtaining tokens, and must make sure that User2 shares business accountability for Agent1 from now on.\n\nWhich two actions should User1 perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Disable Agent1 from Manage agents in the My Account portal",
+   "Add User2 as a sponsor of Agent1",
+   "Add User2 as an owner of Agent1",
+   "Remove the credentials of Agent1",
+   "Hard-delete Agent1 and ask an owner to recreate it"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Sponsors can disable agent identities, soft-delete them and change their sponsors. Technical operations, such as credentials, owners and hard deletion, belong to owners. Disabling blocks token issuance with the same effect as an admin disable.",
+  "rationale": [
+   "Correct: sponsors can disable an agent identity from Manage agents in My Account, which blocks access and prevents token issuance, exactly as an admin disable would.",
+   "Correct: modifying the sponsors of an agent identity is within a sponsor's rights, and sponsorship is the relationship that carries business accountability.",
+   "Incorrect: sponsors cannot add owners; only owners and admins can. An owner is also a technical role, not business accountability. Use an owner for someone who manages configuration.",
+   "Incorrect: managing credentials is an owner capability, and User1 is not an owner. Rotate credentials as an owner after a confirmed compromise, before you re-enable the agent.",
+   "Incorrect: hard deletion is reserved for owners, and it destroys the identity instead of pausing it. Use permanent deletion only when the agent is retired for good."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-owners-sponsors-managers"
+ },
+ {
+  "id": "3.2.3-08",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Fourth Coffee has a shared agent named Agent1 that was built with Microsoft Copilot Agent Builder. User1 is the only owner of Agent1 and moves to another company next week. Until User1 leaves, both users must be able to edit Agent1. On User1's last day, User1 must stop being an owner.\n\nWhich four actions should you perform in sequence in the Microsoft 365 admin center? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Go to Agents > All agents, filter Platform by Agent Builder, and select Agent1.",
+   "On the Details tab, select the user link next to Owner.",
+   "In the Owners pane, select Add owner, select User2, and then select Add.",
+   "Select User1, select Remove owner, and then select Remove.",
+   "Select Assign new owner, and then enter User2.",
+   "In the Owners pane, add the Sales security group as an owner."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Agent Builder agents support multiple owners with equal rights. You cannot remove the last remaining owner, so add the new owner before removing the old one. Assign new owner is the path for agents that are already ownerless.",
+  "rationale": [
+   "Step 1: owner management starts from the agent details pane, and the Platform filter quickly narrows the registry to Agent Builder agents.",
+   "Step 2: the user link next to Owner on the Details tab opens the Owners pane, where owners are added and removed.",
+   "Step 3: User2 must be added first because the last remaining owner cannot be removed; after this step the agent has two owners with equal rights.",
+   "Step 4: with User2 in place, User1 is no longer the last owner and can be removed, which completes the handover.",
+   "Incorrect: Assign new owner replaces the owner, and the previous owner loses all access at once, so User1 could not keep editing until the last day. Use it for ownerless agents or an immediate handover.",
+   "Incorrect: groups are not supported as Agent Builder owners; an owner must be an individual user. Use a group as a sponsor of an Entra agent identity instead."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-actions"
+ },
+ {
+  "id": "3.2.4-01",
+  "obj": "3.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles allows users to install agents built by Microsoft and agents built by its own developers. Users must not be able to install agents or plugins built by external developers.\n\nWhich setting should you configure in Agents > Settings in the Microsoft 365 admin center?",
+  "choices": [
+   "Agent and plugin access",
+   "User access",
+   "Sharing",
+   "Agent feedback sharing"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent settings in the Microsoft 365 admin center separate what kind of agents may be installed (Agent and plugin access, by publisher type), who may use agents (User access), who may share Agent Builder agents (Sharing), and whether developers get feedback.",
+  "rationale": [
+   "Correct: Agent and plugin access has separate options for agents and plugins built by Microsoft, by your organization and by external publishers, so clearing the external publishers option meets the requirement.",
+   "Incorrect: User access chooses which users or groups can access agents and plugins at all. It does not distinguish publishers. Use it to limit agents to a pilot group.",
+   "Incorrect: Sharing controls who can share Agent Builder agents with others. It does not control installation of external agents. Use it to limit broad sharing.",
+   "Incorrect: Agent feedback sharing decides whether developers receive ratings and comments about agents. It has no effect on installation. Use it to help developers improve agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.4-02",
+  "obj": "3.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Lamna Healthcare, users build agents with Microsoft Copilot Agent Builder. Only members of a group named ClinicalLeads may share their agents broadly with others in the organization.\n\nHow should you configure the Sharing setting in the Microsoft 365 admin center?",
+  "choices": [
+   "Select Specific users, and then select ClinicalLeads",
+   "Select No users",
+   "Select All users",
+   "Set User access to ClinicalLeads"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Sharing setting has three options: All users, No users (no org-level sharing, but sharing with specific individuals still works) and Specific users (broad sharing only for selected groups). It only applies to Agent Builder agents.",
+  "rationale": [
+   "Correct: Specific users restricts broad sharing permissions to designated groups, so only ClinicalLeads members can share their Agent Builder agents widely.",
+   "Incorrect: No users disables org-level sharing for everyone, including ClinicalLeads, while still allowing sharing with specific individuals. Use it when nobody may share broadly.",
+   "Incorrect: All users lets everyone share agents with others in the tenant, which violates the restriction. Use it when sharing is unrestricted.",
+   "Incorrect: User access controls who can access agents and plugins at all, not who can share. Setting it to ClinicalLeads would block every other user from using agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.4-03",
+  "obj": "3.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Humongous Insurance starts a pilot for agents in Microsoft 365. During the pilot, only members of a group named PilotUsers may access and install any agents or plugins. Other users keep their existing Microsoft 365 Copilot experience.\n\nWhat should you configure in the Microsoft 365 admin center?",
+  "choices": [
+   "Set User access to Specific users or groups, and select PilotUsers",
+   "Set Sharing to Specific users, and select PilotUsers",
+   "Clear every option in Agent and plugin access except for Microsoft",
+   "Set Available to on the Users tab of each agent to PilotUsers"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "User access is the tenant-wide gate for agents and plugins: All users (default), No users or Specific users or groups. Even users who are allowed to install an agent from the registry can use agents only if this setting includes them.",
+  "rationale": [
+   "Correct: User access with Specific users or groups limits access to agents and plugins to PilotUsers for the whole tenant, while other users keep Copilot without agents.",
+   "Incorrect: Sharing only controls who can share Agent Builder agents broadly. Everyone could still install and use agents. Use it to limit sharing during a pilot.",
+   "Incorrect: this setting filters by publisher type for everyone, so all users could still install Microsoft agents and nobody gets a pilot boundary. Use it to block categories of agents.",
+   "Incorrect: Available to works per agent, so new agents would be open by default and you would have to maintain every agent. Use it to scope one specific agent."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.4-04",
+  "obj": "3.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Southridge Video sets the Sharing setting in Agents > Settings to No users. A week later, users still share agents that they built in Microsoft Copilot Studio with the entire organization.\n\nWhat should you tell the security team?",
+  "choices": [
+   "The Sharing setting applies only to agents built with Microsoft Copilot Agent Builder",
+   "The No users option still allows users to share agents with specific individuals",
+   "The Sharing setting takes effect only after you set User access to No users",
+   "The Sharing setting applies only to agents built by external publishers"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Sharing control in the Microsoft 365 admin center only governs agents built with Microsoft Copilot Agent Builder. Sharing of Copilot Studio agents is governed elsewhere, so a tenant can block Agent Builder sharing and still see Copilot Studio agents shared.",
+  "rationale": [
+   "Correct: Learn states that the Sharing control only applies to agents built with Microsoft Copilot Agent Builder, so it has no effect on Copilot Studio agents shared with the organization.",
+   "Incorrect: this is true of No users, but it explains sharing with individuals only. The users in the stem share with the entire organization, which No users would stop for Agent Builder agents.",
+   "Incorrect: User access and Sharing are independent settings. No users in User access would block all agent use, which is a different outcome. Use it to turn off agents entirely.",
+   "Incorrect: external publisher agents are governed by Agent and plugin access, not Sharing. Sharing targets agents that users in your tenant build with Agent Builder."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.4-05",
+  "obj": "3.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft Agent 365 licenses. User1 has the AI Administrator role. User1 must create a custom policy template named Template2 in Agents > Settings > Templates in the Microsoft 365 admin center. Template2 must assign an existing custom security attribute to the agents that are published with it. The attribute set and the attribute definition already exist. User1 must receive only the permissions that are required.\n\nWhich additional role should you assign to User1?",
+  "choices": [
+   "Attribute Assignment Administrator",
+   "Attribute Definition Administrator",
+   "Conditional Access Administrator",
+   "Global Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom policy templates add Entra policies (Conditional Access, access packages, custom security attributes) on top of the locked Microsoft default policies. The AI Administrator role alone is not enough for every custom policy: Learn states that both the Global Administrator and the AI Administrator need the Attribute Assignment Administrator role for custom security attribute policies, and that the AI Administrator lacks the privileges for Conditional Access.",
+  "rationale": [
+   "Correct: Learn states that the AI Administrator needs the Attribute Assignment Administrator role to use custom security attribute policies in a template. The attribute already exists, so assigning it is the only missing permission.",
+   "Incorrect: Attribute Definition Administrator creates and manages attribute sets and attribute definitions, but it does not assign attribute values to objects. Use it when the custom security attribute must be defined first, which is already done here.",
+   "Incorrect: Conditional Access Administrator is the role to add when a template must include a Conditional Access policy for agents, because the AI Administrator cannot configure Conditional Access. Template2 contains no Conditional Access policy.",
+   "Incorrect: Global Administrator is far broader than needed, and Learn states that even a Global Administrator needs the Attribute Assignment Administrator role for custom security attribute policies. Use Global Administrator only for tasks that require it."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/policy-template"
+ },
+ {
+  "id": "3.2.4-06",
+  "obj": "3.2.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank has Microsoft Agent 365 licenses. You have the Conditional Access Administrator and AI Administrator roles. A Conditional Access policy that blocks risky agents must be added to a custom policy template named Template1. The policy must apply only to agents that are published with Template1. Then a requested agent named Agent2 must be published with Template1.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Microsoft Entra admin center, create a Conditional Access policy that applies to Agents and uses Select agents with at least one agent identity.",
+   "In the Microsoft 365 admin center, go to Agents > Settings > Templates > Add a New Template, and enter the name Template1.",
+   "Select Next, and then select the Conditional Access policy in the custom policies list.",
+   "Review the template, and then select Save template.",
+   "On the Requests tab, select Agent2, select Publish to store, and select Template1 in the template step.",
+   "In the Microsoft Entra admin center, create a Conditional Access policy that includes All agent identities.",
+   "Open the Microsoft default template, and add the Conditional Access policy to it."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Custom templates can only reference Entra policies that already exist, and a Conditional Access policy is listed only if it selects at least one agent identity. A policy scoped to all agent identities is selected automatically in the Microsoft 365 admin center and cannot be overridden. The template is then picked when an agent is published or activated.",
+  "rationale": [
+   "Step 1: custom templates can only use policies created in Entra first, and only policies that select at least one agent identity appear when you build a template.",
+   "Step 2: with the policy in place, you start the template in Agents > Settings > Templates and give it its name.",
+   "Step 3: the custom policies list is where the Entra policy from step 1 is added to the template.",
+   "Step 4: saving the template makes it available in the template dropdown during publishing and activation.",
+   "Step 5: when you publish Agent2 from the Requests tab, the wizard lets you choose an existing, default or custom template, so you select Template1.",
+   "Incorrect: a policy scoped to all agent identities is selected automatically for every agent in the Microsoft 365 admin center and cannot be overridden, so it would not be limited to Template1 agents.",
+   "Incorrect: Microsoft built-in default policies are locked and cannot be edited, and the requirement is a custom template. Use the default template when its built-in controls are enough."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/policy-template"
+ },
+ {
+  "id": "3.2.4-07",
+  "obj": "3.2.4",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Coho Winery is configuring Agents > Settings in the Microsoft 365 admin center.\n\nWhich setting should you use for each requirement? To answer, drag the appropriate settings to the correct requirements. Each setting may be used once, more than once, or not at all.",
+  "choices": [
+   "Agent and plugin access",
+   "Sharing",
+   "User access",
+   "Agent feedback sharing",
+   "Tags",
+   "Agent management rules"
+  ],
+  "answer": [
+   3,
+   4,
+   5,
+   0
+  ],
+  "explanation": "Each agent setting answers one question: which publishers (Agent and plugin access), who shares Agent Builder agents (Sharing), who uses agents (User access), whether developers get feedback, how agents are labeled (Tags), and which bulk actions run (Agent management rules).",
+  "rationale": [
+   "Thumbs-up and thumbs-down ratings and comments reaching the developers of selected agents is controlled by Agent feedback sharing with the Selected agents option.",
+   "A central list of labels with descriptions that admins and users apply to agents, up to 50 per organization, is managed on the Tags page.",
+   "Installing Microsoft first-party agents for all users in one reviewed bulk action is a supported scenario of agent management rules.",
+   "Blocking installation of agents and plugins from external developers is done by clearing the external publishers option in Agent and plugin access."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings",
+  "targets": [
+   "Developers of the HR agent must receive user ratings and comments for that agent only",
+   "Admins must maintain the labels that people apply to organize and find agents",
+   "Install all eligible Microsoft-built agents for every user in one bulk action",
+   "Prevent users from installing agents built by external developers"
+  ],
+  "notes": [
+   "Agent and plugin access: allows agents and plugins by publisher type (Microsoft, your organization, external publishers). Use it to block whole categories of agents.",
+   "Sharing: All users, No users or Specific users for broad sharing of Agent Builder agents. Use it to control who may share agents they build.",
+   "User access: All users, No users or Specific users or groups who may access and install agents and plugins. Use it for pilots or to turn agents off.",
+   "Agent feedback sharing: No agents, All agents or Selected agents whose developers receive ratings and comments. It does not affect what agents can access.",
+   "Tags: admin-managed labels (up to 50) that admins and users apply to agents, each with an optional description. Use them to organize and filter the registry.",
+   "Agent management rules: reviewed bulk actions such as installing Microsoft agents, reassigning or blocking ownerless agents, applying a template, and rejecting old publish requests."
+  ]
+ },
+ {
+  "id": "3.2.4-08",
+  "obj": "3.2.4",
+  "difficulty": "easy",
+  "type": "dropdown",
+  "stem": "Refer to the case study. You need to configure Agents > Settings in the Microsoft 365 admin center to meet the business requirements for the pilot, for external agents, and for sharing.\n\nHow should you configure the settings? To answer, select the appropriate options in the answer area.",
+  "answer": [
+   2,
+   2,
+   1
+  ],
+  "explanation": "User access limits who may use agents at all, Agent and plugin access limits which publishers are allowed, and Sharing limits who may share Agent Builder agents broadly. Each requirement in the case maps to exactly one of these settings.",
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings",
+  "case": "C-g",
+  "targets": [
+   {
+    "label": "User access",
+    "options": [
+     "All users",
+     "No users",
+     "Specific users or groups: AgentPilot"
+    ],
+    "why": [
+     "Incorrect: All users is the default and lets every employee, including seasonal staff, use agents, which breaks the pilot boundary.",
+     "Incorrect: No users blocks agents for everyone, including the pilot participants who must use them.",
+     "Correct: only pilot participants may use agents and plugins, and AgentPilot contains them, so Specific users or groups with AgentPilot meets the requirement."
+    ]
+   },
+   {
+    "label": "Sharing",
+    "options": [
+     "All users",
+     "No users",
+     "Specific users: GuestServicesManagers"
+    ],
+    "why": [
+     "Incorrect: All users lets everyone share Agent Builder agents broadly, but only guest services managers may.",
+     "Incorrect: No users stops broad sharing for everyone, including the guest services managers who must keep it.",
+     "Correct: Specific users restricts broad sharing to designated groups, so GuestServicesManagers are the only users who can share widely."
+    ]
+   },
+   {
+    "label": "Allow agents and plugins built by external publishers",
+    "options": [
+     "Selected",
+     "Cleared"
+    ],
+    "why": [
+     "Incorrect: leaving the option selected lets users install external agents such as Ski Rental Partner, which the requirements forbid.",
+     "Correct: clearing the option prevents users from installing agents and plugins from external publishers while Microsoft and organization agents stay allowed."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "3.2.5-01",
+  "obj": "3.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A. Datum Corporation uses agents built in Microsoft Copilot Studio, agents from external partners, and agents that do not have a Microsoft Entra agent identity.\n\nYou need a single inventory that includes all these agents.\n\nWhich location should you use?",
+  "choices": [
+   "Microsoft 365 admin center > Agents > All agents > Registry",
+   "Microsoft Entra admin center > Entra ID > Agents > Agent identities",
+   "Microsoft Entra admin center > Enterprise applications > All applications",
+   "Microsoft 365 admin center > Agents > Tools > Registry"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent registry experiences converge in Microsoft Agent 365: the registry in the Microsoft 365 admin center is the complete inventory, including agents without an Entra agent identity. The Entra admin center focuses on agent identities, blueprints and access controls.",
+  "rationale": [
+   "Correct: the agent registry under Agents > All agents lists Microsoft agents, partner-built agents, agents published by your org and agents shared by creators, including agents without an Entra agent identity.",
+   "Incorrect: the Agent identities page shows only agents that have a Microsoft Entra agent identity. Use it to manage identities, blueprints and permissions.",
+   "Incorrect: Enterprise applications lists service principals and app registrations. It is not an agent inventory and misses agents without an Entra identity. Use it for app consent and SSO.",
+   "Incorrect: the Tools registry lists plugins, skills, MCP servers and connectors that agents use, not the agents. Use it to govern agent tools."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-registry-convergence"
+ },
+ {
+  "id": "3.2.5-02",
+  "obj": "3.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Blue Yonder Airlines wants an auditor to view the complete agent inventory in Agent 365 and the agents in Microsoft Entra Agent ID. The auditor must not be able to change any agent.\n\nWhich role should you assign by following the principle of least privilege?",
+  "choices": [
+   "AI Reader",
+   "AI Administrator",
+   "Agent ID Administrator",
+   "Agent ID Developer"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "AI Reader is the recommended least-privilege role for viewing all agents in Agent 365 and Microsoft Entra Agent ID. AI Administrator manages agents in the Microsoft 365 admin center, and Agent ID Administrator manages agent identities.",
+  "rationale": [
+   "Correct: Learn names AI Reader as the role for users who need visibility of all agents for monitoring or reporting, and it grants no change rights.",
+   "Incorrect: AI Administrator can view the inventory but can also publish, block and delete agents, which exceeds the read-only need. Use it for agent admins.",
+   "Incorrect: Agent ID Administrator is needed to manage or change agent identities, so it grants write access. Use it for identity admins of agents.",
+   "Incorrect: Agent ID Developer lets users create agent identity blueprints and does not give a tenant-wide read view. Use it for developers who build agents."
+  ],
+  "ref": "https://learn.microsoft.com/entra/agent-id/agent-registry-convergence"
+ },
+ {
+  "id": "3.2.5-03",
+  "obj": "3.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys must review all agents in the agent registry whose makers uploaded files as knowledge sources.\n\nWhich filter should you use in the agent registry?",
+  "choices": [
+   "Data source",
+   "Platform",
+   "Channel",
+   "Publisher type"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Registry filters answer different questions: Publisher type (who owns and distributes the agent), Channel (where it is deployed), Platform (what it was built with), Status, and Data source (Embedded knowledge or Fine-tuned models).",
+  "rationale": [
+   "Correct: the Data source filter has an Embedded knowledge option for agents that include files uploaded by the maker as knowledge sources.",
+   "Incorrect: Platform shows which product was used to create the agent, such as Copilot Studio or Agent Builder. Use it to find all agents from one build tool.",
+   "Incorrect: Channel shows where the agent is deployed, such as Copilot, Teams or Outlook. Use it to review agents on a specific surface.",
+   "Incorrect: Publisher type separates Microsoft, external partner, org-published and creator-shared agents. Use it to review agents by owner and distribution."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.5-04",
+  "obj": "3.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Consolidated Messenger deleted the accounts of 60 employees who left. Some of them had shared agents with colleagues. You need to quickly list the shared agents that no longer have a valid owner so that you can block or delete them.\n\nWhat should you select in the agent registry?",
+  "choices": [
+   "The Agents without owners card",
+   "The Unmanaged agents card",
+   "The Agents at risk tile",
+   "The Status filter set to Blocked"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The registry summary cards are shortcuts: Agents without owners (shared agents whose creator was deleted), Unmanaged agents (agents outside Agent 365 protection) and Agents at risk (agents with risk signals). Each card filters the list with one click.",
+  "rationale": [
+   "Correct: the Agents without owners card counts ownerless shared agents, updates when users are hard deleted, and filters the list so you can block or delete the agents.",
+   "Incorrect: Unmanaged agents counts agents created or managed outside Agent 365 without its risk protection and observability. Ownership plays no role. Use it to find agents to bring under management.",
+   "Incorrect: Agents at risk lists agents with risk signals from Entra, Defender or Purview. An ownerless agent might have no signals. Use it to prioritize security investigation.",
+   "Incorrect: the Blocked status shows agents that are already blocked, not the ownerless agents you still need to act on. Use it to review past block decisions."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.5-05",
+  "obj": "3.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "In the agent registry of Munson's Pickles and Preserves, an agent built in Microsoft Copilot Studio appears twice: once as Shared by creator and once as Published by your org. An auditor reports the second row as an inventory error.\n\nWhat should you tell the auditor?",
+  "choices": [
+   "The rows are separate lifecycle and publisher records for one agent, and both are expected",
+   "The registry duplicated the agent, so deleting the Shared by creator row fixes the inventory",
+   "The agent was uploaded twice as a ZIP file, so one upload must be removed",
+   "The registry view is filtered by Channel, which shows one row for each channel"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "One Copilot Studio agent can have several registry entries with different publisher types. See agent in Microsoft 365 creates a Shared by creator entry, and admin publishing after approval creates a Published by your org entry. Removing one entry does not remove the other.",
+  "rationale": [
+   "Correct: Learn states that duplicate-looking rows with different publisher types are by design; they represent separate lifecycle and publisher records of the same agent.",
+   "Incorrect: the rows are not a duplication error, and removing one entry does not remove the other, so deleting the creator entry changes the creator's testing view, not the published agent.",
+   "Incorrect: a ZIP upload through Add agent creates an org-managed entry, but nothing in the stem suggests an upload, and the publisher types show the Copilot Studio lifecycle.",
+   "Incorrect: Channel is a filter that narrows the list; it does not split one agent into rows per channel. Use it to focus on one deployment surface."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.5-06",
+  "obj": "3.2.5",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "You review the agent registry in the Microsoft 365 admin center of Fabrikam, Inc. The summary shows Total agents, Agents without owners and Unmanaged agents. You apply the Publisher type filter and then export the list.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "After you apply the Publisher type filter, the Total agents count shows only the filtered agents.",
+   "Unmanaged agents counts agents that are created or managed outside Agent 365.",
+   "You can export only the filtered agents instead of all agents."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "The registry summary reflects the whole tenant regardless of filters. Unmanaged agents identifies agents without Agent 365 risk protection and observability. Export to Excel can use the scope All agents or Filtered agents.",
+  "rationale": [
+   "No: applying filters does not change the Total agents count, which always shows the number of agents in the tenant. Use the filtered list itself to see the subset.",
+   "Yes: Unmanaged agents is the number of agents created or managed outside Agent 365, without its risk protection and observability.",
+   "Yes: the export scope can be set to All agents or Filtered agents, so the export can match the Publisher type filter."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.5-07",
+  "obj": "3.2.5",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Trey Research has Microsoft Agent 365 licenses. You need a Microsoft Graph PowerShell script that reads the complete agent inventory, finds the agent named HR Helper, and retrieves its detailed metadata. The script must use the least privileged permission.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes 'CopilotPackages.Read.All'`",
+   "`$response = Invoke-MgGraphRequest -Method GET -Uri \"https://graph.microsoft.com/v1.0/copilot/admin/catalog/packages\"`",
+   "Call `Invoke-MgGraphRequest` with `$response.'@odata.nextLink'` until no next link is returned, and store the id of HR Helper in `$id`.",
+   "`Invoke-MgGraphRequest -Method GET -Uri \"https://graph.microsoft.com/v1.0/copilot/admin/catalog/packages/$id\"`",
+   "`Connect-MgGraph -Scopes 'CopilotPackages.ReadWrite.All'`",
+   "`Get-MgServicePrincipal -All`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The Package Management API exposes the registry: GET /copilot/admin/catalog/packages lists agents and GET /copilot/admin/catalog/packages/{id} returns details. Paging is server-driven, so follow @odata.nextLink until it is absent. CopilotPackages.Read.All is the least privileged permission for reading.",
+  "rationale": [
+   "Step 1: CopilotPackages.Read.All is the least privileged permission for listing packages and getting details, so the session starts with it.",
+   "Step 2: the first GET on the packages collection returns the first page of agents in the tenant inventory.",
+   "Step 3: the collection is paged; requesting each @odata.nextLink until none is returned covers the whole inventory, and the id of HR Helper comes from these pages.",
+   "Step 4: with the id, the GET on packages/{id} returns the detailed metadata of HR Helper.",
+   "Incorrect: CopilotPackages.ReadWrite.All also works but is the higher privileged permission needed to block, unblock or update packages, so it violates least privilege.",
+   "Incorrect: this cmdlet lists service principals, which misses agents that have no Entra identity and returns no registry metadata. Use it to manage enterprise applications."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365-copilot/extensibility/api/admin-settings/package/copilotpackages-list"
+ },
+ {
+  "id": "3.2.5-08",
+  "obj": "3.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. has Microsoft 365 E5 and Microsoft 365 Copilot licenses. An administrator who has the AI Administrator role opens the agent registry and sees the full inventory, but the Risks column and the details on the Security tab of each agent are missing.\n\nWhat should you do to make the risk information appear?",
+  "choices": [
+   "Acquire Microsoft Agent 365 licenses for the tenant",
+   "Assign the Global Administrator role to the administrator",
+   "Assign the Security Reader role to the administrator",
+   "Acquire Microsoft Entra ID P2 licenses for the tenant"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Viewing the agent inventory needs only a role such as AI Reader or AI Administrator. Risk signals in the registry, the Risks column and the Security tab need a Microsoft 365 E7 or Microsoft Agent 365 license, which Microsoft 365 E5 does not include.",
+  "rationale": [
+   "Correct: Learn requires an E7 or Agent 365 license for the Risks column and the Security tab details, and the tenant has neither, so the license is the missing piece.",
+   "Incorrect: the problem is licensing, not permissions. AI Administrator already sees the inventory, and Global Administrator does not unlock features that the tenant is not licensed for.",
+   "Incorrect: Security Reader helps open the deep links to Entra and Defender for investigation, but it does not make the Risks column appear without the license.",
+   "Incorrect: Microsoft 365 E5 already includes Microsoft Entra ID P2, and no Entra license unlocks the registry risk signals, which require an E7 or Agent 365 license. Acquire Entra ID P2 when a tenant without it needs ID Protection features such as risk-based Conditional Access for users."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.6-01",
+  "obj": "3.2.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Northwind Traders, developers build agents in Microsoft Copilot Studio and submit them for admin approval. You are an AI Administrator.\n\nYou need to find the submitted agents and review their capabilities, data sources and custom actions before they become available tenant-wide.\n\nWhich location should you use?",
+  "choices": [
+   "Microsoft 365 admin center > Agents > All agents > Requests",
+   "Microsoft 365 admin center > Agents > All agents > Registry",
+   "Copilot Studio > Agents > Channels > Availability options",
+   "Microsoft 365 admin center > Agents > Tools > Requests"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a member of the organization publishes an agent to the tenant, it waits on the Requests tab for admin approval. The admin reviews the agent metadata there and then publishes it to the store or rejects the submission.",
+  "rationale": [
+   "Correct: the Requests tab lists agents that need admin review, with their full definition metadata, and offers Publish to store and Reject submission.",
+   "Incorrect: the Registry tab shows agents that are already available, installed or blocked. Submissions waiting for approval are on the Requests tab. Use the Registry for inventory tasks.",
+   "Incorrect: Availability options in Copilot Studio is where the maker downloads the ZIP or submits the agent. The admin review happens in the Microsoft 365 admin center.",
+   "Incorrect: the Requests tab under Tools holds requests for tools such as MCP servers and plugins, not agent submissions. Use it to approve MCP server registrations."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests"
+ },
+ {
+  "id": "3.2.6-02",
+  "obj": "3.2.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has an agent named Agent1 that is published to the organization. A developer publishes an update to Agent1, and the request shows the state Pending update. Users must keep using the current version until you approve the change.\n\nWhich action should you select to approve the update after your review?",
+  "choices": [
+   "Update in store",
+   "Publish to store",
+   "Approve request and activate",
+   "Add agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Requests tab shows three kinds of requests: pending review (new agents), pending update (new versions) and pending activate (template agents that users want to instantiate). Each has its own approval action, and users keep the previous version until an update is approved.",
+  "rationale": [
+   "Correct: for a request in the Pending update state, you approve the new version with Update in store; until then users keep the previous version of Agent1.",
+   "Incorrect: Publish to store is the action for a new agent that is pending review. It starts the publishing wizard with users, template and permissions. Use it for first-time submissions.",
+   "Incorrect: Approve request and activate approves activation requests for template agents, so users can create instances. Use it for Agent 365 template agents.",
+   "Incorrect: Add agent uploads a ZIP package that you already have. The update was submitted by the developer and waits on the Requests tab, so no upload is needed."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests"
+ },
+ {
+  "id": "3.2.6-03",
+  "obj": "3.2.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A Microsoft-built agent is blocked in the tenant of Relecloud. User1 opens the agent in the store and selects Request. The request appears on the Requests tab with the state Allow user to install. User1 must be able to install the agent.\n\nWhat should you do?",
+  "choices": [
+   "Unblock the agent, and then approve the request of User1",
+   "Approve the request of User1, which unblocks the agent",
+   "Select Publish to store for the agent, and select User1",
+   "Select Approve request and activate for the agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Users can request Microsoft-built agents that an admin policy makes unavailable. The request shows as Allow user to install. If the agent is blocked, it must be unblocked before a request can be accepted, and the org settings must also allow the user.",
+  "rationale": [
+   "Correct: Learn says a blocked agent must be unblocked before any request to install it can be accepted, and then you approve the request so User1 can install the agent.",
+   "Incorrect: approving does not unblock the agent; a banner reminds you to unblock first. Approving alone leaves the agent unavailable to User1.",
+   "Incorrect: Publish to store applies to agents that your organization submitted for review. A Microsoft-built agent is already in the store and only needs the request approved.",
+   "Incorrect: Approve request and activate is for activation requests of template agents that users want to instantiate. Use it for Agent 365 template agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests"
+ },
+ {
+  "id": "3.2.6-04",
+  "obj": "3.2.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wide World Importers has more than 300 agent publish requests. Many were submitted months ago by employees who no longer need them. You need to reject every publish request older than 60 days in one bulk operation that you review first.\n\nWhat should you use?",
+  "choices": [
+   "An agent management rule that rejects publish requests older than 60 days",
+   "An agent management rule that blocks ownerless agents without usage",
+   "Reject submission on each old request on the Requests tab",
+   "A Graph request that blocks each requested package"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent management rules in Agents > Settings perform reviewed bulk actions. One supported scenario is rejecting agent publish requests older than a specified number of days, which clears a stale request queue without manual work.",
+  "rationale": [
+   "Correct: the reject rule takes a number of days, shows the impacted requests for review and rejects them in bulk, which matches the requirement.",
+   "Incorrect: this rule blocks ownerless agents that have no usage. It does not process pending requests. Use it to contain abandoned shared agents.",
+   "Incorrect: Reject submission works, but one request at a time, which does not meet one bulk operation for more than 300 requests. Use it for individual reviews.",
+   "Incorrect: blocking a package prevents its usage but does not reject the pending publish request. Use the block endpoint to stop an agent that is already available."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-settings"
+ },
+ {
+  "id": "3.2.6-05",
+  "obj": "3.2.6",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "At Litware, Inc., a developer submitted an agent named Agent4 for admin approval. Agent4 must become installable by the Sales group, must use the custom policy template Template1, and must have its requested Microsoft Graph permissions consented.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Go to Agents > All agents > Requests, select Agent4, and review its capabilities, data sources and custom actions.",
+   "Select Publish to store, and select Sales as the users and groups who can install the agent.",
+   "Select Next, and apply the custom policy template Template1.",
+   "In Review permissions, review the requested permissions, and grant admin consent.",
+   "Select Next, and then select Publish.",
+   "Select Approve request and activate.",
+   "Select Update in store."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Publishing a requested agent follows the wizard: review the request, choose the audience, apply a template, consent to permissions and publish. The audience decides who can install, and an optional deploy step preinstalls the agent.",
+  "rationale": [
+   "Step 1: the review starts on the Requests tab, where the agent details show capabilities, data sources, security and custom actions.",
+   "Step 2: Publish to store opens the wizard, and the first page selects the users or groups who can install the agent.",
+   "Step 3: after the audience, the wizard offers an existing, default or custom template, where you choose Template1.",
+   "Step 4: the Review permissions step shows the Graph permissions and is where admin consent is granted.",
+   "Step 5: after the review, Publish makes Agent4 available to the Sales group.",
+   "Incorrect: Approve request and activate handles activation of template agents so users can create instances. Agent4 is a new submission that needs publishing.",
+   "Incorrect: Update in store approves a new version of an agent that is already published. Agent4 is a first-time submission."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests"
+ },
+ {
+  "id": "3.2.6-06",
+  "obj": "3.2.6",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys has Microsoft Agent 365 licenses. You need a read-only Microsoft Graph PowerShell script that lists the open requests from users who asked to publish an agent. The script must use the least privileged permission.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes '[[1]]'\n$uri = \"https://graph.microsoft.com/v1.0/copilot/admin/catalog/packages?`$filter=[[2]] eq 'pending' and [[3]] eq 'publish'\"\nInvoke-MgGraphRequest -Method GET -Uri $uri\n```",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "The packages endpoint returns requested agents when you filter on request properties: requestStatus eq 'pending' selects the open queue and requestType selects publish, activate, access or update requests. Both can be joined with and.",
+  "ref": "https://learn.microsoft.com/microsoft-365-copilot/extensibility/api/admin-settings/package/copilotpackages-list",
+  "targets": [
+   {
+    "label": "[[1]]",
+    "options": [
+     "CopilotPackages.Read.All",
+     "CopilotPackages.ReadWrite.All",
+     "AppCatalog.ReadWrite.All"
+    ],
+    "why": [
+     "Correct: CopilotPackages.Read.All is the least privileged permission for listing packages, and the script only reads.",
+     "Incorrect: CopilotPackages.ReadWrite.All is the higher privileged permission for block, unblock and update operations, which a read-only script does not need.",
+     "Incorrect: AppCatalog.ReadWrite.All manages the Teams app catalog, not the Agent 365 package catalog, and it grants write access."
+    ]
+   },
+   {
+    "label": "[[2]]",
+    "options": [
+     "requestStatus",
+     "requestType",
+     "lastModifiedDateTime"
+    ],
+    "why": [
+     "Correct: requestStatus eq 'pending' is the supported expression that selects the open request queue.",
+     "Incorrect: requestType holds publish, activate, access or update, not pending, so the comparison would match nothing.",
+     "Incorrect: lastModifiedDateTime only supports ge and le bounds with a date value, not eq 'pending'."
+    ]
+   },
+   {
+    "label": "[[3]]",
+    "options": [
+     "requestType",
+     "requestStatus",
+     "elementTypes"
+    ],
+    "why": [
+     "Correct: requestType eq 'publish' narrows the queue to requests from users who asked to publish an agent.",
+     "Incorrect: requestStatus is already used for pending, and publish is not one of its supported filter values.",
+     "Incorrect: elementTypes describes package contents such as DeclarativeAgent, and request properties cannot be combined with it."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "3.2.6-07",
+  "obj": "3.2.6",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Contoso, Ltd. has an agent named Agent3 that a developer submitted for admin approval. After approval, the Sales group must be able to install Agent3, the SalesManagers group must have Agent3 preinstalled, and the Microsoft default protections, including Microsoft Purview audit, must apply.\n\nWhich three actions should you perform in the publishing wizard? Each correct answer presents part of the solution.",
+  "choices": [
+   "Select Sales as the users and groups who can install the agent.",
+   "Select SalesManagers as the users and groups who will have the agent preinstalled.",
+   "Apply the default policy template.",
+   "Select Approve request and activate.",
+   "Pin the agent for SalesManagers in Manage pinned agents.",
+   "Select Update in store."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The publishing wizard separates availability (who can install) from deployment (who has the agent preinstalled), then applies a template and consents to permissions. The Microsoft default template includes Entra, SharePoint, Purview and Defender policies such as Purview audit.",
+  "rationale": [
+   "Correct: the audience you select under publish is the set of users and groups who can install the agent, which is the Sales requirement.",
+   "Correct: the optional deploy step preinstalls the agent for the users or groups you select, so SalesManagers get Agent3 without action.",
+   "Correct: the default template brings Microsoft's essential security and compliance controls, including Purview audit, so no custom template is needed.",
+   "Incorrect: Approve request and activate handles activation of template agents, not publishing a submitted agent. Use it when users request to create agent instances.",
+   "Incorrect: pinning makes a deployed agent more visible but is not part of the publishing wizard and is not required here. Use it after deployment to promote an agent.",
+   "Incorrect: Update in store approves a new version of an agent that is already published. Agent3 is a new submission."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests"
+ },
+ {
+  "id": "3.2.6-08",
+  "obj": "3.2.6",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Refer to the case study. You review the agent requests for Lift Status, Trail Guide and Ski Rental Partner.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Users continue to use the previous version of Lift Status until you approve the update.",
+   "Users can request Ski Rental Partner in the store, and you can approve that request on the Requests tab.",
+   "Selecting MountainOps as the users who can install Trail Guide when you publish it meets the Trail Guide requirement."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Pending update requests keep users on the previous version until approval. The user request and approval workflow in the Microsoft 365 admin center supports only Microsoft-built agents. Publishing to an audience makes an agent installable by that audience.",
+  "rationale": [
+   "Yes: when a developer publishes an update, the request shows Pending update, and users keep the previous version until you approve it with Update in store.",
+   "No: the request workflow supports only Microsoft-built agents. Users cannot request third-party agents such as Ski Rental Partner through it, and admins cannot approve them there.",
+   "Yes: the audience selected in the publishing wizard is the set of users who can install the agent, so MountainOps members alone can install Trail Guide."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-requests",
+  "case": "C-g"
+ },
+ {
+  "id": "3.2.7-01",
+  "obj": "3.2.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute has an agent named Agent1 that is available in the agent registry. Every member of the design team must have Agent1 ready to use without installing it themselves.\n\nWhich action should you select in the agent details pane?",
+  "choices": [
+   "Install",
+   "Pin for users",
+   "Unblock",
+   "Publish to store"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Install deploys an agent for selected users or the whole organization so users do not have to install it. Availability decides who may install it, pinning only makes it more visible, and blocking stops all use.",
+  "rationale": [
+   "Correct: Install deploys the agent to the users or groups you select, after you review and consent to its permissions, so it is ready without manual installation.",
+   "Incorrect: pinning works only for agents that are already deployed and only changes where the agent appears. Use it after installation to make the agent prominent.",
+   "Incorrect: Unblock restores an agent that was blocked. Agent1 is available, not blocked, so unblocking changes nothing. Use it to reverse a block decision.",
+   "Incorrect: Publish to store approves an agent request so users can install it themselves. It does not preinstall the agent. Use it for submitted agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-actions"
+ },
+ {
+  "id": "3.2.7-02",
+  "obj": "3.2.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Margie's Travel must make the Researcher agent unavailable to all users while a compliance review is in progress. In the agent details of Researcher, the Edit users panel is disabled.\n\nWhat should you do?",
+  "choices": [
+   "Block the agent for the entire tenant",
+   "Uninstall the agent for all users",
+   "Remove the agent from Manage pinned agents",
+   "Clear the Microsoft option in Agent and plugin access"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For the Researcher and Analyst agents, the Edit users panel is disabled, so availability cannot be scoped per user. Learn directs admins to block the agent for the entire tenant to manage its availability.",
+  "rationale": [
+   "Correct: Learn states that for Researcher and Analyst you manage availability by blocking the agent for the entire tenant with the Block action.",
+   "Incorrect: uninstalling removes an installed agent but users could install it again, so it does not make Researcher unavailable during the review. Use it to remove a deployment.",
+   "Incorrect: unpinning only removes Researcher from the pinned list. Users can still find and use it. Use pinning to change visibility, not availability.",
+   "Incorrect: clearing the Microsoft option stops users from installing every agent and plugin built by Microsoft, not only Researcher, so it is far broader than the compliance review needs. Use it to block a whole publisher category."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-actions"
+ },
+ {
+  "id": "3.2.7-03",
+  "obj": "3.2.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing publishes an agent named Agent2. Only members of the Analysts group may discover and install Agent2 themselves. Members of the Executives group, who are not analysts, must have Agent2 preinstalled.\n\nHow should you configure the Users tab of Agent2?",
+  "choices": [
+   "Available to: Analysts; Installed to: Executives",
+   "Available to: All users; Installed to: Executives",
+   "Available to: Analysts and Executives; Installed to: Entire organization",
+   "Available to: No users; Installed to: Executives"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Availability (who can discover and install) and installation (who has the agent preinstalled) are independent. An install reaches targeted users even when they are outside the availability audience, which lets you preinstall for one group and offer to another.",
+  "rationale": [
+   "Correct: Available to Analysts limits self-service install to analysts, and Installed to Executives preinstalls the agent for executives even though they are not in the availability audience.",
+   "Incorrect: All users lets everyone discover and install Agent2, which breaks only analysts may install it. Use it for agents meant for the whole company.",
+   "Incorrect: installing to the entire organization installs the agent for everyone regardless of availability, which goes far beyond the executives. Use it for company-wide agents.",
+   "Incorrect: No users stops analysts from installing the agent themselves. Use it when an agent should only reach users through admin installation."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.2.7-04",
+  "obj": "3.2.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A. Datum Corporation blocks an agent that a user created in SharePoint. A day later, users can no longer use the agent in Microsoft 365 Copilot Chat but still use it in the SharePoint site where it was created.\n\nWhat should you tell the help desk?",
+  "choices": [
+   "Blocking a SharePoint agent affects only its availability in Copilot Chat",
+   "Blocking applies only after you also uninstall the agent for all users",
+   "Blocking affects only users who did not install the agent before the block",
+   "Blocking a SharePoint agent requires the Azure AI Owner role to take effect"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Blocking an Agent Builder or Copilot Studio agent affects Copilot and other hosts such as Outlook and Teams. Blocking an agent created with SharePoint or Microsoft Foundry affects only its availability in Microsoft Copilot Chat.",
+  "rationale": [
+   "Correct: Learn states that blocking an agent created with SharePoint only impacts its availability in Copilot Chat, which matches what users see.",
+   "Incorrect: Block works on its own; uninstalling is a separate action that removes a deployment. Use Uninstall when an installed agent should be removed but stay allowed.",
+   "Incorrect: a block also removes the agent from members who already installed it. The behavior in the stem comes from the agent type, not from install state.",
+   "Incorrect: Azure AI Owner is needed to start or stop the Azure infrastructure of Foundry agents, not to block agents. Block needs only an agent admin role."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-actions"
+ },
+ {
+  "id": "3.2.7-05",
+  "obj": "3.2.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee wants to pin an HR agent for all users in Microsoft 365 Copilot. The agent is published and available to all users, but no one has it installed. When you try to pin it, a banner asks you to take another action first.\n\nWhat should you do first?",
+  "choices": [
+   "Install the agent for the users",
+   "Unblock the agent",
+   "Move the agent up in the pinned list",
+   "Add a tag to the agent"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Administrators can pin up to three deployed agents for all users or for groups. Only deployed agents can be pinned, blocked agents must be unblocked first, and pinned agents can take up to six hours to appear.",
+  "rationale": [
+   "Correct: you can pin only deployed agents, and the banner asks you to deploy first, so installing the HR agent for the users comes before pinning.",
+   "Incorrect: unblocking is required only when the agent is blocked. The HR agent is available, so the block banner would not appear. Unblock first for blocked agents.",
+   "Incorrect: ranking with Move up and Move down applies to agents already in the pinned list. The HR agent cannot be added yet.",
+   "Incorrect: tags organize and filter agents in the registry but do not affect pinning. Use tags to group agents by team or function."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.7-06",
+  "obj": "3.2.7",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys built a custom agent in Microsoft Copilot Studio. The developer will not submit it for approval. You must add the agent to the Microsoft 365 admin center so that only the TestGroup group can install it, with the default policy template.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In Copilot Studio, go to Channels > Teams and Microsoft Copilot > Availability options, and select Download .zip.",
+   "In the Microsoft 365 admin center, go to Agents > All agents > Add agent, choose the ZIP file, and select Next.",
+   "Verify the agent's name, icon and host products, and under Publish select TestGroup.",
+   "Apply the default policy template, and select Next.",
+   "Review the agent permissions, select Next, and then select Finish deployment.",
+   "In the Microsoft 365 admin center, go to Agents > Tools > Registry, and select Upload.",
+   "On the Requests tab, select the agent, and then select Publish to store."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The registry can take a custom agent as a ZIP package that contains manifests, icons and embedded knowledge. You download the ZIP from Copilot Studio or Agent Builder, upload it with Add agent, choose the publish (and optional deploy) audience, apply a template and finish.",
+  "rationale": [
+   "Step 1: Add agent needs a ZIP package, which you download from the Copilot Studio channel availability options.",
+   "Step 2: Add agent in the agent registry uploads and validates the ZIP file.",
+   "Step 3: after validation you verify the agent details, and the Publish selection defines who can install the agent, here TestGroup.",
+   "Step 4: the next page applies an existing, custom or default policy template; the default template meets the requirement.",
+   "Step 5: the permissions review and Finish deployment complete the upload.",
+   "Incorrect: Upload in the Tools registry takes manifest files for plugins and skills, not agent ZIP packages. Use it to add a plugin or skill.",
+   "Incorrect: the Requests tab only lists agents that were submitted for approval. The developer will not submit this agent, so no request exists."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/agent-registry"
+ },
+ {
+  "id": "3.2.7-07",
+  "obj": "3.2.7",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Woodgrove Bank has Microsoft Agent 365 licenses. You must block an agent package in the registry by using Microsoft Graph PowerShell and the least privileged permission.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes '[[1]]'\n$packageId = 'P_19ae1zz1-56bc-505a-3d42-156df75a4xxy'\nInvoke-MgGraphRequest -Method [[2]] -Uri \"https://graph.microsoft.com/beta/copilot/admin/catalog/packages/$packageId/[[3]]\"\n```",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "The Package Management API blocks an agent with POST /copilot/admin/catalog/packages/{id}/block (beta), which needs the delegated CopilotPackages.ReadWrite.All permission and returns 204 No Content. Unblock and reassign are sibling POST actions.",
+  "ref": "https://learn.microsoft.com/microsoft-365-copilot/extensibility/api/admin-settings/package/copilotpackage-block",
+  "targets": [
+   {
+    "label": "[[1]]",
+    "options": [
+     "CopilotPackages.ReadWrite.All",
+     "CopilotPackages.Read.All",
+     "AppCatalog.ReadWrite.All"
+    ],
+    "why": [
+     "Correct: CopilotPackages.ReadWrite.All is the least privileged delegated permission for the block action.",
+     "Incorrect: CopilotPackages.Read.All allows listing and reading packages only; the block call would be denied.",
+     "Incorrect: AppCatalog.ReadWrite.All manages the Teams app catalog and does not authorize the Agent 365 package API."
+    ]
+   },
+   {
+    "label": "[[2]]",
+    "options": [
+     "POST",
+     "PATCH",
+     "DELETE"
+    ],
+    "why": [
+     "Correct: block is an action, invoked with POST and no request body.",
+     "Incorrect: PATCH updates package metadata on the package itself, not the block action.",
+     "Incorrect: DELETE is not how the API blocks a package. Deleting an agent is a separate admin action in the Microsoft 365 admin center."
+    ]
+   },
+   {
+    "label": "[[3]]",
+    "options": [
+     "block",
+     "unblock",
+     "reassign"
+    ],
+    "why": [
+     "Correct: the block action prevents usage of the package across the organization.",
+     "Incorrect: unblock reverses an earlier block and allows usage of the package again, which is the opposite of the goal.",
+     "Incorrect: reassign changes the owner of the package, for example when an employee leaves."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "3.2.7-08",
+  "obj": "3.2.7",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Refer to the case study. You need to meet the business requirements for Lift Status.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "On the Users tab of Lift Status, set Available to MountainOps.",
+   "On the Users tab of Lift Status, set Installed to LiftOperators.",
+   "In Manage pinned agents, pin Lift Status for LiftOperators.",
+   "On the Users tab of Lift Status, set Installed to Entire organization.",
+   "Upload the Lift Status ZIP file again by using Add agent.",
+   "Set User access to Specific users or groups, and select LiftOperators."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Availability, installation and pinning are separate controls. Available to decides who can install, Installed to preinstalls the agent, and pinning (up to three agents, deployed agents only) makes it prominent in Microsoft 365 Copilot for selected users.",
+  "rationale": [
+   "Correct: Available to MountainOps lets every mountain operations member install Lift Status, as the case requires.",
+   "Correct: Installed to LiftOperators preinstalls the agent for lift operators so they need no action, and it makes the agent deployed so it can be pinned.",
+   "Correct: admins can pin deployed agents for specific groups, so pinning Lift Status for LiftOperators makes it appear pinned in Copilot.",
+   "Incorrect: installing to the entire organization preinstalls Lift Status for every employee, including seasonal staff, which goes beyond the lift operators. Use it for company-wide agents.",
+   "Incorrect: Lift Status is already published to the organization, so uploading its ZIP again would add a second entry without meeting any requirement. Use Add agent for agents that are not in the registry.",
+   "Incorrect: User access is tenant-wide; limiting it to LiftOperators would stop the other pilot participants from using any agent."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details",
+  "case": "C-g"
+ },
+ {
+  "id": "3.2.8-01",
+  "obj": "3.2.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Proseware, Inc., a developer registered a remote MCP server with Microsoft Agent 365. You must review the server name, the requester and the declared tools before the server becomes available in the organizational registry.\n\nWhich location should you use?",
+  "choices": [
+   "Microsoft 365 admin center > Agents > Tools > Requests",
+   "Microsoft 365 admin center > Agents > All agents > Requests",
+   "Microsoft 365 admin center > Agents > Settings > Gateways",
+   "Entra admin center > Enterprise applications > Admin consent requests"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tools such as MCP servers, plugins, skills and connectors are governed on the Tools page of the Microsoft 365 admin center. A registered MCP server appears on its Requests (preview) tab, where an admin approves or rejects it and then consents to its Entra permissions.",
+  "rationale": [
+   "Correct: the Requests (preview) tab under Agents > Tools lists MCP server registration requests with server name, publisher, requester, date and declared tools.",
+   "Incorrect: the Requests tab under All agents holds agent submissions, updates and activations, not tool registrations. Use it to publish agents.",
+   "Incorrect: Gateways connects Azure AI Gateway or LiteLLM so that their MCP servers are discovered. Individual registrations are not reviewed there.",
+   "Incorrect: admin consent requests are for apps that users ask to consent to. Consent for an MCP server is granted after you approve it on the Tools page."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-plugins-skills-mcp-servers"
+ },
+ {
+  "id": "3.2.8-02",
+  "obj": "3.2.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Bellows College uses an MCP server registered on Agent 365 that supports tool discovery. It exposes read tools and a tool named delete_record. Agents must keep using the read tools but must never call delete_record.\n\nWhat should you do in Agents > Tools?",
+  "choices": [
+   "On the Tools tab of the server, disable delete_record, and save",
+   "Block the MCP server in the Tools registry",
+   "Block the plugins that use the MCP server",
+   "Uninstall the MCP server from the Tools registry"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Blocking an MCP server disables every tool it exposes. Tool-level granular control lets you turn off individual tools on supported servers, such as write or delete tools, while lower-risk tools stay enabled. The Agent 365 Tooling Gateway enforces the setting at runtime. Tool-level control is rolling out only for specific server types; support for bring-your-own MCP servers is planned, so use a server-level block for those.",
+  "rationale": [
+   "Correct: the Tools tab lists each tool with an Enabled or Disabled toggle, so disabling delete_record and saving blocks only that tool, enforced at runtime by the Tooling Gateway.",
+   "Incorrect: blocking the server disables all the tools it exposes, including the read tools that agents still need. Use it when the whole server must be stopped.",
+   "Incorrect: blocking plugins stops the plugins and their dependent agents, while the server and delete_record stay available to other clients. Use it to stop a specific plugin package.",
+   "Incorrect: uninstall applies to plugins and skills and would remove all capabilities, not only delete_record. Use tool-level control for a single risky tool."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-plugins-skills-mcp-servers"
+ },
+ {
+  "id": "3.2.8-03",
+  "obj": "3.2.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud developers register remote MCP servers with Agent 365. You must assign a role to an administrator who reviews these requests on the Tools page and grants the required tenant-wide consent. You must follow the principle of least privilege.\n\nWhich role should you assign?",
+  "choices": [
+   "AI Administrator",
+   "Global Administrator",
+   "Cloud Application Administrator",
+   "AI Reader"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Approving MCP server requests needs two things: access to the Tools page in the Microsoft 365 admin center and the ability to grant tenant-wide consent. Learn names AI Administrator and Global Administrator as the roles that meet both, and AI Administrator is the narrower one.",
+  "rationale": [
+   "Correct: AI Administrator can access the Tools page and grant tenant-wide consent, and it is less privileged than Global Administrator.",
+   "Incorrect: Global Administrator meets both requirements but is a highly privileged role. Use it only when no narrower role works, such as connecting a gateway.",
+   "Incorrect: Cloud Application Administrator can grant consent to many apps, but it is not one of the roles that Learn lists for reviewing MCP requests on the Tools page.",
+   "Incorrect: AI Reader gives read-only visibility of agents and cannot approve requests or grant consent. Use it for auditors."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-plugins-skills-mcp-servers"
+ },
+ {
+  "id": "3.2.8-04",
+  "obj": "3.2.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. registered its MCP servers in Azure API Management with the AI Gateway tier. An administrator who has the AI Administrator role cannot connect the gateway in Agents > Settings > Gateways in the Microsoft 365 admin center.\n\nWhat should you do?",
+  "choices": [
+   "Have a Global Administrator turn on the Microsoft Azure toggle and consent",
+   "Assign the Azure AI Owner role to the administrator and retry",
+   "Approve each MCP server of the gateway on the Tools Requests tab",
+   "Register each MCP server again by using the Agent 365 CLI"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Connecting Azure AI Gateway to Agent 365 requires the Global Administrator role; AI Administrator does not support it. Consent is given once per tenant for all MCP servers in the gateway, and the servers are then discovered on the Tools page.",
+  "rationale": [
+   "Correct: Learn requires the Global Administrator role to connect Azure AI Gateway. The Global Administrator turns on the Microsoft Azure toggle and accepts the permissions once for the tenant.",
+   "Incorrect: Azure AI Owner is needed to start or stop the infrastructure of Foundry agents, not to connect a gateway in the Microsoft 365 admin center.",
+   "Incorrect: gateway servers are discovered automatically after the connection, and consent covers all of them, so no per-server request exists. Use the Requests tab for BYO registrations.",
+   "Incorrect: the CLI registers bring-your-own MCP servers with Agent 365. The gateway servers are already registered in API Management and only need the connection."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-tools-gateway"
+ },
+ {
+  "id": "3.2.8-05",
+  "obj": "3.2.8",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Litware, Inc. has an MCP server named MCP1. Two plugins use MCP1: Plugin1, which your organization uploaded, and Plugin2, which comes from the Microsoft 365 Store.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "If you block MCP1, the plugins that depend on MCP1 and its linked connectors are also blocked.",
+   "If you block Plugin1, MCP1 becomes unavailable to Plugin2.",
+   "You can delete Plugin2 from the Tools registry."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Blocking flows downward from a server: blocking an MCP server also blocks dependent plugins and linked connectors. Blocking a plugin affects that plugin and its agents only. Delete applies only to plugins and skills that were uploaded to the tenant.",
+  "rationale": [
+   "Yes: Learn states that blocking an MCP server also blocks dependent plugins and linked connectors, so both Plugin1 and Plugin2 stop working.",
+   "No: blocking a plugin blocks that plugin and the agents that depend on it, but associated MCP servers and connectors remain available to other plugins such as Plugin2.",
+   "No: Delete is available only for plugins and skills that were uploaded to your tenant. Plugin2 comes from the Microsoft 365 Store, so you can block it or limit its users instead."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-plugins-skills-mcp-servers"
+ },
+ {
+  "id": "3.2.8-06",
+  "obj": "3.2.8",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. runs an internal remote MCP server named OrdersMCP with a public endpoint and API key authentication. The server must be governed by Agent 365 and then used by a Microsoft Copilot Studio agent.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Make sure that the Agent 365 service principal is provisioned, and install Agent 365 CLI version 1.1.165-preview or later.",
+   "Register OrdersMCP with the Agent 365 CLI register-external-mcp-server command, with the server URL, the APIKey authentication type and the tools.",
+   "In the Microsoft 365 admin center, go to Agents > Tools > Requests (preview), review the declared tools, and select Approve.",
+   "Consent to the Microsoft Entra permissions that OrdersMCP requires.",
+   "In Copilot Studio, open the agent, go to Tools, select MCP Server, and select OrdersMCP from the registry.",
+   "In Agents > Settings > Gateways, turn on the Microsoft Azure toggle.",
+   "In Agents > Tools > Registry, select Upload, and upload the OrdersMCP manifest."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Bring-your-own MCP servers follow a developer-to-admin flow: register with the Agent 365 CLI, admin approval on the Tools Requests tab, consent to Entra permissions, then use from a supported client such as Copilot Studio. Approved servers can take up to 30 minutes to appear in Copilot Studio.",
+  "rationale": [
+   "Step 1: registration needs the Agent 365 CLI at the required version and the Agent 365 service principal in the tenant.",
+   "Step 2: the register-external-mcp-server command records the server URL, the APIKey authentication type and the tools, which creates the request.",
+   "Step 3: the registration appears on the Requests (preview) tab, where an admin reviews the declared tools and approves it.",
+   "Step 4: after approval, consent to the server's Entra permissions is required; only then is the server available to agent-building surfaces.",
+   "Step 5: in Copilot Studio, the approved server is picked from the registry under Tools > MCP Server.",
+   "Incorrect: the Gateways toggle connects Azure API Management so its registered servers are discovered. OrdersMCP is a standalone server registered with the CLI.",
+   "Incorrect: Upload in the Tools registry takes manifests for plugins and skills. MCP servers are registered through the CLI flow instead."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-byo-mcp-server"
+ },
+ {
+  "id": "3.2.8-07",
+  "obj": "3.2.8",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Lamna Healthcare has a plugin named ExpenseHelper that its developers uploaded to the tenant. Users must not be able to install any plugins from third-party publishers. Only the Finance group may use ExpenseHelper, and other agents and plugins must remain available to all users.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "In Agents > Settings > Agent and plugin access, clear the option for external publishers.",
+   "In Agents > Tools > Plugins, open ExpenseHelper, and set Users to Specific users and groups: Finance.",
+   "Set User access to Specific users or groups, and select Finance.",
+   "Block ExpenseHelper in Agents > Tools > Plugins.",
+   "Delete every third-party plugin from the Tools registry."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Plugin availability has two levels: organization-level publisher categories in Agent and plugin access, and per-plugin user availability (All users, No users or Specific users and groups) on the plugin itself. Tenant-wide User access affects every agent and plugin.",
+  "rationale": [
+   "Correct: clearing the external publishers category prevents users from installing third-party plugins, while Microsoft and organization plugins stay governed separately.",
+   "Correct: per-plugin availability with Specific users and groups limits ExpenseHelper to Finance without affecting other plugins.",
+   "Incorrect: User access limits all agents and plugins to Finance, which breaks the requirement that other agents remain available to all users. Use it for pilots.",
+   "Incorrect: blocking ExpenseHelper stops everyone, including Finance, from using it. Use Block when a plugin must be stopped organization-wide.",
+   "Incorrect: Delete applies only to plugins uploaded to the tenant, not to store plugins, and it would not stop future third-party installs. Use the publisher setting instead."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-plugins-skills-mcp-servers"
+ },
+ {
+  "id": "3.2.8-08",
+  "obj": "3.2.8",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Refer to the case study. You need to choose where the ticketing team should build the agent that uses TicketingMCP.\n\nWhich surface should the ticketing team use?",
+  "choices": [
+   "Microsoft Copilot Studio",
+   "Microsoft Foundry Agent Service",
+   "A declarative agent in Microsoft 365 Copilot",
+   "GitHub Copilot CLI"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "During the preview, approved bring-your-own MCP servers can be used from Copilot Studio, Visual Studio Code, Claude Code and GitHub Copilot CLI. Foundry and Microsoft 365 declarative agents are not supported. Calls go through the Agent 365 Tooling Gateway, so Defender advanced hunting can track them.",
+  "rationale": [
+   "Correct: Copilot Studio supports approved BYO MCP servers from the registry under Tools > MCP Server, and it is the low-code option that the requirements ask for.",
+   "Incorrect: Foundry agents are not a supported client surface for BYO MCP servers during the preview, so the agent could not use the approved TicketingMCP registration.",
+   "Incorrect: Microsoft 365 declarative agents are also listed as not supported for BYO MCP servers during the preview.",
+   "Incorrect: GitHub Copilot CLI is a supported client, but it is a developer command-line tool, not a low-code way to build and publish an agent for staff."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/manage-byo-mcp-server",
+  "case": "C-g"
+ }
+]

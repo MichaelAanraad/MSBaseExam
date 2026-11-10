@@ -1,0 +1,24 @@
+[
+ {
+  "id": "C-e",
+  "title": "Trey Research",
+  "sections": [
+   [
+    "Overview",
+    "Trey Research is a contract research organization that runs clinical trials for pharmaceutical companies. The company has 4,200 employees. The headquarters is in Boston, and laboratories are in Dublin and Singapore. A security operations center (SOC) in Dublin handles all security incidents for the company.\n\nTrey Research plans to expand the use of Microsoft 365 Copilot and wants to make sure that clinical data stays protected and that AI activity can be reviewed by the compliance team."
+   ],
+   [
+    "Existing environment",
+    "**Microsoft 365**\n\nTrey Research has a Microsoft 365 E5 subscription for all users. The 400 members of the Research security group have Microsoft 365 Copilot licenses. Other users use Microsoft 365 Copilot Chat. All Windows 11 devices are onboarded to Microsoft Defender for Endpoint. Microsoft Teams is used for all internal chat.\n\n**Sensitivity labels**\n\nThe following sensitivity labels exist, listed by priority: Public (order 0), General (order 1), Confidential (order 2), and Highly Confidential (order 3). Highly Confidential applies encryption that grants the Research group the Co-Author permissions level.\n\nA label policy named All Employees has order number 0. It publishes Public, General, and Confidential to all users and sets General as the default label for documents. Members of the Research group are included in All Employees. No other label policy exists.\n\n**SharePoint**\n\nA SharePoint site named TrialDocs stores the clinical trial master files. Highly Confidential files are also stored in several other Research sites and in the OneDrive accounts of researchers.\n\n**Security operations**\n\nSOC analysts manage all incidents in the Microsoft Defender portal. Since October 2026, the SOC has noticed that new DLP signals appear in the BehaviorInfo table in advanced hunting, but they no longer appear in the incident queue.\n\n**Compliance team**\n\nA compliance officer named User1 is a member of the Microsoft Purview Security Reader role group and uses Data Security Posture Management for AI (classic).\n\n**Other information**\n\nThe sales department uses Dynamics 365 to manage client opportunities. The company plans to migrate its remaining on-premises file servers to SharePoint next year. Guest Wi-Fi in all offices is provided by a third-party vendor."
+   ],
+   [
+    "Business requirements",
+    "Trey Research identifies the following business requirements:\n\n- Microsoft 365 Copilot must not use the content of items labeled Highly Confidential in its responses, wherever the items are stored. Researchers must continue to open and edit these items in SharePoint, OneDrive, and the Office apps.\n- New documents created by members of the Research group must have the Confidential label by default. The default label for all other users must remain General.\n- Clinical trial master files in TrialDocs must be kept for 10 years from when they are labeled, must be marked as records so that they cannot be edited or deleted during that period, and must then be deleted.\n- Teams chat messages must be deleted two years after they are created.\n- The SOC must be able to review DLP incidents for up to four months after they occur, and new DLP signals must appear as alerts in the incident queue again.\n- Only analysts in the investigation team may view the matched sensitive content of DLP alerts.\n- User1 must be able to review the text of Microsoft 365 Copilot prompts and responses in activity explorer."
+   ],
+   [
+    "Technical requirements",
+    "Trey Research identifies the following technical requirements:\n\n- Follow the principle of least privilege for all role assignments.\n- Minimize administrative effort.\n- Do not purchase additional licenses.\n- Use built-in Microsoft Purview and Microsoft Defender capabilities whenever possible."
+   ]
+  ]
+ }
+]

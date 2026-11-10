@@ -1,0 +1,1505 @@
+[
+ {
+  "id": "2.2.1-01",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. enabled Temporary Access Pass in the Authentication methods policy for a group of new employees. Help desk staff must create a Temporary Access Pass for each of these employees. None of the employees hold a Microsoft Entra administrator role. You need to give the help desk staff the least privileged built-in role that can create the passes.\n\nWhich role should you assign?",
+  "choices": [
+   "Authentication Administrator",
+   "Privileged Authentication Administrator",
+   "Authentication Policy Administrator",
+   "User Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Temporary Access Pass has two administrative layers. The Authentication methods policy (who may use a pass, lifetime, one-time use) is managed by the Authentication Policy Administrator, while issuing a pass to a specific user is done by an Authentication Administrator for non-admin members or a Privileged Authentication Administrator when the target holds an admin role.",
+  "rationale": [
+   "Correct: Authentication Administrators can create, delete, and view a Temporary Access Pass for members who hold no administrator role, except for themselves. The new employees are regular members, so this is the narrowest role that can issue the passes.",
+   "Incorrect: Privileged Authentication Administrator can also create passes, but it can do so for administrators too, so it grants more than the stem needs. Use it when help desk staff must issue a Temporary Access Pass to users who hold Microsoft Entra admin roles.",
+   "Incorrect: Authentication Policy Administrator enables the Temporary Access Pass method, chooses the included groups, and sets lifetime and length, but it does not create passes for individual users. Use it for the policy configuration that already exists here.",
+   "Incorrect: User Administrator manages accounts, groups, and passwords of non-admin users, but it is not one of the roles that Learn lists for creating a Temporary Access Pass. Use it for user lifecycle tasks such as creating accounts or resetting passwords."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-authentication-temporary-access-pass"
+ },
+ {
+  "id": "2.2.1-02",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. completed the migration to the Authentication methods policy. Microsoft Authenticator is enabled for all users. A group named SmsUsers contains 20 warehouse employees who have no smartphones. You need to ensure that only members of SmsUsers can use text messages for multifactor authentication.\n\nWhat should you configure?",
+  "choices": [
+   "Enable SMS in the Authentication methods policy and target the SmsUsers group",
+   "Select Text message to phone in the legacy per-user MFA service settings",
+   "Enable Voice call in the Authentication methods policy and target the SmsUsers group",
+   "Create a Conditional Access policy for SmsUsers that requires the Multifactor authentication strength"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Authentication methods policy is the place to enable a method for specific groups and to exclude others; the legacy MFA and SSPR policies were tenant-wide only. After the migration is complete, Microsoft Entra ID follows only the Authentication methods policy, so method targeting must be done there.",
+  "rationale": [
+   "Correct: the Authentication methods policy lets you enable SMS for one group, so only the 20 SmsUsers members can register and use text messages while everyone else keeps Microsoft Authenticator. Learn uses this exact pattern as its example.",
+   "Incorrect: the legacy MFA service settings enable text messages for the whole tenant and cannot target a group. After Migration Complete the legacy settings are also ignored. They mattered only for tenants still in Pre-migration or Migration in Progress.",
+   "Incorrect: Voice call is a separate method that places a phone call instead of sending a text message, so it does not meet the text message requirement. Enable it for a group when users can answer a call but cannot receive SMS, or need an office phone.",
+   "Incorrect: an authentication strength controls which methods satisfy a sign-in for the targeted users, but it does not enable SMS or stop other users from registering it. Use authentication strengths to demand stronger methods, such as phishing-resistant MFA for admins."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/how-to-authentication-methods-manage"
+ },
+ {
+  "id": "2.2.1-03",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. users have passkeys and Microsoft Authenticator registered. System-preferred authentication is in the Microsoft managed state. Users report that the first sign-in screen now asks for a passkey instead of a password. Management wants the password prompt to appear first again, but the most secure registered method must still be offered when the second factor is required.\n\nWhat should you do?",
+  "choices": [
+   "Set the system-preferred authentication state to Enabled",
+   "Set the system-preferred authentication state to Disabled",
+   "Keep the Microsoft managed state and exclude all users from it",
+   "Set the registration campaign state to Disabled"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "System-preferred authentication has three states. Microsoft managed applies the method ranking to both first-factor and second-factor authentication, Enabled applies it to the second factor only, and Disabled leaves sign-in logic unchanged. Users can always choose Sign in another way.",
+  "rationale": [
+   "Correct: the Enabled state applies system-preferred logic to the second factor only, so first-factor sign-in returns to the existing password behavior while MFA prompts still start with the most secure registered method. Learn gives this exact tip.",
+   "Incorrect: Disabled turns off system-preferred logic for both factors, so the second factor would fall back to the user's default method instead of the most secure one. Use Disabled only when you do not want the system to pick methods at all.",
+   "Incorrect: excluding all users from the Microsoft managed state has the same effect as disabling the feature for them, so the second factor loses the secure ordering too. Use exclusions for a small group, such as accounts that must keep a specific method.",
+   "Incorrect: the registration campaign nudges users to register Microsoft Authenticator or a passkey after MFA; it does not decide which method is prompted at sign-in. Disable it when you want to stop the setup nudges, not to change sign-in order."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-system-preferred-authentication"
+ },
+ {
+  "id": "2.2.1-04",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys enabled passkeys (FIDO2) for all users with a passkey profile that allows synced and device-bound passkeys. Microsoft Authenticator push notifications are also enabled for all users. About 900 users still complete MFA by text message and have not set up Authenticator. You need to nudge these users to set up Microsoft Authenticator, and they must be required to set it up after they skip the prompt three times.\n\nWhat should you configure for the registration campaign?",
+  "choices": [
+   "State Enabled, target Microsoft Authenticator, Limited number of snoozes set to Enabled",
+   "State Microsoft managed, include all users",
+   "State Enabled, target Passkey, Limited number of snoozes set to Enabled",
+   "State Enabled, target Microsoft Authenticator, Limited number of snoozes set to Disabled"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A registration campaign targets one method at a time. In the Enabled state you choose the method, the snooze days, and whether snoozes are limited to three; in the Microsoft managed state Microsoft chooses the method and settings, and it targets passkeys when the included users are enabled for passkeys and belong to an eligible passkey profile, such as an unrestricted one.",
+  "rationale": [
+   "Correct: the Enabled state lets you pick Microsoft Authenticator even though passkeys are enabled, and Limited number of snoozes set to Enabled requires setup after three skips. Users enabled for Authenticator push who have not set it up are nudged after MFA.",
+   "Incorrect: in the Microsoft managed state the targeted method changes to passkeys because the passkey profile allows all passkey types, and passkey campaigns allow unlimited snoozes. Use Microsoft managed when you accept Microsoft's choice of method and defaults.",
+   "Incorrect: targeting Passkey nudges users to create a passkey, not to set up Microsoft Authenticator, so it misses the stated goal. Use this configuration when you want an enforced passkey rollout with a snooze limit.",
+   "Incorrect: with Limited number of snoozes set to Disabled users can skip the prompt indefinitely, so setup is never required. Use it when you want a soft nudge that never blocks users."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/how-to-mfa-registration-campaign"
+ },
+ {
+  "id": "2.2.1-05",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles is moving from the legacy MFA and SSPR policies to the Authentication methods policy. The Manage migration setting is Pre-migration. Administrators enabled Microsoft Authenticator for a pilot group in the Authentication methods policy, and the pilot users must now also use it for self-service password reset (SSPR). The legacy MFA and SSPR settings must keep applying until every method is validated.\n\nWhat should you do?",
+  "choices": [
+   "Set Manage migration to Migration in Progress",
+   "Set Manage migration to Migration Complete",
+   "Keep Manage migration at Pre-migration",
+   "Run the automated migration guide and select Migrate"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The migration control has three states. Pre-migration uses the Authentication methods policy for authentication only, Migration in Progress uses it for authentication and SSPR while still respecting legacy settings, and Migration Complete uses only the Authentication methods policy and ignores the legacy settings.",
+  "rationale": [
+   "Correct: Migration in Progress applies the Authentication methods policy to both sign-in and SSPR, so the pilot users can reset with Authenticator, and the legacy MFA and SSPR settings are still respected during validation. Learn says to set it before you change methods.",
+   "Incorrect: Migration Complete makes Microsoft Entra ID follow only the Authentication methods policy and ignore legacy settings, which breaks the requirement that legacy settings keep applying. Select it after every method is validated and the legacy methods are removed.",
+   "Incorrect: Pre-migration is the current state; it uses the Authentication methods policy for authentication only, so Authenticator still would not count for SSPR. It fits tenants that have not started to use the new policy for password reset.",
+   "Incorrect: the automated migration guide configures the policy from the legacy settings and then sets the status to Migration Complete, so legacy settings stop applying immediately. Use it for a fast, wizard-driven migration when no staged validation is needed."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-authentication-methods-manage"
+ },
+ {
+  "id": "2.2.1-06",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud set the Manage migration setting to Migration Complete. Microsoft Authenticator is enabled for all users, and Allow use of Microsoft Authenticator OTP is set to Yes. Users who registered the Authenticator app by selecting I want to use a different authenticator app in Security info report that their six-digit codes are no longer accepted.\n\nWhat should you do?",
+  "choices": [
+   "Enable Third-party software OATH tokens and target the affected users",
+   "Enable Hardware OATH tokens and target the affected users",
+   "Set the Microsoft Authenticator authentication mode to Any",
+   "Run a registration campaign that targets Microsoft Authenticator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The legacy OATH control covered Authenticator codes, third-party TOTP apps, and hardware tokens together; the Authentication methods policy splits them into separate controls. An Authenticator registered through the different authenticator app wizard is a software OATH token, so it needs the Third-party software OATH tokens method.",
+  "rationale": [
+   "Correct: Learn notes that users who registered Microsoft Authenticator only for codes through the different authenticator app wizard need the Third-party software OATH tokens policy enabled. Targeting the affected users makes their existing registrations usable again.",
+   "Incorrect: Hardware OATH tokens covers physical key-fob tokens with a seed loaded by an administrator, not an app on a phone. Enable it when users carry hardware TOTP tokens instead of smartphones.",
+   "Incorrect: the authentication mode controls whether Authenticator accepts push notifications, passwordless sign-in, or both. It does not affect codes from an app that was registered as a generic OATH app. Set it to Any to allow both push and passwordless.",
+   "Incorrect: a registration campaign nudges users to set up Authenticator push after MFA, which would eventually change their registration but does not make the existing codes work. Use it to move SMS and voice users to Authenticator."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/how-to-authentication-methods-manage"
+ },
+ {
+  "id": "2.2.1-07",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Woodgrove Bank migrates authentication method management to the Authentication methods policy by using Microsoft Graph PowerShell. You already documented the methods that are enabled in the legacy MFA and SSPR policies. Before you change anything, you must save the current Authentication methods policy for rollback. The new policy must apply to sign-in and SSPR while legacy settings are still honored, and legacy settings must be ignored only after every method is configured.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Policy.ReadWrite.AuthenticationMethod\"`",
+   "`Get-MgPolicyAuthenticationMethodPolicy | ConvertTo-Json -Depth 10 | Out-File policy-backup.json`",
+   "`Update-MgPolicyAuthenticationMethodPolicy -BodyParameter @{ policyMigrationState = \"migrationInProgress\" }`",
+   "`Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration -AuthenticationMethodConfigurationId $configId -BodyParameter $params` for each documented method",
+   "`Update-MgPolicyAuthenticationMethodPolicy -BodyParameter @{ policyMigrationState = \"migrationComplete\" }`",
+   "`Update-MgPolicyAuthenticationMethodPolicy -BodyParameter @{ policyMigrationState = \"premigration\" }`",
+   "`Connect-MgGraph -Scopes \"Policy.ReadWrite.ConditionalAccess\"`",
+   "`Connect-MsolService`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The policyMigrationState property of authenticationMethodsPolicy has the values premigration, migrationInProgress, and migrationComplete. Learn says to set Migration in Progress before you change methods, then configure each method, and only then set Migration Complete, after which legacy settings are ignored.",
+  "rationale": [
+   "Step 1: every later cmdlet reads or writes the Authentication methods policy, so you first connect with the Policy.ReadWrite.AuthenticationMethod scope, which covers both reading and updating it.",
+   "Step 2: exporting the current policy to a file before any change gives you the rollback record that the stem requires, including the methods and groups already configured.",
+   "Step 3: migrationInProgress makes the policy apply to authentication and SSPR while legacy settings are still respected. Learn says to set this state before you change methods.",
+   "Step 4: with the migration in progress, you enable and target each method from your audit, such as Microsoft Authenticator or SMS, by updating its authentication method configuration.",
+   "Step 5: migrationComplete makes Microsoft Entra ID follow only the Authentication methods policy and ignore legacy settings, which the stem allows only after every method is configured.",
+   "Incorrect: premigration uses the policy for authentication only, so SSPR would keep using the legacy policy. It is the starting state of tenants that have not begun migrating, not a step toward completion.",
+   "Incorrect: Policy.ReadWrite.ConditionalAccess grants access to Conditional Access policies, not to the Authentication methods policy, so the updates would fail. Use this scope when you script Conditional Access changes.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module and cannot manage the Authentication methods policy. Use Connect-MgGraph from Microsoft Graph PowerShell instead."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/resources/authenticationmethodspolicy?view=graph-rest-1.0"
+ },
+ {
+  "id": "2.2.1-08",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Alpine Ski House onboards a new employee, User1, who must register a passkey on the first day without knowing a password. The Temporary Access Pass policy allows lifetimes from 1 to 8 hours and does not enforce one-time use. The pass must be valid for four hours and must work for device enrollment and then again for passkey registration later that morning.\n\nHow should you complete the command? To answer, select the appropriate options in the answer area.\n\n```powershell\n$params = @{\n    lifetimeInMinutes = [[1]]\n    isUsableOnce = [[2]]\n}\n[[3]] -UserId \"user1@alpineskihouse.com\" -BodyParameter $params\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "4",
+     "240",
+     "480"
+    ],
+    "why": [
+     "Incorrect: lifetimeInMinutes is expressed in minutes, so 4 means four minutes, which is below the 10-minute minimum and far below the policy minimum of one hour. Use a value in minutes that falls inside the policy range.",
+     "Correct: 240 minutes is four hours, which matches the requirement and falls inside the policy range of 60 to 480 minutes, so the pass is accepted and expires at the end of the onboarding morning.",
+     "Incorrect: 480 minutes is the policy maximum of eight hours. The pass would work, but it stays valid twice as long as required, which widens the window for misuse. Use the maximum only when onboarding lasts the whole day."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "$true",
+     "$false"
+    ],
+    "why": [
+     "Incorrect: a one-time pass is consumed by the first sign-in, so User1 could not sign in again later for passkey registration and would need a second pass. Use one-time passes when a single short sign-in is enough.",
+     "Correct: a multiuse pass can be entered for device enrollment and again for passkey registration during its lifetime. Learn describes this as the simpler option when enrollment and registration are separate steps."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Get-MgUserAuthenticationTemporaryAccessPassMethod",
+     "New-MgUserAuthenticationTemporaryAccessPassMethod",
+     "Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration"
+    ],
+    "why": [
+     "Incorrect: the Get cmdlet returns an existing pass and its usability state but never creates one, and the passcode itself is shown only at creation. Use it to check whether a user's pass is still valid.",
+     "Correct: New-MgUserAuthenticationTemporaryAccessPassMethod creates a Temporary Access Pass for the user with the lifetime and one-time settings in the body, and returns the passcode to give to User1.",
+     "Incorrect: this cmdlet changes the tenant-level method configuration, such as which groups may use Temporary Access Pass and its allowed lifetimes. Use it to change the policy, not to issue a pass to one user."
+    ]
+   }
+  ],
+  "answer": [
+   1,
+   1,
+   1
+  ],
+  "explanation": "A Temporary Access Pass is issued per user with New-MgUserAuthenticationTemporaryAccessPassMethod, and the per-pass lifetime and one-time setting must fall inside the tenant policy. A one-time pass must be used for registration within 10 minutes, so multistep onboarding is easier with a multiuse pass.",
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-authentication-temporary-access-pass"
+ },
+ {
+  "id": "2.2.1-09",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "A. Datum Corporation is configuring the Authentication methods policy for three groups of users. You need to enable the method that meets each group's requirement.\n\nWhich authentication method should you enable for each group? To answer, drag the appropriate methods to the correct groups. Each method may be used once, more than once, or not at all.",
+  "choices": [
+   "Temporary Access Pass",
+   "Passkey (FIDO2)",
+   "Email OTP",
+   "SMS",
+   "Voice call"
+  ],
+  "targets": [
+   "Group1: administrators who need a phishing-resistant method on shared workstations where phones are not allowed",
+   "Group2: new hires who must sign in once without a password to register their own methods",
+   "Group3: members who must verify an alternate email address during self-service password reset"
+  ],
+  "answer": [
+   1,
+   0,
+   2
+  ],
+  "rationale": [
+   "Group1 needs phishing resistance without a phone, which a FIDO2 security key passkey provides; SMS, voice, and email codes can be phished and need a phone or mailbox.",
+   "Group2 needs a time-limited passcode that lets a user sign in without a password to register methods, which is exactly what a Temporary Access Pass is for.",
+   "Group3 resets passwords with a code sent to an alternate email address, which is the Email OTP method enabled for password reset in the Authentication methods policy."
+  ],
+  "notes": [
+   "A time-limited passcode, single or multiuse, that lets a user sign in to register passwordless methods or recover access. Use it for onboarding and recovery, not as a daily method.",
+   "A phishing-resistant credential such as a FIDO2 security key or a passkey in Authenticator. Use it for privileged users and anywhere phishing resistance is required.",
+   "A one-time code sent to an email address. Members can use it for password reset, and a separate setting allows external users to sign in with it.",
+   "A code sent by text message to a mobile phone. Use it only for users without smartphones, because it is weaker than app-based methods.",
+   "A phone call that the user answers to approve. Use it for users who can take a call, including on an office phone, but not receive app notifications."
+  ],
+  "explanation": "Pick a method by the constraint that matters: phishing resistance points to passkeys, passwordless bootstrapping points to Temporary Access Pass, and email verification during SSPR points to Email OTP. Phone-based methods remain fallbacks for users without smartphones.",
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/how-to-authentication-methods-manage"
+ },
+ {
+  "id": "2.2.1-10",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the onboarding requirement for new employees.\n\nWhat should you configure?",
+  "choices": [
+   "Enable Temporary Access Pass for new hires with one-time use not enforced, and issue each new employee a pass that lasts three hours",
+   "Enable Temporary Access Pass for new hires with one-time use enforced, and issue each new employee a pass that lasts three hours",
+   "Enable Email OTP for new hires, and send each new employee a code at a personal email address",
+   "Run a registration campaign that targets Passkey for new hires"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Temporary Access Pass lets a user sign in without a password to set up a device and register passwordless methods. A one-time pass must be used for registration within 10 minutes and is consumed by the first sign-in, so onboarding that spans device setup and later passkey registration is simpler with one multiuse pass.",
+  "rationale": [
+   "Correct: a multiuse pass covers Windows device setup and the passkey registration later in the two-hour session with one code, so new employees never get a password and administrators issue only one pass per hire.",
+   "Incorrect: a one-time pass is used up by the Windows device setup, so each new employee would need a second pass for passkey registration. Learn describes this two-pass approach, but it adds administrative effort that the case wants to avoid.",
+   "Incorrect: Email OTP for members is a password reset method, not a way to sign in without a password, so new employees could not register a passkey with it. External users can use email OTP to sign in when that separate setting is enabled.",
+   "Incorrect: a registration campaign nudges users after they complete MFA, and new employees have no method to complete MFA with. Use a passkey campaign to move existing MFA users to passkeys."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-authentication-temporary-access-pass",
+  "case": "C-d"
+ },
+ {
+  "id": "2.2.2-01",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery has 300 cloud-only users and a Microsoft Entra ID Free tenant. Users must be prevented from choosing passwords that contain the company name or the product name Reserve. You need to meet the requirement.\n\nWhat should you do first?",
+  "choices": [
+   "Acquire Microsoft Entra ID P1 licenses for the users",
+   "Add the terms to the global banned password list",
+   "Set Enable password protection on Windows Server Active Directory to Yes",
+   "Lower the smart lockout threshold to 5"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft Entra Password Protection has two lists. The global banned password list applies to every tenant at no cost and cannot be edited, while the custom banned password list for organization-specific terms requires Microsoft Entra ID P1 or P2 for cloud-only users.",
+  "rationale": [
+   "Correct: company and product names belong in the custom banned password list, and Learn lists Microsoft Entra ID P1 or P2 as the license for that list for cloud-only users. With the licenses in place you add the terms and set Enforce custom list to Yes.",
+   "Incorrect: the global banned password list is maintained by Microsoft from security telemetry, applies automatically, and cannot be edited by customers. It already protects the Free tenant against common weak passwords, but not against company-specific terms.",
+   "Incorrect: this setting turns on the DC agents that enforce the lists on on-premises domain controllers. The users here are cloud-only, so it has no effect on them. Use it in hybrid environments after deploying the proxy and DC agents.",
+   "Incorrect: smart lockout limits how many wrong passwords an attacker can try; it does not control which password a user may choose. Change the threshold when you need to tune brute-force protection, which also needs P1 to customize."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-password-ban-bad"
+ },
+ {
+  "id": "2.2.2-02",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lucerne Publishing has Microsoft Entra ID P1. The company is based in Boston and publishes a book series named Starlight. Users often create passwords such as Lucerne1!, B0ston@Lucerne, and Starlight#1. You need to block these passwords and similar variants by using the fewest custom banned password entries.\n\nWhich entries should you add to the custom banned password list?",
+  "choices": [
+   "Lucerne, Boston, and Starlight",
+   "Lucerne1!, B0ston@Lucerne, and Starlight#1",
+   "Lucerne, Lucerne1, Lucerne2026, and Starlight1",
+   "LUCERNE, lucerne, BOSTON, and boston"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Password Protection normalizes a new password (lowercase plus common substitutions such as 0 to o and @ to a), applies fuzzy matching with an edit distance of one, and scores the result. Because of this, a few base terms block a large set of variants, which is why Learn recommends adding only key base terms.",
+  "rationale": [
+   "Correct: after normalization, Lucerne1!, B0ston@Lucerne, and Starlight#1 all contain a base term and score below the five points needed, so three base terms block them and their variants. This is the fewest entries that cover all three names.",
+   "Incorrect: adding the exact passwords blocks only those strings and close fuzzy matches, so many other variants built on the same names remain allowed. Learn calls this approach wasteful and less secure than banning the base terms.",
+   "Incorrect: listing numbered variants uses more entries and still misses Boston. Normalization and fuzzy matching already catch most numeric variants of a base term, so separate entries per variant are unnecessary.",
+   "Incorrect: the custom banned password list is case-insensitive, so separate uppercase and lowercase entries only waste slots out of the 1,000-term limit, and Starlight is missing. Add each base term once."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-password-ban-bad"
+ },
+ {
+  "id": "2.2.2-03",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has the term fabrikam in the custom banned password list. Assume that no other banned term, user name, or tenant name matches the passwords below and that each password meets the length and complexity requirements. A user changes the password in Microsoft Entra ID.\n\nWhich new password should Microsoft Entra Password Protection accept?",
+  "choices": [
+   "Fabrikam#2026",
+   "F@brikam!9x",
+   "Fabrikam123",
+   "Fabr1kam!!"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A password is first normalized (lowercase, then substitutions such as 0 to o, 1 to l, $ to s, and @ to a), then checked against the banned lists with fuzzy matching at an edit distance of one, and then scored: each banned term found counts one point and each remaining character counts one point. At least five points are needed, so extra characters beyond the banned term matter, while substitutions add nothing.",
+  "rationale": [
+   "Correct: Fabrikam#2026 normalizes to fabrikam#2o26 because 0 becomes o. The banned term scores one point and the five remaining characters #, 2, o, 2, and 6 score five points, six in total. Even if fuzzy matching absorbed the # into the term, five points remain.",
+   "Incorrect: F@brikam!9x normalizes to fabrikam!9x because @ becomes a. The banned term plus the three characters !, 9, and x score four points, which is below five, so the password is rejected.",
+   "Incorrect: Fabrikam123 normalizes to fabrikaml23 because 1 becomes l. The banned term plus l, 2, and 3 score four points (three if fuzzy matching absorbs the l), so it is rejected. Add at least one more unique character to reach five points.",
+   "Incorrect: Fabr1kam!! normalizes to fabrlkam!!, which is within an edit distance of one from fabrikam, so fuzzy matching treats it as the banned term. One point plus two for the exclamation marks gives three points, so it is rejected."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-password-ban-bad"
+ },
+ {
+  "id": "2.2.2-04",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. uses pass-through authentication and has Microsoft Entra ID P1. The on-premises AD DS account lockout policy locks an account after 15 failed attempts for 5 minutes. Password spray attacks must be stopped by Microsoft Entra smart lockout before the attacks lock the on-premises accounts.\n\nWhich smart lockout values should you configure?",
+  "choices": [
+   "Lockout threshold 5, lockout duration 600 seconds",
+   "Lockout threshold 20, lockout duration 600 seconds",
+   "Lockout threshold 5, lockout duration 120 seconds",
+   "Lockout threshold 20, lockout duration 120 seconds"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With pass-through authentication, Microsoft Entra smart lockout must trip before AD DS lockout does. Learn says the Microsoft Entra threshold must be lower than the AD DS threshold (AD DS at least two or three times higher) and the Microsoft Entra duration, set in seconds, must be longer than the AD DS duration, set in minutes.",
+  "rationale": [
+   "Correct: a threshold of 5 is a third of the AD DS threshold of 15, and 600 seconds (10 minutes) is longer than the 5-minute AD DS duration, so Microsoft Entra ID locks attackers out in the cloud before failed attempts reach the on-premises domain controllers.",
+   "Incorrect: a threshold of 20 is higher than the AD DS threshold of 15, so AD DS would lock the on-premises account first. Use a higher cloud threshold only for cloud-only or password hash sync users when fewer lockouts matter more.",
+   "Incorrect: 120 seconds is only 2 minutes, which is shorter than the 5-minute AD DS lockout, so attempts resume in the cloud while AD DS is still counting. The duration must exceed the AD DS duration.",
+   "Incorrect: both values are wrong for pass-through authentication; the threshold is above the AD DS threshold of 15 and the duration is shorter than the 5-minute AD DS duration, so on-premises lockouts would still happen. A higher threshold with a short duration suits cloud-only users, where no AD DS lockout must be protected."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-smart-lockout"
+ },
+ {
+  "id": "2.2.2-05",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Trey Research deployed on-premises Microsoft Entra Password Protection with Mode set to Audit so it can measure the impact before enforcement. Synced users who have password writeback report that weak passwords are rejected immediately when they change their password in Security info. You need to explain the behavior to the users.\n\nWhich reason should you give?",
+  "choices": [
+   "Microsoft Entra ID always enforces the banned password lists for cloud password changes",
+   "Enforce custom list set to Yes overrides Audit mode on the domain controllers",
+   "Smart lockout rejects passwords that users tried before the change",
+   "The DC agents switch to enforce mode for users who have password writeback"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Audit mode exists only for the on-premises DC agents. When a password is changed or reset in Microsoft Entra ID, the global and custom banned password lists are always enforced, so a cloud change can fail while the same weak password would only be logged on a domain controller.",
+  "rationale": [
+   "Correct: the Password Protection FAQ states that audit mode is supported only in on-premises AD DS and that Microsoft Entra ID is implicitly always in enforce mode. Security info changes are cloud changes, so weak passwords are rejected there.",
+   "Incorrect: Enforce custom list controls whether the custom terms are used, both in the cloud and by the DC agents. It does not override the on-premises Mode setting, so DC agents in Audit mode still accept and log weak passwords.",
+   "Incorrect: smart lockout tracks failed sign-in attempts and locks accounts against guessing; it does not validate new passwords. It is the right feature to tune when users are locked out after password spray attacks.",
+   "Incorrect: the DC agents follow the single Mode setting of the tenant policy, and there is no per-user enforcement switch based on writeback. The rejection here happens earlier, in Microsoft Entra ID. Writeback matters when cloud resets must also change the AD DS password."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-ban-bad-on-premises-faq"
+ },
+ {
+  "id": "2.2.2-06",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Blue Yonder Airlines deployed the Microsoft Entra Password Protection proxy service and DC agents. The DC agent Admin event log on each domain controller shows event ID 10024 for several password changes. You need to ensure that passwords like these are rejected from now on.\n\nWhat should you do?",
+  "choices": [
+   "Set Mode to Enforced on the Password protection page",
+   "Set Enforce custom list to Yes on the Password protection page",
+   "Restart the Microsoft Entra Password Protection proxy service",
+   "Run Register-AzureADPasswordProtectionForest again"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Event 10024 means a changed password would normally have been rejected but was accepted because the policy is in audit-only mode. The only difference between Audit and Enforced mode is whether a noncompliant password is accepted, so switching the mode is the fix once the impact is understood.",
+  "rationale": [
+   "Correct: Learn describes event 10024 as a password that failed the policy but was accepted because of audit-only mode. Setting Mode to Enforced in Entra ID > Authentication methods > Password protection makes the DC agents reject such passwords.",
+   "Incorrect: the passwords already failed the policy, so the banned terms are being evaluated. Enforce custom list adds organization terms to the evaluation, but in Audit mode the DC agents would still accept the passwords and log them.",
+   "Incorrect: the proxy service only relays policy downloads and registration between DC agents and Microsoft Entra ID; restarting it does not change the policy mode. Restart it after you change its port or HTTP proxy configuration.",
+   "Incorrect: forest registration is needed only once in the forest's lifetime, and running it again succeeds but changes nothing. Run it when you first deploy Password Protection in a new forest."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-ban-bad-on-premises-monitor"
+ },
+ {
+  "id": "2.2.2-07",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Humongous Insurance has one AD DS domain with four writable domain controllers in the head office and two read-only domain controllers (RODCs) in branch offices. You plan to deploy on-premises Microsoft Entra Password Protection.\n\nWhich servers should you install the DC agent software on?",
+  "choices": [
+   "The four writable domain controllers",
+   "All six domain controllers",
+   "The two RODCs",
+   "One writable domain controller in each site"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The DC agent is a password filter that validates password changes where they are processed. RODCs do not process password changes but forward them to writable domain controllers, and Microsoft strongly recommends installing the agent on every writable domain controller so no change bypasses validation.",
+  "rationale": [
+   "Correct: password change and set operations are processed and persisted only on writable domain controllers, so installing the DC agent on all four of them covers every password change in the domain.",
+   "Incorrect: installing on the RODCs adds nothing because RODCs forward password changes to writable domain controllers. Learn states that you do not have to install the DC agent on RODCs.",
+   "Incorrect: RODCs never validate or store password changes, so agents only on them would leave every password change unprotected. RODCs also cannot host the proxy service.",
+   "Incorrect: incremental deployment works, but clients can send a change to any writable domain controller, so domain controllers without the agent let weak passwords through. Learn recommends the agent on all domain controllers in the domain."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-ban-bad-on-premises-deploy"
+ },
+ {
+  "id": "2.2.2-08",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Margie's Travel has Microsoft Entra ID P1 and uses the default Microsoft Entra smart lockout settings. Users sign in by using password hash synchronization.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "If a user enters the same wrong password repeatedly, each attempt counts toward the lockout threshold.",
+   "A locked-out user who completes SSPR by selecting I forgot my password can sign in without waiting for the lockout to expire.",
+   "You can change the lockout threshold and lockout duration on the Password protection page in the Microsoft Entra admin center."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Smart lockout is always on and locks an account after 10 failed attempts by default, starting with a one-minute lockout. It ignores repeated identical bad passwords, it can be bypassed by an SSPR reset, and its values can be customized with Microsoft Entra ID P1 or higher.",
+  "rationale": [
+   "No: smart lockout tracks the last three bad password hashes, so entering the same wrong password again does not increase the lockout counter. Only different wrong passwords count, which is what a guessing attacker produces.",
+   "Yes: when the user chooses I forgot my password in SSPR, the lockout duration is reset to 0 seconds. Choosing I know my password does not reset the timer, so the user would have to change the password or wait.",
+   "Yes: Lockout threshold and Lockout duration in seconds are set under Entra ID > Authentication methods > Password protection, and the tenant's Microsoft Entra ID P1 licenses allow customizing them."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-smart-lockout"
+ },
+ {
+  "id": "2.2.2-09",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Wide World Importers has one AD DS forest and Microsoft Entra ID P1. You deploy on-premises Microsoft Entra Password Protection. You are signed in to member server Server1 as a local administrator who is also an Enterprise Admin, and you will authenticate with a Global Administrator account of the tenant. The DC agents will be installed on the domain controllers later. You need to make Server1 a working proxy, register the forest, and then, after both registrations, confirm the health of the proxy.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`AzureADPasswordProtectionProxySetup.exe /quiet`",
+   "`Import-Module AzureADPasswordProtection`",
+   "`Register-AzureADPasswordProtectionProxy -AccountUpn \"admin@wideworldimporters.com\"`",
+   "`Register-AzureADPasswordProtectionForest -AccountUpn \"admin@wideworldimporters.com\"`",
+   "`Test-AzureADPasswordProtectionProxyHealth -TestAll`",
+   "`Connect-MgGraph -Scopes \"Policy.ReadWrite.AuthenticationMethod\"`",
+   "`Get-AzureADPasswordProtectionSummaryReport`",
+   "`msiexec.exe /i AzureADPasswordProtectionDCAgentSetup.msi /quiet /qn /norestart`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "On-premises Password Protection needs a registered proxy and a registered forest before DC agents can download the banned password policy. The proxy installer adds the AzureADPasswordProtection module, which is a component of Password Protection and not the retired AzureAD module, and its cmdlets perform both registrations and the health test.",
+  "rationale": [
+   "Step 1: the proxy installer puts the proxy service and the AzureADPasswordProtection PowerShell module on Server1; nothing else can run before it.",
+   "Step 2: the registration and test cmdlets come from the AzureADPasswordProtection module, so you import it in a 64-bit PowerShell session after the installation.",
+   "Step 3: the proxy service runs but has no credentials for Microsoft Entra ID until you register it. The first proxy registration in a tenant needs Global Administrator credentials.",
+   "Step 4: after the proxy can talk to Microsoft Entra ID, you register the forest once by using Enterprise Admin rights on-premises and Global or Security Administrator rights in the tenant.",
+   "Step 5: Test-AzureADPasswordProtectionProxyHealth -TestAll runs the TLS configuration, proxy registration, and end-to-end Azure connectivity tests, which confirms the proxy health after both registrations, as the stem requires.",
+   "Incorrect: the Password Protection registration cmdlets authenticate by themselves through -AccountUpn, so a Microsoft Graph session is not needed. Use Connect-MgGraph when you script cloud settings such as the Authentication methods policy.",
+   "Incorrect: the summary report counts validation events from DC agent logs, and no DC agents are installed yet. Run it after the agents have processed password changes, for example during audit mode.",
+   "Incorrect: the DC agent belongs on domain controllers, and the stem installs it later. On a member server such as Server1 it would only sit inactive until the server is promoted."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-ban-bad-on-premises-deploy"
+ },
+ {
+  "id": "2.2.2-10",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "You are planning the Microsoft Entra Password Protection deployment for the password requirements.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "To measure on-premises impact for 30 days, you set Mode to Audit, and passwords that would be rejected are logged in the DC agent Admin event log.",
+   "During the 30-day measurement, cloud password changes that contain Northwind are accepted.",
+   "Existing AD DS passwords that contain Seattle are flagged as soon as the DC agent is installed."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Northwind Traders needs the custom banned password list for the three terms, the proxy on SRV1 and SRV2, and DC agents on the six domain controllers. Audit mode affects only the DC agents, cloud changes are always enforced, and passwords are validated only when they are changed or set.",
+  "rationale": [
+   "Yes: in Audit mode the DC agents evaluate every on-premises password change and log the ones that would fail, such as events 10024 and 10025, while still accepting them. That gives the 30-day impact measurement.",
+   "No: Microsoft Entra ID is always in enforce mode for cloud password changes, so a cloud change that contains Northwind is rejected even while the on-premises Mode is Audit.",
+   "No: Password Protection validates passwords only during change or set operations. Passwords already stored in AD DS keep working until the users change them, for example when the passwords expire."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-password-ban-bad-on-premises-deploy",
+  "case": "C-d"
+ },
+ {
+  "id": "2.2.3-01",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fourth Coffee wants to enable self-service password reset (SSPR) for the members of two existing security groups named Baristas and Managers. Other users must not be enabled for SSPR. You need to configure the scope in the Microsoft Entra admin center.\n\nWhat should you do?",
+  "choices": [
+   "Create a group that has Baristas and Managers as members, and select it under Selected",
+   "Select both Baristas and Managers under Selected",
+   "Set Self service password reset enabled to All, and exclude the other users",
+   "Select Baristas under Selected, and enable Managers in the Authentication methods policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SSPR scope is set under Password reset > Properties to None, Selected, or All. The admin center accepts only one group for Selected, but nested groups are supported, so a parent group that contains other groups is the way to scope SSPR to several existing groups.",
+  "rationale": [
+   "Correct: the admin center accepts one group for SSPR, and Microsoft Entra ID supports nested groups, so a new group with Baristas and Managers as members enables exactly those users and nobody else.",
+   "Incorrect: you can select only one Microsoft Entra group for SSPR in the admin center, so you cannot add both groups. Selecting one group directly works when only one existing group needs SSPR.",
+   "Incorrect: the All option enables SSPR for every user in the tenant and has no exclusion list, so other users would be enabled. Use All when the whole organization is ready for SSPR.",
+   "Incorrect: the Authentication methods policy controls which methods users can use for sign-in and SSPR, not who is enabled for SSPR, so Managers would stay out of scope. Use it to choose methods such as Email OTP for password reset."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/tutorial-enable-sspr"
+ },
+ {
+  "id": "2.2.3-02",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals configured self-service password reset (SSPR) for all users with one method required, and security questions are enabled. User1 holds the Helpdesk Administrator role and registered security questions and a mobile phone number. User1 reports that SSPR requires more verification than for other users and never offers the security questions.\n\nWhat should you tell User1 to do?",
+  "choices": [
+   "Register an authentication email address in addition to the mobile phone",
+   "Register two more security questions in addition to the mobile phone",
+   "Ask an administrator to set Number of methods required to reset to 2",
+   "Ask an administrator to exclude User1 from the SSPR registration requirement"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Accounts that hold Microsoft Entra administrator roles get a fixed two-gate SSPR policy that differs from the user policy and cannot be changed. It requires two pieces of authentication data, such as an email address, authenticator app, or phone number, and prohibits security questions.",
+  "rationale": [
+   "Correct: Helpdesk Administrator is one of the roles covered by the two-gate policy, which needs two methods and never accepts security questions. A mobile phone plus an authentication email address gives User1 the two allowed methods.",
+   "Incorrect: the two-gate administrator policy prohibits security questions, so more questions never count. Security questions help only regular users, and they are being retired for SSPR in March 2027.",
+   "Incorrect: Number of methods required to reset applies to the user policy. The administrator policy is fixed and already requires two methods, so this change would add friction for all users without helping User1.",
+   "Incorrect: the registration requirement only controls whether users are prompted to register at sign-in. Excluding User1 would not change which methods the administrator policy accepts. Adjust registration when users should register manually instead."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-policy"
+ },
+ {
+  "id": "2.2.3-03",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company has 400 users licensed for Microsoft 365 Business Standard. All users are synchronized from on-premises AD DS by using Microsoft Entra Connect with password hash synchronization. Users must be able to reset forgotten passwords from the web, and the new password must work for on-premises sign-ins. The company wants to stay on a Microsoft 365 Business plan.\n\nWhich license should you assign to the users?",
+  "choices": [
+   "Microsoft 365 Business Premium",
+   "Microsoft 365 Business Basic",
+   "Microsoft 365 Business Standard with password writeback enabled",
+   "Microsoft 365 Apps for business"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SSPR features are licensed in tiers: cloud-only password change is free, cloud-only reset comes with Microsoft 365 Business Standard or Microsoft Entra ID P1, and hybrid change or reset with on-premises writeback needs Microsoft 365 Business Premium or Microsoft Entra ID P1 or P2.",
+  "rationale": [
+   "Correct: the licensing table lists hybrid user password change or reset with on-premises writeback for Microsoft 365 Business Premium and Microsoft Entra ID P1 or P2. Business Premium meets the requirement and keeps the company on a Business plan.",
+   "Incorrect: Business Basic is a lower plan than Business Standard and does not include SSPR writeback. Learn warns that standalone Basic and Standard plans do not support SSPR with on-premises writeback.",
+   "Incorrect: Business Standard covers password reset for cloud-only users only. Enabling writeback in Microsoft Entra Connect does not add the license that hybrid writeback requires, so synced users would not be covered.",
+   "Incorrect: Microsoft 365 Apps for business licenses the Office apps and does not include SSPR writeback. It fits users who only need desktop apps and cloud storage."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-licensing"
+ },
+ {
+  "id": "2.2.3-04",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute requires users to register for self-service password reset (SSPR) when they sign in. Users must also confirm their registered authentication information once a year.\n\nWhich setting should you configure?",
+  "choices": [
+   "Number of days before users are asked to reconfirm their authentication information: 365",
+   "Number of methods required to reset: 2",
+   "Notify users on password resets: Yes",
+   "Require users to register when signing in: No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SSPR registration settings decide when users are prompted. Require users to register when signing in forces registration at sign-in, and the reconfirmation interval, which is available only when that option is on, asks users every 0 to 730 days to confirm that their contact information is still current.",
+  "rationale": [
+   "Correct: the reconfirmation setting accepts 0 to 730 days, so 365 asks users once a year to confirm their methods. It is available because registration at sign-in is already required.",
+   "Incorrect: requiring two methods raises reset security but never asks users to review their registered information. Use it when one verification method is not enough for a reset.",
+   "Incorrect: this notification emails users after their password is reset, which helps detect unwanted resets, but it does not prompt anyone to confirm their information. Enable it to alert users about reset events.",
+   "Incorrect: setting registration to No stops sign-in prompts entirely and also removes the reconfirmation option. Use No when users should register manually at https://aka.ms/ssprsetup."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-howitworks"
+ },
+ {
+  "id": "2.2.3-05",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Southridge Video uses self-service password reset (SSPR) with password writeback to on-premises AD DS. Users who are locked out of AD DS often remember their password and only want the account unlocked.\n\nWhich SSPR setting should you enable?",
+  "choices": [
+   "Allow users to unlock accounts without resetting their password",
+   "Write back passwords with Microsoft Entra Connect cloud sync",
+   "Notify users on password resets",
+   "Customize helpdesk link"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, an SSPR reset also unlocks the on-premises account. The On-premises integration page has a separate option that lets users unlock their AD DS account without changing the password, which keeps the two operations apart.",
+  "rationale": [
+   "Correct: when this option is Yes, users can choose to unlock their on-premises account without resetting the password, or to reset and unlock. Learn says to use it to separate the two operations.",
+   "Incorrect: this option sends password writeback through the cloud sync provisioning agent instead of the Microsoft Entra Connect Sync server. Enable it for domains managed by cloud sync; it does not offer an unlock-only choice.",
+   "Incorrect: this notification emails users after a reset, which helps them spot unwanted resets, but it does not let them unlock without a reset. Turn it on for awareness of reset events.",
+   "Incorrect: a custom helpdesk link changes where the Contact your administrator link points during SSPR. It helps users who cannot finish SSPR, but it does not unlock accounts."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-howitworks"
+ },
+ {
+  "id": "2.2.3-06",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Consolidated Messenger requires two methods to reset a password with self-service password reset (SSPR). Microsoft Authenticator, software OATH tokens, and SMS are enabled for password reset. User1 registered Microsoft Authenticator push notifications and a software OATH token app but no phone number. User1 is unable to reset the password.\n\nWhat should User1 do?",
+  "choices": [
+   "Register a mobile phone number for SMS",
+   "Register a second software OATH token app",
+   "Register Microsoft Authenticator on a second device",
+   "Register a passkey (FIDO2)"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For SSPR, Microsoft Authenticator, software OATH tokens, and hardware OATH tokens together count as a single authentication method, whether or not the tenant migrated to the Authentication methods policy. A user who must provide two methods needs at least one method from outside that app-based family.",
+  "rationale": [
+   "Correct: Learn states that Authenticator and OATH tokens count as one method for SSPR, so User1 has only one method today. SMS is enabled and is a separate method, so registering a phone number gives User1 the second method.",
+   "Incorrect: any number of software OATH token apps still belongs to the same app-based method family, so User1 would still have one method. More apps help only as a backup for the same factor.",
+   "Incorrect: a second Authenticator registration is also part of the app-based family that counts as one method for SSPR. It helps when a user replaces a phone, not when a second SSPR method is required.",
+   "Incorrect: passkeys are not in the list of methods available for SSPR, so a passkey does not count toward the two required methods. Register a passkey to sign in without a password, not to reset it."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-howitworks"
+ },
+ {
+  "id": "2.2.3-07",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. security policy states that accounts that hold Microsoft Entra administrator roles must not be able to reset their passwords by using self-service password reset (SSPR). SSPR must stay enabled for all other users.\n\nWhich command should you run?",
+  "choices": [
+   "`Update-MgPolicyAuthorizationPolicy -AllowedToUseSspr:$false`",
+   "`Update-MgPolicyAuthorizationPolicy -AllowedToUseSspr:$true`",
+   "`Update-MgPolicyAuthenticationMethodPolicy -BodyParameter @{ policyMigrationState = \"migrationComplete\" }`",
+   "`Update-MgUser -UserId $adminId -PasswordPolicies DisablePasswordExpiration`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Administrator accounts are enabled for SSPR by default with a fixed two-gate policy. The tenant authorization policy property AllowedToUseSspr controls only that administrator policy, so setting it to false blocks SSPR for admins while the user SSPR settings keep working. Changes can take up to 60 minutes.",
+  "rationale": [
+   "Correct: setting AllowedToUseSspr to false on the authorization policy disables SSPR for administrator accounts, as Learn shows with this exact command. Regular users stay enabled through the Password reset properties.",
+   "Incorrect: true is the default and keeps SSPR enabled for administrators with the two-gate policy, which is the opposite of the requirement. Run it to restore admin SSPR after it was disabled.",
+   "Incorrect: the migration state decides whether legacy MFA and SSPR method settings are honored, not whether administrators may use SSPR. Set it when you finish moving methods to the Authentication methods policy.",
+   "Incorrect: DisablePasswordExpiration stops a user's password from expiring; it does not affect SSPR. Use Update-MgUser with PasswordPolicies for service accounts whose passwords must not expire."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-sspr-policy"
+ },
+ {
+  "id": "2.2.3-08",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Coho Vineyard synchronizes users from on-premises AD DS by using Microsoft Entra Connect Sync and has Microsoft Entra ID P1. Self-service password reset (SSPR) is already enabled for a pilot group named SSPR-Pilot with two methods required. Passwords that are reset in the cloud must also change in AD DS. You need to finish the configuration and verify it end to end with User1, a pilot member who holds no administrator role and has not registered any methods.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Optional features page of the Microsoft Entra Connect wizard, select Password writeback.",
+   "In the Microsoft Entra admin center, go to Password reset > On-premises integration and select Write back passwords to your on-premises directory.",
+   "Sign in as User1 at https://aka.ms/ssprsetup and register two authentication methods.",
+   "As User1, browse to https://aka.ms/sspr and reset the password.",
+   "In the audit logs, set Service to Self-service Password Management and confirm the reset event for User1.",
+   "Run `Update-MgPolicyAuthorizationPolicy -AllowedToUseSspr:$true`.",
+   "Repeat the reset test with an account that holds the Helpdesk Administrator role."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Hybrid SSPR needs writeback enabled first in the sync engine and then in the SSPR on-premises integration settings. Users must register the required number of methods before they can reset, and the audit logs under the Self-service Password Management service record registration and reset events for verification.",
+  "rationale": [
+   "Step 1: writeback must first be enabled in Microsoft Entra Connect, because the admin center option depends on a sync engine that can write passwords back to AD DS.",
+   "Step 2: with writeback available in Microsoft Entra Connect, you turn it on for SSPR under On-premises integration so that reset passwords are written to AD DS.",
+   "Step 3: User1 has no methods yet, and the policy requires two, so User1 must register two methods before any reset can succeed.",
+   "Step 4: the reset at https://aka.ms/sspr exercises the whole flow, including writeback, by using a non-admin account as Learn recommends for testing.",
+   "Step 5: the audit log entry under Self-service Password Management confirms that the reset happened, which completes the end-to-end verification.",
+   "Incorrect: AllowedToUseSspr controls SSPR for administrator accounts, which is already enabled by default and is not part of this pilot. Change it only to enable or disable admin SSPR.",
+   "Incorrect: administrators get the fixed two-gate policy, so a test with Helpdesk Administrator does not reflect what pilot users experience. Learn recommends testing with an account that holds no admin role."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/tutorial-enable-sspr-writeback"
+ },
+ {
+  "id": "2.2.3-09",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Bellows College enabled self-service password reset (SSPR) for all users with two methods required. Require users to register when signing in is set to No.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A user can still register SSPR methods by going to https://aka.ms/ssprsetup.",
+   "A user who registered only one method can reset the password.",
+   "After the reset starts, the user has 15 minutes to complete it."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Registration at sign-in is only a prompt; users can always register manually. A reset succeeds only when the user registered at least as many methods as the policy requires, and the reset session lasts 15 minutes, with one-time codes valid for 5 minutes.",
+  "rationale": [
+   "Yes: when registration is not required at sign-in, users are not prompted but can register manually at https://aka.ms/ssprsetup or from the Profile page in My Apps.",
+   "No: with two methods required, a user who registered one method sees an error page and must ask an administrator to reset the password. The user must first register a second method.",
+   "Yes: the SSPR session lifetime is 15 minutes from the start of the reset, and email and text message one-time codes are valid for 5 minutes during that session."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/passwords-faq"
+ },
+ {
+  "id": "2.2.3-10",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to meet the SSPR requirement.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set Self service password reset enabled to All and set Number of methods required to reset to 2",
+   "Enable Password writeback in Microsoft Entra Connect, and then select Write back passwords to your on-premises directory",
+   "Select SSPR-Pilot and a second group that contains all other users under Selected",
+   "Assign Microsoft Entra ID P2 licenses to all users",
+   "Enable password hash synchronization in Microsoft Entra Connect"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Hybrid SSPR has three parts: the scope and number of methods under Password reset, writeback enabled in the sync engine, and writeback enabled under On-premises integration. Microsoft Entra ID P1 already licenses hybrid SSPR with writeback, so no additional license is needed. Users also need two registered methods to reset, and Microsoft Authenticator and OATH tokens count as one method for SSPR, so most users must register a second method such as a phone or email.",
+  "rationale": [
+   "Correct: All enables SSPR for every user instead of only SSPR-Pilot, and setting the number of methods to 2 meets the requirement that two methods are required.",
+   "Correct: the users are synchronized with password writeback not configured, so writeback must be enabled in Microsoft Entra Connect and then in the SSPR On-premises integration settings for reset passwords to work on-premises.",
+   "Incorrect: the admin center allows only one group under Selected, and All already covers every user. Use Selected with one, possibly nested, group for a staged rollout.",
+   "Incorrect: SSPR with on-premises writeback is included in Microsoft Entra ID P1, which every user already has, and the case forbids buying licenses. P2 adds features such as ID Protection.",
+   "Incorrect: password hash synchronization is already in use, and it copies password hashes from AD DS to the cloud, not cloud resets back to AD DS. Writeback is the feature that sends the new password on-premises."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/tutorial-enable-sspr-writeback",
+  "case": "C-d"
+ },
+ {
+  "id": "2.2.4-01",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam Residences uses Microsoft Entra ID Free. A script that runs Get-MgAuditLogSignIn by using an app that has the AuditLog.Read.All permission fails with an error that says the tenant does not have a premium license. The account that runs the script holds the Reports Reader role.\n\nWhat should you do to make the script work?",
+  "choices": [
+   "Acquire Microsoft Entra ID P1 licenses for the tenant",
+   "Grant the app Directory.Read.All instead of AuditLog.Read.All",
+   "Assign the Security Reader role instead of Reports Reader",
+   "Query Get-MgAuditLogDirectoryAudit instead"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Reading sign-in logs through Microsoft Graph has three separate requirements: a Microsoft Entra ID P1 or P2 license on the tenant, a role such as Reports Reader or Security Reader, and the AuditLog.Read.All or Directory.Read.All permission. Each requirement produces its own error, so read the error text to see which one is missing.",
+  "rationale": [
+   "Correct: Learn lists the premium license error as a common error and says that accessing sign-in reports through the API requires a Microsoft Entra ID P1 or P2 license. The role and permission are already sufficient.",
+   "Incorrect: Directory.Read.All is an alternative permission that also allows reading activity logs, but the error is about the license, not the permission. Swap permissions when the error says the app is missing read permissions.",
+   "Incorrect: Security Reader and Reports Reader are both allowed roles for the reporting API, so switching roles does not fix a license error. Change the role when the error says the user is not in the allowed roles.",
+   "Incorrect: Get-MgAuditLogDirectoryAudit returns audit logs of directory changes, not sign-in events, so it does not answer the script's question. Use it to see who changed users, groups, or policies."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/monitoring-health/howto-analyze-activity-logs-with-microsoft-graph"
+ },
+ {
+  "id": "2.2.4-02",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Users at Nod Publishers report that Outlook on their Microsoft Entra joined devices stops syncing mail after a few hours, but they never see a sign-in prompt. You need to find the failed token requests in the Microsoft Entra sign-in logs.\n\nWhich sign-in log should you review?",
+  "choices": [
+   "Non-interactive user sign-ins",
+   "Interactive user sign-ins",
+   "Service principal sign-ins",
+   "Managed identity sign-ins"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The sign-in logs are split into four types: interactive user sign-ins (the user provides a factor), non-interactive user sign-ins (a client acts on behalf of a user with a token), service principal sign-ins (apps with their own credentials), and managed identity sign-ins. Background token refreshes are non-interactive.",
+  "rationale": [
+   "Correct: a client app that silently uses a refresh token to get a new access token is logged as a non-interactive user sign-in. Outlook failing in the background without prompting matches this log.",
+   "Incorrect: interactive sign-ins are logged when the user enters a password or answers an MFA prompt. The users never see a prompt, so the failures are not here. Use this log for failed password or MFA attempts.",
+   "Incorrect: service principal sign-ins record apps that authenticate with their own certificate or secret, with no user involved. Use this log to troubleshoot daemons and automation that use app credentials.",
+   "Incorrect: managed identity sign-ins record Azure resources that authenticate with a managed identity. Use this log for Azure workloads such as a function app calling Microsoft Graph."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins"
+ },
+ {
+  "id": "2.2.4-03",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at City Power & Light will travel next week to a country that is not defined as a named location. Before the trip, you need to identify which Conditional Access policies will apply when User1 signs in to Exchange Online from an iOS device in that country. User1 must not sign in for the test.\n\nWhich tool should you use?",
+  "choices": [
+   "The Conditional Access What If tool",
+   "The sign-in diagnostic",
+   "The Conditional Access insights and reporting workbook",
+   "The Authentication methods activity report"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The What If tool simulates a sign-in by using conditions you supply, such as the user, target resource, device platform, client app, and location, and reports which enabled or report-only policies apply and why others do not. Tools based on sign-in logs only analyze sign-ins that already happened.",
+  "rationale": [
+   "Correct: What If evaluates a simulated sign-in for User1 with the resource, platform, and location you enter, without a real sign-in, and lists the policies and controls that would apply.",
+   "Incorrect: the sign-in diagnostic analyzes a real sign-in event that already exists in the logs. User1 has not signed in from that country, so there is no event to diagnose. Use it to explain a past failure.",
+   "Incorrect: the insights and reporting workbook aggregates the impact of policies over sign-ins that already happened and needs logs in Log Analytics. Use it to measure a policy's effect across many users.",
+   "Incorrect: Authentication methods activity shows which methods users registered and used. It does not evaluate Conditional Access policies. Use it to track MFA and passwordless adoption."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/what-if-tool"
+ },
+ {
+  "id": "2.2.4-04",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso Suites has a Conditional Access policy that requires a compliant device for Office 365 SharePoint Online. User1 signs in to Microsoft Teams on an unmanaged device and cannot open files in a channel. The What If tool shows no applicable policy when you select Microsoft Teams as the target resource.\n\nWhat should you do to identify why User1 is interrupted?",
+  "choices": [
+   "Review the Audience list for the resource on the Conditional Access tab of User1's sign-in event",
+   "Run the What If tool again and select the Office 365 app group as the target resource",
+   "Filter the audit logs by the Policy category for changes made to the policy",
+   "Review the Risky sign-ins report for User1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Signing in to one app such as Teams requests tokens for several resources, such as SharePoint and Exchange. The What If tool does not test these service dependencies, so the sign-in log, with audience reporting on the Conditional Access tab, is where you see every resource requested and the policy that applied.",
+  "rationale": [
+   "Correct: audience reporting lists all resources requested during the sign-in. It shows that SharePoint Online was requested behind Teams, which brings the compliant device policy into scope even though the user only opened Teams.",
+   "Incorrect: the What If API needs individual app IDs; groups of apps such as Office 365 do not result in a match. It also does not test service dependencies. Use What If with a specific app ID to simulate direct access to that app.",
+   "Incorrect: audit logs show who created or edited the policy and when, not how it was evaluated during User1's sign-in. Use them when a policy changed unexpectedly.",
+   "Incorrect: the risky sign-ins report shows ID Protection detections, but the policy in question requires a compliant device and has no risk condition. Use it when a risk-based policy interrupts a user."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/troubleshoot-conditional-access"
+ },
+ {
+  "id": "2.2.4-05",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Best For You Organics Company has Microsoft Entra ID P1. Before you enforce MFA, you need a list of users who are not yet MFA capable and the methods that each user registered.\n\nWhich report should you use?",
+  "choices": [
+   "User registration details in Authentication methods activity",
+   "Sign-in logs filtered by status Failure",
+   "Audit logs filtered by the Self-service Password Management service",
+   "The Risky users report in ID Protection"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Authentication methods activity has registration and usage views and a User registration details report that shows, per user, whether the user is MFA capable, passwordless capable, and SSPR registered, plus the methods registered. It requires Microsoft Entra ID P1 or P2.",
+  "rationale": [
+   "Correct: User registration details shows MFA Capable and Methods registered for each user, so you can filter for users who are not capable before enforcement. The tenant's P1 license covers the report.",
+   "Incorrect: failed sign-ins show errors that already happened, not the registration state of users who might never have been challenged. Use them to troubleshoot specific failures.",
+   "Incorrect: these audit logs list password reset and registration events over time, not a current per-user registration state. Use them to confirm that a specific reset or registration happened.",
+   "Incorrect: the Risky users report lists users with ID Protection risk, not their method registration. Use it to investigate and remediate compromised accounts."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/howto-authentication-methods-activity"
+ },
+ {
+  "id": "2.2.4-06",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has a Conditional Access policy that targets the user action Register security information and requires that the user be in a trusted named location. A new employee who works from home reports an error when adding Microsoft Authenticator in Security info. The sign-in log shows error code 53010.\n\nWhat should you tell the employee to do?",
+  "choices": [
+   "Register the method while connected to the corporate network that is defined as a trusted location",
+   "Complete the setup through the Microsoft Authenticator registration campaign prompt",
+   "Reset the password at https://aka.ms/sspr and then retry the registration",
+   "Wait until the smart lockout duration expires and then retry the registration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Error 53010 (ProofUpBlockedDueToSecurityInfoAcr) means the organization requires security information to be registered from specific locations or devices. That requirement comes from a Conditional Access policy on the Register security information user action, so the fix is to meet the condition, not to change credentials.",
+  "rationale": [
+   "Correct: 53010 says MFA methods cannot be configured because the organization requires registration from specific locations or devices. Registering from the trusted corporate network satisfies the policy condition.",
+   "Incorrect: the registration campaign nudge does not appear when a Conditional Access policy blocks access to the Register security information page, so it cannot bypass the block. Use the campaign to move users from SMS to Authenticator.",
+   "Incorrect: a password reset does not change the user's location, so the registration policy still blocks the request. Use SSPR when the error is about an invalid or expired password, such as 50126 or 50055.",
+   "Incorrect: smart lockout errors use code 50053, not 53010, and waiting does not change the location condition. Waiting helps only when the account was locked after too many wrong passwords."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity-platform/reference-error-codes"
+ },
+ {
+  "id": "2.2.4-07",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "User1 at Humongous Insurance receives error AADSTS53003 when opening Exchange Online. User1 is a member of a group named CA-Exempt that a Conditional Access policy was supposed to exclude. You must find the blocking policy and correct it by using Microsoft Graph PowerShell only.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"AuditLog.Read.All\",\"Policy.Read.All\",\"Policy.ReadWrite.ConditionalAccess\"`",
+   "`Get-MgAuditLogSignIn -Filter \"userDisplayName eq 'User1' and status/errorCode eq 53003\"` and read the applied Conditional Access policies",
+   "`Get-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $policyId` and review the user conditions",
+   "`Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $policyId -BodyParameter $params` to add CA-Exempt to the excluded groups",
+   "`Get-MgAuditLogDirectoryAudit -Filter \"category eq 'Policy'\"`",
+   "`New-MgIdentityConditionalAccessPolicy -BodyParameter $params` that grants access to CA-Exempt",
+   "`Connect-MsolService`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Error 53003 means a Conditional Access policy blocked token issuance. The sign-in event records which policies applied, so you read the failed sign-in first, then the policy definition, and finally correct the assignment. Because block wins over grant, the fix is an exclusion in the blocking policy, not a new allowing policy.",
+  "rationale": [
+   "Step 1: you connect once with scopes to read sign-in logs and to read and write Conditional Access policies, because the later cmdlets need all three.",
+   "Step 2: the failed sign-in with error code 53003 lists the Conditional Access policies that applied and their results, which identifies the blocking policy ID.",
+   "Step 3: reading the policy by its ID shows its user conditions, so you can confirm that CA-Exempt is missing from the exclusions before you change anything.",
+   "Step 4: updating the policy to exclude CA-Exempt removes User1 from its scope, which fixes the block without affecting the other targeted users.",
+   "Incorrect: directory audit logs show who changed policies and when, not which policy blocked User1's sign-in. Use them when you need the change history of a policy.",
+   "Incorrect: Conditional Access combines all applicable policies and a block control always wins, so a second policy that grants access cannot override the block. Fix the assignment of the blocking policy instead.",
+   "Incorrect: Connect-MsolService is from the retired MSOnline module and cannot read sign-in logs or Conditional Access policies. Use Connect-MgGraph from Microsoft Graph PowerShell."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/monitoring-health/reference-powershell-reporting"
+ },
+ {
+  "id": "2.2.4-08",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "The help desk at Wide World Importers reviews four failed sign-ins in the Microsoft Entra sign-in logs. You need to match each error code to its cause so that the help desk can choose the right fix.\n\nWhich cause should you match to each error code? To answer, drag the appropriate causes to the correct error codes. Each cause may be used once, more than once, or not at all.",
+  "choices": [
+   "Invalid username or password",
+   "Account locked by smart lockout or blocked malicious IP",
+   "Blocked by a Conditional Access policy",
+   "User account is disabled",
+   "Device is not compliant",
+   "Password is expired"
+  ],
+  "targets": [
+   "AADSTS50126",
+   "AADSTS50053",
+   "AADSTS53003",
+   "AADSTS50057"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "rationale": [
+   "50126 is InvalidUserNameOrPassword: the user entered wrong credentials. Some of these errors are normal, but a spike across accounts points to password spray.",
+   "50053 is IdsLocked: too many wrong attempts triggered smart lockout, or the sign-in came from an IP address with malicious activity. Check the failure reason to tell them apart.",
+   "53003 is BlockedByConditionalAccess: a policy does not allow token issuance. Open the Conditional Access tab of the sign-in event to find the policy.",
+   "50057 is UserDisabled: the account is disabled, so the fix is to enable the account if access is intended, not to reset the password."
+  ],
+  "notes": [
+   "Error 50126. The fix is the correct password or an SSPR reset; investigate if many accounts fail at once.",
+   "Error 50053. Wait for the lockout, use SSPR with I forgot my password, or investigate the malicious IP.",
+   "Error 53003. Review the Conditional Access tab of the sign-in event and correct the policy or the user's situation.",
+   "Error 50057. Enable the user account in Microsoft Entra ID or on-premises AD DS for synced users.",
+   "Error 53000 (DeviceNotCompliant). The user must enroll the device in Intune or bring it into compliance.",
+   "Error 50055 (InvalidPasswordExpiredPassword). The user is offered a reset, or an administrator resets the password."
+  ],
+  "explanation": "AADSTS error codes in the sign-in log tell you which layer failed: credential validation (50126, 50055), account state (50053, 50057), or authorization by Conditional Access (53000 range). Identifying the layer first keeps the help desk from resetting passwords when a policy or device is the real cause.",
+  "ref": "https://learn.microsoft.com/entra/identity-platform/reference-error-codes"
+ },
+ {
+  "id": "2.2.4-09",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to use Microsoft Graph PowerShell to list the sign-ins of User1 at Coho Winery that were blocked by Conditional Access. Your account holds the Reports Reader role, and the tenant has Microsoft Entra ID P1.\n\nWhich two commands should you run? Each correct answer presents part of the solution.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"AuditLog.Read.All\"`",
+   "`Get-MgAuditLogSignIn -Filter \"userDisplayName eq 'User1' and status/errorCode eq 53003\"`",
+   "`Connect-MgGraph -Scopes \"Policy.Read.All\"`",
+   "`Get-MgAuditLogDirectoryAudit -Filter \"category eq 'Policy'\"`",
+   "`Get-MgIdentityConditionalAccessPolicy`"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Sign-in logs are read with Get-MgAuditLogSignIn, which needs the AuditLog.Read.All (or Directory.Read.All) permission, an allowed role, and a P1 or P2 tenant. The Filter parameter accepts properties such as userDisplayName and status/errorCode, so you can isolate Conditional Access blocks by error code 53003.",
+  "rationale": [
+   "Correct: AuditLog.Read.All is the permission that lets Microsoft Graph PowerShell read sign-in and audit logs, and your Reports Reader role and the P1 license complete the requirements.",
+   "Correct: Get-MgAuditLogSignIn with a filter on the user and status/errorCode 53003 returns exactly the sign-ins that Conditional Access blocked for User1.",
+   "Incorrect: Policy.Read.All lets you read policies, including Conditional Access, but not sign-in logs, so the sign-in query would fail. Use it to export policy configurations.",
+   "Incorrect: directory audit logs record configuration changes, such as edits to a Conditional Access policy, not sign-in outcomes. Use them to find who changed a policy.",
+   "Incorrect: this cmdlet lists the configured Conditional Access policies but says nothing about which sign-ins they blocked. Use it after you know the policy ID from the sign-in event."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/monitoring-health/reference-powershell-reporting"
+ },
+ {
+  "id": "2.2.4-10",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "You need to meet the help desk requirement.\n\nWhich role should you assign to the help desk employees?",
+  "choices": [
+   "Security Reader",
+   "Reports Reader",
+   "Global Reader",
+   "Conditional Access Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "To see applied Conditional Access policies in the sign-in logs, a role needs permission to read both the logs and the policies. Reports Reader reads only the logs, Conditional Access Administrator can change policies, and Global Reader reads the whole tenant, so Security Reader is the least privileged built-in role that meets the requirement.",
+  "rationale": [
+   "Correct: Learn names Security Reader as the least privileged built-in role that can read both the activity logs and the Conditional Access policies, so the help desk sees which policies applied to each failed sign-in. The role is read-only, so no configuration can be changed.",
+   "Incorrect: Reports Reader can read sign-in logs, but it cannot read Conditional Access policies, so the applied policy details are not available to it. Assign it when staff only need sign-in and audit logs without policy details.",
+   "Incorrect: Global Reader can read sign-in logs and policies and cannot change settings, but it can read every configuration in the tenant, which exceeds least privilege. Use it for auditors who review the whole tenant.",
+   "Incorrect: Conditional Access Administrator can read policies but can also create and edit them, which violates the requirement that the help desk cannot change configuration. Assign it to engineers who manage Conditional Access."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/monitoring-health/how-to-view-applied-conditional-access-policies",
+  "case": "C-d"
+ },
+ {
+  "id": "2.2.5-01",
+  "obj": "2.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles sign-in logs show password spray attempts over IMAP and POP. You need to create a Conditional Access policy that blocks legacy authentication for all users while modern authentication clients keep working.\n\nWhich client apps should you select in the policy?",
+  "choices": [
+   "Exchange ActiveSync clients and Other clients",
+   "Browser and Mobile apps and desktop clients",
+   "Other clients",
+   "All client apps, with Configure set to No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The client apps condition separates modern authentication clients (Browser, Mobile apps and desktop clients) from legacy authentication clients (Exchange ActiveSync clients and Other clients). The Microsoft template for blocking legacy authentication selects only the two legacy options with Block access, starting in Report-only mode.",
+  "rationale": [
+   "Correct: Learn's block legacy authentication policy checks only Exchange ActiveSync clients and Other clients with Block access, which stops IMAP, POP, SMTP, and basic-auth ActiveSync while browsers and modern apps are not in scope.",
+   "Incorrect: these are the modern authentication client types, so blocking them would stop browsers, Outlook, and Teams while leaving legacy protocols open. Select them when a policy must apply only to modern clients, such as an MFA policy.",
+   "Incorrect: Other clients covers IMAP, POP, SMTP, and older Office apps, but it leaves Exchange ActiveSync basic authentication allowed, so legacy authentication is not fully blocked. Select both legacy options.",
+   "Incorrect: with Configure set to No the policy applies to all client apps, including modern ones, so Block access would block the whole organization. Learn warns against block policies with that scope."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/policy-block-legacy-authentication"
+ },
+ {
+  "id": "2.2.5-02",
+  "obj": "2.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. assigns a security engineer to create and edit Conditional Access policies. The engineer must not manage other security settings, users, or authentication methods.\n\nWhich role should you assign?",
+  "choices": [
+   "Conditional Access Administrator",
+   "Security Administrator",
+   "Authentication Policy Administrator",
+   "Global Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Conditional Access Administrator is the least privileged built-in role that can create or edit Conditional Access policies. Broader roles such as Security Administrator also manage other security features, and authentication roles manage methods rather than access policies.",
+  "rationale": [
+   "Correct: Learn names Conditional Access Administrator as the least privileged role required to create or edit Conditional Access policies, and it does not grant user or authentication method management.",
+   "Incorrect: Security Administrator can manage Conditional Access, but it also manages many other security settings, such as ID Protection and Defender features, which the engineer must not control. Assign it to broader security operations staff.",
+   "Incorrect: Authentication Policy Administrator manages the Authentication methods policy, password protection, and SSPR settings, but not Conditional Access policies. Assign it to staff who configure methods such as passkeys or SMS.",
+   "Incorrect: Global Administrator can do everything in the tenant, which far exceeds the requirement. Keep it for emergency access accounts and a very small number of administrators."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies"
+ },
+ {
+  "id": "2.2.5-03",
+  "obj": "2.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. has Microsoft Entra ID P1 licenses for all users and no other identity licenses. Security defaults are disabled. The security team wants users to complete MFA whenever Microsoft Entra ID Protection rates a sign-in as medium or high risk.\n\nWhat should you do first?",
+  "choices": [
+   "Acquire Microsoft Entra ID P2 licenses for the users",
+   "Create a named location for the corporate IP ranges",
+   "Enable the sign-in risk policy on the ID Protection dashboard",
+   "Enable security defaults"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Conditional Access needs Microsoft Entra ID P1, but risk-based conditions use ID Protection signals, which are a Microsoft Entra ID P2 feature. Risk policies are now built in Conditional Access; the legacy ID Protection risk policies were retired on October 1, 2026.",
+  "rationale": [
+   "Correct: sign-in risk and user risk conditions in Conditional Access require Microsoft Entra ID Protection, which is part of Microsoft Entra ID P2. With P2 licenses you can create the sign-in risk policy for medium and high risk.",
+   "Incorrect: named locations let policies treat trusted networks differently and reduce some false positives, but they do not provide risk levels. Create them when a policy depends on network location.",
+   "Incorrect: the legacy sign-in risk policy in ID Protection was retired on October 1, 2026, and it also needed P2. Create the policy in Conditional Access instead.",
+   "Incorrect: security defaults require MFA based on fixed rules and are free, but they cannot be combined with Conditional Access and do not use risk levels. Use them in tenants without P1 licenses."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/overview"
+ },
+ {
+  "id": "2.2.5-04",
+  "obj": "2.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank's red team ran an approved penetration test. Microsoft Entra ID Protection now shows User1 as a high-risk user, and a Conditional Access policy blocks access for high user risk. The detections are real but not malicious, and similar activity must still be evaluated for risk in the future. You need to restore access for User1 by using the least privileged role.\n\nWhat should you do?",
+  "choices": [
+   "Sign in as a Security Operator and select Dismiss user risk",
+   "Sign in as a Security Operator and select Confirm user safe",
+   "Sign in as a Security Operator and select Confirm user compromised",
+   "Sign in as a Global Administrator and select Dismiss user risk"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "ID Protection offers different feedback actions: Dismiss user risk for benign true positives such as a known penetration test, Confirm user safe for false positives (risk removed and the user relearned), and Confirm user compromised for true positives. Security Operator is enough to dismiss risk.",
+  "rationale": [
+   "Correct: Dismiss user risk is meant for risk that is real but not malicious, such as a known penetration test, and similar users keep being evaluated. Learn lists Security Operator as the role needed to dismiss risk.",
+   "Incorrect: Confirm user safe is for false positives; it removes the detections and puts the user in learning mode to relearn usage. The stem says the detections were real, so dismissing is the correct feedback.",
+   "Incorrect: Confirm user compromised raises the user risk to high and keeps the user blocked until remediation. Use it when an investigation shows an attacker really controls the account.",
+   "Incorrect: Global Administrator can dismiss risk too, but it is far more privileged than needed. Use the narrowest role, Security Operator, for routine risk triage."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-protection/concept-risky-user-report"
+ },
+ {
+  "id": "2.2.5-05",
+  "obj": "2.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud requires that users who hold privileged Microsoft Entra roles sign in only with phishing-resistant methods such as passkeys. Other users can keep using any MFA method.\n\nWhich grant control should you configure in a Conditional Access policy that targets the privileged roles?",
+  "choices": [
+   "Require authentication strength: Phishing-resistant MFA",
+   "Require multifactor authentication",
+   "Require authentication strength: Multifactor authentication",
+   "Require device to be marked as compliant"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Authentication strengths let a Conditional Access policy specify which methods satisfy access. The built-in strengths are Multifactor authentication, Passwordless MFA, and Phishing-resistant MFA, and only the last limits users to methods such as passkeys, Windows Hello for Business, and certificate-based authentication.",
+  "rationale": [
+   "Correct: the built-in Phishing-resistant MFA strength accepts only phishing-resistant methods such as passkeys, so the privileged roles cannot satisfy the policy with SMS or app notifications.",
+   "Incorrect: Require multifactor authentication accepts any registered MFA method, including SMS and voice calls, so it does not enforce phishing resistance. Use it for broad MFA policies for all users.",
+   "Incorrect: the built-in Multifactor authentication strength is equivalent to requiring any MFA method, so phishable methods still pass. Use it when you need a strength object that allows all MFA methods.",
+   "Incorrect: device compliance checks the device state in Intune, not the authentication method, so a compliant device still allows phishable MFA. Combine it with an authentication strength when both are required."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/authentication/concept-authentication-strengths"
+ },
+ {
+  "id": "2.2.5-06",
+  "obj": "2.2.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. has Microsoft Entra ID P2. You create a Conditional Access policy for all users that follows Microsoft recommendations for sign-in risk, so that users can self-remediate risky sign-ins.\n\nWhich three settings should you configure? Each correct answer presents part of the solution.",
+  "choices": [
+   "Sign-in risk condition set to High and Medium",
+   "Grant set to Require authentication strength with the built-in Multifactor authentication strength",
+   "Session set to Sign-in frequency: Every time",
+   "User risk condition set to High in the same policy",
+   "Grant set to Require risk remediation",
+   "Session set to Persistent browser session: Always persistent"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Microsoft recommends separate policies for sign-in risk and user risk. The sign-in risk policy targets Medium and High, requires strong authentication through an authentication strength, and requires reauthentication every time, because a successful strong authentication is the only way to self-remediate sign-in risk.",
+  "rationale": [
+   "Correct: Microsoft recommends requiring MFA when sign-in risk is Medium or High, which balances protection and the number of user interrupts.",
+   "Correct: the recommended grant is Require authentication strength with the built-in Multifactor authentication strength, so the user proves identity with a registered method and remediates the risk.",
+   "Correct: the sign-in frequency session control set to Every time forces reauthentication for the risky sign-in instead of reusing an existing session.",
+   "Incorrect: Learn warns not to combine sign-in risk and user risk conditions in the same policy; create a separate user risk policy instead.",
+   "Incorrect: Require risk remediation is the recommended grant for the user risk policy, where it triggers a secure password change or session revocation. It is not the sign-in risk recommendation.",
+   "Incorrect: an always persistent browser session keeps users signed in across browser restarts, which works against forcing reauthentication on risky sign-ins. Use it for low-risk, managed scenarios."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies"
+ },
+ {
+  "id": "2.2.5-07",
+  "obj": "2.2.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Margie's Travel has Microsoft Entra ID P1. You must deploy a Conditional Access policy that requires MFA for all users except two emergency access accounts. You must measure the impact for one week before the policy is enforced, and you must use Microsoft Graph PowerShell for every policy change.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Policy.Read.All\",\"Policy.ReadWrite.ConditionalAccess\"`",
+   "`New-MgIdentityConditionalAccessPolicy -BodyParameter $params` with state set to enabledForReportingButNotEnforced and the emergency accounts in excludeUsers",
+   "Review the Report-only tab of sign-in events and the policy impact view for one week.",
+   "`Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $policyId -BodyParameter @{ state = \"enabled\" }`",
+   "`New-MgIdentityConditionalAccessPolicy -BodyParameter $params` with state set to enabled and the emergency accounts in excludeUsers",
+   "`Connect-MgGraph -Scopes \"AuditLog.Read.All\"`",
+   "`Update-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $policyId -BodyParameter @{ state = \"disabled\" }`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A Conditional Access policy has three states: enabled, disabled, and enabledForReportingButNotEnforced (Report-only). Report-only evaluates the policy at every sign-in and logs the result without enforcing it, so a safe rollout creates the policy in Report-only, reviews the results, and then switches the same policy to enabled.",
+  "rationale": [
+   "Step 1: creating and updating Conditional Access policies requires the Policy.ReadWrite.ConditionalAccess scope, together with Policy.Read.All for reading policy data.",
+   "Step 2: creating the policy with state enabledForReportingButNotEnforced logs what it would do without prompting anyone, and excludeUsers keeps the emergency access accounts out of scope.",
+   "Step 3: during the week, the Report-only tab and the policy impact view show which sign-ins would succeed, fail, or need user action, which is the measurement the stem requires.",
+   "Step 4: after the review, updating the same policy to state enabled enforces MFA without creating a second policy.",
+   "Incorrect: creating the policy directly in the enabled state enforces MFA immediately, so there is no week of measurement. Use it only for policies already validated elsewhere.",
+   "Incorrect: AuditLog.Read.All lets you read sign-in and audit logs but not create or change Conditional Access policies. Add it when your script also queries sign-ins.",
+   "Incorrect: the disabled state turns the policy off completely, so it neither enforces nor logs results. Use it to pause a policy, not to measure its impact."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-report-only"
+ },
+ {
+  "id": "2.2.5-08",
+  "obj": "2.2.5",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Alpine Ski House has Microsoft Entra ID P1 for all users. The 250 members of a group named Finance must complete risk remediation when their user risk is High. All Finance members are registered for MFA. Microsoft Entra ID P2 licenses must be assigned only to Finance members, and the policy must be validated before it affects users.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Assign Microsoft Entra ID P2 licenses to the Finance group by using group-based licensing.",
+   "In Conditional Access, create a policy that includes Finance, excludes the emergency access accounts, sets User risk to High, selects Require risk remediation, and sets Enable policy to Report-only.",
+   "Review the Report-only results of the policy for Finance sign-ins.",
+   "Set Enable policy for the policy to On.",
+   "In ID Protection, open the User risk policy on the dashboard and set Enforce policy to Enabled.",
+   "Add the Sign-in risk condition set to High to the same policy.",
+   "Select Block access as the grant control of the policy."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "User risk policies are Conditional Access policies that use ID Protection signals, so they need Microsoft Entra ID P2 for the users in scope. Microsoft recommends Require risk remediation for High user risk, separate policies for user and sign-in risk, and Report-only before switching the policy On.",
+  "rationale": [
+   "Step 1: the user risk condition depends on ID Protection, a P2 feature, so the Finance members need P2 licenses before the policy can target them. Group-based licensing assigns the licenses to Finance only.",
+   "Step 2: with P2 in place, you create the policy for Finance with User risk High and Require risk remediation, which also applies an authentication strength and sign-in frequency Every time, and start in Report-only.",
+   "Step 3: reviewing the Report-only results shows which Finance sign-ins would be affected, which is the validation the stem requires.",
+   "Step 4: after validation, setting the policy to On enforces risk remediation for high-risk Finance users.",
+   "Incorrect: the legacy user risk policy in ID Protection was retired on October 1, 2026. Risk policies are now configured in Conditional Access.",
+   "Incorrect: Learn warns not to combine sign-in risk and user risk conditions in the same policy. Create a separate sign-in risk policy if you need one.",
+   "Incorrect: Block access stops high-risk users without letting them self-remediate, which conflicts with the requirement to complete risk remediation. Use it only when self-remediation is not acceptable."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies"
+ },
+ {
+  "id": "2.2.5-09",
+  "obj": "2.2.5",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Lamna Healthcare Company must create a Conditional Access policy that requires MFA for all users. Two emergency access accounts must never be affected, and the policy must log its results without enforcing them until the security team approves it.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\n$params = @{\n    displayName = \"Require MFA for all users\"\n    state = [[1]]\n    conditions = @{\n        applications = @{ includeApplications = @(\"All\") }\n        users = @{\n            includeUsers = @(\"All\")\n            [[2]] = @($breakGlass1Id, $breakGlass2Id)\n        }\n    }\n    grantControls = @{ operator = \"OR\"; builtInControls = @([[3]]) }\n}\n[[4]] -BodyParameter $params\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"enabled\"",
+     "\"enabledForReportingButNotEnforced\"",
+     "\"disabled\""
+    ],
+    "why": [
+     "Incorrect: enabled enforces MFA as soon as the policy is created, so users are prompted before the security team approves. Use it after the Report-only review.",
+     "Correct: enabledForReportingButNotEnforced is the Graph value for Report-only, which evaluates and logs the policy at each sign-in without enforcing it.",
+     "Incorrect: disabled turns the policy off, so it is not evaluated and nothing is logged for the security team to review. Use it to pause a policy."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "includeUsers",
+     "excludeGroups",
+     "excludeUsers"
+    ],
+    "why": [
+     "Incorrect: includeUsers is already set to All, and repeating the key would not exclude anyone; the emergency accounts would be in scope. Use it to list the users a policy targets.",
+     "Incorrect: excludeGroups expects group object IDs, but the variables hold the IDs of two user accounts, so the exclusion would not match. Use it when emergency accounts are kept in a dedicated group.",
+     "Correct: excludeUsers takes user object IDs, so the two emergency access accounts are removed from the policy scope, as Learn recommends for every policy."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "\"mfa\"",
+     "\"block\"",
+     "\"compliantDevice\""
+    ],
+    "why": [
+     "Correct: mfa is the built-in control that requires multifactor authentication, which is the stated goal of the policy.",
+     "Incorrect: block denies access, and with All users and All applications it would block the whole organization once enabled. Use it for targeted policies such as blocking legacy authentication.",
+     "Incorrect: compliantDevice requires an Intune-compliant device instead of MFA, which is a different control and could lock out users without enrolled devices."
+    ]
+   },
+   {
+    "label": "Box 4",
+    "options": [
+     "Update-MgIdentityConditionalAccessPolicy",
+     "New-MgIdentityConditionalAccessPolicy",
+     "Get-MgIdentityConditionalAccessPolicy"
+    ],
+    "why": [
+     "Incorrect: the Update cmdlet changes an existing policy and needs its ConditionalAccessPolicyId. The policy does not exist yet. Use it later to switch the state to enabled.",
+     "Correct: New-MgIdentityConditionalAccessPolicy creates a policy from the body in $params, as in the Learn examples for this cmdlet.",
+     "Incorrect: the Get cmdlet only reads policies and does not accept a body to create one. Use it to review an existing policy's conditions."
+    ]
+   }
+  ],
+  "answer": [
+   1,
+   2,
+   0,
+   1
+  ],
+  "explanation": "In Microsoft Graph, a Conditional Access policy body has a state, conditions with included and excluded users, groups, or roles, and grant controls such as mfa or block. Creating it in the enabledForReportingButNotEnforced state with the emergency accounts excluded is the safe pattern before enforcement.",
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.identity.signins/new-mgidentityconditionalaccesspolicy?view=graph-powershell-1.0"
+ },
+ {
+  "id": "2.2.5-10",
+  "obj": "2.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has Microsoft Entra ID P1 licenses for all users and no Microsoft Entra ID P2 licenses. Security defaults are disabled. The company has two offices with known public IP address ranges. You need to require MFA for all users when they sign in from outside the offices. Two emergency access accounts must be excluded, and you must evaluate the policy impact before users are prompted.\n\nSolution: You create a named location that contains the office IP ranges and mark it as a trusted location. You create a Conditional Access policy for all users that excludes the emergency access accounts, targets all resources, includes any network or location, excludes all trusted locations, and requires multifactor authentication. You set Enable policy to Report-only, review the results, and then set it to On.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Location-based MFA uses a trusted named location plus a policy that includes any location and excludes trusted locations. It needs only Microsoft Entra ID P1, and Report-only lets you evaluate the impact before switching the policy On.",
+  "rationale": [
+   "Correct: the policy applies to every sign-in except those from the trusted office ranges, requires MFA, excludes the emergency accounts, and is validated in Report-only before enforcement. All features need only P1.",
+   "Incorrect: the solution does meet the goal. No would be right if the office ranges were not marked as trusted or not excluded, because then MFA would also be required inside the offices."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/conditional-access/plan-conditional-access",
+  "series": "S-d"
+ },
+ {
+  "id": "2.2.5-11",
+  "obj": "2.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys has Microsoft Entra ID P1 licenses for all users and no Microsoft Entra ID P2 licenses. Security defaults are disabled. The company has two offices with known public IP address ranges. You need to require MFA for all users when they sign in from outside the offices. Two emergency access accounts must be excluded, and you must evaluate the policy impact before users are prompted.\n\nSolution: You create a Conditional Access policy for all users that excludes the emergency access accounts, sets the Sign-in risk condition to Medium and High, and requires multifactor authentication. You set Enable policy to Report-only.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Sign-in risk policies react to ID Protection risk detections, not to network location, and they require Microsoft Entra ID P2. A location requirement is met with named locations, which work with P1.",
+  "rationale": [
+   "Incorrect: the policy triggers on risk levels, so a normal sign-in from home would not be challenged, and the risk condition needs P2 licenses that the company does not have.",
+   "Correct: the solution does not meet the goal. A sign-in risk policy is the right choice when MFA must follow ID Protection risk and the users have P2, not when it must follow the user's location."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies",
+  "series": "S-d"
+ },
+ {
+  "id": "2.2.5-12",
+  "obj": "2.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has Microsoft Entra ID P1 licenses for all users and no Microsoft Entra ID P2 licenses. Security defaults are disabled. The company has two offices with known public IP address ranges. You need to require MFA for all users when they sign in from outside the offices. Two emergency access accounts must be excluded, and you must evaluate the policy impact before users are prompted.\n\nSolution: You enable security defaults in the Microsoft Entra admin center.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Security defaults are a free on-or-off baseline that requires users to register and use MFA. They cannot be customized by location, cannot exclude specific accounts, offer no report-only evaluation, and cannot be combined with Conditional Access policies.",
+  "rationale": [
+   "Incorrect: security defaults prompt for MFA regardless of the office network, cannot exclude the emergency access accounts, and cannot be evaluated before enforcement, so they miss three requirements.",
+   "Correct: the solution does not meet the goal. Security defaults fit tenants without P1 licenses that need a basic MFA baseline, while this tenant needs a customizable Conditional Access policy."
+  ],
+  "ref": "https://learn.microsoft.com/entra/fundamentals/security-defaults",
+  "series": "S-d"
+ },
+ {
+  "id": "2.2.5-13",
+  "obj": "2.2.5",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "case": "C-d",
+  "stem": "You need to configure the Conditional Access policy for the FIN-IT risk requirement.\n\nHow should you configure the policy? To answer, select the appropriate options in the answer area.",
+  "targets": [
+   {
+    "label": "Users: Include",
+    "options": [
+     "All users",
+     "FIN-IT",
+     "Directory roles: Security Administrator"
+    ],
+    "why": [
+     "Incorrect: risk-based policies need Microsoft Entra ID P2 for the users in scope, and only FIN-IT members have P2. Including all users would require licenses the case forbids buying.",
+     "Correct: the requirement applies to FIN-IT, and those are the only users with Microsoft Entra ID P2, which ID Protection user risk requires.",
+     "Incorrect: targeting one directory role misses most Finance and IT staff, who hold no admin role. Use role targeting for policies that protect privileged accounts."
+    ]
+   },
+   {
+    "label": "Users: Exclude",
+    "options": [
+     "SSPR-Pilot",
+     "BreakGlass1 and BreakGlass2",
+     "None"
+    ],
+    "why": [
+     "Incorrect: SSPR-Pilot is the SSPR rollout group and has no relationship to risk; excluding it would leave some FIN-IT members unprotected.",
+     "Correct: the case requires that BreakGlass1 and BreakGlass2 are excluded from every Conditional Access policy, which also follows Microsoft's lockout guidance.",
+     "Incorrect: excluding nobody breaks the requirement to exclude the emergency access accounts from every policy, and risks lockout if the policy is misconfigured."
+    ]
+   },
+   {
+    "label": "Conditions",
+    "options": [
+     "Sign-in risk: High",
+     "User risk: High and Sign-in risk: High",
+     "User risk: High"
+    ],
+    "why": [
+     "Incorrect: sign-in risk measures one sign-in attempt, not the likelihood that the account itself is compromised. Use it for a separate policy that requires strong authentication on risky sign-ins.",
+     "Incorrect: Learn warns not to combine user risk and sign-in risk conditions in one policy; create separate policies for each.",
+     "Correct: the requirement is about user risk at the High level, which matches Microsoft's recommendation for user risk policies."
+    ]
+   },
+   {
+    "label": "Grant",
+    "options": [
+     "Require risk remediation",
+     "Block access",
+     "Require multifactor authentication"
+    ],
+    "why": [
+     "Correct: Require risk remediation makes users with passwords complete a secure password change after MFA, or revokes sessions for passwordless users, which remediates the risk. It also applies an authentication strength automatically.",
+     "Incorrect: Block access stops the users but does not let them remediate the risk themselves, so an administrator must intervene each time. Use it when self-remediation is not acceptable.",
+     "Incorrect: MFA remediates sign-in risk, not user risk, so the account would stay at high risk. Use MFA as the grant in a sign-in risk policy."
+    ]
+   },
+   {
+    "label": "Enable policy",
+    "options": [
+     "On",
+     "Report-only",
+     "Off"
+    ],
+    "why": [
+     "Incorrect: On enforces the policy immediately, but the case requires every new policy to be evaluated first. Switch to On after the Report-only review.",
+     "Correct: Report-only evaluates and logs the policy without enforcing it, which meets the requirement to evaluate new policies before enforcement.",
+     "Incorrect: Off disables the policy, so it is neither enforced nor evaluated, and nothing is logged for review."
+    ]
+   }
+  ],
+  "answer": [
+   1,
+   1,
+   2,
+   0,
+   1
+  ],
+  "explanation": "A user risk policy is a Conditional Access policy that uses the ID Protection user risk signal, which needs P2 for the users in scope. Microsoft recommends User risk High with Require risk remediation, emergency accounts excluded, separate policies for user and sign-in risk, and a Report-only phase first.",
+  "ref": "https://learn.microsoft.com/entra/id-protection/howto-identity-protection-configure-risk-policies"
+ }
+]

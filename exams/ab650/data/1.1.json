@@ -1,0 +1,1786 @@
+[
+ {
+  "id": "1.1.2-01",
+  "obj": "1.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. adds the domain fabrikam.com in the Microsoft 365 admin center. The registrar does not support Domain Connect, its DNS editor does not allow TXT records, and the company website is hosted by a vendor that will not upload files for you.\n\nWhich method should you use to verify domain ownership?",
+  "choices": [
+   "Add an MX record with a high priority value to the domain's DNS records.",
+   "Add a TXT record that contains the MS=ms value to the domain's DNS records.",
+   "Add a text file that the wizard provides to the top-level folder of the website.",
+   "Sign in to the registrar from the wizard and authorize the records automatically."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 offers three manual ways to prove domain ownership: a TXT record, an MX record when TXT records are not possible, or a text file on the domain's website. Domain Connect automates verification only when the registrar supports it.",
+  "rationale": [
+   "Correct: when you cannot add a TXT record, the wizard lets you verify with an MX record. Learn says to set its Priority field to a high value (a high preference number, which means low routing priority) so it does not break mail flow with the current email provider.",
+   "Incorrect: a TXT record with the MS=ms value is the default verification method, but the stem says the DNS editor does not allow TXT records. Use it whenever the DNS host supports TXT.",
+   "Incorrect: the website file method uploads a file such as ms39978200.txt to the site's top-level folder. It is ruled out because the hosting vendor will not upload files. Use it when you control the website but not DNS.",
+   "Incorrect: authorizing records from the wizard is the Domain Connect flow, which requires a registrar that supports Domain Connect. The stem says this registrar does not."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/add-domain"
+ },
+ {
+  "id": "1.1.2-02",
+  "obj": "1.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has verified the domain tailspintoys.com in Microsoft 365. Existing users must keep their current user names, but new accounts that admins create must get tailspintoys.com addresses instead of tailspintoys.onmicrosoft.com.\n\nWhat should you do?",
+  "choices": [
+   "On the Domains page, select tailspintoys.com and select Set as default.",
+   "Add a new onmicrosoft.com domain and make it the fallback domain.",
+   "Configure Send email notifications from your domain to use tailspintoys.com.",
+   "Select all users on the Active users page and use Change domains."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The default domain is the domain that Microsoft 365 proposes for new email addresses and accounts. Changing it affects new accounts only and does not change existing user names or credentials.",
+  "rationale": [
+   "Correct: Set as default on Settings > Domains makes tailspintoys.com the default for new email addresses. Learn notes that this affects new accounts only, so existing user names stay as they are.",
+   "Incorrect: a new onmicrosoft.com fallback domain replaces the initial domain name used behind the scenes. It still uses onmicrosoft.com, so it does not give new accounts the custom domain.",
+   "Incorrect: Send email notifications from your domain changes the sender address of Microsoft 365 product emails. It does not affect which domain new user accounts receive.",
+   "Incorrect: Change domains moves the selected existing users to another domain, which breaks the requirement to keep current user names. Use it when you migrate existing users, for example before removing a domain."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/domains-faq"
+ },
+ {
+  "id": "1.1.2-03",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Litware, Inc. plans to remove the domain litwareold.com from its Microsoft 365 tenant. litwareold.com is the default domain. Several users, two shared mailboxes, and three Microsoft 365 groups use addresses in litwareold.com. The verified domain litwareinc.com will replace it.\n\nWhich three actions should you perform before you remove litwareold.com? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set litwareinc.com as the default domain.",
+   "Change the users and shared mailboxes to litwareinc.com.",
+   "Change the primary email address of each group to litwareinc.com.",
+   "Delete the MS=ms TXT verification record for litwareold.com at the registrar.",
+   "Change the authentication type of litwareold.com to Federated."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A domain can be removed only when it is not the default domain and when no users, shared or resource mailboxes, contacts, Microsoft 365 groups, distribution lists, teams, or admin sign-ins reference it. Removing the remaining references is the work; the removal itself is one click on the Domains page.",
+  "rationale": [
+   "Correct: Microsoft 365 cannot remove the default domain, so another verified domain must become the default first.",
+   "Correct: no users or shared mailboxes may use the domain. Use Change domains on the Active users page (or Update-MgUser at scale) to move them to litwareinc.com.",
+   "Correct: Microsoft 365 groups, Teams-connected groups, and distribution lists must not use the domain, so edit each group's primary email address to the new domain.",
+   "Incorrect: the TXT verification record is needed only to prove ownership and can be deleted after verification, but deleting it does not remove references and is not a prerequisite. Clean it up afterwards if you want.",
+   "Incorrect: switching a domain to Federated hands sign-in for its users to an external identity provider such as AD FS. It removes no reference to the domain, so it is not a removal prerequisite. Use it when users of the domain must authenticate against an on-premises identity provider."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/get-help-with-domains/remove-a-domain"
+ },
+ {
+  "id": "1.1.2-04",
+  "obj": "1.1.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank wants to add and verify woodgrovebank.com by using Microsoft Graph PowerShell and then make it the default domain. You have access to the bank's DNS zone.\n\nWhich six actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Domain.ReadWrite.All\"`",
+   "`New-MgDomain -BodyParameter @{id = \"woodgrovebank.com\"}`",
+   "`(Get-MgDomainVerificationDnsRecord -DomainId \"woodgrovebank.com\" | Where-Object {$_.RecordType -eq \"Txt\"}).AdditionalProperties.text`",
+   "Create a TXT record that contains the returned MS=ms value in the public DNS zone.",
+   "`Confirm-MgDomain -DomainId \"woodgrovebank.com\"`",
+   "`Update-MgDomain -DomainId \"woodgrovebank.com\" -BodyParameter @{isDefault = $true}`",
+   "`Get-MgDomainServiceConfigurationRecord -DomainId \"woodgrovebank.com\"`",
+   "`Connect-MsolService`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "explanation": "Domain onboarding has a forced order: connect with a scope that can write domains, create the unverified domain object, read the verification TXT value Microsoft generated, publish it in public DNS, and then confirm ownership. Only a verified domain can become the default.",
+  "rationale": [
+   "Step 1: the session needs the Domain.ReadWrite.All scope before any cmdlet can create or verify domain objects.",
+   "Step 2: New-MgDomain adds woodgrovebank.com to the tenant as an unverified domain, which makes Microsoft generate its verification records.",
+   "Step 3: Get-MgDomainVerificationDnsRecord returns the MS=ms value that only exists after the domain object is created.",
+   "Step 4: the TXT record must be published at the DNS host (check it with nslookup -type=TXT) before Microsoft can confirm ownership.",
+   "Step 5: Confirm-MgDomain validates the TXT record and marks the domain as verified. It returns no output, so check IsVerified with Get-MgDomain.",
+   "Step 6: Update-MgDomain with isDefault set to true makes the verified domain the default for new accounts. It fails on an unverified domain, so it comes last.",
+   "Incorrect: Get-MgDomainServiceConfigurationRecord returns the MX, CNAME, and SPF records for services such as Exchange Online. Use it after verification when you configure mail flow; it is not needed to verify or set the default.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module. Use Connect-MgGraph from the Microsoft Graph PowerShell SDK instead."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/add-a-domain-to-a-client-tenancy-with-windows-powershell-for-delegated-access-pe"
+ },
+ {
+  "id": "1.1.2-05",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Fabrikam, Inc. moves email for the domain fabrikamtravel.com from a third-party provider to Exchange Online. The registrar does not support Domain Connect. Users must keep receiving email without interruption during the move.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On Settings > Domains, select Add domain and enter fabrikamtravel.com.",
+   "Add the TXT verification record at the registrar and select Verify.",
+   "Create the users and their mailboxes with fabrikamtravel.com addresses.",
+   "Add the MX record and the other required DNS records at the registrar, and then select Continue.",
+   "Sign in to the registrar from the wizard and authorize the DNS changes.",
+   "Set fabrikamtravel.com as the fallback onmicrosoft.com domain."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Adding a domain manually has a fixed order: add the domain, prove ownership, and then add the service DNS records. Mailboxes must exist before the MX record points to Exchange Online, because changing the MX record sends all mail for the domain to Microsoft 365 immediately.",
+  "rationale": [
+   "Step 1: adding the domain on the Domains page starts the wizard and creates the verification values for the domain.",
+   "Step 2: the TXT record proves ownership. Verification can take up to 10 minutes, and some registrars take up to 48 hours.",
+   "Step 3: Learn says to add users and set up mailboxes after adding the domain but before adding the MX record, so mail is delivered to existing mailboxes.",
+   "Step 4: once mailboxes exist, the MX record redirects mail to Exchange Online with no lost messages, and the other records enable services such as Autodiscover and SPF.",
+   "Incorrect: authorizing changes through the wizard is the Domain Connect flow, and the stem says the registrar does not support Domain Connect.",
+   "Incorrect: a fallback domain must be an onmicrosoft.com domain. A custom domain such as fabrikamtravel.com cannot be a fallback domain, and the step has no role in a mail migration."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/add-domain"
+ },
+ {
+  "id": "1.1.2-06",
+  "obj": "1.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud bought the domain relecloud.com from Microsoft, and Microsoft 365 manages its DNS through NS records. The marketing team needs the subdomain events.relecloud.com added to the tenant for a new mail-enabled campaign. You try to add the subdomain on the Domains page, but the option is unavailable.\n\nWhat should you do first?",
+  "choices": [
+   "Move DNS hosting to a registrar where you manage the DNS records yourself, and then add the subdomain.",
+   "Add a custom TXT record for events.relecloud.com on the DNS records page of relecloud.com.",
+   "Add relecloudevents.onmicrosoft.com as a new onmicrosoft.com domain.",
+   "Add the subdomain in a second Microsoft 365 tenant and then move it back."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Subdomains are supported, but only when you manage your own DNS at the registrar. If Microsoft manages DNS through NS records, or if the domain was bought from Microsoft, subdomains cannot be added. Once added, a subdomain is verified automatically from its verified parent.",
+  "rationale": [
+   "Correct: Learn states that to add subdomains you must manage your own DNS settings at the registrar. After DNS management moves, the subdomain can be added and inherits verification from relecloud.com.",
+   "Incorrect: custom records on the Microsoft-hosted DNS page support services such as a website, but they do not unlock subdomain support while Microsoft manages DNS through NS records.",
+   "Incorrect: an extra onmicrosoft.com domain is a fallback domain, limited to five per tenant, and it is not the events.relecloud.com subdomain the campaign needs.",
+   "Incorrect: a subdomain can be added to another organization, but that leaves it outside Relecloud's tenant and still requires DNS you manage. Use another tenant only when a different organization owns the subdomain."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/domains-faq"
+ },
+ {
+  "id": "1.1.2-07",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys has verified tailspintoys.com, and the DNS zone is managed at its registrar. You add the subdomain eu.tailspintoys.com to Microsoft 365 for the European office.\n\nWhat should you do to verify eu.tailspintoys.com?",
+  "choices": [
+   "No verification record is needed, because the subdomain is verified based on the parent domain.",
+   "Add a TXT record with a new MS=ms value for eu.tailspintoys.com at the registrar.",
+   "Add an MX record with a high priority value for eu.tailspintoys.com at the registrar.",
+   "Upload a verification text file to the top-level folder of the eu.tailspintoys.com website."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 trusts a verified parent domain for its subdomains in the same tenant. When you add a subdomain, it is verified automatically, so only the service records such as MX need to be added.",
+  "rationale": [
+   "Correct: Learn states that when you add a subdomain, it is automatically verified based on the parent domain that is already verified.",
+   "Incorrect: a TXT verification record is required for a new root domain, or for a subdomain added to a different Microsoft 365 organization than the parent. Here the parent is verified in the same tenant.",
+   "Incorrect: an MX verification record is the fallback when TXT records are not possible on a root domain. The subdomain needs no ownership proof; add the MX record only for mail routing.",
+   "Incorrect: the website file method proves ownership of a root domain when you control the site but not DNS. It is unnecessary for a subdomain of a verified parent."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/domains-faq"
+ },
+ {
+  "id": "1.1.2-08",
+  "obj": "1.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Admin1 must add contosoparts.com to the Contoso tenant.\n\nWhich role should you assign to Admin1?",
+  "choices": [
+   "Domain Name Administrator",
+   "Exchange Administrator",
+   "Global Administrator",
+   "Billing Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Adding, modifying, or removing domains affects the whole tenant, so it requires a dedicated role. Domain Name Administrator is the role that Learn names for domain management, which makes it the least privileged choice.",
+  "rationale": [
+   "Correct: Learn states that to add, modify, or remove domains you must be a Domain Name Administrator. It meets the least privilege requirement and does not require Global Administrator.",
+   "Incorrect: Admin1 already holds Exchange Administrator, which manages mailboxes and Exchange Online settings but cannot add domains to the tenant. Use it for accepted domains and mail flow after the domain is added.",
+   "Incorrect: Global Administrator can add domains, but the technical requirements forbid assigning it to any additional user. Reserve it for emergency scenarios.",
+   "Incorrect: Billing Administrator, which Admin2 holds, manages purchases, subscriptions, and pay-as-you-go billing. It has no permissions on domains."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/add-domain",
+  "case": "C-a"
+ },
+ {
+  "id": "1.1.1-01",
+  "obj": "1.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants the Microsoft sign-in page for its tenant to show a company photo behind the sign-in box, with a fallback page background color for slow connections.\n\nWhich location should you use to configure the image?",
+  "choices": [
+   "Microsoft Entra admin center, Entra ID > Custom Branding",
+   "Microsoft 365 admin center, Org settings > Organization profile > Custom themes",
+   "Microsoft 365 admin center, Org settings > Organization profile > Custom tiles for Apps",
+   "Microsoft Entra admin center, Entra ID > Overview > Properties"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 has two branding surfaces. Microsoft Entra company branding controls the sign-in experience (favicon, background image, page background color, banner logo, sign-in text, footer). Custom themes in the Microsoft 365 admin center control the suite header that users see after sign-in.",
+  "rationale": [
+   "Correct: company branding in the Microsoft Entra admin center is where you set the sign-in page background image (1920x1080 px, up to 300 KB) and the page background color that appears when the image cannot load.",
+   "Incorrect: custom themes change the Microsoft 365 suite header (logo, navigation bar, text and accent colors) after the user signs in, not the sign-in page. Use them when the requirement is the top navigation bar of Microsoft 365 apps.",
+   "Incorrect: custom tiles add links to sites or apps in the app launcher and on the My apps page. Use them to publish an intranet or legacy app tile, not to change the sign-in page.",
+   "Incorrect: the Properties page holds the technical contact, global privacy contact, and privacy statement URL that guests see. Use it for privacy information, not for sign-in page images."
+  ],
+  "ref": "https://learn.microsoft.com/entra/fundamentals/how-to-customize-branding"
+ },
+ {
+  "id": "1.1.1-02",
+  "obj": "1.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a Microsoft 365 E3 subscription. A marketing specialist named User1 must update the banner logo and sign-in page text on the Microsoft Entra sign-in page. User1 must not be able to manage users, applications, or other tenant settings.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "Organizational Branding Administrator",
+   "Application Administrator",
+   "Privileged Authentication Administrator",
+   "Global Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Least privilege means picking the narrowest built-in role that covers the task. Microsoft Entra company branding has its own role, Organizational Branding Administrator, which is the minimum role that can customize the sign-in experience.",
+  "rationale": [
+   "Correct: Organizational Branding Administrator is the minimum role required to customize company branding, so User1 can change the banner logo and sign-in text without any user or app permissions.",
+   "Incorrect: Application Administrator manages enterprise apps and app registrations. It is needed in addition to branding rights only when you apply an app-specific branding theme to an application, which this task does not require.",
+   "Incorrect: Privileged Authentication Administrator manages authentication methods and passwords for all users, including admins, which the stem forbids. It has no company branding permissions. Use it to reset strong authentication for privileged users.",
+   "Incorrect: Global Administrator can customize branding, but it grants almost unlimited access and violates the least privilege requirement. Reserve it for emergency scenarios."
+  ],
+  "ref": "https://learn.microsoft.com/entra/fundamentals/how-to-customize-branding"
+ },
+ {
+  "id": "1.1.1-03",
+  "obj": "1.1.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Relecloud must meet the following branding requirements in its Microsoft 365 tenant:\n\n- Show the company logo in the Microsoft 365 suite header for every user.\n- Show a different logo in the suite header for the members of a Microsoft 365 group named Research.\n- Show the company background image on the sign-in page.\n- Show the company logo with the label Managed by at the bottom of the Chat screen in the Microsoft 365 Copilot app.\n\nWhich feature should you use for each requirement? To answer, drag the appropriate features to the correct requirements. Each feature may be used once, more than once, or not at all.",
+  "choices": [
+   "Default theme in Custom themes",
+   "Group theme in Custom themes",
+   "Microsoft Entra company branding",
+   "Copilot Chat tab of the default theme",
+   "Custom tiles for Apps"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Custom themes in the Microsoft 365 admin center brand the suite header: one default theme for everyone and up to four group themes mapped to Microsoft 365 groups. The Copilot Chat footer is configured only on the default theme. The sign-in page is branded separately in Microsoft Entra company branding.",
+  "rationale": [
+   "The default theme applies to everyone in the organization and carries the logo that appears in the suite header.",
+   "A group theme is assigned to up to five Microsoft 365 groups, so Research members see their own logo instead of the default theme.",
+   "Sign-in page images, such as the 1920x1080 background, are set in Microsoft Entra company branding, not in Microsoft 365 themes.",
+   "The Copilot Chat tab exists only on the default theme. It reuses the default theme logo and lets you pick a label such as Managed by for the Chat footer."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/customize-your-organization-theme",
+  "targets": [
+   "Logo in the suite header for all users",
+   "Different suite header logo for Research members",
+   "Background image on the sign-in page",
+   "Logo and label in the Copilot Chat footer"
+  ],
+  "notes": [
+   "The default theme is the first theme, cannot be renamed, and applies to everyone. Use it for the organization-wide suite header logo and colors.",
+   "A group theme overrides the default theme for members of up to five Microsoft 365 groups (not security or distribution groups). You can create up to four group themes.",
+   "Company branding in the Microsoft Entra admin center customizes the sign-in page: favicon, background image, banner logo, sign-in text, and footer links.",
+   "The Copilot Chat tab of the default theme adds the organization logo and an optional label (No label, Approved by, Provided by, Managed by) to the Chat footer. It is off by default.",
+   "Custom tiles add links to the app launcher and My apps page. Use them for intranet or legacy app shortcuts; they do not change any logo or theme."
+  ]
+ },
+ {
+  "id": "1.1.1-04",
+  "obj": "1.1.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Woodgrove Bank configures custom themes in the Microsoft 365 admin center. The bank has one default theme and plans group themes for its Retail, Wealth, and Markets divisions.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "You can assign a group theme to a mail-enabled security group that contains the Retail employees.",
+   "A user who is a member of both the Wealth and Markets groups that have different group themes sees the default theme.",
+   "To delete the default theme, you must first delete all group themes."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Group themes are mapped only to Microsoft 365 groups. A tenant can have five themes (one default and four group themes), each group theme targets up to five groups, users in more than one group theme fall back to the default theme, and the default theme can be deleted only after every group theme is removed.",
+  "rationale": [
+   "No: group themes must be mapped to one or more Microsoft 365 groups. Security groups and distribution groups are not supported, so you would need a Microsoft 365 group for the Retail employees.",
+   "Yes: when a user is assigned to multiple group themes, Microsoft 365 shows the default theme, which avoids an arbitrary choice between conflicting group themes.",
+   "Yes: the default theme can be deleted only after all other themes are deleted. Delete the group themes first if you need to remove all custom branding."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/customize-your-organization-theme"
+ },
+ {
+  "id": "1.1.1-05",
+  "obj": "1.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. edits the default theme in the Microsoft 365 admin center. The logo file is 40 KB and is stored in a SharePoint document library that only authenticated employees can read. When the admin enters the HTTPS URL of the file in the Default logo field, the admin center returns an error. The logo must open https://intranet.litwareinc.com when selected.\n\nWhat should you do?",
+  "choices": [
+   "Host the logo at an HTTPS URL that allows anonymous access, such as Azure Blob Storage, and enter that URL.",
+   "Enter the SharePoint file URL in the On-click link field and leave the Default logo field empty.",
+   "Change the logo URL so that it uses HTTP instead of HTTPS, and enter the intranet URL as the On-click link.",
+   "Grant the Everyone except external users group Read access to the library, and enter the same SharePoint URL."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A theme logo URL must use HTTPS and must allow anonymous access without authentication. A direct upload is possible only for images smaller than 10 KB, so a 40 KB file must come from a publicly addressable location such as Azure Blob Storage or the Office 365 CDN. The On-click link is a separate field that sets where the logo navigates.",
+  "rationale": [
+   "Correct: Learn requires an HTTPS image URL that allows anonymous access. Azure Blob Storage or the Office 365 CDN meet that, and you can then set the intranet URL in the On-click link field.",
+   "Incorrect: the On-click link sets where users go when they select the logo; it does not supply the image. Use it for the intranet URL after the logo itself is hosted anonymously.",
+   "Incorrect: the logo URL must use HTTPS. Switching to HTTP does not remove the authentication requirement of the SharePoint library and breaks the HTTPS rule.",
+   "Incorrect: Everyone except external users still requires a signed-in employee, so the URL is not anonymous. Use that permission when only employees should open a file, not for theme logos."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/customize-your-organization-theme"
+ },
+ {
+  "id": "1.1.1-06",
+  "obj": "1.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the branding requirement for the members of Sales-EU.\n\nWhat should you do?",
+  "choices": [
+   "Add a group theme in Custom themes that uses the regional Sales logo, and assign it to Sales-EU.",
+   "Edit the default theme to use the regional Sales logo, and select Prevent users from overriding their theme.",
+   "Add a browser language customization in Microsoft Entra company branding that uses the regional Sales logo.",
+   "Create an app-specific branding theme in Microsoft Entra company branding and apply it to Microsoft 365."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Suite header branding for a subset of users is done with group themes, which map to Microsoft 365 groups. Sales-EU is a Microsoft 365 group, so it can be assigned directly, while the default theme keeps the Contoso logo for everyone else.",
+  "rationale": [
+   "Correct: a group theme overrides the default theme only for members of the assigned Microsoft 365 group. Sales-EU is a Microsoft 365 group, so its members see the regional logo while all others keep the Contoso default theme.",
+   "Incorrect: the default theme applies to everyone, so all users would lose the Contoso logo, which breaks the all-users requirement. Use this option when one logo must apply to the whole organization.",
+   "Incorrect: browser language customization changes the Entra sign-in page for a browser language, not the suite header after sign-in. Use it to localize sign-in text for a language.",
+   "Incorrect: app-specific branding themes customize the sign-in page for a registered application. They do not affect the suite header, and they are not targeted at group members."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/setup/customize-your-organization-theme",
+  "case": "C-a"
+ },
+ {
+  "id": "1.1.3-01",
+  "obj": "1.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. requires that users who are inactive for one hour in any Microsoft 365 web app, including Outlook on the web, SharePoint, and the Microsoft 365 admin center, are signed out after a warning. The setting must apply to the entire organization, and desktop apps must not be affected.\n\nWhat should you configure?",
+  "choices": [
+   "Idle session timeout on the Security & privacy tab of Org settings",
+   "A Conditional Access policy that sets sign-in frequency to one hour",
+   "The ActivityBasedAuthenticationTimeoutInterval parameter of Set-OrganizationConfig",
+   "The idle session sign-out setting in the SharePoint admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Idle session timeout in the Microsoft 365 admin center signs users out of supported Microsoft 365 web apps after a chosen period of inactivity, shows a warning first, and applies to the whole organization. It overrides the older service-specific Outlook on the web and SharePoint timeouts and does not affect desktop or mobile apps.",
+  "rationale": [
+   "Correct: Idle session timeout (Settings > Org settings > Security & privacy) covers Outlook on the web, SharePoint, OneDrive, Office web apps, and the admin center, warns users before sign-out, and applies tenant-wide.",
+   "Incorrect: sign-in frequency forces reauthentication after a fixed time even when the user is active, and it is not an inactivity timer. Use it when sessions must be reauthenticated on a schedule, for example on unmanaged devices.",
+   "Incorrect: this Exchange Online setting controls activity-based timeout for Outlook on the web only, so SharePoint and the admin center are not covered. Learn notes that the tenant-wide idle session timeout overrides it.",
+   "Incorrect: the SharePoint idle sign-out setting covers SharePoint and OneDrive only. Use it only if you need a SharePoint-specific policy; the tenant-wide setting overrides it."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/idle-session-timeout-web-apps"
+ },
+ {
+  "id": "1.1.3-02",
+  "obj": "1.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses cloud-only accounts. A new security standard requires that user passwords expire every 90 days.\n\nWhat should you configure in the Microsoft 365 admin center?",
+  "choices": [
+   "Password expiration policy on the Security & privacy tab of Org settings",
+   "Self-service password reset on the Security & privacy tab of Org settings",
+   "Custom banned passwords in Microsoft Entra Password Protection",
+   "The Authentication methods policy in the Microsoft Entra admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, passwords never expire in Microsoft 365. The Password expiration policy in Org settings lets a User Administrator clear Set passwords to never expire and enter a value from 14 to 730 days. It applies to cloud-only accounts, not to users who sign in with synchronized or federated passwords.",
+  "rationale": [
+   "Correct: in Password expiration policy you clear Set passwords to never expire and enter 90 in Days before passwords expire, which accepts values from 14 to 730.",
+   "Incorrect: self-service password reset lets users reset forgotten passwords themselves. It does not force passwords to expire. Use it to reduce help desk calls.",
+   "Incorrect: a custom banned password list blocks weak or company-specific passwords when users set them. It does not control how long a password stays valid.",
+   "Incorrect: the Authentication methods policy controls which methods, such as Microsoft Authenticator or FIDO2 keys, users can register and use. It has no password lifetime setting."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/set-password-expiration-policy"
+ },
+ {
+  "id": "1.1.3-03",
+  "obj": "1.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud hosts Teams meetings with external participants. When attendees hover over the Privacy and cookies link in the meeting join experience, they must see Relecloud's own privacy statement. Privacy questions must go to privacy@relecloud.com.\n\nWhat should you configure?",
+  "choices": [
+   "Privacy profile on the Security & privacy tab of Org settings",
+   "Privacy and security URL in the email invitation settings of the Teams admin center",
+   "The Privacy & Cookies footer link in Microsoft Entra company branding",
+   "The help desk information on the Organization profile tab of Org settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Privacy profile in the Microsoft 365 admin center stores the organization's privacy statement URL and privacy contact. Microsoft 365 experiences such as the Teams meeting join screen and Viva Pulse read the statement from there.",
+  "rationale": [
+   "Correct: Learn states that the privacy statement URL and privacy contact set in Privacy profile are shown to attendees in the meeting join experience when they hover over Privacy and cookies.",
+   "Incorrect: the Privacy and security URL in Teams meeting settings is shown in meeting invitations and in recording and transcription notices. Use it to customize the invitation email, not the join experience.",
+   "Incorrect: the company branding footer link appears on the Microsoft Entra sign-in page, and custom footer URLs there are shown as text that is not clickable. Use it to brand the sign-in page.",
+   "Incorrect: help desk information directs users to internal support contacts. It does not publish a privacy statement or a privacy contact."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/meeting-privacy-statement"
+ },
+ {
+  "id": "1.1.3-04",
+  "obj": "1.1.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Tailspin Toys wants passwords for cloud-only accounts in the tailspintoys.com domain to expire after 90 days. You use Microsoft Graph PowerShell instead of the admin center.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes [[1]]\n$params = @{ [[2]] = 90 }\n[[3]] -DomainId \"tailspintoys.com\" -BodyParameter $params\n```",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "The password expiration policy in Microsoft 365 is stored per domain as the passwordValidityPeriodInDays property. Update-MgDomain changes it, and the session needs the Domain.ReadWrite.All scope. The org-wide setting in the admin center writes the same property for each managed domain.",
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.identity.directorymanagement/update-mgdomain",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"Domain.ReadWrite.All\"",
+     "\"Directory.Read.All\"",
+     "\"Policy.ReadWrite.AuthenticationMethod\""
+    ],
+    "why": [
+     "Correct: updating a domain object, including its password policy properties, requires write access to domains, which Domain.ReadWrite.All grants.",
+     "Incorrect: Directory.Read.All can read the domain and its current password settings but cannot write them. Use it for reporting scripts.",
+     "Incorrect: this scope manages the Authentication methods policy (for example, which MFA methods are allowed). It cannot change domain password lifetime."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "passwordValidityPeriodInDays",
+     "passwordNotificationWindowInDays"
+    ],
+    "why": [
+     "Correct: passwordValidityPeriodInDays sets how many days a password stays valid before it must be changed, which is the 90-day requirement.",
+     "Incorrect: passwordNotificationWindowInDays sets how many days before expiration users are notified. It does not set the expiration period itself."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Update-MgDomain",
+     "Confirm-MgDomain",
+     "Update-MgOrganization"
+    ],
+    "why": [
+     "Correct: Update-MgDomain updates properties of a verified domain, such as passwordValidityPeriodInDays, isDefault, and supportedServices.",
+     "Incorrect: Confirm-MgDomain validates domain ownership after you publish the verification TXT record. It does not set password properties.",
+     "Incorrect: Update-MgOrganization changes tenant properties such as technical notification contacts. The password lifetime is a domain property, so it is set on the domain object."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.1.3-05",
+  "obj": "1.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft 365 E5. Compliance rules require that Microsoft support engineers cannot access mailbox or SharePoint content without explicit approval by the bank. A compliance officer named User1 must turn on the control and approve or deny each request. User1 must have the least privileges required.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "Customer Lockbox access approver",
+   "Compliance Administrator",
+   "Privileged Role Administrator",
+   "Global Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Customer Lockbox makes the customer the final approver when a Microsoft engineer needs access to content in Exchange Online, SharePoint, OneDrive, Teams, or Windows 365. It is included in E5 and is turned on in Settings > Org settings > Security & privacy > Customer Lockbox. Requests that are not approved within 12 hours expire.",
+  "rationale": [
+   "Correct: Learn uses an account with the Customer Lockbox access approver role to turn on Require approval for all data access requests and to approve or deny requests in Support > Customer Lockbox Requests.",
+   "Incorrect: Compliance Administrator manages Microsoft Purview compliance features such as retention and eDiscovery, but it is not the role that approves Customer Lockbox requests.",
+   "Incorrect: Privileged Role Administrator manages role assignments and PIM settings. It could assign the approver role to someone, but it is not the role that approves Customer Lockbox requests.",
+   "Incorrect: Global Administrator can also approve requests, but it grants almost unlimited access and violates the least privilege requirement."
+  ],
+  "ref": "https://learn.microsoft.com/purview/customer-lockbox-requests"
+ },
+ {
+  "id": "1.1.3-06",
+  "obj": "1.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud wants notification emails that Microsoft 365 sends to users, such as product and service notifications, to come from no-reply@relecloud.com instead of a Microsoft address. relecloud.com is verified and has SPF, DKIM, and DMARC records. The change must not affect any user mailbox or user name.\n\nWhat should you do?",
+  "choices": [
+   "On the Organization profile tab, set Send email notifications from your domain to relecloud.com.",
+   "On the Domains page, set relecloud.com as the default domain and update its MX record.",
+   "In the Microsoft Defender portal, turn on DKIM signing for relecloud.com and enforce DMARC.",
+   "On the Organization profile tab, change the technical contact to no-reply@relecloud.com."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Send email notifications from your domain is an opt-in Organization profile setting that lets Microsoft 365 send its product emails from a verified domain, with an optional custom username such as no-reply. SPF, DKIM, DMARC, and MX records are recommended for that domain so recipients can validate the mail. Changes can take up to 24 hours.",
+  "rationale": [
+   "Correct: this setting lets you select a verified domain and set a custom username such as no-reply, so Microsoft 365 product emails come from no-reply@relecloud.com without changing any mailbox.",
+   "Incorrect: the default domain controls which domain new accounts receive. It does not change the sender address of Microsoft 365 notifications, and editing the MX record changes inbound mail routing.",
+   "Incorrect: DKIM signing and DMARC help recipients validate mail from relecloud.com and are recommended, but they do not change which address Microsoft 365 uses to send notifications.",
+   "Incorrect: the technical contact receives technical notifications from Microsoft about the tenant. It does not change the From address of emails that Microsoft 365 sends to users."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/select-domain-to-use-for-email-from-microsoft-365-products"
+ },
+ {
+  "id": "1.1.3-07",
+  "obj": "1.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals wants to stop users from acquiring Office Add-ins from Microsoft Marketplace in Word, Excel, and PowerPoint. Admins will continue to deploy approved add-ins centrally.\n\nWhat should you configure?",
+  "choices": [
+   "Clear Let users access the Office Store in User owned apps and services on the Services tab.",
+   "Remove the add-ins on the Integrated apps page and redeploy them to specific groups.",
+   "Set the add-in products to Do not allow in Self-service trials and purchases on the Services tab.",
+   "Change the Microsoft 365 installation options so users cannot install Office themselves."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Let users access the Office Store setting, in Settings > Org settings > Services > User owned apps and services, controls whether users can acquire add-ins from Microsoft Marketplace in Word, Excel, and PowerPoint. Centralized deployment through Integrated apps keeps working when the store is blocked. Outlook add-ins are managed separately in Exchange Online.",
+  "rationale": [
+   "Correct: clearing Let users access the Office Store blocks user-initiated add-in downloads, and approved add-ins still reach users through centralized deployment.",
+   "Incorrect: Integrated apps is where admins deploy add-ins centrally. Redeploying does not stop users from getting other add-ins from the store. Use it to push approved add-ins.",
+   "Incorrect: Self-service trials and purchases controls whether users can buy or trial eligible Microsoft products such as Power BI Pro. It does not govern Office Add-ins from the Marketplace.",
+   "Incorrect: installation options control whether users can install the Office apps and which update channel they use. They do not control add-ins inside the apps."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/manage-addins-in-the-admin-center"
+ },
+ {
+  "id": "1.1.3-08",
+  "obj": "1.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has many Microsoft 365 groups that already include guests. Management decides that existing guests must keep access to the content of their groups, but group owners must no longer be able to add new people from outside the organization to groups. The change must be made once for the whole organization.\n\nWhat should you do in the Microsoft 365 Groups settings on the Services tab of Org settings?",
+  "choices": [
+   "Clear Let group owners add people outside your organization to Microsoft 365 Groups as guests, and keep Let guest group members access group content selected.",
+   "Clear Let guest group members access group content, and keep Let group owners add people outside your organization to Microsoft 365 Groups as guests selected.",
+   "Clear both Let group owners add people outside your organization to Microsoft 365 Groups as guests and Let guest group members access group content.",
+   "Keep both settings selected, and set the SharePoint external sharing level for the organization to Existing guests."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Guest access for Microsoft 365 groups is on by default and is controlled by two independent org-wide settings: whether owners can add new guests to groups, and whether guest members can access group content. Turning off only the first freezes guest membership while existing guests keep working.",
+  "rationale": [
+   "Correct: clearing the owner setting stops new guests from being added to groups, and keeping the content setting lets existing guest members keep using group content.",
+   "Incorrect: clearing the content setting cuts off the existing guests, which breaks the requirement, while owners could still add new guests. Use it when guests must lose access but membership stays.",
+   "Incorrect: clearing both settings blocks new guests and also removes content access for existing guests. Use it when guest collaboration in groups must stop entirely.",
+   "Incorrect: Existing guests in SharePoint limits site and file sharing to guests already in the directory, but group owners could still add new guests to the groups themselves."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/create-groups/manage-guest-access-in-groups"
+ },
+ {
+  "id": "1.1.4-01",
+  "obj": "1.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud uses group-based licensing in the Microsoft 365 admin center. An IT technician named User1 must assign product licenses to groups and reprocess failed license assignments. User1 must not be able to create users or change group membership.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "License Administrator",
+   "User Administrator",
+   "Groups Administrator",
+   "Global Reader"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Several roles can assign licenses to groups: Groups Administrator, License Administrator, and User Administrator. License Administrator is the narrowest one: it assigns and removes licenses, edits usage location, assigns licenses to groups, and reprocesses group license assignments, without user or group management rights.",
+  "rationale": [
+   "Correct: License Administrator can assign product licenses to groups and reprocess group-based license assignments, and it cannot create users or manage group membership.",
+   "Incorrect: User Administrator can assign licenses, but it also creates and manages users and groups, which the stem forbids. Use it for help desk staff who run the full user lifecycle.",
+   "Incorrect: Groups Administrator can assign licenses to groups, but it also manages groups and their membership, which the stem forbids. Use it for staff who own group management.",
+   "Incorrect: Global Reader can view license assignments and errors but cannot assign or reprocess anything. Use it for auditors who need read-only access."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/add-users/about-admin-roles"
+ },
+ {
+  "id": "1.1.4-02",
+  "obj": "1.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. assigns Microsoft 365 E3 to a security group named AllStaff. AllStaff contains users and also contains a security group named Contractors. Members of Contractors do not receive E3 licenses, and there are enough available licenses.\n\nWhat should you do?",
+  "choices": [
+   "Assign the E3 license to the Contractors group as well.",
+   "Select Reprocess for the AllStaff group on the Licenses page.",
+   "Set a usage location for each member of the Contractors group.",
+   "Convert AllStaff to a Microsoft 365 group and reassign the license."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Group-based licensing does not support nested groups. When a license is assigned to a group that contains other groups, only the direct (first-level) user members receive the license. Members of nested groups must be licensed through their own group or directly.",
+  "rationale": [
+   "Correct: only users in the first-level group get the license, so assigning E3 to Contractors as well licenses its members.",
+   "Incorrect: Reprocess retries assignments after you fix a cause such as missing licenses or a conflict. Nested group members are out of scope by design, so reprocessing changes nothing.",
+   "Incorrect: a missing usage location produces a Usage location is not allowed error, and group-based licensing falls back to the tenant location anyway. It is not why nested members are skipped.",
+   "Incorrect: security groups, mail-enabled groups, and Microsoft 365 groups all support group-based licensing, and none of them pass licenses to nested groups."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/manage-group-licenses"
+ },
+ {
+  "id": "1.1.4-03",
+  "obj": "1.1.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank wants to use Microsoft Graph PowerShell to assign Microsoft 365 E5 to an existing security group named Sales-Licensed, whose object ID is stored in $groupId, and then list the members who failed to receive the license.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Group.ReadWrite.All\", \"Organization.Read.All\"`",
+   "`$sku = Get-MgSubscribedSku -All | Where-Object SkuPartNumber -eq \"SPE_E5\"`",
+   "`$params = @{ AddLicenses = @(@{ SkuId = $sku.SkuId }); RemoveLicenses = @() }`",
+   "`Set-MgGroupLicense -GroupId $groupId -BodyParameter $params`",
+   "`Get-MgGroupMemberWithLicenseError -GroupId $groupId -All`",
+   "`Set-MgUserLicense -UserId $userId -AddLicenses @{SkuId = $sku.SkuId} -RemoveLicenses @()`",
+   "`Connect-AzureAD`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Group-based licensing in Graph PowerShell follows the data dependencies: connect with scopes that can read subscriptions and write groups, look up the SkuId of the product, build the addLicenses body, assign it to the group, and then check members whose license processing failed.",
+  "rationale": [
+   "Step 1: the session needs Organization.Read.All to read subscribed SKUs and Group.ReadWrite.All to change the group's assigned licenses.",
+   "Step 2: Get-MgSubscribedSku returns the tenant's products, and filtering on SkuPartNumber SPE_E5 gives the SkuId GUID that the assignment needs.",
+   "Step 3: the body parameter uses the SkuId from step 2. RemoveLicenses is an empty array because nothing is removed.",
+   "Step 4: Set-MgGroupLicense assigns E5 to the group, and Microsoft Entra ID then licenses each direct member in the background.",
+   "Step 5: because group licensing errors appear after processing, Get-MgGroupMemberWithLicenseError lists the members who failed, for example because of missing licenses or conflicting plans.",
+   "Incorrect: Set-MgUserLicense assigns a license directly to one user. That is direct assignment, not group-based licensing, and it creates assignments you later have to clean up.",
+   "Incorrect: Connect-AzureAD belongs to the deprecated AzureAD module. Use Connect-MgGraph from the Microsoft Graph PowerShell SDK."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/licensing-powershell-graph-examples"
+ },
+ {
+  "id": "1.1.4-04",
+  "obj": "1.1.4",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Litware, Inc. creates a cloud-only user named user1@litwareinc.com who has no usage location. You must assign Microsoft 365 E5 to the user with the Sway and Forms service plans turned off.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes \"User.ReadWrite.All\", \"Organization.Read.All\"\n[[1]] -UserId \"user1@litwareinc.com\" -UsageLocation \"US\"\n$e5Sku = [[2]] -All | Where SkuPartNumber -eq 'SPE_E5'\n$disabledPlans = $e5Sku.ServicePlans | Where ServicePlanName -in (\"SWAY\", \"FORMS_PLAN_E5\") | Select -ExpandProperty ServicePlanId\n$addLicenses = @(@{ SkuId = $e5Sku.SkuId; DisabledPlans = $disabledPlans })\nSet-MgUserLicense -UserId \"user1@litwareinc.com\" [[3]]\n```",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Direct license assignment with Graph PowerShell needs a usage location on the user, the SkuId of the product from Get-MgSubscribedSku, and Set-MgUserLicense with both AddLicenses and RemoveLicenses. DisabledPlans inside an AddLicenses entry turns off individual service plans of that product.",
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Update-MgUser",
+     "Set-MgUserLicense",
+     "New-MgUser"
+    ],
+    "why": [
+     "Correct: Update-MgUser sets the UsageLocation property of the existing user, which must be set before a license can be assigned.",
+     "Incorrect: Set-MgUserLicense assigns or removes licenses and has no UsageLocation parameter. It runs later, after the location is set.",
+     "Incorrect: New-MgUser creates a new account. The user already exists, so creating it again fails; set UsageLocation at creation only for new users."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "Get-MgSubscribedSku",
+     "Get-MgUserLicenseDetail",
+     "Get-MgGroup"
+    ],
+    "why": [
+     "Correct: Get-MgSubscribedSku lists the products the tenant owns, with their SkuPartNumber, SkuId, and ServicePlans, which the script filters for SPE_E5.",
+     "Incorrect: Get-MgUserLicenseDetail returns the licenses already assigned to a user. Use it to keep plans that are already disabled when you update a licensed user.",
+     "Incorrect: Get-MgGroup returns group objects, including AssignedLicenses for group-based licensing. It does not list the tenant's subscribed products."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "-AddLicenses $addLicenses -RemoveLicenses @()",
+     "-AddLicenses @() -RemoveLicenses $addLicenses",
+     "-AddLicenses $e5Sku.ServicePlans -RemoveLicenses @()"
+    ],
+    "why": [
+     "Correct: AddLicenses takes the hashtable with SkuId and DisabledPlans, and RemoveLicenses is an empty array because nothing is removed.",
+     "Incorrect: this swaps the parameters, so the script tries to remove a license the user does not have instead of assigning E5.",
+     "Incorrect: AddLicenses expects license objects with a SkuId, not a list of service plans. Service plans to turn off go in DisabledPlans."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.1.4-05",
+  "obj": "1.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys uses group-based licensing. A security group named GroupA is assigned Microsoft 365 E5. The tenant owns 400 E5 licenses, and all of them are in use. Thirty-five disabled accounts of former employees, which are not members of GroupA, still have directly assigned E5 licenses. After 30 new employees were added to GroupA, the Errors & issues tab for Microsoft 365 E5 lists all 30 of them with the error Not enough licenses.\n\nYou need to ensure that the 30 new employees receive E5 through GroupA without purchasing more licenses.\n\nSolution: You remove the directly assigned E5 licenses from the 35 disabled accounts, and then you reprocess the affected users on the Errors & issues tab.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Not enough licenses error means the product has no available seats. The fix is to buy more licenses or to free licenses, for example by removing unused direct assignments, and then to reprocess so that group-based licensing retries the assignment.",
+  "rationale": [
+   "Correct: removing 35 unused direct assignments frees 35 E5 licenses, which covers the 30 new members. Reprocess then retries the group assignment with the available licenses.",
+   "Incorrect: the solution does meet the goal. It frees more licenses than needed and does not require a purchase. No would be right if fewer licenses were freed than users who are waiting."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/manage-group-licenses",
+  "series": "S-a"
+ },
+ {
+  "id": "1.1.4-06",
+  "obj": "1.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys uses group-based licensing. A security group named GroupA is assigned Microsoft 365 E5. The tenant owns 400 E5 licenses, and all of them are in use. Thirty-five disabled accounts of former employees, which are not members of GroupA, still have directly assigned E5 licenses. After 30 new employees were added to GroupA, the Errors & issues tab for Microsoft 365 E5 lists all 30 of them with the error Not enough licenses.\n\nYou need to ensure that the 30 new employees receive E5 through GroupA without purchasing more licenses.\n\nSolution: You select Reprocess for the 30 affected users on the Errors & issues tab.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Reprocess tells group-based licensing to apply licenses again with the current configuration and available licenses. It helps only after the underlying cause, such as a lack of licenses, a conflict, or a missing usage location, has been fixed.",
+  "rationale": [
+   "Incorrect: reprocessing retries the assignment, but all 400 E5 licenses are still in use, so the 30 users fail with the same Not enough licenses error.",
+   "Correct: the solution does not meet the goal because no licenses were freed. Reprocess is the right final step after you remove unused direct assignments or buy more licenses."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/manage-group-licenses",
+  "series": "S-a"
+ },
+ {
+  "id": "1.1.4-07",
+  "obj": "1.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys uses group-based licensing. A security group named GroupA is assigned Microsoft 365 E5. The tenant owns 400 E5 licenses, and all of them are in use. Thirty-five disabled accounts of former employees, which are not members of GroupA, still have directly assigned E5 licenses. After 30 new employees were added to GroupA, the Errors & issues tab for Microsoft 365 E5 lists all 30 of them with the error Not enough licenses.\n\nYou need to ensure that the 30 new employees receive E5 through GroupA without purchasing more licenses.\n\nSolution: You create a security group named GroupB, assign E5 to GroupB, and add GroupA as a member of GroupB.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Group-based licensing does not support nested groups, and a second group that assigns the same product draws from the same license pool. Neither changes the number of available licenses.",
+  "rationale": [
+   "Incorrect: members of a nested group do not receive licenses from the parent group, and GroupB would use the same exhausted E5 pool even if they did.",
+   "Correct: the solution does not meet the goal. It adds a nested group, which group-based licensing ignores, and frees no licenses. Free unused direct assignments instead, then reprocess."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/manage-group-licenses",
+  "series": "S-a"
+ },
+ {
+  "id": "1.1.4-08",
+  "obj": "1.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. wants to use Microsoft 365 SharePoint Storage, which is billed as a pay-as-you-go service. User1 is assigned the Billing Administrator role and has the Reader role on an Azure subscription named Sub1. In Billing > Pay-as-you-go, User1 starts to add a billing policy but cannot select Sub1 or its resource group. Sub1 must be used.\n\nWhat should you do?",
+  "choices": [
+   "Assign User1 the Contributor role on Sub1 and its resource group.",
+   "Assign User1 the Global Administrator role in Microsoft Entra ID.",
+   "Assign User1 the SharePoint Administrator role in Microsoft Entra ID.",
+   "Make User1 a Billing account owner of the Microsoft billing account."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Pay-as-you-go services in Microsoft 365 are billed through an Azure subscription in the same tenant. The admin needs a supported Microsoft 365 role (SharePoint Administrator, Billing Administrator, AI Administrator, or Global Administrator) and Owner or Contributor rights on the Azure subscription and resource group.",
+  "rationale": [
+   "Correct: Learn requires Owner or Contributor rights on the Azure subscription and resource group to create a billing policy. Reader cannot link the subscription.",
+   "Incorrect: Global Administrator is a Microsoft 365 role and does not grant Azure RBAC rights on Sub1. User1 already holds a supported admin role, Billing Administrator.",
+   "Incorrect: SharePoint Administrator is another supported Microsoft 365 role for pay-as-you-go setup, but User1 already has Billing Administrator. The missing permission is on the Azure subscription.",
+   "Incorrect: a Billing account owner or contributor is needed only to create a new Azure subscription from the Microsoft 365 admin center. The stem requires the existing Sub1."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/commerce/services/pay-as-you-go-setup-billing-node"
+ },
+ {
+  "id": "1.1.5-01",
+  "obj": "1.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. plans its first rollout of Microsoft 365 Copilot. You need a report in the Microsoft 365 admin center that shows which users are technically eligible for Copilot and that lets you assign Copilot licenses from the report.\n\nWhich report should you use?",
+  "choices": [
+   "Microsoft Copilot readiness report",
+   "Microsoft Copilot usage report",
+   "Microsoft Copilot Chat usage report",
+   "Agent usage report"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot reports in Reports > Usage answer different questions: readiness shows who is technically eligible and lets you assign licenses, the Copilot usage report shows adoption by licensed users, the Copilot Chat usage report covers users without a Copilot license, and the agent usage report shows agent adoption.",
+  "rationale": [
+   "Correct: the readiness report shows which users are technically eligible for Copilot, and you can assign licenses directly from it. Its data can have up to 72 hours of latency.",
+   "Incorrect: the Copilot usage report shows adoption, retention, and engagement of users who already have Copilot licenses. Use it after rollout to find inactive licensed users.",
+   "Incorrect: the Copilot Chat usage report covers only users without a Copilot license who use Copilot Chat. Use it to measure free Chat adoption before you buy licenses.",
+   "Incorrect: the agent usage report shows how agents are adopted in Copilot. It does not assess license eligibility."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/agent-essentials/agent-usage-billing/agent-usage-cs-reports"
+ },
+ {
+  "id": "1.1.5-02",
+  "obj": "1.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a Copilot Studio tenant license, and two makers have Copilot Studio User Licenses. The makers publish an agent for all 900 employees. You need to plan licenses for the employees who only chat with the published agent.\n\nWhich license should you assign to these employees?",
+  "choices": [
+   "No Copilot Studio license is needed for them.",
+   "A Copilot Studio User License for each of them.",
+   "A Microsoft 365 Copilot license for each of them.",
+   "The Copilot Studio tenant license for each of them."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Studio licensing has two parts: a tenant license for the organization and a per-user license for each person who creates and manages agents. People who only interact with a published agent do not need a special license; consumption is covered by the tenant capacity or billing.",
+  "rationale": [
+   "Correct: Learn states that users of your agents do not need a special license. After publishing, anyone who can access the agent can interact with it.",
+   "Incorrect: the Copilot Studio User License is for makers who create and manage agents. Assign it only to the two makers.",
+   "Incorrect: a Microsoft 365 Copilot license enables Copilot in Microsoft 365 apps. It is not a requirement for chatting with a published Copilot Studio agent.",
+   "Incorrect: the tenant license is acquired once by the tenant administrator and cannot be assigned to individual users."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/requirements-licensing"
+ },
+ {
+  "id": "1.1.5-03",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A business analyst at Litware, Inc. named User1 signed up for a Copilot Studio trial and built an agent. User1 can test the agent in the test chat panel but cannot publish it. Litware has no other Copilot Studio licenses. User1 must publish the agent to Teams and the web.\n\nWhat should you do?",
+  "choices": [
+   "Purchase the Copilot Studio tenant license and assign User1 a Copilot Studio User License.",
+   "Assign User1 a Microsoft 365 Copilot license and keep the Copilot Studio trial.",
+   "Extend the Copilot Studio trial for User1 by using the AllowAdHocSubscriptions setting.",
+   "Purchase the Copilot Studio tenant license and assign that license to User1."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A Copilot Studio trial allows building and testing but not publishing. Production use needs both a tenant license, bought once by the admin, and a Copilot Studio User License for each maker. Only the user license is assignable.",
+  "rationale": [
+   "Correct: makers need a per-user Copilot Studio User License, and the organization needs the Copilot Studio tenant license. With both, User1 can publish the agent.",
+   "Incorrect: a Microsoft 365 Copilot license covers Copilot in Microsoft 365 apps. It does not remove the trial restriction that blocks publishing in Copilot Studio.",
+   "Incorrect: AllowAdHocSubscriptions controls whether users can sign up for trials themselves. Any trial still cannot publish agents.",
+   "Incorrect: the tenant license cannot be assigned to individual users. User1 also needs the separate Copilot Studio User License."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/requirements-licensing"
+ },
+ {
+  "id": "1.1.5-04",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Relecloud wants members of a Microsoft 365 group named Marketing, who do not have Microsoft 365 Copilot licenses, to use metered agents in Microsoft 365 Copilot Chat. Costs must be billed to an existing Azure subscription, and the finance team must receive an alert at 75 percent of a monthly budget.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In Copilot > Cost management > Classic Billing & usage, add a billing policy and select the Azure subscription, resource group, and region.",
+   "On the Choose users page, select Specific group and add Marketing.",
+   "On the Budget page, set a monthly budget and add an alert at 75 percent.",
+   "On the Review and create policy page, select Create policy.",
+   "On the Pay-as-you-go services tab, select Microsoft Copilot Chat and set the policy to Connected.",
+   "Assign Microsoft 365 Copilot licenses to the members of Marketing.",
+   "In Billing > Pay-as-you-go, connect the policy to Microsoft 365 Backup."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Copilot pay-as-you-go setup is a two-part process: create a billing policy (billing details, users, optional budget, review) and then connect it to a Copilot service. Creating the policy alone does not complete the setup; the connection is what gives the covered users access to metered agents.",
+  "rationale": [
+   "Step 1: in Copilot > Cost management, the Classic Billing & usage page holds the Copilot billing policies, and the policy wizard starts with the billing details. The subscription and resource group cannot be changed after the policy is created.",
+   "Step 2: choosing users applies to Copilot pay-as-you-go services, so the policy can cover only Marketing instead of all users.",
+   "Step 3: the budget is optional and sends alerts at the chosen percentages. It does not stop usage when the limit is reached.",
+   "Step 4: Create policy saves the billing infrastructure, but the users still have no access until a service is connected.",
+   "Step 5: connecting the policy to Microsoft Copilot Chat grants metered agent access to the users the policy covers.",
+   "Incorrect: Copilot licenses would give the users licensed Copilot and defeat the goal of metered, usage-based billing for unlicensed Chat users.",
+   "Incorrect: Microsoft 365 Backup is a non-Copilot pay-as-you-go service managed in Billing > Pay-as-you-go. Connecting it does not enable agents in Copilot Chat."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/commerce/services/pay-as-you-go-setup-copilot"
+ },
+ {
+  "id": "1.1.5-05",
+  "obj": "1.1.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Woodgrove Bank has Microsoft 365 E5 and does not have Microsoft 365 E7 or Microsoft Agent 365 licenses. The bank evaluates five agent governance requirements.\n\nWhich two requirements should you meet by purchasing Microsoft Agent 365 licenses? Each correct answer presents a complete solution.",
+  "choices": [
+   "Monitor agent activity with observability telemetry in the Microsoft 365 admin center.",
+   "Control tenant-wide which tools, including Microsoft MCP servers, agents can access.",
+   "View an inventory of all agents in the organization in the Agent Registry.",
+   "Block an agent and reassign its owner in the Microsoft 365 admin center.",
+   "Automate agent lifecycle actions by using conditions-based rules."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Agent 365 is licensed per user and is included with Microsoft 365 E7 or sold as an add-on. Basic registry and governance features (inventory, publish, block, delete, reassign owner, lifecycle rules) are included with Microsoft 365 Enterprise plans, while observability, tool control, policy templates, and the Entra, Purview, and Defender extensions for agents require E7 or Agent 365.",
+  "rationale": [
+   "Correct: observability and monitoring of agent activity is listed as requiring Microsoft 365 E7 or Agent 365.",
+   "Correct: controlling which tools, including Microsoft MCP servers, agents can access tenant-wide requires Microsoft 365 E7 or Agent 365.",
+   "Incorrect: the agent inventory in the Agent Registry is included with Microsoft 365 Enterprise plans such as E5, so no Agent 365 purchase is needed.",
+   "Incorrect: basic governance actions such as block, delete, approve, and reassign owner are included with Microsoft 365 Enterprise plans.",
+   "Incorrect: conditions-based lifecycle rules are included with Microsoft 365 Enterprise plans. Buy Agent 365 for the advanced controls instead."
+  ],
+  "ref": "https://learn.microsoft.com/office365/servicedescriptions/microsoft-agent-365/microsoft-agent-365"
+ },
+ {
+  "id": "1.1.5-06",
+  "obj": "1.1.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has a pay-as-you-go billing policy that covers All users and is connected to Microsoft Copilot Chat. Finance creates a second billing policy that covers only a group named Research and uses a different Azure subscription. When you try to connect the Research policy to Microsoft Copilot Chat, the connection fails. Only Research members must keep using metered agents.\n\nWhat should you do?",
+  "choices": [
+   "Disconnect the All users billing policy from Copilot Chat, and then connect the Research policy.",
+   "Set the budget of the All users billing policy to zero, and then connect the Research policy.",
+   "Delete the Azure subscription that the All users billing policy uses.",
+   "Create a Copilot credit policy that is scoped to the Research group."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A billing policy defines who is covered and which Azure subscription pays, and the connection to a Copilot service grants access. Connections are changed one at a time, and an All users policy must be disconnected before a user-specific policy can be connected to the same service.",
+  "rationale": [
+   "Correct: Learn states that before you connect a user-specific billing policy, you must disconnect any existing All users billing policy. Users who are not in Research then lose access to the metered agents, which matches the requirement.",
+   "Incorrect: budgets only send alert emails. Reaching or setting a budget does not stop usage or free the connection for another policy.",
+   "Incorrect: the Azure subscription and resource group of a billing policy cannot be edited, and deleting the subscription is not a documented way to free a Copilot service connection. The supported change is to disconnect the existing policy; delete a policy only after its services are disconnected.",
+   "Incorrect: a Copilot credit policy distributes the prepaid credits of a purchased Copilot Studio capacity pack to a group. It does not resolve the conflict between the two pay-as-you-go billing policies. Use it when you have bought capacity packs and want to scope those credits."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/pay-as-you-go-overview"
+ },
+ {
+  "id": "1.1.5-07",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. bought a Copilot Studio prepaid capacity pack for Copilot Chat agents and created a Copilot credit policy for the Sales group. Last month the credits ran out and Sales users could not use the agents until the next billing period. Usage beyond the prepaid credits must now continue without interruption.\n\nWhat should you do?",
+  "choices": [
+   "Pair the Copilot credit policy with a pay-as-you-go billing policy that is connected to Copilot Chat.",
+   "Add a budget alert at 100 percent to the Copilot credit policy for the Sales group.",
+   "Create a second Copilot credit policy that covers the same Sales group.",
+   "Allocate more Copilot Credits to the Copilot Chat environment than the pack provides."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A capacity pack gives 25,000 Copilot Credits per month. A Copilot credit policy on its own uses only those prepaid credits, so the service stops when they run out. Pairing it with a pay-as-you-go billing policy uses the prepaid credits first and then bills overage to Azure with no interruption.",
+  "rationale": [
+   "Correct: in the paired configuration, usage switches to pay-as-you-go billing when prepaid credits are exhausted, so Sales users keep working and the overage is billed to the connected Azure subscription.",
+   "Incorrect: budget alerts only notify recipients. They do not add credits or keep the service running when the prepaid pool is empty.",
+   "Incorrect: a second credit policy draws on the same prepaid pool (up to 10 credit policies per tenant), so the users still lose access when credits run out.",
+   "Incorrect: the total allocated in the Power Platform admin center must not exceed what you bought. To get more prepaid credits, buy another capacity pack."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-capacity-packs"
+ },
+ {
+  "id": "1.1.5-08",
+  "obj": "1.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals has Microsoft 365 E5 and wants to use Microsoft Agent 365 to govern its agents, including Entra conditional access and Purview data loss prevention for agents. The company does not plan to change its E5 subscription.\n\nWhat should you purchase?",
+  "choices": [
+   "Microsoft Agent 365 licenses for the users",
+   "Copilot Studio prepaid capacity packs",
+   "Microsoft Entra ID P2 licenses for the users",
+   "Microsoft 365 Copilot licenses for the users"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft Agent 365 is licensed per user. It is included with Microsoft 365 E7 and available as an add-on to eligible plans such as Microsoft 365 E5, and at least one user must have a qualifying Agent 365 license to enable it. Extending Entra, Purview, and Defender controls to agents requires it.",
+  "rationale": [
+   "Correct: Agent 365 is a per-user add-on to E5, and it is required for features such as conditional access for agents and data loss prevention for agents.",
+   "Incorrect: capacity packs prepay Copilot Credits for agent consumption, such as Copilot Chat agents. They do not license Agent 365 governance features.",
+   "Incorrect: E5 already includes Entra ID P2. Learn states that extending Microsoft Entra security features to agents requires Microsoft Agent 365.",
+   "Incorrect: Microsoft 365 Copilot licenses enable Copilot in apps for users. They do not include the Agent 365 control plane; use them when users need licensed Copilot."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/overview"
+ },
+ {
+  "id": "1.1.5-09",
+  "obj": "1.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys assigns a Microsoft 365 Copilot license to User1. User1 works only on a shared PC, and Microsoft 365 Apps for enterprise on that PC is activated by device-based licensing. User1 has no other Microsoft 365 license. Copilot does not appear in Word for User1.\n\nWhat should you do?",
+  "choices": [
+   "Assign User1 a user-based prerequisite license, such as Microsoft 365 E3.",
+   "Reprocess the Copilot license for User1 on the Errors & issues tab.",
+   "Assign User1 a Copilot Studio User License in addition to the Copilot license.",
+   "Assign the Microsoft 365 Copilot license to the shared PC by using device-based licensing."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 Copilot is an add-on that requires a qualifying user-based prerequisite license, such as Microsoft 365 E3 or E5, Office 365 E3, or Business Standard. Copilot is not available with device-based licensing for Microsoft 365 Apps for enterprise.",
+  "rationale": [
+   "Correct: users need a Copilot license plus a qualifying prerequisite license. Learn states that Copilot is not available with device-based licensing, so User1 needs a user-based plan such as Microsoft 365 E3.",
+   "Incorrect: Reprocess retries assignments that failed for a fixable reason. The Copilot license is assigned; what is missing is an eligible prerequisite license.",
+   "Incorrect: the Copilot Studio User License lets makers build agents in Copilot Studio. It does not enable Copilot in Word.",
+   "Incorrect: Copilot is a user-based license, and Learn states that it is not available with device-based licensing for Microsoft 365 Apps for enterprise."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/microsoft-copilot-requirements"
+ },
+ {
+  "id": "1.1.5-10",
+  "obj": "1.1.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to meet the requirement for reclaiming Microsoft 365 Copilot licenses.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "In Org settings > Services > Reports, clear Conceal user, group, and site names in all reports.",
+   "Open the Microsoft Copilot usage report and review the last activity date for each licensed user.",
+   "On Billing > Licenses, unassign Microsoft 365 Copilot from the users who have been inactive for 90 days.",
+   "Open the Microsoft Copilot Chat usage report and filter users by their last activity date.",
+   "Search the Microsoft Purview audit log for Copilot interactions and count the prompts per user."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "License reclamation uses the Copilot usage report, whose user table lists every user licensed for Copilot in the past 180 days with a last activity date. Usage reports hide user names by default, so the Reports privacy setting must be changed when users must be identified by name.",
+  "rationale": [
+   "Correct: user names are concealed by default in all usage reports. Clearing this setting shows real user names, which the requirement to identify users by name needs.",
+   "Correct: the Copilot usage report lists licensed users and their last activity date in Copilot apps, so you can find users with no activity in the last 90 days.",
+   "Correct: after you identify inactive users, unassigning their Copilot licenses returns the licenses to the pool for other users.",
+   "Incorrect: the Copilot Chat usage report includes only users without a Copilot license, so it cannot show inactive licensed users. Use it to measure unlicensed Chat adoption.",
+   "Incorrect: Learn states that audit log data is built for security and compliance and is not intended as the basis for Copilot usage reporting. Use it for investigations, not license decisions."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-usage",
+  "case": "C-a"
+ },
+ {
+  "id": "1.1.6-01",
+  "obj": "1.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants to protect its SharePoint sites and Exchange mailboxes with Microsoft 365 Backup. The tenant has Microsoft 365 E5 licenses.\n\nWhat should you set up before you can create backup policies?",
+  "choices": [
+   "Pay-as-you-go billing that is linked to an Azure subscription",
+   "A Microsoft 365 Backup license for each protected user",
+   "A Microsoft Purview retention policy for each protected workload",
+   "A Microsoft 365 E5 Compliance add-on for each protected user"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 Backup is a pay-as-you-go service that charges per GiB of protected data per month, with free restores. It is not licensed per user, so the first setup step is pay-as-you-go billing with an Azure subscription, a resource group, and a region; backup policies come after that.",
+  "rationale": [
+   "Correct: Backup is billed by consumption through an Azure subscription. You set up pay-as-you-go billing first and then create backup policies in Settings > Microsoft 365 Backup.",
+   "Incorrect: Learn states that Backup charges based on consumption, unlike user-based licenses, so there is no per-user Backup license to assign.",
+   "Incorrect: Purview retention policies are separate from Backup and do not affect the backup recovery window. Use them for compliance retention, not as a Backup prerequisite.",
+   "Incorrect: Backup does not depend on a compliance add-on. Its prerequisites are a supported admin role and pay-as-you-go billing."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-overview"
+ },
+ {
+  "id": "1.1.6-02",
+  "obj": "1.1.6",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys is a new Microsoft 365 Backup customer. It has no Azure subscription. You must protect the company's SharePoint sites with Microsoft 365 Backup.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create an Azure subscription and a resource group in the same tenant as Microsoft 365.",
+   "In Billing > Pay-as-you-go, add a billing policy that uses the subscription and resource group.",
+   "Connect the billing policy to Microsoft 365 Backup on the Services tab.",
+   "In Settings > Microsoft 365 Backup, create a backup policy for SharePoint.",
+   "Assign a Microsoft 365 Backup license to each owner of a protected site.",
+   "Create a Microsoft Purview retention policy for the protected sites."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Backup setup follows its billing dependency: an Azure subscription and resource group must exist, a billing policy must reference them, and the policy must be connected to the Backup service before Backup is enabled and backup policies can be created. New customers after April 1, 2026 use the Billing > Pay-as-you-go experience.",
+  "rationale": [
+   "Step 1: pay-as-you-go needs an Azure subscription in the same tenant and a resource group, and you need Owner or Contributor rights on them.",
+   "Step 2: the billing policy stores the subscription, resource group, and region. The subscription and resource group cannot be edited later.",
+   "Step 3: a billing policy does nothing until it is connected to a service. Connecting it to Microsoft 365 Backup enables Backup billing.",
+   "Step 4: with billing in place, you create a SharePoint backup policy that selects the sites to protect and sets the recovery window.",
+   "Incorrect: Backup is charged by consumption, not by user licenses, so there is nothing to assign to site owners.",
+   "Incorrect: retention policies are a Purview compliance feature and are isolated from the Backup recovery window. They are not part of Backup setup."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-setup"
+ },
+ {
+  "id": "1.1.6-03",
+  "obj": "1.1.6",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "A user at Litware, Inc. corrupted the content of the SharePoint site https://litware.sharepoint.com/sites/Finance this morning. The legal team must be able to compare the current site with its state from yesterday, so the current site must not change. You must start the fastest restore that meets this requirement by using Microsoft 365 Backup.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Microsoft 365 Backup page, in the SharePoint section, select Restore and keep SharePoint site content selected.",
+   "Select the Finance site from the list of backed-up sites.",
+   "Select yesterday's date and time, and then choose a faster restore point.",
+   "On the Choose destination page, select Create new sites from backups.",
+   "On the Review and finish page, select Restore sites.",
+   "On the Choose destination page, select Replace sites with backups.",
+   "On the Content scope page, select Selected content only."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "A full SharePoint site restore runs through a wizard: start the restore, select the sites, pick the point in time and preferably an express restore point, pick the destination, and confirm. A restore to the same URL overwrites the site, while Create new sites from backups restores to a new URL ending in R plus a number and leaves the original untouched.",
+  "rationale": [
+   "Step 1: the SharePoint Restore flow starts the wizard with SharePoint site content preselected.",
+   "Step 2: you choose which backed-up sites to restore before you pick a point in time.",
+   "Step 3: Backup restores the closest backup before the selected time, and the recommended faster (express) restore points give the quickest result.",
+   "Step 4: a new URL keeps the current site unchanged, so the legal team can compare both versions. You can later copy content back to roll forward.",
+   "Step 5: the review page confirms the choices and starts the restore task.",
+   "Incorrect: replacing the site is an in-place rollback that overwrites current content and permissions, which violates the requirement to keep the current site. Use it for ransomware recovery.",
+   "Incorrect: the Content scope page with Selected content only belongs to the Exchange restore flow. For SharePoint, granular restore uses Restore specific files or folders."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-restore-data"
+ },
+ {
+  "id": "1.1.6-04",
+  "obj": "1.1.6",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Relecloud uses Microsoft 365 Backup for SharePoint, OneDrive, and Exchange Online. The following incidents occur:\n\n- Ransomware encrypted the entire Projects site two hours ago.\n- A user deleted a folder from their OneDrive account five days ago.\n- Messages from one sender were purged from a mailbox, and current items must not be overwritten.\n- Auditors need a copy of the HR site as it was six months ago, and the live site must stay unchanged.\n\nWhich restore option should you use for each incident? To answer, drag the appropriate options to the correct incidents. Each option may be used once, more than once, or not at all.",
+  "choices": [
+   "Full site restore in place from an express restore point",
+   "Restore specific files or folders",
+   "Exchange restore of selected content to a new folder",
+   "Full site restore to a new URL",
+   "Full mailbox restore in place"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Pick the restore by scope and destination. Full-site restores roll a site or OneDrive back, in place or to a new URL. Granular file and folder restore works only for recovery points within the last 14 days. Exchange restores bring back changed or deleted items, either in place or to a new Recovered Items folder.",
+  "rationale": [
+   "Whole-site encryption needs a full rollback, and an in-place restore from an express restore point is the fastest recovery.",
+   "Only one folder from five days ago is needed, which is within the 14-day window for granular file and folder restore.",
+   "Selected content only, with a search filter on the sender, restored to a new folder, brings back the purged messages without overwriting current items.",
+   "A new URL restore creates a copy of the site from the older restore point and leaves the live HR site unchanged."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-restore-data",
+  "targets": [
+   "Projects site encrypted by ransomware",
+   "Folder deleted from a OneDrive account five days ago",
+   "Purged messages from one sender",
+   "Six-month-old copy of the HR site"
+  ],
+  "notes": [
+   "Rolls the whole site or OneDrive back to a prior point and overwrites current content and permissions. Express restore points make it the fastest option for large recoveries.",
+   "Restores selected files and folders from a site or OneDrive, to the original location or a new folder. Only recovery points from the most recent 14 days are available.",
+   "Searches for mailbox items by time range, sender, recipient, subject, or content type and restores up to 1,000 items to a new Recovered Items folder or in place.",
+   "Restores the full site to a new URL with R and a number appended. Use it when you must keep the current site, then copy data back if needed.",
+   "Restores all modified or deleted items of a mailbox to the original location and overwrites current versions. Use it after a mailbox-wide attack."
+  ]
+ },
+ {
+  "id": "1.1.6-05",
+  "obj": "1.1.6",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Woodgrove Bank uses Microsoft 365 Backup. An administrator named User1 must restore deleted items to Exchange Online mailboxes. Company policy prohibits assigning the Global Administrator role.\n\nWhich two roles should you consider assigning to User1? Each correct answer presents a complete solution.",
+  "choices": [
+   "Exchange Administrator",
+   "Microsoft 365 Backup Administrator",
+   "SharePoint Administrator",
+   "Compliance Administrator",
+   "Global Reader"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Backup permissions follow the admin role: Global Administrator and Microsoft 365 Backup Administrator can manage all three workloads, SharePoint Administrator manages OneDrive and SharePoint, and Exchange Administrator manages Exchange. End users cannot run backups or restores.",
+  "rationale": [
+   "Correct: Exchange Administrator can manage Microsoft 365 Backup for Exchange, including mailbox restores.",
+   "Correct: Microsoft 365 Backup Administrator is the dedicated role that controls the entire tool, including Exchange restores.",
+   "Incorrect: SharePoint Administrator manages Backup only for SharePoint and OneDrive. Assign it when the admin restores sites and OneDrive accounts.",
+   "Incorrect: Compliance Administrator manages Purview compliance features such as retention and eDiscovery. It is not listed as a Backup management role.",
+   "Incorrect: Global Reader is read-only and cannot start restores. Use it for auditors who only need to view settings."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-setup"
+ },
+ {
+  "id": "1.1.6-06",
+  "obj": "1.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A user at Contoso Pharmaceuticals deleted 200 messages yesterday. The messages are now in the Deleted Items folder of the mailbox. An admin runs a Microsoft 365 Backup restore of the mailbox to yesterday morning, but no items are restored.\n\nWhat should you do?",
+  "choices": [
+   "Have the user move the messages from Deleted Items back to the Inbox.",
+   "Run the restore again and choose Create a new folder for the backups.",
+   "Run the restore again and choose a faster express restore point.",
+   "Increase the recovery window of the Exchange backup policy."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 Backup restores mailbox items that were changed, deleted to the Recoverable Items folder, or purged. Items that were only moved to Deleted Items are still in the mailbox, so Backup does not restore them; users recover them themselves.",
+  "rationale": [
+   "Correct: Learn states that items moved to the Deleted Items folder are not restored by Backup, and users can recover them by moving them back.",
+   "Incorrect: a new-folder restore changes the destination, not which items qualify. Items in Deleted Items are still not restored.",
+   "Incorrect: express restore points apply only to OneDrive and SharePoint. The Exchange restore flow does not have them.",
+   "Incorrect: the recovery window controls how long restore points are kept. Yesterday is already within it, so the result does not change."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-restore-data"
+ },
+ {
+  "id": "1.1.6-07",
+  "obj": "1.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Microsoft 365 Backup. The operations team must review backup policy changes and restore tasks from the last two months in the Microsoft 365 admin center, filter them by impact, and export the results to a CSV file.\n\nWhat should you use?",
+  "choices": [
+   "The Activity logs page from the Reports tab of Microsoft 365 Backup",
+   "An audit log search in Microsoft Purview Audit for Backup activities",
+   "The cost analysis of the Backup resource group in Azure Cost Management",
+   "The Item enrollment status report on the Reports tab of Microsoft 365 Backup"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Backup activity logs give an in-product view of policy and restore operations, retained for 365 days, with filters for activity, status, service, and impact, and a CSV export. Purview Audit remains the source for formal compliance investigations, and Cost Management shows consumption costs.",
+  "rationale": [
+   "Correct: Reports > Recent activities > View more opens the Activity logs page, which covers policy changes and restore tasks, filters by impact, and exports to CSV.",
+   "Incorrect: Purview Audit records Backup activities and is the right tool for compliance investigations that need the Microsoft 365 audit record. It is not the in-product operational view that the team wants.",
+   "Incorrect: Azure Cost Management shows Backup consumption and charges for the billing resource group. It does not list policy changes or restores.",
+   "Incorrect: the Item enrollment status report shows which items are backed up, in progress, or failed. It does not list policy and restore operations."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-privacy-security"
+ },
+ {
+  "id": "1.1.6-08",
+  "obj": "1.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. must protect every current and future OneDrive account with Microsoft 365 Backup, except the accounts of 20 contractors. New employees must be protected automatically, and administrators must not maintain any group membership for this purpose.\n\nWhat should you do?",
+  "choices": [
+   "Enable Full Workload Backup for OneDrive and add the 20 contractor accounts to its exclusion list.",
+   "Create a OneDrive backup policy with a dynamic rule that targets a security group of all non-contractors.",
+   "Create a OneDrive backup policy from a CSV file that lists every current non-contractor account.",
+   "Create a OneDrive backup policy that uses filters on the distribution lists of each department."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Full Workload Backup (preview) automatically protects every eligible item in a workload that is not in a custom policy, checks for new items every 24 hours, and supports an exclusion list. Custom policies built from CSV files or group filters are static, and dynamic rules depend on group membership being maintained.",
+  "rationale": [
+   "Correct: Full Workload Backup picks up new OneDrive accounts automatically, and the exclusion list keeps the 20 contractor accounts out without any group to maintain.",
+   "Incorrect: a dynamic rule reevaluates group membership daily, but someone must keep the security group current, which the stem forbids. Use it when protection should follow an existing group.",
+   "Incorrect: a CSV upload adds the listed accounts once, so new employees are not protected automatically. Use it for a fixed list, up to 50,000 entries per file.",
+   "Incorrect: filters on distribution lists are flattened when added and do not update later, so new employees are missed."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-view-edit-policies"
+ },
+ {
+  "id": "1.1.6-09",
+  "obj": "1.1.6",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "You need to configure the recovery windows of the Microsoft 365 Backup policies for the Exec group.\n\nHow should you configure the policies? To answer, select the appropriate options in the answer area.",
+  "answer": [
+   1,
+   1
+  ],
+  "explanation": "The recovery window is set per backup policy and determines how long restore points are kept. Exchange policies support 3 months, 6 months, 1 year, or 2 years. SharePoint and OneDrive policies support 3 months, 6 months, or any whole number of years from 1 through 10. Backup is billed per GiB of protected data, and deleted and versioned content counts toward that size until the recovery window lapses, so the shortest window that meets the requirement keeps costs down.",
+  "ref": "https://learn.microsoft.com/microsoft-365/backup/backup-view-edit-policies",
+  "targets": [
+   {
+    "label": "Exchange backup policy for the Exec mailboxes",
+    "options": [
+     "1 year",
+     "2 years",
+     "3 years"
+    ],
+    "why": [
+     "Incorrect: a 1-year window keeps restore points for only 12 months, which is less than the required 18 months.",
+     "Correct: 2 years is the shortest Exchange window that covers 18 months, and it is the longest window that Exchange supports.",
+     "Incorrect: 3 years is a valid window for SharePoint and OneDrive, but Exchange policies support at most 2 years."
+    ]
+   },
+   {
+    "label": "OneDrive backup policy for the Exec accounts",
+    "options": [
+     "2 years",
+     "5 years",
+     "10 years"
+    ],
+    "why": [
+     "Incorrect: a 2-year window does not meet the requirement of five years of OneDrive restore points.",
+     "Correct: 5 years is the shortest window that meets the five-year requirement. Because deleted and versioned content is billed until the window lapses, the shortest qualifying window minimizes storage costs.",
+     "Incorrect: 10 years meets the requirement, but deleted and versioned content stays in the backups, and is charged, until the recovery window lapses. Keeping it twice as long as required raises storage costs."
+    ]
+   }
+  ],
+  "case": "C-a"
+ },
+ {
+  "id": "1.1.7-01",
+  "obj": "1.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has 12 office locations. Network engineers want to see a map of network assessments per office and the network insights that Microsoft detected for each location.\n\nWhich page of the Microsoft 365 admin center should you use?",
+  "choices": [
+   "Health > Network connectivity",
+   "Health > Service health",
+   "Reports > Usage",
+   "Health > Message center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Network connectivity in the Microsoft 365 admin center aggregates network measurements from Microsoft 365 clients into a tenant and per-location network assessment, a map of office locations, and network insights with recommended actions.",
+  "rationale": [
+   "Correct: Health > Network connectivity shows the global map, the network assessment for the tenant and each location, and per-location insights and recommendations.",
+   "Incorrect: Service health shows incidents and advisories in Microsoft services. Network insights can raise Service health notifications, but the per-office map and assessments live on Network connectivity.",
+   "Incorrect: usage reports show how people use Microsoft 365 apps, such as active users and activity counts. They do not show network performance.",
+   "Incorrect: Message center announces upcoming changes and planned maintenance. It has no network measurements."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-overview"
+ },
+ {
+  "id": "1.1.7-02",
+  "obj": "1.1.7",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Woodgrove Bank wants network assessments for its offices in Microsoft 365 network connectivity. The bank has the following requirements:\n\n- Two branches in the same city must appear as separate locations.\n- Offices whose laptops use Wi-Fi and the latest OneDrive client must be discovered with no admin data entry.\n- A new branch must produce a test report within minutes, without waiting 24 hours.\n- Building data already uploaded to the Teams Call Quality Dashboard must be reused.\n\nWhich method should you use for each requirement? To answer, drag the appropriate methods to the correct requirements. Each method may be used once, more than once, or not at all.",
+  "choices": [
+   "Add locations with LAN subnets",
+   "Enable Windows Location Services",
+   "Run the Microsoft 365 network connectivity test",
+   "Import locations from Call Quality Dashboard",
+   "Add locations with public egress IP ranges only"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Network connectivity needs office location information. Windows Location Services discovers offices automatically at city level, locations with LAN subnets allow named offices and several offices per city, the connectivity test tool uploads a report in 2-3 minutes, and CQD building data can be imported as locations.",
+  "rationale": [
+   "Locations added with LAN subnets support several named offices in one city, while discovered locations are aggregated per city.",
+   "Windows Location Services discovers offices automatically when at least two Wi-Fi computers per office run an up-to-date OneDrive client and allow location access.",
+   "A test report from the connectivity test tool appears 2-3 minutes after the test completes, while the other methods take about 24 hours to show samples.",
+   "You can download the building data from Call Quality Dashboard as a TSV file and import it as locations without re-entering it."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-overview",
+  "targets": [
+   "Two branches in the same city",
+   "Automatic discovery with no admin data entry",
+   "Report from a new branch within minutes",
+   "Reuse of Call Quality Dashboard building data"
+  ],
+  "notes": [
+   "You name each office and enter its LAN subnets (IPv4, /8 to /29). A test result must match a LAN subnet to map to the location, which allows several offices per city.",
+   "Off by default; you enable it in the location settings. Uses location consent on Windows devices, rounded to 300 meters and aggregated per city. Ethernet-only devices give inaccurate locations.",
+   "A user signs in at the test site, runs the test and the downloaded advanced test app, and the report is uploaded to the tenant in minutes.",
+   "Uses the TSV file of building data from Teams Call Quality Dashboard to add LAN subnet office locations in bulk.",
+   "Egress IP ranges are only a secondary differentiator for sites that share LAN subnets. LAN subnets are required, so egress IPs alone do not define a location."
+  ]
+ },
+ {
+  "id": "1.1.7-03",
+  "obj": "1.1.7",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Relecloud configures office locations for network connectivity in the Microsoft 365 admin center.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "For Windows Location Services to discover an office, at least two computers at that office must have an up-to-date OneDrive for Windows client and allow location access.",
+   "Computers that connect over an ethernet cable give the most accurate location information for Windows Location Services.",
+   "If a location has both LAN subnets and public egress IP ranges, a test result must match one of each to be assigned to that location."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Each method of identifying offices has prerequisites. Windows Location Services needs at least two Wi-Fi computers per office with up-to-date OneDrive and location consent. Locations with LAN subnets need at least one OneDrive computer, and adding egress IP ranges tightens matching because results must then match both.",
+  "rationale": [
+   "Yes: Learn requires at least two computers at each office location with an up-to-date OneDrive for Windows client and Windows location consent.",
+   "No: Learn states that machines should use Wi-Fi, because machines with an ethernet cable do not have accurate location information.",
+   "Yes: when egress IP ranges are included, a result must match one LAN subnet range and one egress range. Learn recommends leaving egress ranges blank at first so results show up."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-overview"
+ },
+ {
+  "id": "1.1.7-04",
+  "obj": "1.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "The CIO of Tailspin Toys wants one number from 0 to 100 that summarizes how network connectivity affects the Microsoft 365 user experience, for the whole tenant and for each office.\n\nWhich metric should you report?",
+  "choices": [
+   "Network assessment",
+   "Microsoft Secure Score",
+   "Adoption Score",
+   "Call quality score"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The network assessment distills many network performance measurements into a value from 0 to 100. It is shown for the tenant as a weighted average across locations and for each location, with history and a comparison to other customers in the same city.",
+  "rationale": [
+   "Correct: network assessments are points values from 0 to 100, scoped to the entire tenant and to each location in Health > Network connectivity.",
+   "Incorrect: Microsoft Secure Score measures security posture against recommended controls. It does not measure network performance.",
+   "Incorrect: Adoption Score measures people and technology experiences of Microsoft 365 adoption. Network connectivity is not its focus.",
+   "Incorrect: Teams call quality data in Call Quality Dashboard covers media calls only and is not the 0-100 Microsoft 365 network assessment."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-overview"
+ },
+ {
+  "id": "1.1.7-05",
+  "obj": "1.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Network connectivity in the Microsoft 365 admin center shows this insight for the Lisbon office of Litware, Inc.: User connections to Microsoft 365 domains are being TLS intercepted and decrypted by a network intermediary. The office uses a web proxy that inspects all HTTPS traffic.\n\nWhat should you do?",
+  "choices": [
+   "Exempt traffic to Microsoft 365 domains from TLS interception and decryption on the proxy.",
+   "Configure split tunneling on the VPN client for the Microsoft 365 Optimize endpoints.",
+   "Point the office DNS servers to a recursive resolver near the network egress.",
+   "Add the Lisbon LAN subnets to the office location in the admin center."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The TLS interception insight appears when connections to Microsoft 365 services present non-Microsoft certificates, which means a device decrypts and might alter the traffic. The recommended fix is to exempt Microsoft 365 domains from TLS break and inspect at the network layer.",
+  "rationale": [
+   "Correct: Learn recommends updating network configuration so that traffic to Microsoft 365 domains is exempt from TLS interception and decryption.",
+   "Incorrect: split tunneling keeps Optimize traffic off the VPN. It is the fix for the VPN split tunnel test result, not for proxy decryption in the office.",
+   "Incorrect: aligning the DNS recursive resolver with the egress fixes connections to a non-optimal service front door. It does not stop certificate replacement.",
+   "Incorrect: LAN subnets only map measurements to the right office. They do not change how the proxy handles TLS."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-insights"
+ },
+ {
+  "id": "1.1.7-06",
+  "obj": "1.1.7",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Users in the Montreal office of Contoso Pharmaceuticals report slow Outlook and SharePoint. The Microsoft 365 network connectivity test run from Montreal shows that the network egress is in Dallas, about 1,700 miles (2,700 km) away, and that the in-use Exchange service front door is not one of the best front doors for Montreal. VPN is not used in the office.\n\nWhat should you recommend?",
+  "choices": [
+   "Implement local and direct internet egress for Microsoft 365 traffic from the Montreal office.",
+   "Configure VPN split tunneling for the Exchange Online and SharePoint Optimize endpoints.",
+   "Exempt the Microsoft 365 domains from TLS inspection on the Dallas proxy server.",
+   "Upgrade the Montreal internet circuit to increase SharePoint download speed."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The test flags a network insight when the egress is more than 500 miles (800 km) from the user's office, because that backhaul adds latency and makes clients use distant service front doors. Microsoft's connectivity principles recommend local and direct egress so traffic reaches the nearest front door.",
+  "rationale": [
+   "Correct: a distant egress indicates WAN backhaul. Learn states that improving local and direct egress is the best way to address this insight, and it also lets clients reach the best nearby front doors.",
+   "Incorrect: split tunneling addresses Microsoft 365 traffic sent through a VPN tunnel. The stem says no VPN is used in the office.",
+   "Incorrect: exempting Microsoft 365 traffic from TLS inspection fixes the TLS interception insight. It does not remove the 1,700-mile backhaul.",
+   "Incorrect: more bandwidth can improve download speed, but latency from the backhaul and the non-optimal front door remain."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-onboarding-tool"
+ },
+ {
+  "id": "1.1.7-07",
+  "obj": "1.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "After a firewall change at Relecloud, Microsoft 365 Copilot stops working for users in one office, while web pages of Microsoft 365 apps still load. Network connectivity shows the insight WebSocket connection to critical Microsoft 365 domains is failing.\n\nWhat should you do?",
+  "choices": [
+   "Allow the WebSocket protocol for connections to hosts in *.cloud.microsoft.",
+   "Allow UDP ports 3478 to 3481 for Teams media traffic.",
+   "Allow HTTPS on TCP port 443 to *.static.microsoft and *.usercontent.microsoft.",
+   "Exempt the *.cloud.microsoft domain from TLS inspection."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Network insights test HTTPS to the unified domains, WebSocket (WSS) to *.cloud.microsoft, and TLS interception. Copilot and real-time collaboration require WebSocket connections to *.cloud.microsoft, so a device that blocks WSS breaks Copilot even when HTTPS still works.",
+  "rationale": [
+   "Correct: Learn tells you to ensure the WebSocket protocol is allowed for connections to hosts in *.cloud.microsoft, which Copilot needs.",
+   "Incorrect: UDP 3478-3481 carries Teams audio and video. Blocking it impairs calls but does not cause the WebSocket insight.",
+   "Incorrect: HTTPS to these domains is still working because web pages load. That would fix the insight about HTTPS connectivity failing.",
+   "Incorrect: TLS inspection causes the TLS interception insight. The issue here is that the WebSocket protocol is blocked."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-insights"
+ },
+ {
+  "id": "1.1.7-08",
+  "obj": "1.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. opens a support case about poor network performance in its Seattle office. The Microsoft engineer cannot see the office's network assessment and network insights. An admin turned off data sharing with Microsoft last year. The engineer needs data for the next two weeks.\n\nWhat should you do?",
+  "choices": [
+   "Turn on sharing of network assessment data with Microsoft in the network connectivity settings.",
+   "Export the Locations list to a CSV file and attach it to the support case.",
+   "Turn on Windows Location Services for the Seattle office in the location settings.",
+   "Grant the Microsoft engineer the Global Reader role in the tenant."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, network assessments and insights are shared with Microsoft employees, without personal data or office names. If an admin turns sharing off, Microsoft engineers cannot view the data. Turning it back on shares only future data, starting the day after you enable it.",
+  "rationale": [
+   "Correct: re-enabling sharing lets the engineer view assessments and insights again for data from the day after you enable it, which covers the next two weeks.",
+   "Incorrect: the CSV export lists office names, addresses, and subnets. It does not contain the network assessment metrics and insights the engineer needs.",
+   "Incorrect: Windows Location Services identifies office locations automatically. It does not control whether Microsoft engineers can see the data.",
+   "Incorrect: Microsoft support engineers do not get tenant roles to view this data. Access is controlled by the data sharing setting."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/office-365-network-mac-perf-overview"
+ },
+ {
+  "id": "1.1.8-01",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys wants two operations engineers to receive email when Microsoft posts a new incident for Exchange Online or SharePoint Online that affects the tenant. They must not receive email about advisories or about other services.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Microsoft 365 admin center, go to Health > Service health.",
+   "Select Customize, and then select the Email tab.",
+   "Select Send me email notifications about service health.",
+   "Enter the two email addresses, select Incidents only, and select Exchange Online and SharePoint Online.",
+   "Select Save.",
+   "In Message center, open Preferences and add the two email addresses on the Email tab.",
+   "Open an active issue and select Manage notifications for this issue."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Service health email preferences are set per admin under Customize > Email. You turn on notifications and then choose up to two email addresses, incidents or advisories, and the services to watch. Message center has separate preferences for change announcements.",
+  "rationale": [
+   "Step 1: email notifications for service health are configured from the Service health page.",
+   "Step 2: Customize opens the view and email preferences, and the Email tab holds the notification settings.",
+   "Step 3: notifications are off until you select Send me email notifications about service health, which enables the other fields.",
+   "Step 4: each admin can enter up to two email addresses and choose incidents, advisories, or both, plus the services to include.",
+   "Step 5: saving applies the preferences so that new incidents for the chosen services trigger email.",
+   "Incorrect: Message center preferences send email about upcoming changes, plans for change, and planned maintenance. They do not send Service health incident notifications.",
+   "Incorrect: Manage notifications for this issue subscribes to updates for one existing issue only. It does not notify about new incidents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "1.1.8-02",
+  "obj": "1.1.8",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank is investigating a resolved Exchange Online incident. The help desk knows only the incident title, not its ID. By using Microsoft Graph PowerShell, you must list the services with their issues to find the incident ID, which turns out to be EX123456, confirm from the issue details that its status is Post-incident report published, and then download the post-incident review.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"ServiceHealth.Read.All\"`",
+   "`Get-MgServiceAnnouncementHealthOverview -ExpandProperty \"issues\"`",
+   "`Get-MgServiceAnnouncementIssue -ServiceHealthIssueId \"EX123456\"`",
+   "`Invoke-MgReportServiceAnnouncementIssueIncident -ServiceHealthIssueId \"EX123456\"`",
+   "`Connect-MgGraph -Scopes \"ServiceMessage.Read.All\"`",
+   "`Get-MgServiceAnnouncementMessage`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The Microsoft Graph service communications API separates service health (health overviews, issues, and post-incident reports, all under ServiceHealth.Read.All) from Message center posts (ServiceMessage.Read.All). The order follows the data: connect, find the issue, check its status, and then request the report.",
+  "rationale": [
+   "Step 1: listing health overviews, issues, and incident reports requires ServiceHealth.Read.All.",
+   "Step 2: the health overview expanded with issues shows the services and their issues, so you can find the incident under Exchange Online and read its ID, EX123456, which the next commands need.",
+   "Step 3: the issue object holds the status, classification, and posts, so you confirm that the status is Post-incident report published.",
+   "Step 4: the incident report operation returns the post-incident review document for the issue, which exists only after it is published.",
+   "Incorrect: ServiceMessage.Read.All grants access to Message center posts only. It does not allow reading service health issues or incident reports.",
+   "Incorrect: Get-MgServiceAnnouncementMessage returns Message center posts about changes and planned maintenance, not service health incidents."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/resources/service-communications-api-overview"
+ },
+ {
+  "id": "1.1.8-03",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Litware, Inc. wants a scheduled script that lists every Microsoft 365 service that is not fully operational, together with its issues.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes [[1]]\n[[2]] -ExpandProperty \"issues\" | Where-Object { $_.Status -ne \"serviceOperational\" }\n```",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Service health data in Microsoft Graph is read with the ServiceHealth.Read.All permission. Health overviews return one serviceHealth object per subscribed service with a status such as serviceOperational, serviceDegradation, or serviceInterruption, and the issues relationship can be expanded in the same call.",
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.devices.serviceannouncement/get-mgserviceannouncementhealthoverview",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"ServiceHealth.Read.All\"",
+     "\"ServiceMessage.Read.All\"",
+     "\"Reports.Read.All\""
+    ],
+    "why": [
+     "Correct: ServiceHealth.Read.All is the least privileged permission for listing health overviews and their issues.",
+     "Incorrect: ServiceMessage.Read.All reads Message center posts. Use it for scripts that track upcoming changes, not service health.",
+     "Incorrect: Reports.Read.All reads Microsoft 365 usage reports. It does not cover the service communications API."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "Get-MgServiceAnnouncementHealthOverview",
+     "Get-MgServiceAnnouncementMessage",
+     "Get-MgServiceAnnouncementIssue"
+    ],
+    "why": [
+     "Correct: Get-MgServiceAnnouncementHealthOverview returns each service with its status, and -ExpandProperty issues includes the issues in the same response.",
+     "Incorrect: Get-MgServiceAnnouncementMessage returns Message center posts, which do not have a service health status.",
+     "Incorrect: Get-MgServiceAnnouncementIssue returns issues, but not the per-service health status the script filters on, and issues have no issues property to expand."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.1.8-04",
+  "obj": "1.1.8",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Fabrikam, Inc. administrators review the Service health page in the Microsoft 365 admin center.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The Issue history tab shows incidents and advisories that were resolved within the last 7 or 30 days.",
+   "The Issues for your organization to act on section lists issues that Microsoft is working to resolve for all customers.",
+   "Selecting Manage notifications for this issue on an active issue lets you receive email updates for that issue only."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Service health has an Overview with two lists: issues detected in your own environment that need your action, and active issues that Microsoft is working on. The Issue history tab shows resolved items from the last 7 or 30 days, and you can subscribe to updates for all events of a service or for one issue.",
+  "rationale": [
+   "Yes: the Issue history tab shows incidents and advisories resolved within the last 7 or 30 days.",
+   "No: that section lists issues detected in your environment that require your action, and it is hidden when there are none. Microsoft's own work appears under Active issues Microsoft is working on.",
+   "Yes: Manage notifications for this issue subscribes up to two email addresses to updates for that single issue, instead of every event for a service."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "1.1.8-05",
+  "obj": "1.1.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An IT coordinator at Relecloud named User1 must monitor service health and open and manage service requests with Microsoft. User1 must not be able to reset passwords or manage users.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "Service Support Administrator",
+   "Helpdesk Administrator",
+   "Global Reader",
+   "Message Center Privacy Reader"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Several admin roles include service health monitoring. Service Support Administrator is designed as an add-on role for people who open and manage service requests, view Message center posts, and monitor service health, without user management rights.",
+  "rationale": [
+   "Correct: Service Support Administrator can create and manage service requests and read and configure service health, and it has no user or password permissions.",
+   "Incorrect: Helpdesk Administrator also monitors service health and manages service requests, but it can reset passwords and force sign-outs, which the stem forbids.",
+   "Incorrect: Global Reader is read-only across the tenant and cannot open service requests. Use it for auditors.",
+   "Incorrect: Message Center Privacy Reader reads Message center posts, including data privacy messages, and has no permission to view, create, or manage service requests."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/add-users/about-admin-roles"
+ },
+ {
+  "id": "1.1.8-06",
+  "obj": "1.1.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Users at Litware, Inc. cannot open shared calendars in Outlook on the web. The Service health page shows no incident or advisory for Exchange Online. You want Microsoft to check whether the problem comes from the service and, if it does, to track it on the Service health page.\n\nWhat should you do?",
+  "choices": [
+   "Select Report an issue on the Service health page and complete the form.",
+   "Open the Issue history tab and filter the list by Exchange Online.",
+   "Add Exchange Online to the services in your Service health email preferences.",
+   "Search Message center for posts about Exchange Online calendar changes."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Report an issue on the Service health page sends Microsoft a short report. Microsoft compares it with data from other organizations, and if the problem is in the service, it posts a new incident or advisory. The Reported issues tab tracks what your tenant submitted.",
+  "rationale": [
+   "Correct: Report an issue lets Microsoft check how widespread the problem is and, if it originated in the service, add an incident or advisory you can track. The Reported issues tab shows its status.",
+   "Incorrect: Issue history lists incidents and advisories already resolved in the last 7 or 30 days. It does not report a new issue.",
+   "Incorrect: email preferences notify you about future incidents or advisories. They do not tell Microsoft about a problem that is not posted.",
+   "Incorrect: Message center describes upcoming changes and planned maintenance. It does not open an investigation of a current problem."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "1.1.8-07",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals must plan for maintenance events that Microsoft schedules for Microsoft 365 services, so that the help desk can prepare users before each change. The team checks Service health daily but sees no planned maintenance there.\n\nWhat should you use?",
+  "choices": [
+   "Message center posts in the Plan for change category",
+   "The Issue history tab on the Service health page",
+   "Service health email notifications for advisories",
+   "The Reported issues tab on the Service health page"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Service health is for current and recent incidents and advisories. Planned maintenance events are not shown there; they are announced in Message center, where posts categorized as Plan for change explain when a change happens, its effect, and how to prepare.",
+  "rationale": [
+   "Correct: Learn states that planned maintenance is not shown in service health and that you track it in Message center by filtering on Plan for change.",
+   "Incorrect: Issue history shows incidents and advisories resolved within the last 7 or 30 days. It is backward-looking and does not include planned maintenance.",
+   "Incorrect: advisory notifications report issues that affect some users while the service stays available. They are not maintenance announcements.",
+   "Incorrect: Reported issues tracks problems your tenant submitted with Report an issue. It does not show Microsoft's maintenance plans."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health"
+ },
+ {
+  "id": "1.1.8-08",
+  "obj": "1.1.8",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "You plan to configure Service health notifications to meet the monitoring requirement.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "One admin's Service health email preferences can send notifications to both ops1@contoso.com and ops2@contoso.com.",
+   "To exclude advisories, you must create a mail flow rule in Exchange Online that deletes advisory notifications.",
+   "Planned maintenance for Exchange Online is included in the Service health email notifications that you configure."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Service health email preferences accept up to two email addresses per admin and let you choose incidents, advisories, or both, and which services to include. Planned maintenance is announced in Message center, not in Service health.",
+  "rationale": [
+   "Yes: each admin's preferences accept up to two email addresses, which covers ops1 and ops2.",
+   "No: the preferences let you select incidents and clear advisories directly, so no mail flow rule is needed.",
+   "No: planned maintenance is not shown in Service health. The operations team would need Message center to track it."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-service-health",
+  "case": "C-a"
+ }
+]

@@ -1,0 +1,1916 @@
+[
+ {
+  "id": "3.1.1-01",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. reviews the Microsoft Copilot readiness report in the Microsoft 365 admin center. The report shows that 400 users with Microsoft 365 Copilot licenses are not counted under **Users on an eligible update channel**. The change advisory board requires that their devices receive new Microsoft 365 Apps features once a month on a predictable release date.\n\nWhich update channel should you assign to the devices of these users?",
+  "choices": [
+   "Monthly Enterprise Channel",
+   "Beta Channel",
+   "Current Channel (Preview)",
+   "Current Channel"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The readiness report counts a user as being on an eligible update channel when their devices are on Current Channel or Monthly Enterprise Channel. Of the two eligible channels, only Monthly Enterprise Channel releases feature updates on a fixed date, the second Tuesday of each month.",
+  "rationale": [
+   "Correct: Monthly Enterprise Channel is counted as an eligible update channel in the readiness report, and it releases one update per month on the second Tuesday, which meets the predictable schedule required by the change advisory board.",
+   "Incorrect: Beta Channel gives the earliest unsupported builds to Microsoft 365 Insiders for testing. It is not counted as eligible and is not suited to production users. Use it only on test devices that evaluate future features.",
+   "Incorrect: Current Channel (Preview) is a preview channel for validating upcoming Current Channel builds on a small set of devices. It is not counted as an eligible channel in the readiness report and has no fixed monthly date. Use it for a small pilot ring.",
+   "Incorrect: Current Channel is an eligible channel for Copilot, but it delivers features as soon as they are ready with no set schedule, so it fails the predictable release date requirement. Use it when users must get new Copilot features as early as possible."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/activity-reports/microsoft-365-copilot-readiness?view=o365-worldwide"
+ },
+ {
+  "id": "3.1.1-02",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys is preparing a Copilot pilot. A help desk engineer reports that User1 cannot use licensed Microsoft 365 Copilot features. You need to check right away whether the user account of User1 meets the applicable Copilot licensing requirements. Data that can be up to 72 hours old is not acceptable.\n\nWhich tool should you use?",
+  "choices": [
+   "the Microsoft Copilot readiness report",
+   "the Microsoft 365 connectivity test for the Copilot app",
+   "the Copilot License Details diagnostic",
+   "the Copilot Dashboard in Viva Insights"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Microsoft provides the Copilot License Details diagnostic to validate whether a single user account meets the licensing requirements for Copilot features. Reports in the admin center are aggregated and can lag up to 72 hours, and the connectivity tests check the network, not licensing.",
+  "rationale": [
+   "Incorrect: the readiness report shows license eligibility and assignment per user, but it becomes available within 72 hours and its data can have up to 72 hours of latency, which the stem rules out. Use it to plan which users to license.",
+   "Incorrect: the connectivity test for the Copilot app checks whether the device can reach the *.cloud.microsoft endpoints. It says nothing about licenses. Use it when users report that the Copilot app cannot connect.",
+   "Correct: the Copilot License Details diagnostic checks one user account against the applicable Copilot licensing requirements when you run it, so it gives a current answer for User1 without waiting for report data.",
+   "Incorrect: the Copilot Dashboard in Viva Insights shows readiness, adoption, and impact trends for leaders. It is an aggregated analytics view, not a per-user license check. Use it to report Copilot adoption to IT leaders."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.1-03",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. users report that Copilot works in the Word, Excel, and PowerPoint desktop apps but does not work in Word for the web, Excel for the web, and PowerPoint for the web. The devices use Microsoft Edge, and an organization-managed browser policy blocks all third-party cookies. The users can open Copilot Chat in the Copilot app.\n\nWhat should you do to resolve the issue?",
+  "choices": [
+   "Set the policy for optional connected experiences in Office to Enabled.",
+   "Add *.cloud.microsoft to the allow list on the proxy and firewall.",
+   "Allow third-party cookies for the Office web apps in the browser policy.",
+   "Add [*.]safelinks.protection.outlook.com to the CookiesAllowedForUrls policy only."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Copilot in Word, Excel, and PowerPoint for the web requires third-party cookies to be enabled in the browser. Because the desktop apps and the Copilot app work, the network path is fine and the browser cookie policy is the cause.",
+  "rationale": [
+   "Incorrect: optional connected experiences affect the availability of some Copilot features in Microsoft 365 Apps, but the stem points to a browser cookie block that only affects the web apps. Change this policy when desktop Copilot features are missing because of privacy controls.",
+   "Incorrect: *.cloud.microsoft must be allowed for Copilot, but the Copilot app and the desktop apps already connect, so the network is not blocking Copilot here. Use this step when the Copilot app or all Copilot experiences fail to connect.",
+   "Correct: Learn states that third-party cookies must be enabled for Copilot to work in Word, Excel, and PowerPoint for the web. Changing the managed browser policy fixes the web apps without affecting the desktop apps that already work.",
+   "Incorrect: allowing cookies only for [*.]safelinks.protection.outlook.com fixes the Unable to verify link message when users open links in Copilot Chat responses. It does not allow the cookies that the Office web apps need. Use it when only links in responses fail."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.1-04",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders uses Microsoft 365 Apps for enterprise on Monthly Enterprise Channel. Users have Microsoft 365 Copilot licenses. On 200 devices, core Copilot features are missing in Word, Excel, PowerPoint, and OneNote. A device hardening script that ran on those devices disabled several scheduled tasks, including the Office Feature Updates task.\n\nWhat should you do first?",
+  "choices": [
+   "Remove and reassign the Microsoft 365 Copilot licenses for the users.",
+   "Reinstall Microsoft 365 Apps for enterprise by using the Office Deployment Tool.",
+   "Move the devices to Current Channel by using a Cloud Update profile.",
+   "Re-enable the Office Feature Updates task so that it runs on its regular schedule."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Learn lists the Office Feature Updates task as a requirement: it must run on its regular schedule and reach the required network resources for core Copilot experiences in Word, Excel, PowerPoint, and OneNote. The update channel and licenses are already correct in this scenario.",
+  "rationale": [
+   "Incorrect: the users already have Copilot licenses, and the issue only affects the devices where the task is disabled. Reassigning licenses does not change device configuration. Do this when a license assignment failed or is missing.",
+   "Incorrect: reinstalling with the Office Deployment Tool is disruptive, and the hardening script could disable the task again. The stem already identifies the disabled task as the cause. Use a reinstall when the installation itself is damaged.",
+   "Incorrect: Cloud Update can move devices to Current Channel, but Monthly Enterprise Channel is already an eligible channel for Copilot, so changing channels does not address the disabled task. Use it when devices are on a channel that is not eligible.",
+   "Correct: the Office Feature Updates task must run on its regular schedule for core Copilot experiences in the desktop apps. The hardening script disabled it, so re-enabling the task restores the missing features without reinstalling anything."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.1-05",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Wide World Importers is rolling out Microsoft 365 Copilot. Copilot integrations fail intermittently in Microsoft 365 Apps. The network team allows a list of individual FQDNs on the proxy, performs Transport Layer Security (TLS) inspection on all traffic, and closes idle connections after 30 seconds.\n\nYou need to ensure that Copilot traffic is not blocked or altered.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Allow only copilot.cloud.microsoft and m365.cloud.microsoft and block other *.cloud.microsoft subdomains.",
+   "Block copilot.cloud.microsoft and allow users to reach Copilot Chat from Microsoft Teams only.",
+   "Enable TLS inspection for *.cloud.microsoft so that the proxy logs every Copilot prompt.",
+   "Ensure full WebSocket Secure (WSS) connectivity to *.office.com, *.cloud.microsoft, and copilot.cloud.microsoft without interference from TLS inspection or short timeouts.",
+   "Allow the entire *.cloud.microsoft domain on the proxy and firewall."
+  ],
+  "answer": [
+   3,
+   4
+  ],
+  "explanation": "Copilot requires the whole *.cloud.microsoft domain to be allowed, because Microsoft does not support allowing only selected application URLs in that domain. Copilot integrations also need full WSS connectivity; TLS inspection that interferes with the connection and aggressive proxy timeouts make them fail.",
+  "rationale": [
+   "Incorrect: allowing only selected subdomains is exactly the partial allow list that Microsoft does not support for *.cloud.microsoft. It would keep the intermittent failures. A narrow list is only acceptable where Microsoft publishes a fixed FQDN list, which it does not for Copilot.",
+   "Incorrect: blocking copilot.cloud.microsoft breaks the Copilot app. If the goal is to stop personal Microsoft account sign-in, Learn recommends tenant restrictions v2 as the targeted control instead. Use tenant restrictions when consumer accounts must be blocked.",
+   "Incorrect: TLS inspection is one of the causes of failing WSS connections, so adding more inspection makes the problem worse. Copilot prompts are already auditable in Microsoft Purview Audit and DSPM for AI. Use those tools when prompts must be logged.",
+   "Correct: Copilot integrations can fail when the perimeter blocks WSS, when TLS inspection interferes with the connection, or when a proxy enforces aggressive timeouts. Allowing full WSS connectivity to these domains removes all three causes named in the stem.",
+   "Correct: Learn tells you to add *.cloud.microsoft to allow lists and states that allowing only selected Microsoft 365 application URLs in the domain is not supported. This replaces the FQDN-by-FQDN list that the proxy uses today."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.1-06",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Lucerne Publishing is preparing a Microsoft 365 Copilot pilot for 60 users. The Microsoft Copilot readiness report shows that their devices are not on an eligible update channel. IT deployed Microsoft 365 Apps to the devices with the Office Deployment Tool, and the devices appear in Inventory in the Microsoft 365 Apps admin center. The pilot users must get new Copilot features in Microsoft 365 Apps as soon as they are ready, and the devices of other users must keep their current update channel. You will use cloud update.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a Microsoft Entra security group, and add the 60 pilot users.",
+   "In the Microsoft 365 Apps admin center, expand Cloud Update, and select the profile for Current Channel.",
+   "On the profile page, select the Settings tab, and then select Device selection criteria.",
+   "Select + Add groups, select the pilot group, and then select Save.",
+   "Select + Add channels, and add the Monthly Enterprise Channel built-in group.",
+   "In the Microsoft 365 Apps admin center, expand Cloud Update, and select the profile for Monthly Enterprise Channel.",
+   "In the Microsoft 365 admin center, set Microsoft 365 installation options to Current Channel, and select Save."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Copilot in Microsoft 365 Apps needs an eligible update channel such as Current Channel or Monthly Enterprise Channel. With cloud update you do not create channel-change jobs: you assign Microsoft Entra groups or built-in channel groups to the profile of the target channel, and cloud update changes the target channel of eligible devices. Cloud update takes precedence over the Office Deployment Tool, while the installation options in the Microsoft 365 admin center affect only installations that users start themselves.",
+  "rationale": [
+   "Step 1: cloud update profiles are assigned to Microsoft Entra groups, so the group with the pilot users must exist before you can select it. A group limits the change to the pilot, and cloud update evaluates its membership at least once a day.",
+   "Step 2: each cloud update profile maps to an update channel. Current Channel delivers new features as soon as they are ready, and assigning devices to its profile changes their target channel to Current Channel.",
+   "Step 3: Device selection criteria on the Settings tab define which users or devices the profile manages. You do not create or enable profiles manually; a profile becomes active when a group is assigned to it.",
+   "Step 4: + Add groups assigns the pilot group, and Save applies it. Cloud update then moves eligible pilot devices to Current Channel according to the rollout configuration of the profile, and other devices are not affected.",
+   "Incorrect: a built-in channel group contains every device in Inventory that is on that channel. Adding it to the Current Channel profile would move all Monthly Enterprise Channel devices, not only the pilot. Use + Add channels to onboard or move all devices of a channel in bulk.",
+   "Incorrect: the Monthly Enterprise Channel profile moves devices to Monthly Enterprise Channel, which delivers new features once a month on a predictable date instead of as soon as they are ready. Use it when change control needs a monthly release cadence.",
+   "Incorrect: Microsoft 365 installation options set the default channel only for unmanaged installations that users start themselves from Office.com. They do not change devices deployed with the Office Deployment Tool. Use them to choose the channel for self-service installations."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365-apps/admin-center/cloud-update-profiles-channels"
+ },
+ {
+  "id": "3.1.1-07",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. assigned Microsoft 365 Copilot licenses to 50 users. Copilot works for these users in Teams chats and in Word, but Copilot cannot summarize or draft email in Outlook. The primary mailboxes of the 50 users are hosted on Exchange Server in the on-premises datacenter.\n\nWhat should you do?",
+  "choices": [
+   "Enable an online archive mailbox for each user in Exchange Online.",
+   "Add the users as members of a Microsoft 365 group mailbox.",
+   "Migrate the primary mailboxes of the users to Exchange Online.",
+   "Grant the users delegate access to a shared mailbox in Exchange Online."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Microsoft 365 Copilot supports primary mailboxes hosted in Exchange Online, and an Exchange Online mailbox is required for experiences that use email, calendar, or meeting data. Copilot can also use archive, shared, and delegate mailboxes that the user can access, but not group mailboxes.",
+  "rationale": [
+   "Incorrect: Copilot can use content in archive mailboxes that the user can access, but the primary mailbox still lives on Exchange Server, so drafting and summarizing the user's own email still fails. An online archive helps when old mail must be searchable.",
+   "Incorrect: Microsoft 365 Copilot is not available in group mailboxes, so this adds nothing for Outlook. Group mailboxes are the right tool for shared team conversations, not for Copilot grounding.",
+   "Correct: mailbox-grounded Copilot experiences require the primary mailbox to be in Exchange Online. Moving the mailboxes from Exchange Server to Exchange Online removes the blocker for Outlook.",
+   "Incorrect: Copilot can use shared and delegate mailboxes that the user is permitted to access, but this does not move the user's own primary mailbox to Exchange Online. Use shared mailboxes when several users must work in one inbox."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.1-08",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-f",
+  "stem": "You are evaluating the readiness of Relecloud for Microsoft 365 Copilot.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Office worker devices on Monthly Enterprise Channel are counted under Users on an eligible update channel in the Microsoft Copilot readiness report.",
+   "The current proxy configuration meets the Copilot network requirements if copilot.cloud.microsoft is added to the list of allowed FQDNs.",
+   "After a Microsoft 365 Copilot license is assigned to a call center user, the user can use Copilot in the desktop apps on the shared call center devices."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The readiness report counts users on Current Channel or Monthly Enterprise Channel. Copilot needs the full *.cloud.microsoft domain and WSS connectivity without interfering TLS inspection, and it is not available with device-based licensing for Microsoft 365 Apps for enterprise.",
+  "rationale": [
+   "Yes: the readiness report defines Users on an eligible update channel as users enrolled in Current Channel or Monthly Enterprise Channel. Most Relecloud office devices use Monthly Enterprise Channel, so those users are counted.",
+   "No: the proxy allows individual FQDNs and performs TLS inspection. Copilot requires the entire *.cloud.microsoft domain, because a partial allow list is not supported, and WSS connections fail when TLS inspection interferes. Adding one FQDN does not fix either problem.",
+   "No: Microsoft 365 Copilot is not available with device-based licensing for Microsoft 365 Apps for enterprise. The call center devices would need user-based activation of Microsoft 365 Apps before Copilot works in the desktop apps."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-requirements"
+ },
+ {
+  "id": "3.1.2-01",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles has Microsoft 365 Copilot licenses and SharePoint Advanced Management. Before the Copilot rollout, you need a baseline that shows which SharePoint and OneDrive sites give access to the largest number of users, including sites that grant access to Everyone except external users.\n\nWhich report should you run first in the SharePoint admin center?",
+  "choices": [
+   "the Shared with Everyone except external users activity report",
+   "the Sharing links activity report",
+   "the Sensitivity label applied to files snapshot report",
+   "the Site permissions across your organization snapshot report"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Data access governance reports come in two kinds: snapshot reports show the current permission state across all sites, and activity reports show sharing in the last 28 days. Microsoft recommends starting with the site permissions snapshot report to get the baseline, then using activity reports to track new oversharing.",
+  "rationale": [
+   "Incorrect: this activity report tracks sites where content was shared with all internal users in the last 28 days. It misses broad access granted before that window. Use it to monitor ongoing EEEU sharing after you have the baseline.",
+   "Incorrect: the sharing links report is an activity report that lists sites where users created the most sharing links in the last 28 days. It shows recent activity, not the full baseline. Run it monthly after the baseline to catch new oversharing.",
+   "Incorrect: this snapshot report finds sites that contain files with a specific sensitivity label. It helps you check protection of labeled content, not the number of users with access. Use it to verify policies on your most sensitive files.",
+   "Correct: the site permissions report is a snapshot of the permission structure across all SharePoint and OneDrive sites, and it identifies sites with the broadest access, including Everyone except external users permissions. Learn recommends running it first."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/data-access-governance-reports"
+ },
+ {
+  "id": "3.1.2-02",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals uses restricted access control on several SharePoint sites to prepare for Microsoft 365 Copilot. Members of these sites still share files with users who are not in the restricted access control groups, which creates links that lead to access denied errors and shows up in oversharing reports. You need to block sharing of these sites and their content with anyone who is not a member of a control group, including sharing by site owners.\n\nWhich command should you run?",
+  "choices": [
+   "`Set-SPOTenant -AllowSharingOutsideRestrictedAccessControlGroups $false`",
+   "`Set-SPOSite -Identity $siteUrl -DisableSharingForNonOwners`",
+   "`Set-SPOSite -Identity $siteUrl -SharingCapability Disabled`",
+   "`Set-SPOTenant -DelegateRestrictedAccessControlManagement $true`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, sharing a site that uses restricted access control does not follow the policy: users can still share content with people outside the control groups, who then get access denied. The opt-in tenant setting AllowSharingOutsideRestrictedAccessControlGroups set to $false blocks sharing with users and groups that are not in the control groups, including Everyone except external users and SharePoint groups. Site sharing settings such as SharingCapability control external sharing only.",
+  "rationale": [
+   "Correct: setting AllowSharingOutsideRestrictedAccessControlGroups to $false is the opt-in tenant capability that blocks sharing of restricted sites and their content with users and groups outside the restricted access control groups, for owners and members alike.",
+   "Incorrect: DisableSharingForNonOwners stops members from sharing the site, but site owners can still share content with anyone in the organization, so the requirement to block owners too is not met. Use it when only owners should be allowed to share a site.",
+   "Incorrect: SharingCapability Disabled turns off external sharing for the site. Internal users who are not in the control groups can still be given links, so the oversharing continues. Use it when a site must not be shared with guests or anonymous users.",
+   "Incorrect: DelegateRestrictedAccessControlManagement lets site admins turn restricted access control on or off and change the control groups, with a justification. It does not change sharing behavior. Use it when site owners should manage the policy themselves."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-access-control"
+ },
+ {
+  "id": "3.1.2-03",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fourth Coffee has Microsoft 365 Copilot licenses and SharePoint Advanced Management. You need to use SharePoint Online Management Shell to find SharePoint sites where any user can access content, download the results, and ask the owner of one overshared site to review its permissions.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-SPOService -Url https://fourthcoffee-admin.sharepoint.com`",
+   "`Start-SPODataAccessGovernanceInsight -ReportEntity PermissionedUsers -ReportType Snapshot -Workload SharePoint -CountOfUsersMoreThan 0 -Name \"Baseline\"`",
+   "`Get-SPODataAccessGovernanceInsight -ReportEntity PermissionedUsers`",
+   "`Export-SPODataAccessGovernanceInsight -ReportID $reportId -DownloadPath \"C:\\DAGReports\"`",
+   "`Start-SPOSiteReview -ReportID $reportId -SiteID $siteId -Comment \"Check for org wide access\"`",
+   "`Connect-SPOService -Url https://fourthcoffee-admin.sharepoint.com -Credential $cred`",
+   "`Start-SPOAuditDataCollectionForActivityInsights -ReportEntity SharingLinks_Anyone`",
+   "`Set-SPOSite -Identity $siteUrl -RestrictedAccessControl $true`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "A data access governance workflow in PowerShell is: connect, start the report, track it until it is Completed to get the report ID, export the CSV, and then start a site access review for a site from that report by using the report ID and site ID from the CSV.",
+  "rationale": [
+   "Step 1: all data access governance cmdlets need a SharePoint Online session. Learn says to connect without the Credential parameter, which is not supported in line with security best practices.",
+   "Step 2: the PermissionedUsers snapshot report with CountOfUsersMoreThan 0 lists every site where at least one user can access content. The cmdlet returns a report ID that you track next.",
+   "Step 3: Get-SPODataAccessGovernanceInsight shows the status of the report and its report ID. You wait until the status is Completed before you can download it; the first report can take up to five days.",
+   "Step 4: Export-SPODataAccessGovernanceInsight downloads the completed report as a CSV file. The CSV contains the site IDs that the review command needs.",
+   "Step 5: Start-SPOSiteReview uses the report ID and the site ID from the CSV and sends an email to the site owner, which is the collaborative remediation step for an overshared site.",
+   "Incorrect: signing in with the Credential parameter is not supported for these cmdlets. Use Connect-SPOService without Credential and complete the interactive or modern authentication sign-in.",
+   "Incorrect: you enable audit data collection only for recent activity reports in tenants without SharePoint Advanced Management. Fourth Coffee has SharePoint Advanced Management and runs a snapshot report. Use it in an E5-only tenant before an activity report.",
+   "Incorrect: restricted access control limits site access to members of specific groups. It is an immediate remediation that changes access, but the requirement is a review by the site owner. Use it when access must be cut off before any review."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/powershell-for-data-access-governance"
+ },
+ {
+  "id": "3.1.2-04",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Coho Winery has Microsoft 365 E5 licenses but no Microsoft 365 Copilot licenses and no SharePoint Advanced Management. Before buying Copilot, you need to use PowerShell to find SharePoint sites to which Everyone except external users was added in the last 28 days, and download the results as a CSV file.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-SPOService -Url https://cohowinery-admin.sharepoint.com`",
+   "`Start-SPOAuditDataCollectionForActivityInsights -ReportEntity EveryoneExceptExternalUsersAtSite`",
+   "Wait 24 hours, and then run `Get-SPOAuditDataCollectionStatusForActivityInsights -ReportEntity EveryoneExceptExternalUsersAtSite` until it returns InProgress.",
+   "`Start-SPODataAccessGovernanceInsight -ReportEntity EveryoneExceptExternalUsersAtSite -Workload SharePoint -ReportType RecentActivity -Name \"PublicSiteViaEEEU\"`",
+   "`Export-SPODataAccessGovernanceInsight -ReportID $reportId`",
+   "`Start-SPODataAccessGovernanceInsight -ReportEntity PermissionedUsers -ReportType Snapshot -Workload SharePoint -CountOfUsersMoreThan 0`",
+   "`Start-SPOSiteReview -ReportID $reportId -SiteID $siteId -Comment \"Remove EEEU\"`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Without SharePoint Advanced Management, an E5 tenant can use data access governance activity reports, but it must first enable audit data collection and wait 24 hours. Snapshot reports and remedial actions such as site access reviews are not available in that case.",
+  "rationale": [
+   "Step 1: the data collection, report, and export cmdlets all run in a SharePoint Online Management Shell session, so you connect first.",
+   "Step 2: without SharePoint Advanced Management, you must enable data collection for recent activity based reports. Collection only covers activity from the point it is enabled.",
+   "Step 3: reports can be generated 24 hours after collection starts. The status cmdlet returns NotInitiated, InProgress, or Paused, and reports can be generated when it returns InProgress.",
+   "Step 4: this RecentActivity report lists SharePoint sites that had Everyone except external users added to site membership in the last 28 days, and it returns the report ID for the export.",
+   "Step 5: after the report completes, Export-SPODataAccessGovernanceInsight downloads it as a CSV file; the default path is the Downloads folder when DownloadPath is omitted.",
+   "Incorrect: E5 tenants without SharePoint Advanced Management cannot generate snapshot reports, and the requirement is about the last 28 days anyway. Use the PermissionedUsers snapshot when the tenant has SharePoint Advanced Management and needs a baseline.",
+   "Incorrect: site access reviews are a SharePoint Advanced Management remedial action that is not available to an E5-only tenant, and the requirement ends with downloading the CSV. Use it after Copilot licenses bring SharePoint Advanced Management to the tenant."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/powershell-for-data-access-governance"
+ },
+ {
+  "id": "3.1.2-05",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Trey Research has SharePoint Advanced Management and is preparing a Microsoft 365 Copilot rollout. A site named Site1 is connected to a Microsoft 365 group named Deals. Over time, many Site1 files were shared directly with users who are not members of Deals. Only members of Deals must be able to open Site1 content, including in Copilot and search results, even when a file was shared with another user. Site access restriction is not yet allowed in the tenant, and only SharePoint administrators may manage it. Afterward, you must download a list of the sites that the policy protects.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-SPOService -Url https://treyresearch-admin.sharepoint.com`",
+   "`Set-SPOTenant -EnableRestrictedAccessControl $true`",
+   "`Set-SPOSite -Identity $site1Url -RestrictedAccessControl $true`",
+   "`Start-SPORestrictedAccessForSitesInsights -RACProtectedSites`",
+   "`Get-SPORestrictedAccessForSitesInsights -RACProtectedSites -ReportId $reportId -Action Download`",
+   "`Set-SPOSite -Identity $site1Url -RestrictContentOrgWideSearch $true`",
+   "`Set-SPOTenant -DelegateRestrictedAccessControlManagement $true`",
+   "`Start-SPORestrictedAccessForSitesInsights -ActionsBlockedByPolicy`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Restricted access control (site access restriction) limits a site to members of up to 10 control groups. Users outside these groups cannot open the content even with existing permissions or sharing links, and Copilot and search honor the policy. It must be allowed for the tenant before you set it on a site, and for a group-connected site the connected Microsoft 365 group is the default control group. The RACProtectedSites insights report lists protected sites; you generate it and then download it.",
+  "rationale": [
+   "Step 1: Connect-SPOService connects SharePoint Online Management Shell to the admin URL. Every tenant, site, and insights cmdlet that follows needs this session.",
+   "Step 2: EnableRestrictedAccessControl allows site-level access restriction for the organization. It must be on before you can configure the policy for an individual site, and it can take up to one hour to take effect.",
+   "Step 3: RestrictedAccessControl $true applies the policy to Site1. Because Site1 is group-connected, Deals is the default control group, so users who are not in Deals lose access even through direct sharing, and Copilot no longer shows them the content.",
+   "Step 4: Start-SPORestrictedAccessForSitesInsights -RACProtectedSites generates the report of sites protected by the policy. You run it after Site1 is protected so that Site1 is included; the report can take a few hours.",
+   "Step 5: the Download action with the report ID saves the protected-sites report to the folder where you run the command, which gives the downloadable list that the stem asks for.",
+   "Incorrect: RestrictContentOrgWideSearch turns on Restricted Content Discovery, which hides Site1 from Copilot and organization-wide search but keeps permissions, so users who received a sharing link can still open the files. Use it when access must stay unchanged and only discovery should stop.",
+   "Incorrect: DelegateRestrictedAccessControlManagement lets site admins manage the policy with a justification, which breaks the requirement that only SharePoint administrators manage it. Use it when site owners should control access restriction for their own sites.",
+   "Incorrect: the ActionsBlockedByPolicy report shows access denials caused by the policy in the past 28 days, such as the top denied users and sites. It does not list protected sites. Use it to see who is blocked after the policy is applied."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-access-control"
+ },
+ {
+  "id": "3.1.2-06",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Woodgrove Bank reviews the default data risk assessment in Microsoft Purview Data Security Posture Management (DSPM) for AI. You must remediate four findings by using the options on the **Protect** tab of the site flyout.\n\nWhich option should you use for each finding? To answer, drag the appropriate options to the correct findings. Each option may be used once, more than once, or not at all.",
+  "choices": [
+   "Restrict access by label",
+   "Restrict all items",
+   "Create an auto-labeling policy",
+   "Create retention policies",
+   "Restricted access control",
+   "Site access review"
+  ],
+  "targets": [
+   "Finding1: Copilot and agents must not summarize files labeled Highly Confidential, wherever the files are stored.",
+   "Finding2: Unlabeled files in Site2 contain credit card numbers and must get a sensitivity label without user action.",
+   "Finding3: Site3 contains content that no one has accessed for more than three years.",
+   "Finding4: All items in Site4 must stop appearing in Copilot while the owners review the site."
+  ],
+  "answer": [
+   0,
+   2,
+   3,
+   1
+  ],
+  "explanation": "DSPM for AI runs a weekly default data risk assessment of the top 100 SharePoint sites by usage. Its Protect tab offers four remediations: a DLP policy by label, Restricted Content Discovery for all items, an auto-labeling policy, and a retention policy for stale content.",
+  "rationale": [
+   "Finding1: Restrict access by label creates a DLP policy that prevents Microsoft 365 Copilot and agents from summarizing data that has the selected sensitivity labels, so the control follows the label to any location.",
+   "Finding2: an auto-labeling policy from Microsoft Purview Information Protection applies a sensitivity label automatically when sensitive information is found in unlabeled files, so users do not have to act.",
+   "Finding3: the retention option creates a Data Lifecycle Management policy that deletes content not accessed for at least three years, which removes stale data that Copilot could otherwise surface.",
+   "Finding4: Restrict all items uses SharePoint Restricted Content Discovery to exempt the site from Copilot, which hides every item while the owners review permissions."
+  ],
+  "notes": [
+   "Restrict access by label: creates a DLP policy for the Microsoft 365 Copilot location that blocks summarization of items with selected labels. Use it when the risk follows a label, not a site.",
+   "Restrict all items: applies Restricted Content Discovery so the site's content does not appear in Copilot and organization-wide search. Use it when a whole site must be hidden during a review.",
+   "Create an auto-labeling policy: automatically applies a sensitivity label when sensitive information types are found in unlabeled files. Use it to close labeling gaps at scale.",
+   "Create retention policies: deletes content that has not been accessed for at least three years. Use it to reduce obsolete data that adds oversharing risk.",
+   "Restricted access control: a SharePoint Advanced Management policy that limits site access to members of specific groups. It is not a Protect tab option in DSPM for AI; use it when only one group may open a site.",
+   "Site access review: asks site owners to review and update permissions, started from data access governance reports or the Monitor tab. Use it for collaborative remediation, not for an immediate block."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "3.1.2-07",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. uses Microsoft Purview DSPM for AI. A site named Projects is used by 30 people and is not among the most used sites in the tenant. You need an assessment of Projects that shows how many items contain sensitive information types and how many items are shared with anyone or with everyone in the organization. The assessment must cover the Projects site specifically.\n\nWhat should you do?",
+  "choices": [
+   "Wait for the next weekly run of the default data risk assessment.",
+   "Run an on-demand classification scan of the Projects site.",
+   "Create a custom data risk assessment that includes the Projects site.",
+   "Generate a site permissions report from the data access governance reports."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The default data risk assessment runs weekly but only for the top 100 SharePoint sites by usage. For other sites or specific users, you create a custom data risk assessment; you wait at least 48 hours after it runs to see the results, and you duplicate it to run it again.",
+  "rationale": [
+   "Incorrect: the default assessment covers only the top 100 SharePoint sites based on usage, so a small site such as Projects is not included no matter how long you wait. Rely on it for the most used sites.",
+   "Incorrect: an on-demand classification scan finds sensitive information types in items that were not scanned, but it is only one action on the Identify tab and does not produce the oversharing assessment. Use it when an assessment shows unscanned items.",
+   "Correct: a custom data risk assessment lets you choose specific sites or users and the data sources to scan, so it covers Projects even though the site is not among the top 100 by usage, and it reports sensitive items and sharing data for that site.",
+   "Incorrect: the site permissions report shows how many users can access each site, but it does not count sensitive information types and does not provide the DSPM for AI Protect tab actions. Use it for a tenant-wide permissions baseline."
+  ],
+  "ref": "https://learn.microsoft.com/purview/data-security-posture-management-oversharing"
+ },
+ {
+  "id": "3.1.2-08",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "case": "C-f",
+  "stem": "You need to meet the technical requirement for the HRRecords site.\n\nWhat should you configure for HRRecords?",
+  "choices": [
+   "a site access review",
+   "Restricted SharePoint Search",
+   "Restricted Content Discovery",
+   "restricted access control"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Restricted Content Discovery hides a site's content from organization-wide search and Copilot discovery without changing permissions, which suits a temporary review. Restricted access control changes who can access the site, and Restricted SharePoint Search is a retiring tenant-wide allow list.",
+  "rationale": [
+   "Incorrect: a site access review asks the HR site owners to fix permissions, which is useful, but it does not stop content from appearing in Copilot while the review runs. Combine it with Restricted Content Discovery for collaborative cleanup.",
+   "Incorrect: Restricted SharePoint Search applies a tenant-wide allow list of up to 100 sites, which would affect all 2,300 sites, and it is retiring with new enablement blocked since July 31, 2026. Use Restricted Content Discovery for selected sites instead.",
+   "Correct: Restricted Content Discovery stops HRRecords content from appearing in Copilot responses and organization-wide search while permissions stay unchanged. Relecloud has SharePoint Advanced Management through its Copilot licenses, so the feature is available.",
+   "Incorrect: restricted access control limits site access to members of specific groups, which changes effective permissions during the review and breaks the requirement. Use it when only one group, such as HR, may open a site at all."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "3.1.3-01",
+  "obj": "3.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Alpine Ski House must turn off web search in Microsoft 365 Copilot and Copilot Chat for a security group named Group1. Other users must keep web search.\n\nWhich service should you use to configure the **Allow web search in Copilot** policy?",
+  "choices": [
+   "Copilot > Settings > Data access in the Microsoft 365 admin center",
+   "the Cloud Policy service in the Microsoft 365 Apps admin center",
+   "Microsoft Edge configuration policies in the Microsoft 365 admin center",
+   "a meeting policy in the Teams admin center"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The Allow web search in Copilot policy is available only in the Cloud Policy service for Microsoft 365, and it can target users or groups. The web search entry in Copilot settings only links to that policy service.",
+  "rationale": [
+   "Incorrect: the web search entry under Copilot settings is a link that sends you to create the cloud policy in the Microsoft 365 Apps admin center. You do not configure the policy there. Use Copilot settings for controls such as image generation.",
+   "Correct: Learn states that the Allow web search in Copilot policy is available only in Cloud Policy service for Microsoft 365, and a cloud policy can be scoped to Group1 while other users keep the default.",
+   "Incorrect: Edge configuration policies manage Copilot Chat behavior in the Edge sidebar, such as whether it can use page content. They do not turn off web search in Copilot. Use them to control browsing context in Edge.",
+   "Incorrect: Teams meeting policies control Copilot in meetings, such as whether transcription is required. They do not control web search. Use them for meeting and call experiences."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-02",
+  "obj": "3.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Bellows College wants web search to be available by default in Microsoft 365 Copilot and Copilot Chat for staff. Each staff member must be able to stop web content from being used in their own responses.\n\nWhich configuration should you use?",
+  "choices": [
+   "Set the Allow the use of additional optional connected experiences in Office policy to Disabled, and let users turn on web search.",
+   "Set the Allow web search in Copilot policy to Disabled in Microsoft Copilot and Microsoft Copilot Chat, and let users turn on the Web content toggle.",
+   "Leave the Allow web search in Copilot policy not configured, and turn off optional connected experiences for each user.",
+   "Set the Allow web search in Copilot policy to Enabled in Microsoft Copilot and Microsoft Copilot Chat, and let users turn off the Web content toggle."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "When admins enable web search, the user-level Web content toggle is on by default and each user can turn it off. When admins disable web search, the toggle is dimmed and users cannot turn it on.",
+  "rationale": [
+   "Incorrect: disabling optional connected experiences turns off web search, but it also restricts Copilot Chat, Copilot, and many other Microsoft 365 experiences, and users cannot override it. Use it only when the organization must block all optional connected experiences.",
+   "Incorrect: when the policy disables web search, the Web content toggle is turned off and dimmed, so users cannot turn it on. Use this option when web search must be blocked for a group.",
+   "Incorrect: if the policy is not configured, web search is available, but the user privacy setting for optional connected experiences has no effect on web search. Users would still use the Web content toggle, so the per-user change does nothing here.",
+   "Correct: with web search enabled, the Web content toggle is on by default, and users can turn it off in Settings > Personalization in the Copilot app. Their preference persists across sessions and devices, which meets both requirements."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-03",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "City Power & Light never configured the **Allow web search in Copilot** policy. Users report that Copilot Chat cannot use web search, and that several other Microsoft 365 experiences that use cloud services are also unavailable. Users did not change any personal settings.\n\nWhich setting should you identify as the most likely cause?",
+  "choices": [
+   "The Pin Copilot Chat setting is set to Do not pin Copilot Chat in Microsoft 365 apps.",
+   "The EdgeEntraCopilotPageContext policy is set to block page context.",
+   "The Allow the use of additional optional connected experiences in Office policy is set to Disabled.",
+   "The user privacy setting for optional connected experiences is turned off in Word."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "If the Allow web search in Copilot policy is not configured, web search is available unless the admin sets Allow the use of additional optional connected experiences in Office to Disabled. That policy also restricts Copilot Chat, Copilot, and other experiences, which matches the extra symptoms.",
+  "rationale": [
+   "Incorrect: the pinning setting only controls whether Copilot Chat is pinned in the navigation of Microsoft 365 apps. It does not affect web search. Use it to manage where Copilot Chat appears.",
+   "Incorrect: EdgeEntraCopilotPageContext stops Copilot Chat in Edge from using web page or PDF content in responses. It does not turn off web search or other Microsoft 365 experiences. Use it to block browsing context in the Edge sidebar.",
+   "Correct: with the web search policy not configured, the admin policy for optional connected experiences decides availability. Setting it to Disabled removes web search and restricts other cloud-backed Microsoft 365 experiences, matching both symptoms.",
+   "Incorrect: Learn states that the user privacy setting for optional connected experiences in Microsoft 365 apps has no effect on web search. Web search can still be available when a user turns it off. Users also did not change settings."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-04",
+  "obj": "3.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A. Datum Corporation uses Microsoft 365 Government Community Cloud (GCC). The Allow web search in Copilot policy is not configured, and the Allow the use of additional optional connected experiences in Office policy is set to Enabled. Users report that Copilot Chat never uses web content. The compliance team approved web search for all users.\n\nWhat should you do?",
+  "choices": [
+   "Instruct users to turn on the Web content toggle in Settings > Personalization in the Copilot app.",
+   "Set the Allow the use of additional optional connected experiences in Office policy to Not configured.",
+   "Create a cloud policy that sets Allow web search in Copilot to Enabled in Microsoft Copilot and Microsoft Copilot Chat.",
+   "Turn on web search in Copilot > Settings > Data access in the Microsoft 365 admin center."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "In GCC and DoD, web search is available but turned off by default. To enable it, you must configure the Allow web search in Copilot policy in Cloud Policy service; if it is not configured, web search stays off regardless of the optional connected experiences policy.",
+  "rationale": [
+   "Incorrect: the Web content toggle is only available to users when the admin enables web search. In this GCC tenant the policy is not configured, so web search stays off and users cannot turn it on. Users use the toggle to opt out after admins enable it.",
+   "Incorrect: in GCC, web search stays off when the web search policy is not configured, regardless of how the optional connected experiences policy is set. In a commercial tenant, Disabled on this policy turns web search off.",
+   "Correct: GCC tenants have web search off by default, and the only way to turn it on is to configure the Allow web search in Copilot policy in Cloud Policy service. Setting it to Enabled meets the approved requirement for all users.",
+   "Incorrect: the web search entry in Copilot settings only links to the Cloud Policy service. There is no separate toggle there that overrides the cloud policy. Use Copilot settings for controls that live in the admin center, such as image generation."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-05",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Humongous Insurance uses Microsoft 365 Copilot. The **Allow web search in Copilot** policy is not configured. The risk team requires that Researcher, Cowork, and Copilot Work mode never send queries to the web. Copilot Chat must keep web search, and other Microsoft 365 experiences must not be affected. Users must not be able to override the setting.\n\nSolution: You create a cloud policy for all users that sets Allow web search in Copilot to Disabled in Microsoft Copilot Work mode; Enabled in Microsoft Copilot Web mode and Microsoft Copilot Chat.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The third value of the Allow web search in Copilot policy turns off web search in Work mode and, as Learn notes, also in Researcher and Cowork, while Copilot Chat and Web mode keep it. Because it is an admin policy, users cannot turn it back on.",
+  "rationale": [
+   "Correct: Learn states that this option disables web search in Researcher and Cowork, and it disables web search in Work mode while Web mode and Copilot Chat keep it. It changes nothing outside Copilot, and users cannot override an admin-disabled setting.",
+   "Incorrect: the solution does meet the goal. No would be right if the policy were set to Disabled in Microsoft Copilot and Microsoft Copilot Chat, because then Copilot Chat would also lose web search."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-06",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Humongous Insurance uses Microsoft 365 Copilot. The **Allow web search in Copilot** policy is not configured. The risk team requires that Researcher, Cowork, and Copilot Work mode never send queries to the web. Copilot Chat must keep web search, and other Microsoft 365 experiences must not be affected. Users must not be able to override the setting.\n\nSolution: You set the Allow the use of additional optional connected experiences in Office policy to Disabled for all users.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Disabling optional connected experiences turns off web search when the web search policy is not configured, but it also restricts Copilot Chat, Copilot, and other Microsoft 365 experiences.",
+  "rationale": [
+   "Incorrect: this policy removes web search from Copilot Chat too, and Learn warns that it restricts Copilot Chat, Copilot, and multiple experiences across Microsoft 365. Both the Copilot Chat requirement and the no-impact requirement fail.",
+   "Correct: the solution does not meet the goal. Disabling optional connected experiences is the right lever only when the organization must turn off all optional cloud-backed experiences in Microsoft 365 Apps."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-07",
+  "obj": "3.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-f",
+  "stem": "Humongous Insurance uses Microsoft 365 Copilot. The **Allow web search in Copilot** policy is not configured. The risk team requires that Researcher, Cowork, and Copilot Work mode never send queries to the web. Copilot Chat must keep web search, and other Microsoft 365 experiences must not be affected. Users must not be able to override the setting.\n\nSolution: You leave the policy not configured and instruct users to turn off the Web content toggle in Settings > Personalization when they use Researcher or Cowork.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The Web content toggle is a user preference. It cannot be enforced, it applies to all of the user's Copilot responses, and Analyst and Cowork do not have their own web search toggle for users.",
+  "rationale": [
+   "Incorrect: users can turn the toggle back on at any time, so the setting is not enforced. The toggle also applies across Copilot clients rather than only to Researcher and Cowork, and Cowork has no separate web search toggle for users.",
+   "Correct: the solution does not meet the goal. The user toggle is the right control when individual users want to opt out of web content after an admin has enabled web search, not when the organization must enforce a restriction."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.3-08",
+  "obj": "3.1.3",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "case": "C-f",
+  "stem": "You need to configure web search to meet the business requirements of Relecloud. You plan to use one policy setting with two scoped configurations.\n\nHow should you complete the configuration? To answer, select the appropriate options in the answer area.\n\n```text\nService:                    [[1]]\nPolicy:                     Allow web search in Copilot\nScope LegalGroup:           [[2]]\nScope all other users:      [[3]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Cloud Policy service in the Microsoft 365 Apps admin center",
+     "Copilot > Settings > Data access in the Microsoft 365 admin center",
+     "Microsoft Edge configuration policies"
+    ],
+    "why": [
+     "Correct: the Allow web search in Copilot policy is available only in Cloud Policy service for Microsoft 365, where each configuration can be scoped to a group such as LegalGroup.",
+     "Incorrect: the web search entry in Copilot settings only links to the Cloud Policy service, so you cannot scope the setting there. Use Copilot settings for admin center controls such as Copilot image generation.",
+     "Incorrect: Edge configuration policies control Copilot Chat in the Edge sidebar, for example whether it can read page content. They do not control web search in Copilot. Use them for browser-specific Copilot behavior."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "Disabled in Microsoft Copilot and Microsoft Copilot Chat",
+     "Disabled in Microsoft Copilot Work mode; Enabled in Microsoft Copilot Web mode and Microsoft Copilot Chat",
+     "Enabled in Microsoft Copilot and Microsoft Copilot Chat"
+    ],
+    "why": [
+     "Correct: the legal department must not use web search in any Copilot experience, so both Copilot and Copilot Chat must be disabled. The Web content toggle is dimmed and users cannot turn it on.",
+     "Incorrect: this value keeps web search in Copilot Chat and Web mode, so legal users could still send queries to the web. Use it for users who may use web search only in chat.",
+     "Incorrect: this value turns on web search everywhere, and users could only opt out by using the toggle. Use it when web search is approved for a group without restrictions."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Disabled in Microsoft Copilot and Microsoft Copilot Chat",
+     "Disabled in Microsoft Copilot Work mode; Enabled in Microsoft Copilot Web mode and Microsoft Copilot Chat",
+     "Enabled in Microsoft Copilot and Microsoft Copilot Chat"
+    ],
+    "why": [
+     "Incorrect: this value removes web search from Copilot Chat too, which breaks the requirement that Copilot Chat keeps web search for other users. Use it for groups such as LegalGroup that must have no web search.",
+     "Correct: this value keeps web search in Copilot Chat and Web mode, and Learn states that it disables web search in Work mode, Researcher, and Cowork, which matches the requirement for all other users.",
+     "Incorrect: this value leaves web search on in Researcher, Cowork, and Work mode, which the business requirements forbid for other users. Use it when every Copilot experience may use the web."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   1
+  ],
+  "explanation": "Web search for Copilot and Copilot Chat is managed by one cloud policy with three values: enabled in both, disabled in both, or disabled in Work mode with Web mode and Chat enabled. The third value also disables web search in Researcher and Cowork. Scoped configurations let different groups get different values.",
+  "ref": "https://learn.microsoft.com/copilot/plan/manage-public-web-access"
+ },
+ {
+  "id": "3.1.4-01",
+  "obj": "3.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Margie's Travel has Microsoft 365 E3 licenses for all users and Microsoft 365 Copilot licenses for 200 users. User2 has only a Microsoft 365 E3 license. When User2 selects the **Search** module in the Microsoft 365 Copilot app, User2 gets keyword-based results instead of the AI-powered Copilot Search experience.\n\nWhat should you do so that User2 gets Copilot Search?",
+  "choices": [
+   "Turn on Copilot Search in Copilot > Search in the Microsoft 365 admin center.",
+   "Assign a Microsoft 365 Copilot license to User2.",
+   "Add a search vertical for User2 in Microsoft Search.",
+   "Pin Copilot Chat in Microsoft 365 apps for User2."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Copilot Search needs no setup by an admin, but it requires an eligible Microsoft 365 Copilot license. Users without the license get the Microsoft Search experience when they select the Search module.",
+  "rationale": [
+   "Incorrect: no admin action is needed to set up Copilot Search, and there is no switch that grants it to unlicensed users. The Copilot > Search page is for bookmarks, acronyms, connectors, and analytics.",
+   "Correct: users with an eligible Copilot license get Copilot Search from the Search module automatically. User2 has no Copilot license, so User2 receives Microsoft Search until a license is assigned.",
+   "Incorrect: verticals customize the Microsoft Search results page, for example to show connector content. They do not turn Microsoft Search into Copilot Search. Use them when unlicensed users must see a custom set of results.",
+   "Incorrect: pinning controls whether Copilot Chat appears in the navigation of Microsoft 365 apps. It does not change which search experience the Search module shows. Use it to improve discoverability of Copilot Chat."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "3.1.4-02",
+  "obj": "3.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys curated 150 bookmarks and 80 acronyms in Microsoft Search last year. The company now has Microsoft 365 Copilot licenses. You need the same bookmarks and acronyms to appear in Copilot Search with the least administrative effort.\n\nWhat should you do?",
+  "choices": [
+   "Take no further action, because curated bookmarks and acronyms already apply to Copilot Search.",
+   "Re-create the bookmarks and acronyms in Draft state and then publish them.",
+   "Create a Copilot connector that indexes the bookmark and acronym lists.",
+   "Export the bookmarks and acronyms as CSV files and import them on the Copilot > Search page."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Search uses the same curated answers as Microsoft Search. If bookmarks and acronyms are already configured for Microsoft Search, no further action is required for them to work in Copilot Search.",
+  "rationale": [
+   "Correct: Learn states that if you already configured bookmarks and acronyms for Microsoft Search, no further action is required to enable curated bookmarks and acronyms for Copilot Search, which is the least effort.",
+   "Incorrect: re-creating answers duplicates work and risks duplicate URL errors. Draft state is useful when a new answer must be reviewed before users can see it, not for answers that already exist.",
+   "Incorrect: Copilot connectors index content from external systems into Microsoft Graph. Bookmarks and acronyms are search answers that admins curate, not content to index. Use a connector for data such as tickets or knowledge articles.",
+   "Incorrect: CSV import is useful to add or update answers in bulk, but the existing answers already apply, and re-importing URLs that are used in existing bookmarks causes duplicate errors. Use import for a new batch of answers."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "3.1.4-03",
+  "obj": "3.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Nod Publishers wants to add the acronym ECO to Copilot Search. The legal team must approve the definition before users can see it in search results.\n\nWhich state should you use when you add the acronym?",
+  "choices": [
+   "Excluded",
+   "Draft",
+   "Scheduled",
+   "Published"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Acronyms in Copilot Search have three states: Published (visible), Draft (saved but not shown in results), and Excluded (prevented from appearing). Scheduled is a bookmark state, not an acronym state.",
+  "rationale": [
+   "Incorrect: Excluded prevents an acronym from appearing in search results. It is meant for acronyms that must never be shown, not for a pending review. Use it to suppress a confusing or unwanted acronym.",
+   "Correct: acronyms in Draft state do not appear in search results, so the legal team can review ECO first. You then move the acronym to Published to make it visible.",
+   "Incorrect: Scheduled is a state for bookmarks, which can publish at a set date and time. Acronyms support only Published, Draft, and Excluded. Use Scheduled for a bookmark that must appear on a launch date.",
+   "Incorrect: Published makes the acronym available to users in Copilot Search right away, before legal approval. Use it when the definition is already approved."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "3.1.4-04",
+  "obj": "3.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Southridge Video manages 300 bookmarks for Copilot Search. You exported the bookmarks, added new keywords to 40 existing rows, and imported the CSV file. The import fails with errors that the URLs are already used in existing bookmarks.\n\nWhat should you do before you import the file again?",
+  "choices": [
+   "Clear the URL column of the 40 rows.",
+   "Change the State column of the 40 rows to Draft.",
+   "Populate the ID column with the bookmark ID of each existing bookmark.",
+   "Remove the header row and the empty ID, Last Modified, and Last Modified By columns."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Copilot Search rejects a bookmark whose URL is already used by another answer. To update existing bookmarks by import, you include the bookmark ID; the row is then treated as an update instead of a new bookmark.",
+  "rationale": [
+   "Incorrect: the URL is required for Published, Suggested, Scheduled, and Draft bookmarks, so clearing it creates new errors. Only Excluded bookmarks need just the URL.",
+   "Incorrect: changing the state does not change whether the row is treated as new, so the duplicate URL errors remain, and Draft would also hide the bookmarks. Use Draft for bookmarks that need review before publishing.",
+   "Correct: when the bookmark ID is present, the row is not treated as a new addition, so the duplicate URL rule is not triggered and the new keywords update the existing bookmarks.",
+   "Incorrect: the file must keep the header row and all columns in the template order. The ID, Last Modified, and Last Modified By columns are the only ones that can be empty, not columns to delete."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "3.1.4-05",
+  "obj": "3.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam Residences has Microsoft 365 Copilot licenses for all users. Users want one experience that answers questions by combining internal documents from Microsoft Graph, ServiceNow content from a Copilot connector, and current public information from the web.\n\nWhich experience should you recommend?",
+  "choices": [
+   "Microsoft Copilot Chat",
+   "the Microsoft Copilot extension for the browser",
+   "Microsoft Copilot Search",
+   "Microsoft Search in SharePoint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Search is query-based and uses Microsoft Graph and third-party connectors. Copilot Chat is conversational and can use Microsoft Graph, third-party connectors, and the web, so only Copilot Chat combines all three sources.",
+  "rationale": [
+   "Correct: Copilot Chat uses Microsoft Graph, third-party connectors, and the web as data sources, and it generates deeper answers, which matches the request to combine internal, connector, and public web information.",
+   "Incorrect: the Microsoft Copilot extension improves Copilot Search results with activity from configured third-party sites such as Jira or ServiceNow. It does not add public web content. Use it to enrich search results from work-related SaaS apps.",
+   "Incorrect: Copilot Search searches Microsoft Graph and third-party connectors to find content quickly, but it does not include web results. Recommend it when users need to find a file, ticket, or person fast.",
+   "Incorrect: Microsoft Search in SharePoint is keyword-based, has no Copilot integration, and does not use the web. It is the free experience for users without a Copilot license."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-overview"
+ },
+ {
+  "id": "3.1.4-06",
+  "obj": "3.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute enabled a Copilot connector for its ServiceNow knowledge base. Staff with Microsoft 365 Copilot licenses see ServiceNow articles in Copilot Search right away. Staff without Copilot licenses use Microsoft Search and do not see any ServiceNow articles. The college will not buy more Copilot licenses.\n\nWhat should you do so that unlicensed staff can find the articles?",
+  "choices": [
+   "Configure a search vertical and a result type for the connection in Microsoft Search.",
+   "Run a full crawl of the ServiceNow connection.",
+   "Change the connector access permissions to Everyone in the organization.",
+   "Add the ServiceNow article URLs as bookmarks in Copilot Search."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Search supports all tenant-enabled connectors right away with semantic search. Microsoft Search requires admin setup before connector content appears, as verticals with result types and filters, and it has no semantic search.",
+  "rationale": [
+   "Correct: in Microsoft Search, connector content appears only after an admin sets up verticals with result types and filters. Configuring them makes the ServiceNow articles visible to unlicensed staff without buying licenses.",
+   "Incorrect: a full crawl refreshes the index, deleted items, and permissions, but the articles are already indexed because Copilot Search shows them. Run a full crawl when permission changes or deletions are not reflected.",
+   "Incorrect: access permissions control which users may see indexed items, but licensed staff already see the articles, so permissions are not the gap. Microsoft Search still has no vertical to display them. Change permissions when content is public to all employees.",
+   "Incorrect: bookmarks promote individual key resources for specific keywords. Adding every article as a bookmark does not scale and does not make the connector content searchable. Use bookmarks for a small set of important sites and tools."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-overview"
+ },
+ {
+  "id": "3.1.4-07",
+  "obj": "3.1.4",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Consolidated Messenger manages acronyms and bookmarks on the Copilot > Search page in the Microsoft 365 admin center.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A user who searches for kpi does not get the curated answer for the acronym KPI because acronym queries are case sensitive.",
+   "When you publish a bookmark, users can discover it right away because the search index refreshes immediately.",
+   "When you bulk import acronyms from a CSV file, the State column must contain a value for every row."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Curated acronyms answer common query forms such as KPI, define KPI, or KPI stands for, regardless of case. Publishing a bookmark refreshes the index immediately, and the acronym CSV import requires the Acronym, Stands For, and State fields.",
+  "rationale": [
+   "No: Learn notes that acronym queries are not case sensitive, so kpi, KPI, and Kpi all return the curated meanings. Case only matters for how you want the acronym displayed.",
+   "Yes: when you publish a bookmark in the admin center, the search index refreshes immediately, so users can discover it right away. Use Scheduled when the bookmark should appear later.",
+   "Yes: in the acronym import file, Acronym, Stands For, and State are mandatory. State must be Published, Draft, or Excluded for each row."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "3.1.4-08",
+  "obj": "3.1.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso Suites wants to add the acronym ECO to Copilot Search by using Microsoft Graph PowerShell. The legal team must approve the definition in the Microsoft 365 admin center before users can see it.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"SearchConfiguration.ReadWrite.All\"`",
+   "`New-MgSearchAcronym -BodyParameter @{ displayName = \"ECO\"; standsFor = \"Engineering Change Order\"; state = \"draft\" }`",
+   "In the Microsoft 365 admin center, open **Copilot** > **Search** > **Acronyms**, review ECO with the legal team, and move it to Published.",
+   "`New-MgSearchBookmark -BodyParameter @{ displayName = \"ECO\"; webUrl = \"https://contoso.com/eco\"; state = \"draft\" }`",
+   "`Connect-MgGraph -Scopes \"ExternalConnection.ReadWrite.OwnedBy\"`",
+   "`New-MgExternalConnection -BodyParameter @{ id = \"eco\"; name = \"ECO\"; description = \"Engineering Change Order\" }`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Acronyms are search answers managed through the Microsoft Graph search answers API with the SearchConfiguration permissions. Creating the acronym in draft state keeps it out of results until someone moves it to Published, which fits an approval step.",
+  "rationale": [
+   "Step 1: creating search answers such as acronyms requires the SearchConfiguration.ReadWrite.All permission, so you connect with that scope before you call the API.",
+   "Step 2: New-MgSearchAcronym creates the acronym with its display name, meaning, and state draft. Acronyms in Draft state do not appear in Copilot Search results, so users cannot see ECO yet.",
+   "Step 3: an acronym in Draft state must be moved to Published to appear in search results, so the final step is the legal review on the Acronyms tab and the move to Published. It needs the draft from step 2.",
+   "Incorrect: New-MgSearchBookmark creates a bookmark, which promotes a URL for keywords. It is the wrong answer type for a term definition. Use it to promote key sites and tools in search results.",
+   "Incorrect: ExternalConnection.ReadWrite.OwnedBy lets you create and manage Copilot connector connections. It does not grant access to search answers such as acronyms. Use it when you build a connector by using Microsoft Graph.",
+   "Incorrect: New-MgExternalConnection creates a Copilot connector connection for external content. Acronyms are curated answers, not indexed content. Use it as the first step of a custom synced connector."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.search/new-mgsearchacronym?view=graph-powershell-1.0"
+ },
+ {
+  "id": "3.1.5-01",
+  "obj": "3.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Blue Yonder Airlines wants users to be able to start trials of Microsoft 365 Copilot on their own. Users must not be able to buy Copilot licenses by themselves.\n\nWhich option should you select in **Microsoft Copilot self-service purchases**?",
+  "choices": [
+   "Copilot pay-as-you-go billing",
+   "Allow trials or purchases",
+   "Prevent self-service purchases",
+   "Allow trials only"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The Microsoft Copilot self-service purchases setting in Copilot > Settings > User access has three choices: allow trials or purchases, allow trials only, or prevent self-service purchases.",
+  "rationale": [
+   "Incorrect: Copilot pay-as-you-go billing is a separate setting that sets up a billing policy for eligible Copilot Chat usage. It is not an option of the self-service purchases setting. Use it to bill agent usage in Copilot Chat.",
+   "Incorrect: this option lets users both start trials and buy Copilot themselves, which breaks the requirement that users must not purchase. Use it when the organization accepts self-service purchases.",
+   "Incorrect: this option blocks trials as well as purchases, so users could not start trials. Use it when all Copilot acquisitions must go through IT.",
+   "Correct: Allow trials only lets users start a trial of Copilot by themselves while blocking self-service purchases, which matches both requirements."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/configure-copilot-admin-center"
+ },
+ {
+  "id": "3.1.5-02",
+  "obj": "3.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Lamna Healthcare Company must turn on the Copilot AI disclaimer for all users. You must follow the principle of least privilege. An auditor who has the Global Reader role must be able to confirm the configuration afterward.\n\nWhich role should you assign to the administrator who turns on the disclaimer?",
+  "choices": [
+   "Global Administrator",
+   "Global Reader",
+   "AI Administrator",
+   "Office Apps Administrator"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Turning on the Copilot AI disclaimer requires the AI Administrator role. Global Reader can view Copilot settings but not change them, and Global Administrator is broader than needed.",
+  "rationale": [
+   "Incorrect: Global Administrator can turn on the disclaimer, but it is far broader than needed and breaks least privilege. Reserve it for emergency scenarios.",
+   "Incorrect: Global Reader can view but not change Copilot settings, so it fits the auditor, not the administrator who turns on the disclaimer.",
+   "Correct: Learn states that you need the AI Administrator role to turn on the Copilot AI disclaimer. It manages Copilot settings without the broad permissions of Global Administrator.",
+   "Incorrect: Office Apps Administrator is needed to create Cloud Policy settings for Microsoft 365 apps directly. The disclaimer is turned on from Copilot settings, which creates its cloud policy automatically and requires AI Administrator."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/microsoft-365-ai-disclaimers"
+ },
+ {
+  "id": "3.1.5-03",
+  "obj": "3.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "VanArsdel, Ltd. must make it clear to users of Copilot in Word, Excel, PowerPoint, and Outlook that AI-generated content may be inaccurate. The message must be bold, and its tooltip must link to the internal AI use policy page of the company.\n\nWhich setting should you configure?",
+  "choices": [
+   "Custom link for blocked Microsoft Copilot app, with the internal policy URL",
+   "Custom AI disclaimer on the Workforce Insights landing page",
+   "Copilot custom dictionary, with the policy terms added as entries",
+   "Copilot AI disclaimer, with the Bold font and a web address for the tooltip"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The Copilot AI disclaimer setting is in Copilot > Settings > View all. It displays a standard or bold message in Word, Excel, PowerPoint, Outlook, OneNote, and the Copilot app, and you can add an internal policy URL to the tooltip.",
+  "rationale": [
+   "Incorrect: the custom link for the blocked Copilot app appears only on the Copilot Chat was turned off for your organization page for blocked users. It does not show a disclaimer to active users. Use it to explain why Copilot is blocked.",
+   "Incorrect: the Workforce Insights custom AI disclaimer adds a footer to the Workforce Insights agent only. It does not appear in Word, Excel, PowerPoint, or Outlook. Use it to add guidance for that agent.",
+   "Incorrect: the Copilot custom dictionary adds organization-specific vocabulary to supported Teams experiences, such as meeting transcription. It does not display any message. Use it to improve recognition of product names in Teams.",
+   "Correct: the Copilot AI disclaimer lets you choose Standard or Bold, and you can enter a web address that is available from the tooltip. The disclaimer appears in Word, Excel, PowerPoint, Outlook, OneNote, and the Copilot app."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/microsoft-365-ai-disclaimers"
+ },
+ {
+  "id": "3.1.5-04",
+  "obj": "3.1.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank wants the whole tenant to receive generally available Microsoft 365 features about 30 days after they reach general availability. A security group named ITValidation must receive generally available features as soon as they are released. Targeted release can no longer be modified in the tenant.\n\nWhat should you configure in **Copilot Release Preferences: General Availability**?",
+  "choices": [
+   "Select Standard release, and add all other users as exceptions.",
+   "Select Standard release, and add ITValidation as an exception.",
+   "Select Deferred release, and enroll ITValidation in Copilot Frontier.",
+   "Select Deferred release, and add ITValidation as an exception."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Release preferences have a tenant default of Standard release or Deferred release, plus up to 10,000 user or group exceptions that get the other option. Frontier is a separate opt-in for features before general availability, not for generally available features.",
+  "rationale": [
+   "Incorrect: listing every other user as an exception does not scale and hits the 10,000-exception limit, where each member of a group counts. Choosing Deferred release as the default achieves the same result with one exception.",
+   "Incorrect: this makes the tenant Standard release and puts ITValidation on Deferred release, which is the opposite of the requirement. Use it when most users get features at GA and only a few need extra time.",
+   "Incorrect: Frontier gives preview features before general availability, which is not the same as Standard release for GA features. ITValidation would still follow Deferred release for features that are not part of Frontier.",
+   "Correct: with Deferred release as the default, the tenant receives GA features about 30 days after Standard release starts. Adding ITValidation as an exception assigns that group to Standard release, so it gets GA features as soon as they are released."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/configure-release-options?view=o365-worldwide"
+ },
+ {
+  "id": "3.1.5-05",
+  "obj": "3.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Trey Research wants a security group named EarlyAdopters to receive eligible Copilot agents and features before they reach general availability. All members of EarlyAdopters have Microsoft 365 Copilot licenses. Other users must not receive these features.\n\nWhat should you configure?",
+  "choices": [
+   "Current Channel (Preview) for the devices of EarlyAdopters",
+   "Copilot Release Preferences: General Availability, with EarlyAdopters on Standard release",
+   "Targeted release for EarlyAdopters in Settings > Org settings",
+   "Copilot Frontier, with access set to Specific users and groups"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Frontier is the opt-in program for features before general availability. Standard and Deferred release only decide when generally available features arrive, Targeted release is retiring, and update channels control Microsoft 365 Apps builds, not service features.",
+  "rationale": [
+   "Incorrect: Current Channel (Preview) delivers early Microsoft 365 Apps desktop builds. It does not grant pre-GA Copilot agents or service features. Use it to validate upcoming app builds on a few devices.",
+   "Incorrect: Standard release gives features as soon as they are generally available, not before. Use it when a group must not be deferred, as part of the GA release preferences.",
+   "Incorrect: Targeted release is retiring in January 2027, and since November 2026 administrators can no longer add or remove users. Microsoft directs customers to Frontier for early access.",
+   "Correct: Copilot Frontier offers No access, All users, or Specific users and groups. Selecting EarlyAdopters gives only that group pre-GA features and agents, and its members have the Copilot licenses that Copilot Frontier features need."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/manage/get-started-frontier?view=o365-worldwide"
+ },
+ {
+  "id": "3.1.5-06",
+  "obj": "3.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "First Up Consultants wants eligible administrators to use the Microsoft 365 Admin agent, the Copilot experience that helps administrators operate Microsoft 365, Copilot, and agents.\n\nWhich setting should you configure in **Copilot** > **Settings** > **User access**?",
+  "choices": [
+   "Copilot in Bing, Edge, and Windows",
+   "Microsoft Copilot in admin centers",
+   "Copilot Frontier",
+   "Microsoft Copilot self-service purchases"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Microsoft Copilot in admin centers controls whether eligible admins can use Copilot in supported admin centers. The Microsoft 365 Admin agent is the agentic experience that this setting manages.",
+  "rationale": [
+   "Incorrect: this entry only provides access guidance for Copilot Chat in Bing, Edge, and Windows; it is not a configuration location. Use the linked Edge and Windows guidance for those experiences.",
+   "Correct: this User access setting manages whether eligible admins can use Copilot in supported admin centers, which is where the Microsoft 365 Admin agent runs.",
+   "Incorrect: Copilot Frontier gives selected users preview features and agents before general availability. It is not the control for Copilot in admin centers. Use it to pilot pre-GA capabilities.",
+   "Incorrect: this setting controls whether users can start trials or buy Copilot themselves. It does not affect admin experiences. Use it to govern self-service acquisition."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/configure-copilot-admin-center"
+ },
+ {
+  "id": "3.1.5-07",
+  "obj": "3.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys must stop users from creating AI-generated videos in Microsoft 365 Copilot and supported Microsoft 365 apps. Users must still be able to generate images with Copilot.\n\nWhat should you do in the Microsoft 365 admin center?",
+  "choices": [
+   "Turn off the Screen and camera sharing setting.",
+   "Turn off the Create features in the Copilot app individually.",
+   "Turn off the Copilot image generation setting.",
+   "Turn off the Copilot video generation setting."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The Microsoft 365 admin center has separate settings for Copilot image generation and Copilot video generation. Built-in Create features are not configured individually, and Screen and camera sharing controls Vision.",
+  "rationale": [
+   "Incorrect: Screen and camera sharing manages Vision, which lets Copilot see the user's screen or camera. It does not control video generation. Use it to stop users from sharing screens with Copilot.",
+   "Incorrect: Learn states that built-in Create features are not configured individually; only brand kits are managed through a cloud policy. Use the dedicated settings for image and video generation instead.",
+   "Incorrect: Copilot image generation allows or prevents image-generation experiences. Turning it off breaks the requirement that users can still generate images. Use it when image generation must be blocked.",
+   "Correct: the dedicated video generation setting controls whether users can access AI video generation features in Copilot and supported Microsoft 365 apps, so you can block video while images stay available."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/release-notes"
+ },
+ {
+  "id": "3.1.5-08",
+  "obj": "3.1.5",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Coho Vineyard has four requirements for Copilot settings in the Microsoft 365 admin center.\n\nWhich setting should you configure for each requirement? To answer, drag the appropriate settings to the correct requirements. Each setting may be used once, more than once, or not at all.",
+  "choices": [
+   "Microsoft Copilot self-service purchases",
+   "Copilot Release Preferences: General Availability",
+   "Copilot AI disclaimer",
+   "Copilot image generation",
+   "Copilot Frontier",
+   "Copilot pay-as-you-go billing"
+  ],
+  "targets": [
+   "Requirement1: Users can start a Copilot trial but cannot buy Copilot themselves.",
+   "Requirement2: The tenant receives generally available features about 30 days after Standard release starts.",
+   "Requirement3: Supported apps show a bold message that AI-generated content may be inaccurate.",
+   "Requirement4: Users cannot create pictures with Copilot."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Most tenant-wide Copilot controls live in Copilot > Settings in the Microsoft 365 admin center, grouped under User access, Data access, Copilot actions, and Other settings. Learn which setting owns which outcome: acquisition, release timing, transparency, and generation features.",
+  "rationale": [
+   "Requirement1: the self-service purchases setting has an Allow trials only option, which lets users start trials while blocking self-service purchases.",
+   "Requirement2: selecting Deferred release in the general availability release preferences delays GA features by about 30 days after the Standard release rollout begins.",
+   "Requirement3: the Copilot AI disclaimer displays AI-generated content may be inaccurate in supported apps, and you can choose the Bold font.",
+   "Requirement4: Copilot image generation allows or prevents supported image-generation experiences, so turning it off stops users from creating pictures."
+  ],
+  "notes": [
+   "Microsoft Copilot self-service purchases: allow trials or purchases, allow trials only, or prevent self-service purchases. Use it to govern how users acquire Copilot.",
+   "Copilot Release Preferences: General Availability: choose Standard release or Deferred release for GA features, with up to 10,000 exceptions. Use it to control when GA features arrive.",
+   "Copilot AI disclaimer: shows a standard or bold accuracy disclaimer with an optional link to an internal policy. Use it to meet transparency or regulatory requirements.",
+   "Copilot image generation: allows or prevents supported image-generation experiences. Use it when image creation must be blocked or allowed.",
+   "Copilot Frontier: gives users or groups preview features and agents before general availability. Use it for early evaluation, not for GA timing or blocking features.",
+   "Copilot pay-as-you-go billing: sets up a billing policy for eligible Copilot Chat usage through Billing & usage. Use it to pay for agent usage by unlicensed users, not to control purchases."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/configure-copilot-admin-center"
+ },
+ {
+  "id": "3.1.6-01",
+  "obj": "3.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Proseware, Inc. wants to pin the Microsoft Copilot app to the Windows taskbar of managed devices by using the taskbar pinning control in **Copilot** > **Settings**. All users have Microsoft Intune licenses. You must follow the principle of least privilege.\n\nWhich role should the administrator have?",
+  "choices": [
+   "AI Administrator",
+   "Teams Administrator",
+   "Intune Administrator",
+   "Office Apps Administrator"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The taskbar pinning control in Copilot settings applies only to users with an active Intune license, and viewing or configuring it requires the Intune Administrator role. Other Copilot settings typically use AI Administrator.",
+  "rationale": [
+   "Incorrect: AI Administrator manages most Copilot settings, such as pinning Copilot Chat in Microsoft 365 apps, but Learn states that taskbar pinning requires the Intune Administrator role. Use AI Administrator for Copilot settings that do not touch device management.",
+   "Incorrect: Teams Administrator pins the Copilot app inside Teams by using app setup policies in the Teams admin center. It does not pin apps to the Windows taskbar. Use it for the Teams app bar.",
+   "Correct: to view or configure Copilot taskbar pinning in the Microsoft 365 admin center, you must be a member of the Intune Administrator role, and the setting applies to users who have an active Intune license.",
+   "Incorrect: Office Apps Administrator manages Cloud Policy settings for Microsoft 365 apps, such as the web search policy. It does not control Windows taskbar pinning. Use it for Microsoft 365 Apps policies."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/pin-copilot-chat-navbar"
+ },
+ {
+  "id": "3.1.6-02",
+  "obj": "3.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee blocks the Copilot app for contractors by using Integrated apps. When contractors open Copilot Chat, they see a page that says Copilot Chat was turned off for the organization. You need that page to link to the internal AI guidance site of the company.\n\nWhich setting should you configure?",
+  "choices": [
+   "Copilot AI disclaimer",
+   "Copilot diagnostics logs",
+   "Pin Microsoft Copilot Chat",
+   "Custom link for blocked Microsoft Copilot app"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Users blocked through the Integrated apps control see the Copilot Chat was turned off for your organization page. The Custom link for blocked Microsoft Copilot app setting adds a View info from your organization link to that page.",
+  "rationale": [
+   "Incorrect: the AI disclaimer link appears in a tooltip in supported apps for users who can use Copilot. Blocked contractors never see it. Use it to link active users to an AI policy.",
+   "Incorrect: Copilot diagnostics logs let admins submit diagnostic data to Microsoft on behalf of users who cannot submit feedback. They do not change any user-facing page. Use them when you troubleshoot Copilot issues with Microsoft.",
+   "Incorrect: pinning controls whether Copilot Chat appears in the navigation of Microsoft 365 apps. It does not add a link to the blocked page. Use it to manage discoverability.",
+   "Correct: this setting in Copilot > Settings > View all adds a View info from your organization link that points to your URL on the page that blocked users see."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/manage-copilot-chat"
+ },
+ {
+  "id": "3.1.6-03",
+  "obj": "3.1.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House wants the Copilot app to be pinned in the second position of the Teams app bar for the sales department. Copilot Chat is allowed for the sales users. The **Pin Copilot Chat** setting in the Microsoft 365 admin center is set to Pin Copilot Chat in Microsoft 365 apps.\n\nWhat should you do?",
+  "choices": [
+   "Create a Pin Microsoft Copilot Chat cloud policy in the Microsoft 365 Apps admin center for the sales users.",
+   "Create a Teams app permission policy that allows the Copilot app for the sales users.",
+   "Create a Teams app setup policy that pins the Copilot app in the second position, and assign it to the sales users.",
+   "Deploy the Copilot app to the sales users from Integrated apps in the Microsoft 365 admin center."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Pinning settings for Copilot Chat in Teams can only be changed through the Teams admin center. App setup policies pin apps in a defined position, and app permission policies or app centric management decide whether the app is allowed.",
+  "rationale": [
+   "Incorrect: the Pin Microsoft Copilot Chat cloud policy scopes pinning in Microsoft 365 apps to groups, but Learn states that Teams pinning can be changed only in the Teams admin center, and the cloud policy cannot set a position. Use it to scope pinning in other apps.",
+   "Incorrect: Copilot Chat is already allowed for the sales users, and a permission policy only allows or blocks apps; it does not pin them. You need it in addition only when the app is blocked.",
+   "Correct: an app setup policy with the Copilot app in its pinned apps pins Copilot Chat in the position the policy defines for assigned users, which meets the second-position requirement.",
+   "Incorrect: deploying the Copilot app from Integrated apps makes it available in the Copilot app and Outlook, but it does not set its position in the Teams app bar. Use Integrated apps to manage availability of the Copilot app."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/pin-copilot-chat-navbar"
+ },
+ {
+  "id": "3.1.6-04",
+  "obj": "3.1.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing users in a security group named Archive cannot create Copilot Pages or Copilot Notebooks. Other users can. The Cloud Policy setting **Create and view Copilot Pages and Copilot Notebooks** is Not configured for all users. The Archive users were set up last year so that OneDrive is not created for them.\n\nWhat should you do so that the Archive users can create Copilot Pages?",
+  "choices": [
+   "Set Enable code previews for AI-generated content in Microsoft Copilot Chat and Copilot Pages to Enabled.",
+   "Turn on Loop workspaces for the tenant.",
+   "Allow OneDrive creation for the Archive users.",
+   "Set Create and view Copilot Pages and Copilot Notebooks to Enabled for the Archive group."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "When the Pages and Notebooks policy is Not configured, creation is available. However, if OneDrive creation is disabled for users, they cannot create Copilot Pages or Copilot Notebooks regardless of the policy.",
+  "rationale": [
+   "Incorrect: the code previews policy controls whether users can view and interact with AI-generated code previews, such as lightweight apps. It does not affect whether users can create pages. Use it to allow or block code previews.",
+   "Incorrect: Copilot Pages and Copilot Notebooks are independent of Loop and can be enabled even when Loop is blocked, and other users already create pages, so Loop workspaces are not the gap. Turn on Loop when users must work in Loop workspaces.",
+   "Correct: Learn notes that users for whom OneDrive creation is disabled cannot create Copilot Pages or Copilot Notebooks, regardless of the policy. Allowing OneDrive creation removes the blocker for the Archive users.",
+   "Incorrect: Not configured already makes Pages and Notebooks available, the same as Enabled, so this changes nothing while OneDrive creation stays disabled. Use Enabled or Disabled when you need an explicit setting for a group."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/loop/cpcn-admin-configuration?view=o365-worldwide"
+ },
+ {
+  "id": "3.1.6-05",
+  "obj": "3.1.6",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Northwind Traders wants users without Microsoft 365 Copilot licenses to lose access to Copilot Chat in the Microsoft Copilot app, Outlook, and Teams. Users with Copilot licenses must keep full access. A security group named CopilotLicensed contains all licensed users.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "In Integrated apps, block the Copilot app for the tenant.",
+   "In Integrated apps, set the Copilot app so that only CopilotLicensed can install it, and do not deploy it to unlicensed users.",
+   "In Integrated apps, turn off the Let users access Microsoft apps in your tenant setting.",
+   "Set the Pin Copilot Chat setting to Do not pin Copilot Chat in Microsoft 365 apps and take no other action.",
+   "In the Teams admin center, allow the Copilot app only for CopilotLicensed by using app permission policies, and do not pin it for unlicensed users."
+  ],
+  "answer": [
+   1,
+   4
+  ],
+  "explanation": "To remove Copilot Chat only for unlicensed users, manage the Copilot app through Integrated apps for the Copilot app and Outlook, and through Teams app permission and setup policies for Teams. Blocking the app in Integrated apps is tenant-wide, and unpinning alone leaves web access.",
+  "rationale": [
+   "Incorrect: blocking the Copilot app through the Integrated apps control blocks it tenant-wide across the Copilot app, Outlook, and the web, including for licensed users. Use it when no one may use Copilot Chat.",
+   "Correct: the Copilot app provides Copilot Chat in the Copilot app, Outlook, and on the web. Making it installable only by a group of licensed users, and not deploying it to others, removes it for unlicensed users while licensed users keep it.",
+   "Incorrect: Learn states that turning off Let users access Microsoft apps in your tenant does not turn off the Copilot app. You must manage the Copilot app directly. Use that setting to control other Microsoft apps.",
+   "Incorrect: the pinning setting only changes the default entry point in the navigation of Microsoft 365 apps. Users can still open Copilot Chat from m365.cloud.microsoft/chat, so it does not remove access. Combine pinning changes with app availability controls when access must be removed.",
+   "Correct: Copilot Chat in Teams is managed through the Copilot app in the Teams admin center. Allowing it only for licensed users and not pinning it for others in app setup policies completes the removal in Teams."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/manage-copilot-chat"
+ },
+ {
+  "id": "3.1.6-06",
+  "obj": "3.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Humongous Insurance must prevent users from sharing their screen or camera with Microsoft 365 Copilot. Claims adjusters must still be able to have voice conversations with Copilot on their mobile devices. Other Copilot features must not change.\n\nWhat should you do?",
+  "choices": [
+   "Turn off the Screen and camera sharing setting in Copilot > Settings > Copilot actions.",
+   "Set the Allow the use of additional optional connected experiences in Office policy to Disabled.",
+   "Turn off the Copilot image generation setting in Copilot > Settings > Copilot actions.",
+   "Set the EdgeEntraCopilotPageContext policy to block page context."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Screen and camera sharing manages Vision in Microsoft 365 Copilot. Learn notes that turning it off does not turn off voice, so the setting meets a requirement to block Vision and keep voice conversations.",
+  "rationale": [
+   "Correct: this Copilot actions setting manages Vision, which is how Copilot sees a screen or camera feed, and turning it off does not turn off voice. Claims adjusters keep voice conversations and nothing else changes.",
+   "Incorrect: disabling optional connected experiences restricts Copilot Chat, Copilot, and multiple Microsoft 365 experiences, which breaks the requirement that other features stay the same. Use it only to block all optional connected experiences.",
+   "Incorrect: image generation controls whether Copilot can create images. It does not stop users from sharing a screen or camera feed. Use it when generated images must be blocked.",
+   "Incorrect: EdgeEntraCopilotPageContext stops Copilot Chat in Edge from using web page or PDF content. It does not affect camera or screen sharing in the Copilot app. Use it to keep browser content out of prompts."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/configure-copilot-admin-center"
+ },
+ {
+  "id": "3.1.6-07",
+  "obj": "3.1.6",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles finds that some employees sign in to the Microsoft Copilot app on corporate devices by using personal Microsoft accounts. The company must stop personal account sign-in to Microsoft services on corporate networks. Work and school accounts must keep using Copilot Chat with enterprise data protection.\n\nWhat should you do?",
+  "choices": [
+   "Configure tenant restrictions v2 to block Microsoft account tenants.",
+   "Block copilot.cloud.microsoft on the corporate proxy.",
+   "Set the CopilotPageContext policy in Microsoft Edge to block page context.",
+   "Block the Copilot app for all users in Integrated apps."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Users can sign in to the Copilot app with a work or school account or a personal Microsoft account, and the experiences stay separate. To manage whether users can sign in with personal accounts, Learn points to tenant restrictions v2 as the targeted control.",
+  "rationale": [
+   "Correct: tenant restrictions v2 can block consumer Microsoft account tenants on corporate networks and devices, while work and school sign-ins continue to work with enterprise data protection.",
+   "Incorrect: blocking copilot.cloud.microsoft breaks the Copilot app for work accounts too, which the requirements forbid. Learn recommends tenant restrictions instead of blocking this domain.",
+   "Incorrect: CopilotPageContext only stops the personal Copilot experience in the Edge work profile from using page or PDF content. It does not block personal sign-in. Use it to keep browser content out of personal Copilot.",
+   "Incorrect: blocking the Copilot app in Integrated apps removes Copilot Chat for work accounts across the tenant and does not stop personal accounts from signing in. Use it when no one in the organization may use Copilot Chat."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/manage-copilot-chat"
+ },
+ {
+  "id": "3.1.6-08",
+  "obj": "3.1.6",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Litware, Inc. manages Copilot Chat in the Microsoft Edge sidebar by using Group Policy. You have the following requirements:\n\n- Copilot Chat in Edge for users signed in with their Microsoft Entra account must not use web page or PDF content in responses.\n- When users sign in with a personal Microsoft account in the Edge work profile, the personal Copilot experience must not use web page or PDF content either.\n- Other Edge sidebar apps must stay available.\n\nWhich policy should you configure for each requirement? To answer, select the appropriate options in the answer area.\n\n```text\nEntra account requirement:            [[1]]\nPersonal account requirement:         [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "EdgeEntraCopilotPageContext",
+     "CopilotPageContext",
+     "HubsSidebarEnabled"
+    ],
+    "why": [
+     "Correct: EdgeEntraCopilotPageContext allows or blocks Copilot Chat in Edge from using browsing context, such as web pages and PDFs, for users signed in with Microsoft Entra accounts.",
+     "Incorrect: CopilotPageContext applies to the personal Copilot experience when users are signed in with a personal Microsoft account in the work profile. It does not cover Entra-signed-in Copilot Chat.",
+     "Incorrect: HubsSidebarEnabled disables Copilot Chat in Edge entirely and blocks all sidebar apps, which breaks the requirement to keep other sidebar apps. Use it when the whole sidebar must be removed."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "EdgeEntraCopilotPageContext",
+     "CopilotPageContext",
+     "HubsSidebarEnabled"
+    ],
+    "why": [
+     "Incorrect: EdgeEntraCopilotPageContext controls only the Copilot Chat experience for Entra-signed-in users. Personal account usage in the work profile needs its own policy.",
+     "Correct: CopilotPageContext prevents Microsoft Copilot for personal use from using web page or PDF content when users are signed in with a personal Microsoft account in the Edge work profile.",
+     "Incorrect: HubsSidebarEnabled removes the sidebar and every sidebar app instead of only blocking page content, which breaks the third requirement. Use it to remove the Edge sidebar completely."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Edge has separate policies for page context: EdgeEntraCopilotPageContext for Copilot Chat with an Entra account, and CopilotPageContext for personal Copilot in the work profile. HubsSidebarEnabled turns off the whole sidebar, including Copilot Chat.",
+  "ref": "https://learn.microsoft.com/copilot/manage/manage-copilot-chat"
+ },
+ {
+  "id": "3.1.7-01",
+  "obj": "3.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. enabled usage-based billing for AI experiences in Microsoft 365. Members of a security group named Analysts must be able to use Microsoft 365 Copilot Cowork, which is generally available.\n\nWhat should you do?",
+  "choices": [
+   "Turn on the discovery setting for AI experiences enabled by usage-based billing.",
+   "Allow Analysts on the Cowork entry under Agents > All Agents.",
+   "Enroll Analysts in Copilot Frontier.",
+   "Create a spending policy that is scoped to Analysts and selects Cowork."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "At general availability, access to Cowork is granted only by a spending policy that includes the user and selects Cowork as a service. The agent entry, the discovery setting, and Frontier do not grant access.",
+  "rationale": [
+   "Incorrect: the discovery setting controls whether users can see Cowork across Microsoft 365, not whether they can use it. When Cowork is discoverable but no billing is set up, users can only request access in the app. Use it to make Cowork visible.",
+   "Incorrect: the agent-based control was used in the Frontier and preview versions. The Cowork entry is still visible under All Agents, but configuration on it has no effect on who can use Cowork. Use it only to view the entry.",
+   "Incorrect: Frontier gives preview features before general availability. Cowork is generally available, and its preview access control is deprecated. Use Frontier to evaluate pre-GA features.",
+   "Correct: a user can use Cowork when a spending policy in Copilot > Cost Management > Configuration includes the user, directly or through a security group, and selects Cowork under Select agents and services."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-admin-governance"
+ },
+ {
+  "id": "3.1.7-02",
+  "obj": "3.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House has three spending policies that select Cowork. User3 is in the scope of two of them through group membership. User3 moved to a role that must not use Cowork, but must keep the other Copilot experiences.\n\nWhat should you do?",
+  "choices": [
+   "Remove User3 from the scope of every spending policy that selects Cowork.",
+   "Turn off the discovery setting for AI experiences enabled by usage-based billing.",
+   "Turn off the Anthropic model family in Copilot settings.",
+   "Lower the per-user limit of both policies to one Copilot credit."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A spending policy is an access control, not only a budget. Access to Cowork is granted if any applicable policy selects Cowork, so you remove the user from every such policy. A low limit, model settings, and the discovery setting do not remove access.",
+  "rationale": [
+   "Correct: access is decided by whether any applicable policy selects Cowork, so User3 keeps access while any policy that selects Cowork includes User3. Removing User3 from every such scope removes access without affecting other experiences.",
+   "Incorrect: the discovery setting controls visibility only, and users covered by a spending policy that selects Cowork have access even when discovery is off. Use the discovery setting to control whether Cowork is shown to users.",
+   "Incorrect: model settings control which models appear in the picker, not whether a user can use Cowork, so User3 would keep using Cowork with the other models. Turn off a model family when its terms or data processing are not approved.",
+   "Incorrect: Learn states that a low credit limit does not block access; even a one-credit limit still grants it, and enforcement is asynchronous. Lower limits when you want to control spending, not access."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-access"
+ },
+ {
+  "id": "3.1.7-03",
+  "obj": "3.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Copilot Cowork. The security team must prevent Cowork from completing web tasks for users in Microsoft Edge on their devices. Users must keep their access to Cowork for other tasks.\n\nWhat should you do?",
+  "choices": [
+   "Remove the users from the spending policies that select Cowork.",
+   "Set the HubsSidebarEnabled policy in Microsoft Edge to Disabled.",
+   "Set the Allow web search in Copilot policy to Disabled in Microsoft Copilot Work mode; Enabled in Microsoft Copilot Web mode and Microsoft Copilot Chat.",
+   "Turn off the Cowork Browsing tenant setting in the Microsoft 365 admin center."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Cowork can complete web tasks in Edge on the user's device by using the user's sign-ins. The Cowork Browsing tenant setting turns this browser use on or off, and existing Edge allow lists, block lists, and view-only policies still apply when it is on.",
+  "rationale": [
+   "Incorrect: removing users from every spending policy that selects Cowork removes Cowork access completely, which breaks the requirement to keep access for other tasks. Do it when users must not use Cowork at all.",
+   "Incorrect: HubsSidebarEnabled disables Copilot Chat in Edge and all Edge sidebar apps. It is not the documented control for Cowork browser tasks and affects other sidebar apps. Use it to remove the Edge sidebar.",
+   "Incorrect: this web search option stops Cowork from sending web search queries, but browser use is a separate capability that runs tasks in Edge on the device. Use the policy to control web search grounding.",
+   "Correct: the Cowork Browsing tenant setting in the Microsoft 365 admin center turns browser use on or off for the organization, so Cowork stops completing web tasks while users keep access to Cowork."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-admin-governance"
+ },
+ {
+  "id": "3.1.7-04",
+  "obj": "3.1.7",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank wants to make a plugin from the Microsoft 365 App Store available in Copilot Cowork. Members of the Finance group must get the plugin automatically and must not be able to remove it. Users outside Finance must not see the plugin.\n\nHow should you deploy the plugin?",
+  "choices": [
+   "Make the plugin available in the App Store so that Finance users acquire it.",
+   "Deploy the plugin to the entire organization.",
+   "Deploy the plugin to specific groups, and select only the Finance group.",
+   "Set the plugin to Available to specific users or groups, and select Finance."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Cowork plugins can be deployed to the entire organization, deployed to specific groups, or made available in the App Store. Deployed plugins are acquired automatically and show Managed by your organization; users can disable but not remove them.",
+  "rationale": [
+   "Incorrect: with App Store availability, users acquire the plugin themselves and can remove it, so Finance would not get it automatically. Use it when users should opt in.",
+   "Incorrect: deploying to the entire organization gives the plugin to all licensed Copilot users automatically, so users outside Finance would see it. Use it when every user must have the plugin.",
+   "Correct: deploying to specific groups means target users acquire the plugin automatically and cannot remove it, and it is visible to others only if you configure that. This meets all three requirements for Finance.",
+   "Incorrect: this availability setting limits who can view the plugin, but users still acquire it themselves, so Finance would not receive it automatically. Use it to restrict an optional plugin to a group."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-manage-plugins"
+ },
+ {
+  "id": "3.1.7-05",
+  "obj": "3.1.7",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Nod Publishers managed access to Copilot Cowork during the preview by allowing a list of users on the Cowork agent entry. Cowork is now generally available, and usage-based billing is enabled. You need the same users, and only those users, to keep access to Cowork.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add the users from the previous allow list to a security group in Microsoft Entra ID.",
+   "In the Microsoft 365 admin center, go to Copilot > Cost Management > Configuration, and select + Add spending policy.",
+   "On the Scope user and group step, choose Specific groups, and select the security group.",
+   "On the Select agents and services step, select Cowork.",
+   "Set the limits, choose a billing method, and create the policy.",
+   "Allow the security group on the Cowork entry under Agents > All Agents.",
+   "Enroll the security group in Copilot Frontier."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "At general availability, the agent-based allow list no longer controls Cowork access. You re-express the old allow list as a security group and a spending policy that is scoped to that group and selects Cowork.",
+  "rationale": [
+   "Step 1: the spending policy scopes users through security groups, so the previous allow list must first exist as a Microsoft Entra security group.",
+   "Step 2: spending policies are created in Copilot > Cost Management > Configuration by selecting + Add spending policy, which starts the policy wizard.",
+   "Step 3: on the Scope user and group step, Specific groups with the new security group limits the policy to the former allow list instead of All users.",
+   "Step 4: selecting Cowork under Select agents and services is what grants access; a policy that does not select Cowork gives no Cowork access.",
+   "Step 5: setting limits and a billing method and creating the policy completes it, and users in the group's scope then have access to Cowork.",
+   "Incorrect: the agent-based access control from the preview is deprecated, and configuration on the All Agents entry has no effect on who can use Cowork. It is the control you are migrating away from.",
+   "Incorrect: Frontier gives access to pre-GA features. Cowork is generally available, so Frontier enrollment does not grant or limit Cowork access. Use Frontier for previews."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-admin-governance"
+ },
+ {
+  "id": "3.1.7-06",
+  "obj": "3.1.7",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Coho Winery uses usage-based billing for Copilot Cowork. A spending policy named Policy1 is scoped to a group named Sales, selects Cowork, and has a per-user limit of one Copilot credit. User1 is a member of Sales. An admin turned off the Anthropic model family in Copilot settings and turned off the discovery setting for AI experiences enabled by usage-based billing.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "User1 can use Cowork.",
+   "Turning off the discovery setting removes Cowork access for User1.",
+   "Because the Anthropic model family is turned off, User1 cannot open Cowork."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Access to Cowork comes from being in the scope of a spending policy that selects Cowork, whatever the credit limit. The discovery setting controls visibility, and model settings control which models appear, not access.",
+  "rationale": [
+   "Yes: Policy1 includes User1 through Sales and selects Cowork. A one-credit limit still grants access; limits are a spending safeguard enforced asynchronously, not an access gate.",
+   "No: the discovery setting controls visibility only. Usage-based billing setup overrides discovery for users covered by a policy, so User1 keeps access even when discovery is off.",
+   "No: turning off the Anthropic family changes which models appear in the model picker. User1 keeps working with the other allowed models, such as GPT models, and Auto selects from the remaining models."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-access"
+ },
+ {
+  "id": "3.1.7-07",
+  "obj": "3.1.7",
+  "difficulty": "hard",
+  "type": "single",
+  "case": "C-f",
+  "stem": "You need to meet the business requirement for Copilot Cowork access during the pilot.\n\nWhat should you do?",
+  "choices": [
+   "Turn off the discovery setting for AI experiences enabled by usage-based billing.",
+   "Lower the per-user limit of the Org budget policy to the minimum value.",
+   "Block the Cowork entry under Agents > All Agents for all users except AIPilot.",
+   "Remove Cowork from the selected services of the Org budget policy."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Cowork access is granted per service when any applicable spending policy selects Cowork. Because the Org budget policy is scoped to All users and selects Cowork, every user has access until Cowork is removed from that policy.",
+  "rationale": [
+   "Incorrect: the discovery setting controls visibility only, and users covered by a spending policy that selects Cowork have access even when discovery is off. Use it to decide whether Cowork is shown to users.",
+   "Incorrect: the one-credit limit already shows the problem: a low limit does not block access, and enforcement is asynchronous. Lowering it further still grants Cowork to everyone. Adjust limits to control spending, not access.",
+   "Incorrect: at general availability the Cowork agent entry is still visible, but configuration on it has no effect on who can use Cowork. Access is granted only through spending policies.",
+   "Correct: the Org budget policy covers All users and selects Cowork, which grants Cowork to the whole tenant. Removing Cowork from it leaves the Pilot policy as the only grant, so only AIPilot keeps access while Copilot Chat stays in both policies."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-access"
+ },
+ {
+  "id": "3.1.8-01",
+  "obj": "3.1.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has a Microsoft 365 tenant in the United States commercial cloud. Users see Claude models from Anthropic in Microsoft 365 Copilot and Researcher. The legal team requires that no user can use Claude models until it reviews the terms.\n\nWhat should you do in the Microsoft 365 admin center?",
+  "choices": [
+   "Set the Allow web search in Copilot policy to Disabled in Microsoft Copilot and Microsoft Copilot Chat.",
+   "Disable Anthropic as a Microsoft subprocessor in the AI providers operating as Microsoft subprocessors setting.",
+   "Turn off Anthropic in the AI providers operating as independent processors setting.",
+   "Block the Anthropic agents in Agents > Settings > Agent and plugin access."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Claude models are on by default for most commercial cloud tenants outside the EU, EFTA, and UK, with Anthropic acting as a Microsoft subprocessor. You opt out by disabling Anthropic in the AI providers operating as Microsoft subprocessors setting.",
+  "rationale": [
+   "Incorrect: web search controls whether Copilot grounds answers in Bing results. It has no effect on which AI models are available. Use it when public web content must not be used.",
+   "Correct: in regions where Anthropic as a subprocessor is on by default, you select Disable Anthropic as a Microsoft subprocessor. After that, users no longer have the option to use Claude models, and you can enable them later.",
+   "Incorrect: the independent processor setting covers providers that process data under their own terms, such as Anthropic models with Data Retention, which are off by default. The Claude models users see now run as subprocessor models.",
+   "Incorrect: agent and plugin access controls which agents users can install or use. Claude models are model choices inside Copilot experiences, not agents. Use agent access settings to block specific agent types."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connect-to-ai-subprocessor"
+ },
+ {
+  "id": "3.1.8-02",
+  "obj": "3.1.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fourth Coffee enabled Anthropic in the **AI providers operating as Microsoft subprocessors** setting for all users. Users can select Claude in Researcher. Makers report that they cannot select a Claude model for generative responses when they build agents in Copilot Studio.\n\nWhat should you do?",
+  "choices": [
+   "Enable Anthropic in the AI providers operating as independent processors setting.",
+   "Assign the makers to the Copilot Frontier program.",
+   "Enable Anthropic models with Data Retention for the makers.",
+   "Allow external large language models for generative responses in the Power Platform admin center."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "After Anthropic is enabled in the Microsoft 365 admin center, additional admin controls in the Power Platform admin center decide whether Anthropic can be used in Copilot Studio and Power Platform.",
+  "rationale": [
+   "Incorrect: the independent processor setting is for providers that process data under their own terms. Claude models in Copilot Studio are offered with Anthropic as a subprocessor, so this does not unlock them for makers. Use it only when you accept a provider's own terms.",
+   "Incorrect: Frontier gives preview Microsoft 365 features before general availability. It does not control model access in Copilot Studio environments. Use it to evaluate pre-GA features.",
+   "Incorrect: Anthropic models with Data Retention are advanced models under Anthropic's own terms that are off by default. Enabling them does not turn on the Power Platform control that makers need. Use them only when the organization accepts data retention by Anthropic.",
+   "Correct: Learn states that once Anthropic is enabled in the Microsoft 365 admin center, additional controls in the Power Platform admin center allow it in Copilot Studio and Power Platform, through the setting to allow external LLMs for generative responses."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connect-to-ai-subprocessor"
+ },
+ {
+  "id": "3.1.8-03",
+  "obj": "3.1.8",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research has Claude models enabled for all users with Anthropic as a Microsoft subprocessor. The research group wants to use an Anthropic model that is labeled as an Anthropic model with Data Retention. The legal team accepts that Anthropic stores inputs and outputs under its own commercial terms. Other users must not be able to use this model.\n\nWhat should you do?",
+  "choices": [
+   "Take no action, because the model is available to every user who can use Claude models as a subprocessor.",
+   "Allow the use of preview models for the research group in the Microsoft 365 admin center.",
+   "Scope the AI providers operating as Microsoft subprocessors setting to the research group only.",
+   "Opt in to Anthropic models with Data Retention, accept the Anthropic terms, and select the research group as the users who can access them."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Anthropic models with Data Retention are off by default even where other Claude models are on. Using them requires an explicit opt-in under Anthropic's Commercial Terms and Data Protection Addendum, with Anthropic acting as an independent processor, and the admin chooses which users or groups can access them.",
+  "rationale": [
+   "Incorrect: Learn states that Anthropic models with Data Retention must always be separately enabled, even where other Claude models are on by default. They are not covered by the subprocessor setting.",
+   "Incorrect: preview models are the latest models offered for exploration and testing, not recommended for production. Allowing them is a separate control and does not accept Anthropic's data retention terms. Use it when users must test new preview models.",
+   "Incorrect: scoping the subprocessor setting only changes who can use the subprocessor Claude models, and it would take them away from other users. It does not enable models with Data Retention. Use it to limit standard Claude models to a group.",
+   "Correct: no users have access to these models until the tenant admin explicitly opts in, accepts Anthropic's terms, and chooses all users or specific users or groups, so selecting only the research group meets both requirements."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connect-to-ai-subprocessor"
+ },
+ {
+  "id": "3.1.8-04",
+  "obj": "3.1.8",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso Pharmaceuticals has a Microsoft 365 tenant in the European Union that existed before March 2026. All users must be able to use Claude models in Copilot experiences in Word, Excel, and PowerPoint. Claude models must not be available in the Microsoft Copilot app, Researcher, or Copilot Studio.\n\nWhich option should you select under **Choose which users can access Anthropic models**?",
+  "choices": [
+   "Specific users and groups, with a group that contains all users",
+   "All users for Microsoft 365 apps only",
+   "No users",
+   "All users"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "For tenants in the EU, EFTA, and UK, the Anthropic subprocessor setting has an option that makes Claude models available only in Copilot experiences in Excel, PowerPoint, and Word. It is on by default only for tenants created after March 25, 2026, so older tenants must check it.",
+  "rationale": [
+   "Incorrect: a group that contains everyone has the same effect as All users, because the assignment applies across Copilot and Copilot Studio experiences. Use specific groups when only some users may use Claude.",
+   "Correct: All users for Microsoft 365 apps only makes Claude models available only in Copilot experiences in Excel, PowerPoint, and Word, which keeps them out of the Copilot app, Researcher, and Copilot Studio.",
+   "Incorrect: No users is the default for EU tenants created before March 25, 2026, and it blocks Claude models in Word, Excel, and PowerPoint too. Keep it when Claude must not be used at all.",
+   "Incorrect: All users makes Claude models available beyond Copilot in Microsoft 365 apps, including experiences such as the Copilot app and Researcher, which the requirement forbids. Use it when Claude may be used everywhere."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-anthropic-apps"
+ },
+ {
+  "id": "3.1.8-05",
+  "obj": "3.1.8",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Litware, Inc. is documenting how each AI model used in its Microsoft 365 Copilot experiences is classified, because the classification decides which contractual terms apply.\n\nWhich classification should you assign to each model? To answer, drag the appropriate classifications to the correct models. Each classification may be used once, more than once, or not at all.",
+  "choices": [
+   "AI model hosted and operated by Microsoft",
+   "AI subprocessor",
+   "AI independent processor",
+   "Preview model"
+  ],
+  "targets": [
+   "Model1: an Azure OpenAI model hosted on Azure",
+   "Model2: a Claude model offered under the Microsoft Product Terms and DPA",
+   "Model3: an Anthropic model with Data Retention used under the Anthropic Commercial Terms",
+   "Model4: a Black Forest Labs FLUX model hosted on Azure"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   0
+  ],
+  "explanation": "Microsoft classifies AI functionality by who processes data: Microsoft-hosted models and AI subprocessors are covered by the Microsoft DPA and Product Terms, while AI independent processors use their own terms and are off unless an admin enables them.",
+  "rationale": [
+   "Model1: Azure OpenAI is hosted on Azure and provided directly by Microsoft under the DPA and Product Terms, and the data does not leave Microsoft.",
+   "Model2: Anthropic handles data on Microsoft's behalf under the Microsoft DPA, Product Terms, and enterprise safeguards, which is the definition of an AI subprocessor.",
+   "Model3: for Anthropic models with Data Retention, Anthropic processes data under its own commercial terms and data processing agreement, which makes it an AI independent processor.",
+   "Model4: Learn lists Black Forest Labs FLUX as an example of a model hosted on Azure and provided directly by Microsoft, so it is a Microsoft-hosted model like Azure OpenAI."
+  ],
+  "notes": [
+   "AI model hosted and operated by Microsoft: a model hosted on Azure and provided by Microsoft, such as Azure OpenAI or FLUX. Covered by the DPA and Product Terms; data does not leave Microsoft.",
+   "AI subprocessor: a third-party provider that processes data on Microsoft's behalf under the Microsoft DPA and Product Terms, such as Anthropic for standard Claude models. Managed in the AI providers operating as Microsoft subprocessors setting.",
+   "AI independent processor: a third-party provider that processes data under its own commitments and terms, outside the Microsoft DPA. Not used unless an admin enables it.",
+   "Preview model: a newly available model for exploration and testing that is not recommended for production. It describes release status, not who processes the data, so it does not fit these contractual classifications."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/plan/ai-models-overview"
+ },
+ {
+  "id": "3.1.8-06",
+  "obj": "3.1.8",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Lucerne Publishing has a Microsoft 365 tenant in the European Union, so Claude models are set to No users by default. Members of a group named Makers must build agents in Copilot Studio that use a Claude model for generative responses. You are an AI Administrator.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Microsoft 365 admin center, go to Copilot > Settings > View all, and select AI providers operating as Microsoft subprocessors.",
+   "Under Available subprocessors for your organization, select Anthropic, and then select Save.",
+   "Under the setting for who can access Anthropic models, select the Makers group, and then select Save.",
+   "In the Power Platform admin center, allow external large language models for generative responses in the environment that Makers use.",
+   "In Copilot Studio, select a Claude model during agent creation.",
+   "Select AI providers operating as independent processors, and turn on Anthropic.",
+   "Under the setting for who can access Anthropic models, select All users for Microsoft 365 apps only."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "In opt-in regions, you first enable Anthropic as a subprocessor and choose who can access it in the Microsoft 365 admin center. Only then do the additional Power Platform admin center controls let Copilot Studio use it, and makers select the model when they create an agent.",
+  "rationale": [
+   "Step 1: the opt-in starts on the AI providers operating as Microsoft subprocessors page, which you reach from Copilot > Settings > View all as an AI Administrator or Global Administrator.",
+   "Step 2: selecting Anthropic under Available subprocessors for your organization and saving turns on Anthropic as a subprocessor for the tenant.",
+   "Step 3: choosing the Makers group limits access to the provider. Assignments apply at the provider level across Copilot and Copilot Studio experiences.",
+   "Step 4: Learn states that once Anthropic is enabled in the Microsoft 365 admin center, additional controls in the Power Platform admin center allow it in Copilot Studio, so this step must come after the opt-in.",
+   "Step 5: in Copilot Studio, creators must select the model during agent creation, which is possible only after both admin controls allow it.",
+   "Incorrect: the independent processor setting is for providers that use their own terms, such as Anthropic models with Data Retention. Standard Claude models for Copilot Studio are enabled through the subprocessor setting.",
+   "Incorrect: this option makes Claude models available only in Copilot experiences in Word, Excel, and PowerPoint, so Makers could not use them in Copilot Studio. Use it when Claude is allowed only in those apps."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connect-to-ai-subprocessor"
+ },
+ {
+  "id": "3.1.8-07",
+  "obj": "3.1.8",
+  "difficulty": "medium",
+  "type": "multi",
+  "case": "C-f",
+  "stem": "You need to configure access to Claude models to meet the business requirements of Relecloud.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "On the AI providers operating as Microsoft subprocessors page, select Anthropic under Available subprocessors for your organization, and save.",
+   "Under the setting for who can access Anthropic models, select specific users and groups, and add AIPilot.",
+   "Under the setting for who can access Anthropic models, select All users for Microsoft 365 apps only.",
+   "Opt in to Anthropic models with Data Retention for AIPilot.",
+   "In the Power Platform admin center, allow external large language models for generative responses."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "The Relecloud tenant is in the EU Data Boundary, where Claude models are set to No users by default. You opt in to Anthropic as a subprocessor and scope access to AIPilot, which keeps processing under the Microsoft Product Terms and DPA.",
+  "rationale": [
+   "Correct: in EU tenants, Anthropic as a subprocessor defaults to No users, so you must select Anthropic and save. As a subprocessor, Anthropic is covered by the Microsoft Product Terms and DPA, which the business requirements demand.",
+   "Correct: scoping access to AIPilot gives the pilot users Claude models across Copilot experiences, including the Copilot app and Researcher, while other users stay without access.",
+   "Incorrect: this option limits Claude models to Copilot in Word, Excel, and PowerPoint, so AIPilot could not use them in the Copilot app or Researcher. Use it when Claude is allowed only inside those apps.",
+   "Incorrect: Anthropic models with Data Retention are used under Anthropic's own terms, with Anthropic as an independent processor, so they are not covered by the Microsoft DPA. Use them only when the legal team accepts Anthropic's retention terms.",
+   "Incorrect: the Power Platform admin center control allows Anthropic in Copilot Studio and Power Platform. Relecloud needs Claude in the Copilot app and Researcher, not in Copilot Studio agents."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connect-to-ai-subprocessor"
+ },
+ {
+  "id": "3.1.8-08",
+  "obj": "3.1.8",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Graphic Design Institute uses Copilot Cowork. The data protection officer requires that Cowork no longer uses Claude models from Anthropic. Users with Cowork access must keep using Cowork with other models.\n\nWhat should you do?",
+  "choices": [
+   "Turn off the discovery setting for AI experiences enabled by usage-based billing.",
+   "Turn off the Anthropic model family in Copilot settings.",
+   "Turn off the Cowork Browsing tenant setting.",
+   "Remove the users from every spending policy that selects Cowork."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Model settings control which models users see, not whether they can use Cowork. When the Anthropic family is off, users with Cowork access keep working with the other allowed models, such as GPT models, and Auto picks from the remaining models.",
+  "rationale": [
+   "Incorrect: the discovery setting controls whether users can see Cowork across Microsoft 365. It does not affect model choice. Use it to manage the visibility of usage-billed experiences.",
+   "Correct: turning off the Anthropic model family in Copilot settings removes Claude models from the picker, and users keep Cowork access with the remaining models, which meets both requirements.",
+   "Incorrect: Cowork Browsing controls whether Cowork can complete web tasks in Microsoft Edge on the user's device. It does not affect which models Cowork uses. Turn it off to stop browser tasks.",
+   "Incorrect: spending policies grant access to Cowork, so removing users from them takes Cowork away completely. Do this when users must not use Cowork at all."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/cowork/cowork-admin-governance"
+ },
+ {
+  "id": "3.1.9-01",
+  "obj": "3.1.9",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers wants Microsoft 365 Copilot to use knowledge articles from its ServiceNow instance. You are an AI Administrator and plan to use a prebuilt synced Copilot connector.\n\nWhich page in the Microsoft 365 admin center should you use to start the deployment?",
+  "choices": [
+   "Copilot > Connectors > Gallery",
+   "Agents > Tools",
+   "Settings > Integrated apps",
+   "Copilot > Search > Bookmarks"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Synced Copilot connectors are deployed from Copilot > Connectors in the Microsoft 365 admin center. On the Gallery, you select the data source, name the connection, enter the URL, choose authentication, and optionally stage the rollout to a subset of users.",
+  "rationale": [
+   "Correct: Learn tells you to choose Copilot > Connectors, select Gallery, and pick the data source, such as ServiceNow Knowledge, to create the connection.",
+   "Incorrect: Agents > Tools manages plugins and tools, such as plugins for Cowork, including who can use them. It is not where connector connections are created. Use it to allow or block plugins.",
+   "Incorrect: Integrated apps deploys and blocks apps and agents, including the Copilot app. It does not create Copilot connector connections. Use it to manage app availability.",
+   "Incorrect: Bookmarks promote individual URLs for keywords in Copilot Search. They do not index content from ServiceNow. Use them for a small set of key resources."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/deployment-overview"
+ },
+ {
+  "id": "3.1.9-02",
+  "obj": "3.1.9",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank wants Microsoft 365 Copilot to answer questions by using data from an external system that contains regulated, frequently changing records. The data must stay in the source system and must not be indexed in Microsoft 365. Each user must access the data with their own credentials.\n\nWhich type of Copilot connector should you use?",
+  "choices": [
+   "a custom synced connector built by using the Microsoft Graph connectors API",
+   "a synced connector with tenant configuration",
+   "a federated connector",
+   "a synced connector with self-serve configuration"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Synced connectors crawl and index external content into Microsoft Graph. Federated connectors use Model Context Protocol (MCP) to fetch data in real time with the user's identity, without indexing it, which suits sensitive, dynamic, or live data.",
+  "rationale": [
+   "Incorrect: a custom connector built with the Microsoft Graph connectors API is a synced connector that ingests items into the Microsoft Graph index, which breaks the requirement that data stays in the source. Use one to index a line-of-business system that has no prebuilt connector.",
+   "Incorrect: a synced connector with tenant configuration indexes data into Microsoft Graph at the organization level, which breaks the requirement that data stays in the source. Use it for broad indexing of knowledge repositories.",
+   "Correct: federated connectors fetch data live through MCP, keep data in the source system, and use user-level authentication, which matches regulated, changing data that must not be indexed.",
+   "Incorrect: self-serve synced connectors use the user's own credentials, but they still index the user's content into Microsoft Graph. Use them to index personally relevant content."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/overview"
+ },
+ {
+  "id": "3.1.9-03",
+  "obj": "3.1.9",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders is deploying a synced Copilot connector for a public product knowledge base. Most employees do not have accounts in the knowledge base system, but every employee must be able to find all articles through Copilot.\n\nWhich setting should you configure on the **Users** tab of the custom setup?",
+  "choices": [
+   "Deploy the connector to a subset of users for validation.",
+   "Set Access Permissions to Only users with access to the content.",
+   "Provide a custom mapping formula in Map Identities.",
+   "Set Access Permissions to Everyone in the organization."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "On the Users tab of a synced connector, Access Permissions decide whether indexed data is visible only to users with access in the source or to everyone in the organization. Identity mapping matters only when source permissions are enforced.",
+  "rationale": [
+   "Incorrect: deploying to a subset of users is a staged rollout for validation before broad deployment. It limits who sees the content rather than opening it to everyone. Use it for a pilot.",
+   "Incorrect: this option enforces source permissions, so employees without accounts in the knowledge base would see nothing. Use it when the source system restricts content to specific users.",
+   "Incorrect: Map Identities changes how source users are matched to Microsoft Entra users, by default by email to UserPrincipalName or Mail. It cannot grant access to employees who have no source account. Use it when emails do not match.",
+   "Correct: Everyone in the organization makes the indexed articles visible to all employees, even those without accounts in the source system, which fits public content."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/deployment-overview"
+ },
+ {
+  "id": "3.1.9-04",
+  "obj": "3.1.9",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses a synced Copilot connector with incremental crawls every 15 minutes and a full crawl once a month. After the source system administrators removed a team's access to several items, members of that team still see those items in Copilot responses two weeks later.\n\nWhat should you do?",
+  "choices": [
+   "Schedule full crawls more often so that permission changes are processed.",
+   "Change the content property of the connection.",
+   "Assign the title semantic label to a different property.",
+   "Increase the incremental crawl frequency to the shortest interval."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Incremental crawls process only new or changed items and do not process permission updates. Full crawls update ACLs, detect deletions, and apply schema changes, so you run them periodically to keep permissions accurate.",
+  "rationale": [
+   "Correct: Learn states that incremental crawls do not support permission updates and that you should run full crawls periodically. A more frequent full crawl applies the removed access sooner.",
+   "Incorrect: the content property drives full-text indexing, snippets, and ranking. It has nothing to do with access control lists. Change it when search relevance or snippets are poor.",
+   "Incorrect: the title semantic label decides which property is shown as the item title and enables result clusters. It does not affect permissions. Remap it when titles appear wrong.",
+   "Incorrect: 15 minutes is already the shortest interval, and incremental crawls never process permission changes, however often they run. Use frequent incremental crawls to keep content and metadata fresh."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/deployment-overview"
+ },
+ {
+  "id": "3.1.9-05",
+  "obj": "3.1.9",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adventure Works Cycles deploys a synced Copilot connector to a SaaS data source in North America. The connection fails to crawl because the data source accepts traffic only from approved IP addresses. Users already reach Copilot without network issues.\n\nWhat should you do?",
+  "choices": [
+   "Switch the connection from full crawls to incremental crawls only.",
+   "Change the connector authentication method to a service account with more permissions.",
+   "Allow the Copilot connector service IP ranges for the region in the data source firewall.",
+   "Allow the entire *.cloud.microsoft domain on the corporate proxy."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "If a data source uses IP firewall rules, you must allow the Copilot connectors service IP ranges, which Microsoft publishes per region for Microsoft 365 Enterprise and Government, so the service can crawl the source.",
+  "rationale": [
+   "Incorrect: the crawl type does not change the source IP addresses of the connector service, so incremental crawls would fail in the same way and would also skip permission updates. Tune crawl types for freshness, not connectivity.",
+   "Incorrect: more permissions do not help when the firewall drops the connection before authentication. Check the service account roles when the crawl connects but cannot read content.",
+   "Correct: the crawler connects from the Copilot connectors service, so the data source firewall must allow the published IP ranges for the NAM region, such as 52.250.92.252/30 and 52.224.250.216/30.",
+   "Incorrect: *.cloud.microsoft must be allowed for users to reach Copilot, but users already connect, and the blocked traffic is inbound to the data source from the connector service. Allow the domain when clients cannot reach Copilot."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/deployment-overview"
+ },
+ {
+  "id": "3.1.9-06",
+  "obj": "3.1.9",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. uses a ServiceNow Knowledge Copilot connector connection that was published six months ago. Copilot answers link to the default ServiceNow article URL, but the company publishes articles on a custom portal URL. You need Copilot responses to use the custom portal URL by setting a new default expression for the URL property.\n\nWhat should you do?",
+  "choices": [
+   "Edit the existing connection, and change the default expression for the URL property on the Content tab.",
+   "Add an alias for the URL property on the existing connection.",
+   "Create a new connection with Custom setup, and set the default expression for the URL property on the Content tab before you publish.",
+   "Add a bookmark for the custom portal URL in Copilot Search."
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Some connectors, such as ServiceNow, let you customize schema property values such as the access URL with a default expression. This is done during connection setup; editing an existing connection to change schema property values is not supported.",
+  "rationale": [
+   "Incorrect: editing an existing connection to change schema property values is not currently supported, so the URL of the published connection cannot be changed this way. Edit an existing connection for supported changes, such as the crawl schedule.",
+   "Incorrect: aliases are friendly names that normalize property names across connections for queries and filters. They do not change the value that the URL property returns. Use aliases to build one filter across several connections.",
+   "Correct: Learn states that to customize schema property values you must create a new connection, select Custom setup, and set the new default expression in Manage properties on the Content tab before publishing.",
+   "Incorrect: a bookmark promotes one URL for selected keywords in search. It does not change the links in Copilot responses for indexed articles. Use bookmarks to surface key sites."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/copilot/connectors/deployment-overview"
+ },
+ {
+  "id": "3.1.9-07",
+  "obj": "3.1.9",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys is building a custom synced Copilot connector for its ticketing system by using Microsoft Graph PowerShell. You have the following requirements:\n\n- The ticketTitle property must be shown as the item title in Microsoft 365 experiences.\n- Users must be able to query tickets by the priority property by name, for example priority:High.\n- The schema must be registered on an existing connection.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\n$params = @{\n  baseType = \"microsoft.graph.externalItem\"\n  properties = @(\n    @{ name = \"ticketTitle\"; type = \"String\"; isSearchable = \"true\"; isRetrievable = \"true\"; labels = @(\"[[1]]\") }\n    @{ name = \"priority\"; type = \"String\"; [[2]] = \"true\"; isRetrievable = \"true\" }\n  )\n}\n[[3]] -ExternalConnectionId $connectionId -BodyParameter $params\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "title",
+     "url",
+     "fileName"
+    ],
+    "why": [
+     "Correct: the title semantic label marks the property shown as the item title in search and other Microsoft 365 experiences, and it is the most important label for result clusters.",
+     "Incorrect: the url label marks the target URL of the item in the source system. A ticket title is not a URL. Map it to the property that holds the link to the ticket.",
+     "Incorrect: the fileName label marks the name of a file. Tickets are not files. Use it for connectors that index documents."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "isQueryable",
+     "isSearchable",
+     "isRefinable"
+    ],
+    "why": [
+     "Correct: a queryable property supports property-specific queries by name, such as priority:High, which is the requirement.",
+     "Incorrect: a searchable property adds its text to the full-text index so a free-text query matches it, but it does not enable name-specific queries. Use it for text such as titles and descriptions.",
+     "Incorrect: a refinable property can be used as a filter on the search results page, and the refinable attribute cannot be changed after setup. It does not by itself support priority:High queries. Use it to build filters."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Update-MgExternalConnectionSchema",
+     "New-MgExternalConnection",
+     "Set-MgExternalConnectionItem"
+    ],
+    "why": [
+     "Correct: Update-MgExternalConnectionSchema creates or updates the schema of an existing connection, which matches the hash table that defines baseType and properties.",
+     "Incorrect: New-MgExternalConnection creates the connection itself with an ID, name, and description. The connection already exists, and this body is a schema. Use it as the first step of a custom connector.",
+     "Incorrect: Set-MgExternalConnectionItem ingests one external item with its ACL, properties, and content after the schema exists. Use it to push tickets into the index."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "A custom synced connector is built in three stages: create the connection, register the schema with properties, attributes, and semantic labels, and then ingest items with ACLs. Search schema attributes are search, query, retrieve, and refine, and semantic labels such as title connect properties to Microsoft 365 experiences.",
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.search/update-mgexternalconnectionschema?view=graph-powershell-1.0"
+ },
+ {
+  "id": "3.1.9-08",
+  "obj": "3.1.9",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso Suites is building a custom synced Copilot connector for its HR case system by using Microsoft Graph PowerShell with delegated permissions. You must follow the principle of least privilege.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"ExternalConnection.ReadWrite.OwnedBy\", \"ExternalItem.ReadWrite.OwnedBy\"`",
+   "`New-MgExternalConnection -BodyParameter @{ id = \"contosohr\"; name = \"Contoso HR\"; description = \"HR cases\" }`",
+   "`Update-MgExternalConnectionSchema -ExternalConnectionId \"contosohr\" -BodyParameter $schema`",
+   "`Set-MgExternalConnectionItem -ExternalConnectionId \"contosohr\" -ExternalItemId $itemId -BodyParameter $item`",
+   "`Connect-MgGraph -Scopes \"SearchConfiguration.ReadWrite.All\"`",
+   "`New-MgSearchAcronym -BodyParameter $params`",
+   "`Connect-MgGraph -Scopes \"ExternalConnection.ReadWrite.All\", \"ExternalItem.ReadWrite.All\"`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A custom synced connector uses the Microsoft Graph connectors API: connect with the connection and item permissions, create the connection, register its schema, and then ingest items that carry content, properties, and an ACL.",
+  "rationale": [
+   "Step 1: ExternalConnection.ReadWrite.OwnedBy and ExternalItem.ReadWrite.OwnedBy are the least privileged permissions for creating a connection, its schema, and its items.",
+   "Step 2: New-MgExternalConnection creates the connection with its ID, name, and description. The schema and items both reference this connection ID.",
+   "Step 3: Update-MgExternalConnectionSchema registers the properties, search attributes, and semantic labels. Items must match the schema, so it comes before ingestion.",
+   "Step 4: Set-MgExternalConnectionItem ingests each HR case with its ACL, properties, and content into the Microsoft Graph index, where Copilot and search can use it.",
+   "Incorrect: SearchConfiguration.ReadWrite.All grants access to search answers such as acronyms and bookmarks, not to connector connections or items. Use it when you manage search answers with Graph.",
+   "Incorrect: New-MgSearchAcronym creates an acronym answer for Copilot Search. It does not ingest HR cases. Use it to curate organization-specific acronyms.",
+   "Incorrect: the .All permissions work but are higher privileged than the .OwnedBy permissions, which breaks least privilege. Use them only when the app must manage connections it does not own."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.graph.search/new-mgexternalconnection?view=graph-powershell-1.0"
+ }
+]

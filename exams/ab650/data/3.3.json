@@ -1,0 +1,631 @@
+[
+ {
+  "id": "3.3.1-01",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. uses Agent 365. A compliance analyst needs a CSV file that lists every invocation of an Agent 365 agent during the last seven days, taken from the unified audit log. You work on a new workstation that has never had the Exchange Online PowerShell module installed.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Install-Module -Name ExchangeOnlineManagement`",
+   "`Connect-ExchangeOnline -UserPrincipalName admin@contoso.com`",
+   "`$r = Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-7) -EndDate (Get-Date) -Operations \"AIInvokeAgent\" -ResultSize 5000`",
+   "`$r | Export-Csv -Path AgentInvocations.csv -NoTypeInformation`",
+   "`Connect-MsolService`",
+   "`Connect-MgGraph -Scopes \"AuditLog.Read.All\"`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Agent 365 activities are written to the unified audit log with operations such as AIInvokeAgent, AIExecuteTool, AIInferenceCall and AIGuardrail. Search-UnifiedAuditLog is an Exchange Online PowerShell cmdlet, so the module must be installed and a session opened before the search, and the results are exported last.",
+  "rationale": [
+   "Step 1: the workstation has never had the module, so Install-Module ExchangeOnlineManagement must run first; without it Connect-ExchangeOnline and Search-UnifiedAuditLog do not exist.",
+   "Step 2: Connect-ExchangeOnline opens the session that loads Search-UnifiedAuditLog. It needs the module from step 1 and must precede any audit query.",
+   "Step 3: AIInvokeAgent is the Agent 365 operation logged when an agent is invoked by a user, agent or event, so filtering on it returns exactly the invocations for the seven-day window.",
+   "Step 4: Export-Csv writes the objects stored in $r to the CSV file the analyst asked for. It can only run after the search has filled the variable.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module and never provided Search-UnifiedAuditLog. Use Microsoft Graph PowerShell or Exchange Online PowerShell instead.",
+   "Incorrect: Connect-MgGraph with AuditLog.Read.All is the right connection for Microsoft Entra sign-in and directory audit logs (Get-MgAuditLogSignIn), but it does not load the Exchange Online cmdlet that searches the unified audit log."
+  ],
+  "ref": "https://learn.microsoft.com/purview/audit-log-activities"
+ },
+ {
+  "id": "3.3.1-02",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Fabrikam, Inc. investigates Agent1, an Agent 365 agent. The security team needs two result sets from the unified audit log: every tool call that Agent1 executed, and every time Agent1 used an AI model to produce an answer or decide its next steps.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-ExchangeOnline\n$tools  = Search-UnifiedAuditLog -StartDate $start -EndDate $end -Operations [[1]] -FreeText \"Agent1\"\n$guards = Search-UnifiedAuditLog -StartDate $start -EndDate $end -Operations [[2]] -FreeText \"Agent1\"\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "AIExecuteTool",
+     "AIInvokeAgent",
+     "AIInferenceCall",
+     "CopilotInteraction"
+    ],
+    "why": [
+     "Correct: AIExecuteTool is the Agent 365 audit operation (friendly name Executed AI tool) that is logged each time an agent executes a tool call, which is the first result set.",
+     "Incorrect: AIInvokeAgent is logged when the agent is invoked by a user, agent or event, so it counts sessions starting, not the tool calls inside them. Use it to see who or what triggered an agent.",
+     "Incorrect: AIInferenceCall records the agent using an AI model to produce an answer or decide next steps. Use it to review model calls, not tool executions.",
+     "Incorrect: CopilotInteraction records prompts entered in Copilot or an agent experience. It is the operation for Copilot interaction audits, not for Agent 365 tool calls."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "AIInferenceCall",
+     "AIGuardrail",
+     "BlockedAgent",
+     "AIInvokeAgent"
+    ],
+    "why": [
+     "Correct: AIInferenceCall (friendly name Made AI inference call) is logged when the agent uses an AI model to produce an answer or determine next steps, which is the second result set.",
+     "Incorrect: Applied AI guardrail records only the requests or responses where a guardrail enforced a safety or compliance policy, not every model call. Use it when you investigate guardrail actions on an agent.",
+     "Incorrect: BlockedAgent is an admin activity from Microsoft 365 admin center agent management, logged when an admin blocks an agent. It does not record runtime model calls.",
+     "Incorrect: AIInvokeAgent records that the agent was invoked by a user, agent or event. It returns the invocations, not each model call the agent makes inside them."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Agent 365 writes runtime activities to the unified audit log: Invoked AI agent (AIInvokeAgent), Executed AI tool (AIExecuteTool), Made AI inference call (AIInferenceCall) and Applied AI guardrail. Admin actions on agents, such as BlockedAgent or DeployedAgent, are separate Microsoft 365 admin center agent management activities.",
+  "ref": "https://learn.microsoft.com/purview/audit-log-activities"
+ },
+ {
+  "id": "3.3.1-03",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Litware, Inc. uses Agent 365. Three people must review agent activity.\n\nWhich tool should each person use? To answer, drag the appropriate tools to the correct people. Each tool may be used once, more than once, or not at all.",
+  "choices": [
+   "Microsoft Defender portal",
+   "Activity tab of the agent details in the Microsoft 365 admin center",
+   "Activity tab of the agent in Microsoft Teams",
+   "Microsoft Copilot Agents usage report",
+   "Activity explorer in Microsoft Purview"
+  ],
+  "targets": [
+   "User1, a security analyst: investigate alerts and correlate activity of all Agent 365 agents with other security data",
+   "User2, an AI administrator: review active users, sessions, exceptions, and run-time of one agent across the tenant",
+   "User3, the agent manager of Agent1 in Microsoft Entra: review the sessions of Agent1 from within Teams"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "User1 needs alerts, incidents and correlation for all Agent 365 agents. Microsoft Defender monitors all activity of Agent 365 agents and lets analysts hunt across agents, identities and devices.",
+   "User2 needs active users, sessions, exceptions and agent run-time for one agent. Those four metrics are exactly what the Activity tab in the agent details of the Microsoft 365 admin center shows.",
+   "User3 is the agent manager and wants to stay in Teams. The agent Activity tab in Teams shows the sessions of agents for which the signed-in user is the agent manager."
+  ],
+  "notes": [
+   "Monitors all activity for all Agent 365 agents, correlates alerts into incidents and supports advanced hunting. Use it for security investigation, not for adoption metrics.",
+   "Shows one agent's active users, sessions, exceptions and run-time for a selectable date range across Microsoft surfaces. Use it for operational health and adoption of a single agent.",
+   "Shows a user's own sessions with an agent, or every session for agents the user manages. Use it when an agent manager oversees an agent from Teams.",
+   "Reports Reports > Usage > Microsoft Copilot > Agents: active users and responses per agent, but only in Copilot Chat, Word, Excel and PowerPoint. Use it for adoption inside Copilot, not for exceptions or run-time.",
+   "Shows activity on content with sensitive information and label activity. Use it when you investigate what sensitive data an agent touched, not for agent sessions or alerts."
+  ],
+  "explanation": "Agent activity is visible in several places with different audiences: Defender for security teams across all agents, the admin center Activity tab for one agent's operational metrics, and the Teams Activity tab for agent managers. Usage reports and Purview tools answer adoption and data questions instead.",
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/observe"
+ },
+ {
+  "id": "3.3.1-04",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys deploys Agent1, an agent built with Microsoft Copilot Agent Builder, to Teams, Outlook, and Microsoft Copilot. An AI administrator needs the number of sessions that had errors and the total hours Agent1 worked during the last 14 days.\n\nWhich view should the administrator use?",
+  "choices": [
+   "The Activity tab in the agent details pane in the Microsoft 365 admin center",
+   "The Security tab in the agent details pane in the Microsoft 365 admin center",
+   "The Data & Tools tab in the agent details pane in the Microsoft 365 admin center",
+   "The Microsoft Copilot Agents usage report in Reports > Usage"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Activity tab of an agent shows active users, sessions, exceptions (sessions with an error) and agent run-time (hours worked), with an adjustable date range. It covers Agent Builder, SharePoint and Agents Toolkit agents across Microsoft surfaces.",
+  "rationale": [
+   "Correct: the Activity tab reports Exceptions (sessions that had an error) and Agent run-time (total hours worked), and its date range can be set to 14 days instead of the default 30.",
+   "Incorrect: the Security tab links to Purview tools to monitor activity on sensitive content, protect sensitive data and evaluate compliance gaps. Use it for data risk, not for error counts and hours worked.",
+   "Incorrect: the Data & Tools tab is read-only metadata about the agent's capabilities, knowledge sources and tools. Use it to judge what the agent can access, not how it performed.",
+   "Incorrect: the Agents usage report shows active users and responses per agent for 7 or 30 days, only in Copilot Chat, Word, Excel and PowerPoint. It has no exceptions or run-time and misses Teams and Outlook."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.3.1-05",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud compares two numbers for Agent1, a SharePoint agent. The Activity tab in Agent 365 shows 420 active users for the last 30 days, while the Microsoft Copilot Agents usage report shows 260 active users for the same period. Most employees use Agent1 in Teams.\n\nWhich explanation should you give the AI governance team?",
+  "choices": [
+   "The usage report counts usage only in Copilot Chat, Word, Excel, and PowerPoint",
+   "The usage report counts only users who have a Microsoft 365 Copilot license",
+   "The Activity tab counts a user again every time a session restarts after inactivity",
+   "The usage report includes only agents that an administrator approved for the org"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Agent 365 Registry and Activity tab measure agent usage across every Microsoft surface where the agent is deployed, including Teams, Outlook and SharePoint. The Agents usage report measures only Copilot Chat, Word, Excel and PowerPoint, so the two numbers are not expected to match.",
+  "rationale": [
+   "Correct: Learn states that the Agents usage report covers only Microsoft 365 Copilot Chat, Word, Excel and PowerPoint, while the Activity tab includes Teams and other surfaces. Heavy Teams use explains the gap.",
+   "Incorrect: the Agents usage report counts both licensed and unlicensed users and even splits them into Active users (licensed) and Active users (unlicensed). A license filter would explain a gap only if the report lacked that split.",
+   "Incorrect: an active user on the Activity tab is a unique user who interacted at least once, regardless of the number of sessions. Sessions restart after 30 minutes of inactivity, but that changes the session count, not active users.",
+   "Incorrect: the Agents usage report also includes agents that users create with agent builder and share (creator type Your Users), so it is not limited to admin-approved agents. This would not explain a Teams-driven gap anyway."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.3.1-06",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank connects Amazon Bedrock to the Microsoft 365 agent registry, and Collect agent observability data is selected on the connection. The tenant has Microsoft 365 E5 and Microsoft 365 Copilot licenses only. Platform-side telemetry is enabled in Amazon Bedrock, and the agents ran during the last week. The Activity tab of the synchronized Bedrock agents shows no details.\n\nWhat should you do?",
+  "choices": [
+   "Assign Microsoft Agent 365 licenses in the tenant",
+   "Assign Microsoft 365 Copilot licenses to the agent owners",
+   "Turn on the Microsoft 365 connector in Microsoft Defender",
+   "Assign the AI Administrator role to the administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Activity details of third-party agents require a Microsoft E7 or Agent 365 license, and data collection for third-party agents starts when the licenses are activated. First-party agents do not need Agent 365 licenses for these metrics.",
+  "rationale": [
+   "Correct: Learn states that a Microsoft E7 or Agent 365 license is required to see Activity tab details of third-party agents, and data collection for them starts at license activation. The tenant has neither.",
+   "Incorrect: Microsoft 365 Copilot licenses give users Copilot features and cover agent usage costs, but they do not unlock third-party agent activity data. Assign them when users need Copilot itself.",
+   "Incorrect: the Microsoft 365 connector feeds investigation and advanced hunting of agent activity in Microsoft Defender. It does not populate the Activity tab in the Microsoft 365 admin center.",
+   "Incorrect: AI Administrator is the right role to manage agents and view their details, but the tab is empty because of licensing, not permissions. Change roles when the admin cannot open the tab at all."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.3.1-07",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders connected Google Vertex AI to the agent registry. Finance reports Google BigQuery query charges that are caused by telemetry retrieval. You must stop collecting new observability data for the Vertex AI agents, keep the agents synchronized in the registry, and keep Defender security for AI enabled for all other agents.\n\nWhat should you do?",
+  "choices": [
+   "Edit the connection on the Connected platforms page and clear Collect agent observability data",
+   "Delete the Google Vertex AI connection on the Connected platforms page",
+   "Turn off the Enable toggle in Settings > Security for AI > Get started in Defender",
+   "Block the Vertex AI agents in the agent registry in the Microsoft 365 admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Collect agent observability data is a per-connection setting on the Connected platforms page. Clearing it stops new telemetry retrieval for that connection's agents, which can otherwise incur provider charges such as BigQuery queries, while synchronization and earlier telemetry stay.",
+  "rationale": [
+   "Correct: clearing Collect agent observability data on that connection stops new telemetry collection for only those agents, leaves the agents synchronized, and does not change Defender for other agents.",
+   "Incorrect: deleting the connection would stop the provider charges, but it also removes registry synchronization for the Vertex AI agents, which the stem requires you to keep. Delete a connection when you stop managing that platform.",
+   "Incorrect: the Enable toggle on the Security for AI Get started page stops Defender data collection for AI agents tenant-wide, which breaks the requirement for all other agents. Use it only to stop Defender agent security entirely.",
+   "Incorrect: blocking agents in the registry stops users from installing or using them; it does not change telemetry retrieval from the connected platform. Block an agent when it must not be used."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/connected-platforms"
+ },
+ {
+  "id": "3.3.1-08",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation security analysts must query Agent 365 observability data together with device and identity events by using Kusto Query Language (KQL) to hunt for risky agent behavior.\n\nWhich feature should the analysts use?",
+  "choices": [
+   "Advanced hunting in the Microsoft Defender portal",
+   "Audit search in the Microsoft Purview portal",
+   "Activity explorer in the Microsoft Purview portal",
+   "The agent Activity tab in the Microsoft 365 admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Advanced hunting in Microsoft Defender lets analysts query Agent 365 observability data alongside other security data by using KQL, to trace tool invocations, investigate root cause and build custom detection rules.",
+  "rationale": [
+   "Correct: Advanced hunting queries Agent 365 observability data with KQL and correlates it with identities, devices and applications, which is exactly the hunting requirement.",
+   "Incorrect: Purview Audit search finds audit records such as AIInvokeAgent by date, user and activity, but it does not run KQL joins with device and identity events. Use it for compliance and forensic audit searches.",
+   "Incorrect: Activity explorer shows activity on sensitive content and labels across Exchange, SharePoint, OneDrive and endpoints. Use it to see what sensitive data was touched, not to hunt with KQL.",
+   "Incorrect: the Activity tab shows aggregated metrics such as sessions and exceptions for one agent. Use it for operational health, not for threat hunting across security data."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/security-for-ai/ai-agent-detection-protection"
+ },
+ {
+  "id": "3.3.2-01",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Proseware, Inc. completed onboarding of security for AI agents in Microsoft Defender. Only the built-in Default rule exists for real-time protection. You must block agent tool calls that send email to unsafe domains for every agent except Agent2, which has a Microsoft Entra agent ID, before the tool calls run.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Microsoft Defender portal, go to Settings > Security for AI > Policies & rules > Real-time protection.",
+   "Select Create rule.",
+   "On the Rule details step, set the rule status and enter a rule name and description.",
+   "Set the scope to All, exclude Agent2, and select Unsafe email domain as the detection type.",
+   "Review the rule name, action, scope, and detection rules, and then select Create.",
+   "Go to Settings > Security for AI > Prompt evidence collection and turn on Enabled.",
+   "In Advanced hunting, create a custom detection rule that queries the BehaviorInfo table."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The Default rule only audits. Blocking requires a custom real-time protection rule: open Real-time protection, create a rule, fill in the details, choose scope, exclusions and detection types, then review and create it. Only agents with a Microsoft Entra agent ID can be excluded.",
+  "rationale": [
+   "Step 1: real-time protection rules are managed only on the Real-time protection page under Settings > Security for AI > Policies & rules, so you must open it before you can create a rule.",
+   "Step 2: Create rule starts the wizard. A custom rule is needed because the built-in Default rule audits all agents and does not block.",
+   "Step 3: the first wizard step is Rule details, where you set the status and enter the name and description before you can move to the scope.",
+   "Step 4: scoping to All with an exclusion for Agent2 covers every other agent, and Unsafe email domain blocks a tool call that sends email to an unsafe domain before it runs.",
+   "Step 5: the review step confirms name, description, action, scope, detection rules and status, and Create saves the blocking rule.",
+   "Incorrect: prompt evidence collection, which is on by default, controls whether suspicious prompt snippets appear as evidence in alerts. It blocks nothing. Turn it off when prompt content must not appear in alerts.",
+   "Incorrect: a custom detection rule on BehaviorInfo alerts or automates after a behavior is recorded; it cannot stop the tool call before it runs. Use it to build detections on audited or blocked behaviors."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/security-for-ai/ai-agent-real-time-protection"
+ },
+ {
+  "id": "3.3.2-02",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Wingtip Toys onboarded to Agent 365 and to Microsoft Defender security for AI agents. The Microsoft 365 connector shows Connected, and Copilot Studio shows Not connected on the Get started page. You must block malicious tool invocations of Copilot Studio agents at runtime.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "On the Copilot Studio step of the Get started page, turn on Real-time protection and share the provided URL with a Power Platform administrator.",
+   "Have the Power Platform administrator complete the threat detection setup in Power Platform, and then enter the same App ID in the Defender portal.",
+   "Select Microsoft Entra ID Management events and Microsoft 365 activities in the Microsoft 365 connector.",
+   "Turn on prompt evidence collection in Settings > Security for AI.",
+   "Add the Copilot Studio agents to a Microsoft Purview DLP policy as users."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Real-time protection for Copilot Studio agents needs the Copilot Studio integration: a Defender admin turns on Real-time protection and shares the integration URL, and a Power Platform admin completes the external threat detection setup by using the same App ID, which is then saved in Defender.",
+  "rationale": [
+   "Correct: the Copilot Studio step is where you toggle Real-time protection on and copy the Power Platform integration URL. Without it, Defender cannot scan Copilot Studio tool invocations.",
+   "Correct: the Power Platform admin must finish the threat detection configuration with the same App ID as the Entra application, and you paste that App ID into Defender and save. Then the step shows Connected.",
+   "Incorrect: these components are what the Microsoft 365 connector needs for investigation and advanced hunting, and the stem says it is already connected. Learn notes that blocking works without it, but alerts do not appear.",
+   "Incorrect: prompt evidence collection, which is on by default, adds suspicious prompt snippets to alerts for investigation. It neither connects Copilot Studio nor blocks tool calls. Change it only to control whether prompt content appears in alerts.",
+   "Incorrect: Purview DLP can include Agent 365 agent instances as users to block sensitive data in Teams, email, OneDrive and SharePoint. It does not inspect Copilot Studio tool invocations for malicious behavior."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/security-for-ai/get-started-defender-security-for-ai"
+ },
+ {
+  "id": "3.3.2-03",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee needs a single page in Microsoft Purview that lists active Agent 365 agent instances, prioritized by risk level, with the top risky activities such as oversharing and exfiltration.\n\nWhich page should you open?",
+  "choices": [
+   "DSPM > AI observability",
+   "Data Security Posture Management (classic)",
+   "Audit > Search",
+   "Communication compliance > Policies"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI observability page in the current DSPM lists agents with activity in the last 30 days, prioritized by the risk level from Insider Risk Management, shows top risky activities (oversharing, exfiltration, unethical behavior) and recommends remediation. The classic DSPM version does not support Agent 365.",
+  "rationale": [
+   "Correct: DSPM > AI observability is the Purview starting point for Agent 365, showing agents ranked by risk level and top risky activities such as oversharing and exfiltration.",
+   "Incorrect: Learn warns not to confuse the current DSPM with Data Security Posture Management (classic), which does not support Agent 365. Keep using the classic experience only for the AI app reports and policies you already run there.",
+   "Incorrect: Audit search returns individual audit records such as AIInvokeAgent. It does not rank agents by risk. Use it for forensic searches of specific activities.",
+   "Incorrect: communication compliance policies detect unethical communication in Teams and email for agent interactions, but they do not provide a risk-ranked inventory of agents. Use them for conduct violations."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-agent-365"
+ },
+ {
+  "id": "3.3.2-04",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Coho Winery shares a file with Agent1, an Agent 365 agent instance. The file has a sensitivity label that applies encryption with the permission Add all users and groups in your organization. Sensitivity labels for SharePoint and OneDrive are enabled. Agent1 cannot use the file content.\n\nWhat should you do?",
+  "choices": [
+   "Update the label encryption to grant Agent1 the VIEW and EXTRACT usage rights",
+   "Change the label encryption permission to Add any authenticated users",
+   "Share the file with Agent1 again by using a link for specific people",
+   "Add Agent1 to a DLP policy that audits sensitive content in SharePoint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For an Agent 365 agent instance to use encrypted content, the file must be explicitly shared with it and the label encryption must explicitly grant the agent instance VIEW and EXTRACT usage rights. Organization-wide or any-authenticated-user permissions are not sufficient.",
+  "rationale": [
+   "Correct: Learn states that label encryption must explicitly grant the agent instance VIEW and EXTRACT. The file is already shared and SharePoint labeling is enabled, so the missing rights are the cause.",
+   "Incorrect: Learn names Add any authenticated users, like Add all users and groups in your organization, as not sufficient for agent instances. Use it for broad human access to encrypted content.",
+   "Incorrect: explicit sharing is required, but the stem says the file is already shared with Agent1, so sharing again does not add the missing usage rights.",
+   "Incorrect: a DLP policy that includes Agent1 audits or blocks sensitive data in agent interactions; it never grants access to encrypted content. Use DLP to restrict, not to enable, access."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-agent-365"
+ },
+ {
+  "id": "3.3.2-05",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Lucerne Publishing must block Agent1, an Agent 365 agent instance, from sending credit card numbers to people in Teams chats and in email. Detection only is not acceptable.\n\nWhat should you do?",
+  "choices": [
+   "Create a DLP policy for Teams and Exchange that includes a group that contains Agent1",
+   "Create a DLP policy for the Microsoft 365 Copilot and Copilot Chat location",
+   "Create an Endpoint DLP policy that blocks pasting into generative AI websites",
+   "Create a communication compliance policy for Teams and email that includes Agent1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Purview DLP supports Agent 365 agent instances when you specify them in the policy as you would a user, or through a security group that contains them. It can block or audit agent-to-human and human-to-agent interactions in Teams, OneDrive, SharePoint and email.",
+  "rationale": [
+   "Correct: including the agent instance, directly or through a security group, in a DLP policy for Teams and Exchange blocks agent-to-human messages with credit card numbers, which meets the enforcement requirement.",
+   "Incorrect: the Copilot and Copilot Chat location controls what Microsoft 365 Copilot and Copilot Chat process in prompts and responses. It does not target messages that an agent instance sends in Teams chats and email.",
+   "Incorrect: Endpoint DLP blocks or warns users who paste sensitive data into third-party generative AI sites in a browser on onboarded devices. Use it for shadow AI, not for an agent sending messages.",
+   "Incorrect: communication compliance detects unethical communication for agent-to-human interactions in Teams and email, but it only detects and supports review; it does not block. The stem rules out detection only."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-agent-365"
+ },
+ {
+  "id": "3.3.2-06",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Margie's Travel uses the Default real-time protection rule for Agent 365 agents in Microsoft Defender. Security engineers want to build custom detections from the actions that real-time protection audits or blocks.\n\nWhich Advanced hunting table should the engineers query?",
+  "choices": [
+   "BehaviorInfo",
+   "AgentsInfo",
+   "AlertInfo",
+   "AlertEvidence"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When real-time protection audits or blocks an action, Defender records it as a behavior in the BehaviorInfo table, including what happened, why it was risky, and which agent, user and tool were involved. Near-real-time detections still surface as alerts.",
+  "rationale": [
+   "Correct: audited and blocked real-time protection events are recorded as behaviors in BehaviorInfo, which is the table for custom detections, hunting queries and automation on those actions.",
+   "Incorrect: AgentsInfo is the agent inventory table with snapshots of agent properties such as authentication, tools and knowledge sources. Use it for posture and discovery, not for audited actions.",
+   "Incorrect: AlertInfo holds alerts. Real-time protection audit and block events are behaviors, not alerts. Use AlertInfo for near-real-time detection alerts.",
+   "Incorrect: AlertEvidence holds the entities attached to alerts. It is useful when you investigate an alert, but it does not contain the behaviors that real-time protection records."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/security-for-ai/ai-agent-real-time-protection"
+ },
+ {
+  "id": "3.3.2-07",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Humongous Insurance must block secret exfiltration by Agent1 before the action runs. For every other agent, the security operations team must keep receiving near-real-time alerts.\n\nWhat should you do?",
+  "choices": [
+   "Create a custom real-time protection rule scoped to Agent1 for Secret exfiltration",
+   "Create a custom real-time protection rule scoped to All for Secret exfiltration",
+   "Create a custom detection rule in Advanced hunting on the BehaviorInfo table",
+   "Turn on prompt evidence collection and keep the Default real-time rule"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom real-time protection rules block matching actions before they run and can be scoped to specific agents. Near-real-time alerts are only generated in audit mode: when a blocking rule covers an agent, those alerts stop for that agent, so blocking should be scoped narrowly.",
+  "rationale": [
+   "Correct: a custom rule scoped to Agent1 blocks secret exfiltration for Agent1 only. All other agents stay under the auditing Default rule, so their near-real-time alerts continue.",
+   "Incorrect: scoping the blocking rule to All also blocks for other agents, and when a blocking rule covers an agent, near-real-time alerts are no longer generated for it. Use it when every agent must be blocked.",
+   "Incorrect: a custom detection rule runs on recorded behaviors after the fact. It can alert or automate, but it cannot stop the action before it runs. Use it to extend detections.",
+   "Incorrect: prompt evidence collection (on by default) only adds suspicious prompt snippets to alerts, and the Default rule audits without blocking. Use this combination for visibility before you enforce blocking."
+  ],
+  "ref": "https://learn.microsoft.com/defender-xdr/security-for-ai/ai-agent-real-time-protection"
+ },
+ {
+  "id": "3.3.2-08",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Users at Alpine Ski House built Agent1 with Microsoft Copilot Agent Builder and uploaded three files as knowledge. One file has the Highly Confidential label, which applies encryption. User2 and User3 both have Microsoft 365 Copilot licenses. User2 cannot access Agent1, while User3 can.\n\nWhich cause should you investigate first?",
+  "choices": [
+   "User2 lacks the EXTRACT usage right for the Highly Confidential label",
+   "User2 lacks a Microsoft 365 Copilot license for embedded knowledge",
+   "Information barriers block User2 from the embedded file content",
+   "The SharePoint Embedded container is not shared with User2"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Files uploaded in Agent Builder are stored in tenant-owned SharePoint Embedded containers, and the agent gets the most restrictive label of the uploaded files. Users without extract rights for any of those labels cannot access the agent.",
+  "rationale": [
+   "Correct: Learn states that a user who has no extract rights for a label applied to the uploaded files cannot access the agent. User3 has the rights, so User2's usage rights are the first thing to check.",
+   "Incorrect: the stem says both users have Microsoft 365 Copilot licenses, so licensing cannot explain why only User2 is blocked. Check licenses when Copilot features are missing for every unlicensed user.",
+   "Incorrect: Learn states that information barriers are not supported on embedded files, so any user who can access the agent sees grounded responses. Information barriers therefore cannot be the cause.",
+   "Incorrect: the service creates the tenant-owned Declarative Agent container automatically when files are uploaded, and access to the agent follows label extract rights, not manual sharing of the container. Do not delete these containers."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.3.3-01",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Contoso, Ltd. creates agent instances for Agent 365 and plans to use Microsoft Purview to evaluate compliance gaps.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A new agent instance is automatically included in the Compliance Manager assessments for AI regulations.",
+   "Sensitive information in the prompts and responses of a new agent instance is detected only after you include the agent instance in a DLP policy.",
+   "Data Security Posture Management (classic) shows the agent instances on its AI observability page."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "New Agent 365 agent instances are automatically enabled for audit, for sensitive data detection with data classification, and for the Compliance Manager assessments for AI regulations. Other Purview capabilities, such as DLP, need the agent instance in a policy, and the AI observability page belongs to the current DSPM, not the classic version.",
+  "rationale": [
+   "Yes: Learn states that a new agent instance for Agent 365 is automatically included in the Assessments for AI regulations from Compliance Manager, along with audit and data classification. Other capabilities need policies.",
+   "No: a new agent instance is automatically enabled for detection of sensitive data with data classification. Include the agent instance in a DLP policy, as you would a user, only when you must block or audit sensitive data in its interactions.",
+   "No: the classic version of DSPM does not support Agent 365. Use the current DSPM and its AI observability page to see agent instances and their risks."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-agent-365"
+ },
+ {
+  "id": "3.3.3-02",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "On the Security tab of Agent1 in the Microsoft 365 admin center, an AI baseline assessment is available. You need to review which recommended controls Agent1 does not meet yet.\n\nWhich Microsoft Purview solution should you use?",
+  "choices": [
+   "Compliance Manager",
+   "DSPM AI observability",
+   "Activity explorer",
+   "Insider Risk Management"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Security tab of an agent offers three Purview actions: monitor agent activity (Activity explorer), protect sensitive data (AI observability) and evaluate compliance gaps, which uses the AI baseline assessment in Compliance Manager.",
+  "rationale": [
+   "Correct: Evaluate compliance gaps on the Security tab uses the agent's AI baseline assessment, which lives in Compliance Manager, where controls and improvement actions show what is not met.",
+   "Incorrect: AI observability is behind the Protect sensitive data action and shows sensitive interactions and risky activities. Use it for oversharing and exfiltration risk, not control gaps.",
+   "Incorrect: Activity explorer is behind the Monitor agent activity action and shows activity on sensitive content and labels. Use it to see what the agent did with sensitive data.",
+   "Incorrect: Insider Risk Management assigns risk levels to agents and users through policies such as Risky AI usage. Use it to detect risky behavior, not to measure regulatory controls."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-agent-365/admin/agent-details"
+ },
+ {
+  "id": "3.3.3-03",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Trey Research operates agents for customers in the European Union and must measure its compliance against the EU AI regulation in Compliance Manager.\n\nWhich regulatory template should you use to create the assessment?",
+  "choices": [
+   "EU Artificial Intelligence Act",
+   "Microsoft Data Protection Baseline",
+   "ISO/IEC 42001:2023",
+   "NIST AI Risk Management Framework (RMF) 1.0"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Compliance Manager has four premium AI templates: EU Artificial Intelligence Act, ISO/IEC 23894:2023, ISO/IEC 42001:2023 and NIST AI RMF 1.0. Pick the template that matches the regulation you must prove, and note that each counts toward premium licenses.",
+  "rationale": [
+   "Correct: the EU Artificial Intelligence Act template is the Compliance Manager premium AI template for the EU AI regulation named in the stem.",
+   "Incorrect: the Data Protection Baseline is included for all organizations and draws mainly on NIST CSF, ISO, FedRAMP and GDPR. Use it for a general data protection score, not EU AI law.",
+   "Incorrect: ISO/IEC 42001:2023 is an AI management system standard and a premium AI template. Use it when you must align with ISO AI management, not the EU regulation.",
+   "Incorrect: NIST AI RMF 1.0 is a US framework template for AI risk management. Use it when the requirement is NIST alignment rather than EU law."
+  ],
+  "ref": "https://learn.microsoft.com/purview/compliance-manager-assessments"
+ },
+ {
+  "id": "3.3.3-04",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lamna Healthcare Company created a Compliance Manager assessment based on the NIST AI Risk Management Framework (RMF) 1.0 template for its Agent 365 agents. On the Assessments page, the status of the assessment is Incomplete. Before an external audit, you must identify the gaps that cause this status.\n\nWhat should you do first?",
+  "choices": [
+   "On the Controls tab of the assessment, filter by the Failed status and review the improvement actions in those controls",
+   "On the Controls tab of the assessment, filter by the None status and test the improvement actions in those controls",
+   "On the assessment details page, select Review update and accept the pending template update",
+   "On the Your improvement actions tab, filter by the In progress status and review those actions"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Compliance Manager, an assessment is Incomplete when at least one control has the Failed status. None means that not all controls are tested, and In progress means that actions are in progress, have partial credit or are undetected. The Controls tab filters controls by family, status and service, and each control lists the improvement actions that close the gap.",
+  "rationale": [
+   "Correct: Learn defines Incomplete as at least one control with the Failed status and tells you to review the failed controls and their improvement actions. Filtering the Controls tab by Failed shows exactly those gaps.",
+   "Incorrect: a control has the None status when its improvement actions are not tested yet, and untested controls give the assessment the status None, not Incomplete. Filter on None when you plan the testing work that remains.",
+   "Incorrect: an assessment update applies template changes such as new control mapping and can change the score, but it does not show which controls failed. Accept updates when Microsoft revises the template and you are not mid-assessment.",
+   "Incorrect: actions that are in progress, have partial credit or are undetected give the assessment the In progress status, not Incomplete. Filter on them when you track remediation work that is already under way."
+  ],
+  "ref": "https://learn.microsoft.com/purview/compliance-manager-assessments"
+ },
+ {
+  "id": "3.3.3-05",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wide World Importers has Microsoft 365 E5 and Microsoft Agent 365 licenses. In Microsoft Purview Compliance Manager, the company already uses the three premium regulations that Microsoft 365 E5 includes at no extra cost. You must now create an assessment for the company's agents based on the ISO/IEC 42001:2023 regulation.\n\nWhat should you do first?",
+  "choices": [
+   "Purchase a license for the ISO/IEC 42001:2023 premium template",
+   "Create the assessment from the Data Protection Baseline template",
+   "Create the assessment from the NIST AI RMF 1.0 template",
+   "Acquire more Microsoft Agent 365 licenses for the agent instances"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Compliance Manager includes the Microsoft Data Protection Baseline for every organization, and A5/E5/G5 customers can use up to three premium regulations for free. The AI regulations (EU AI Act, ISO/IEC 23894, ISO/IEC 42001 and NIST AI RMF) are premium AI templates, and using one counts toward purchased premium licenses. A purchased template appears within 48 hours, and its license is valid for one year.",
+  "rationale": [
+   "Correct: ISO/IEC 42001:2023 is a premium AI template. The three free premium regulations of Microsoft 365 E5 are already used, so you buy a license for this template; it appears within 48 hours, and you can then create as many assessments for it as you need.",
+   "Incorrect: the Data Protection Baseline is included for every organization and needs no license, but it is not the ISO/IEC 42001 regulation that the stem requires. Use it for a default assessment of general data protection controls.",
+   "Incorrect: NIST AI RMF 1.0 is also a premium AI template, so it needs a license as well, and it measures a different framework than the required ISO/IEC 42001. Use it when the organization must align its agents with the NIST AI risk framework.",
+   "Incorrect: Agent 365 licenses are needed for agent instances and the agent registry, and the company already has them. They do not add premium regulatory templates in Compliance Manager. Acquire them when agents must be managed and secured with Agent 365."
+  ],
+  "ref": "https://learn.microsoft.com/purview/compliance-manager-regulations"
+ },
+ {
+  "id": "3.3.3-06",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Bellows College must keep the prompts and responses exchanged between people and Agent1, an Agent 365 agent instance, in Teams and email for seven years to meet records requirements.\n\nWhat should you configure?",
+  "choices": [
+   "A Purview retention policy that includes Agent1 for Teams and email",
+   "A Purview DLP policy that includes Agent1 for Teams and email",
+   "A communication compliance policy that includes Agent1 for Teams",
+   "A sensitivity label policy that publishes a default label to Agent1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Data Lifecycle Management supports Agent 365 for Teams, OneDrive, SharePoint and email locations and for agent-to-human and human-to-agent interactions. You include the agent instance in a retention policy as you would a user, and the principles of retention resolve conflicts.",
+  "rationale": [
+   "Correct: retention policies retain or delete AI prompts and responses, support Teams and email for Agent 365, and include an agent instance like a user, which meets the seven-year requirement.",
+   "Incorrect: DLP blocks or audits sensitive data in agent interactions, but it does not retain content for a period. Use DLP to prevent leaks, not to meet records retention.",
+   "Incorrect: communication compliance detects unethical communication in agent interactions for review. It does not keep content for seven years. Use it for conduct monitoring.",
+   "Incorrect: a sensitivity label policy classifies and protects content; it does not retain prompts and responses. Use retention labels or policies for lifecycle requirements."
+  ],
+  "ref": "https://learn.microsoft.com/purview/ai-agent-365"
+ },
+ {
+  "id": "3.3.3-07",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Graphic Design Institute creates a Compliance Manager assessment for its Microsoft Foundry agents and wants evaluation results to sync automatically. The admin has the Compliance Administrator role, but no Foundry agents appear when the admin adds agents during assessment creation.\n\nWhat should you do?",
+  "choices": [
+   "Assign the admin the Azure AI User role on the relevant Foundry accounts",
+   "Assign the admin the AI Administrator role in Microsoft Entra ID",
+   "Assign the admin the Global Reader role in Microsoft Entra ID",
+   "Convert the automated actions to manual actions in Compliance Manager"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Automatic assessments for AI apps and agents sync evaluation results from Microsoft Foundry into Compliance Manager. Adding Foundry agents during assessment creation requires the Azure AI Project Manager or Azure AI User RBAC role on the relevant Foundry accounts.",
+  "rationale": [
+   "Correct: Learn lists the Azure AI Project Manager or Azure AI User RBAC role on the relevant Foundry accounts as required to add agents during assessment creation for the Foundry service.",
+   "Incorrect: AI Administrator manages Copilot and agents in Microsoft 365 but is a Microsoft Entra directory role, not Azure RBAC on Foundry accounts. Use it for Microsoft 365 agent management.",
+   "Incorrect: Global Reader grants read access across Microsoft 365 admin experiences, not Azure RBAC on Foundry resources. Use it for read-only admin review.",
+   "Incorrect: converting to manual actions is supported for organizations without Foundry access, but the stem requires automatic sync. Choose manual updates only when automatic sync is not possible."
+  ],
+  "ref": "https://learn.microsoft.com/purview/compliance-manager-assessments"
+ },
+ {
+  "id": "3.3.3-08",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Southridge Video wants guided assistance before it starts to work with AI regulation templates. The guidance must show recent interactions with sensitive data and recommend actions to stay compliant.\n\nWhich feature should you use?",
+  "choices": [
+   "Recommendations in DSPM for AI",
+   "Improvement actions in Compliance Manager",
+   "Activity explorer in data classification",
+   "Reports in Insider Risk Management"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Learn points to the Recommendations section of DSPM for AI for guided help with AI regulation templates: it displays recent interactions with sensitive data and recommends actions. Compliance Manager then holds the assessments and their improvement actions.",
+  "rationale": [
+   "Correct: the Recommendations section of DSPM for AI provides guided assistance on AI regulations, showing recent interactions with sensitive data and recommended actions, as the stem requires.",
+   "Incorrect: improvement actions list the controls to implement inside an existing assessment, but they do not show recent sensitive interactions. Use them after the assessment exists.",
+   "Incorrect: Activity explorer shows label and sensitive content activity, but it does not give guidance on AI regulations. Use it to investigate specific activity.",
+   "Incorrect: Insider Risk Management reports show user and agent risk from policies such as Risky AI usage. They do not guide work with regulation templates."
+  ],
+  "ref": "https://learn.microsoft.com/purview/compliance-manager-assessments"
+ }
+]

@@ -1,0 +1,1750 @@
+[
+ {
+  "id": "2.1.1-01",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank hires 40 employees. Human resources provides their names and user names in a spreadsheet saved in CSV format. You must create the 40 cloud-only accounts in one operation and assign a Microsoft 365 E3 license to every account in the same procedure. You do not want to use PowerShell.\n\nWhich feature should you use?",
+  "choices": [
+   "Add multiple users on the Active users page of the Microsoft 365 admin center",
+   "Bulk create on the Users page of the Microsoft Entra admin center",
+   "Bulk invite on the Users page of the Microsoft Entra admin center",
+   "User templates on the Active users page of the Microsoft 365 admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Microsoft 365 admin center imports a CSV file of users and, in the same wizard, lets you choose the license location and the product licenses for all new users. Microsoft Entra bulk create also imports a CSV file, but it only creates the accounts; licenses are assigned afterwards. Pick the tool by what must happen in the same pass: accounts only, accounts plus licenses, or guest invitations.",
+  "rationale": [
+   "Correct: Add multiple users reads a CSV with the same column headings as the sample file, and the wizard then asks for the location and the licenses to assign to every new user, so creation and licensing happen in one procedure without PowerShell.",
+   "Incorrect: Bulk create in the Microsoft Entra admin center creates member accounts from a CSV template with name, user name and initial password, but it does not assign product licenses. Use it when you only need the accounts, or when licenses come from group-based licensing.",
+   "Incorrect: Bulk invite creates B2B guest accounts and sends invitation emails to external addresses. It is the right tool for partners from other organizations, not for new employees who need internal member accounts.",
+   "Incorrect: a user template saves common settings such as domain, license and department, but it is applied when you add users one at a time. Use it for a steady trickle of similar hires, not for importing 40 people from a CSV file."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/add-several-users-at-the-same-time?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.1-02",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys hires support engineers one at a time over the next year. Every engineer gets the same domain, the same Microsoft 365 E3 license, the same department and office, and must create a new password at first sign-in. You want admins to add each engineer in the Microsoft 365 admin center with as few manual entries as possible.\n\nWhat should you create?",
+  "choices": [
+   "A user template in the Microsoft 365 admin center",
+   "A CSV file for the Add multiple users wizard",
+   "A dynamic membership group based on the department",
+   "A group-based license assignment for a security group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "User templates store the values that are shared by a type of user (domain, password settings, license location and licenses, apps, role and most profile fields) so that each new account only needs the person-specific values such as name and user name. CSV import is for batches, and groups only automate membership or licensing, not the rest of the profile.",
+  "rationale": [
+   "Correct: a user template keeps the domain, the password and one-time password choice, the licenses and profile values like department and office, so each new engineer is added with only the name and user name typed in.",
+   "Incorrect: the Add multiple users wizard is efficient when a batch of users is known at the same time. The engineers arrive one at a time over a year, so a CSV import per hire adds work instead of saving it.",
+   "Incorrect: a dynamic membership group adds users automatically after their department is set, but it does not fill in the domain, password settings, office or license for a new account. Use it to keep group membership in sync with attributes.",
+   "Incorrect: group-based licensing assigns the E3 license to group members automatically, but it does not set the domain, department, office or password options. Use it when licensing is the only thing you want to automate."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/add-users/create-and-use-a-template-to-add-users?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.1-03",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Fabrikam, Inc., an admin deleted the account of User1 by mistake 10 days ago. User1 must get back the same work account with the existing mailbox content. Fabrikam has not configured Microsoft 365 Backup.\n\nWhat should you do?",
+  "choices": [
+   "Restore User1 from the Deleted users page in the Microsoft 365 admin center",
+   "Create a new account for User1 that has the same user name and license",
+   "Restore the mailbox and OneDrive of User1 by using Microsoft 365 Backup",
+   "Run Restore-SPODeletedSite for the OneDrive URL of User1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A deleted user stays in a soft-deleted state for 30 days. Restoring the account in that window brings back the account and its associated data, including a fully restored mailbox, and the user signs in with the same work account. After 30 days the account and mailbox are permanently deleted.",
+  "rationale": [
+   "Correct: the account was deleted 10 days ago, which is inside the 30-day window. Restoring it from Deleted users brings back the same account and the mailbox, so User1 signs in exactly as before after you set a password.",
+   "Incorrect: a new account with the same name is a different object with an empty mailbox, and it creates a user name conflict if you later try to restore the original. Create a new account only after the 30-day window has passed.",
+   "Incorrect: Microsoft 365 Backup can restore mailboxes and OneDrive accounts from backup points, but only when a backup policy already protects them. The stem says Backup is not configured, so there is nothing to restore from.",
+   "Incorrect: Restore-SPODeletedSite brings back a deleted OneDrive site, typically after the user is gone beyond 30 days. It does not restore the account or the mailbox, so User1 still could not sign in."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/add-users/restore-user?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.1-04",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation creates cloud-only users with Microsoft Graph PowerShell. For User1, the following command fails, and the error states that the user has no valid usage location:\n\n```powershell\nSet-MgUserLicense -UserId \"user1@adatum.com\" -AddLicenses @{SkuId = $e3Sku.SkuId} -RemoveLicenses @()\n```\n\nUser1 works in the United States.\n\nWhat should you run before you rerun the command?",
+  "choices": [
+   "Update-MgUser -UserId \"user1@adatum.com\" -UsageLocation \"US\"",
+   "Update-MgUser -UserId \"user1@adatum.com\" -Country \"United States\"",
+   "Update-MgUser -UserId \"user1@adatum.com\" -PreferredDataLocation \"NAM\"",
+   "Connect-MgGraph -Scopes \"User.ReadWrite.All\",\"Organization.Read.All\""
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Licenses can only be assigned to accounts whose UsageLocation is a valid ISO 3166-1 alpha-2 country code, because some services are not available in every country. Country is only a profile field and PreferredDataLocation is a Multi-Geo setting; neither satisfies the licensing check.",
+  "rationale": [
+   "Correct: UsageLocation takes a two-letter ISO 3166-1 code such as US. Once it is set, Set-MgUserLicense can check service availability for that country and assign the E3 license.",
+   "Incorrect: Country is an address attribute shown in the profile and the address book. Licensing does not read it, so the error remains. Set Country when you maintain contact information.",
+   "Incorrect: PreferredDataLocation tells Multi-Geo tenants in which geography to store the user's data. It is unrelated to license availability. Use it when you create mailboxes or OneDrive accounts in a specific satellite geo.",
+   "Incorrect: these scopes are needed to read SKUs and assign licenses, but the error is about the user object, not about missing permissions. Reconnecting with the same scopes does not set a usage location."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.1-05",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud creates a cloud-only user with this command:\n\n```powershell\nNew-MgUser -DisplayName \"User2\" -AccountEnabled -MailNickName \"user2\" -UserPrincipalName \"user2@relecloud.com\" -PasswordProfile $passwordProfile\n```\n\nThe user must replace the initial password at first sign-in. Relecloud has not rolled out multifactor authentication (MFA) yet, so the user must not be asked to perform MFA before changing the password.\n\nHow should you define $passwordProfile?",
+  "choices": [
+   "$passwordProfile = @{ Password = '<initial>'; ForceChangePasswordNextSignIn = $true }",
+   "$passwordProfile = @{ Password = '<initial>'; ForceChangePasswordNextSignInWithMfa = $true }",
+   "$passwordProfile = @{ Password = '<initial>'; ForceChangePasswordNextSignIn = $false }",
+   "$passwordProfile = @{ Password = '<initial>' }; plus -PasswordPolicies 'DisablePasswordExpiration'"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "passwordProfile holds the initial password and two flags. forceChangePasswordNextSignIn makes the user set a new password at next sign-in; forceChangePasswordNextSignInWithMfa does the same but first requires MFA. passwordPolicies is a separate user property that changes expiration or strength rules, not the first sign-in experience.",
+  "rationale": [
+   "Correct: ForceChangePasswordNextSignIn = $true forces a password change at the first sign-in without an MFA step, which meets both requirements.",
+   "Incorrect: ForceChangePasswordNextSignInWithMfa also forces a password change, but the user must complete MFA first. That breaks the requirement because MFA is not rolled out yet. Use it when you want proof of identity before the new password.",
+   "Incorrect: with the flag set to $false the user keeps the initial password, so the admin-chosen password stays in use. Use $false only for accounts whose password is handed over through a secure process and must not change.",
+   "Incorrect: DisablePasswordExpiration stops the password from expiring later; it does not force a change at first sign-in. Use it for accounts that must never hit password expiration."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/resources/passwordprofile?view=graph-rest-1.0"
+ },
+ {
+  "id": "2.1.1-06",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. deleted the account user4@fabrikam.com 12 days ago. Last week, a new employee was given a new account with the same user name, user4@fabrikam.com. You now need to restore the original account with its mailbox. The new employee's account must stay active and keep its current user name.\n\nWhat should you do?",
+  "choices": [
+   "Restore the deleted account and give it a new user name during the restore",
+   "Rename the active account, and then restore the deleted account with its old name",
+   "Run Restore-MgDirectoryDeletedItem with autoReconcileProxyConflict set to true",
+   "Restore the deleted account from the Deleted users page without any changes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Restoring a user whose user name is now used by an active account causes a user name conflict. You resolve it either by renaming the active account or by giving the restored account a different user name. When the active account must keep its name, the only option left is a new user name for the restored account. Proxy address conflicts are a different case that the restore can fix automatically.",
+  "rationale": [
+   "Correct: the Microsoft 365 admin center lets you type a new primary email address (user name) for the account you restore, so the original account and mailbox come back while the new employee keeps user4@fabrikam.com.",
+   "Incorrect: renaming the active account and then restoring is the other documented fix for a user name conflict, but it changes the new employee's user name, which the stem forbids. Use it when the restored account must get its original name back.",
+   "Incorrect: autoReconcileProxyConflict removes conflicting proxy addresses from the restored object. It fixes a proxy address conflict, not a duplicate user principal name, so the restore still fails. Use it when only an email alias of the deleted user is now in use by another account.",
+   "Incorrect: restoring without changes fails because two active accounts cannot share one user name. You get a conflict message and must choose a resolution. Restore without changes only when no active account uses the name."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/add-users/restore-user?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.1-07",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. uses cloud-only accounts. The account of User5 is suspected to be compromised. By using Microsoft Graph PowerShell, you must block new sign-ins for User5 and make sure that existing refresh tokens can no longer be used. The account, its licenses and its mailbox must be kept for the investigation. Device clean-up is handled by another team.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"User.ReadWrite.All\",\"Directory.AccessAsUser.All\"`",
+   "`$User = Get-MgUser -Search UserPrincipalName:'user5@contoso.com' -ConsistencyLevel eventual`",
+   "`Update-MgUser -UserId $User.Id -AccountEnabled:$false`",
+   "`Revoke-MgUserSignInSession -UserId $User.Id`",
+   "`Disable-ADAccount -Identity user5`",
+   "`Remove-MgUser -UserId $User.Id`",
+   "`Set-MgUserLicense -UserId $User.Id -AddLicenses @{} -RemoveLicenses @($e5Sku.SkuId)`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "To revoke access in a cloud-only tenant you first disable the account so it cannot get new tokens, and then revoke its refresh tokens so existing sessions cannot be silently renewed. Doing it the other way round leaves a window in which the attacker can sign in again. Access tokens already issued stay valid until they expire, usually within an hour.",
+  "rationale": [
+   "Step 1: every Graph cmdlet needs an authenticated session. These scopes allow updating the user and revoking sessions.",
+   "Step 2: the later commands take $User.Id, so the user object must be retrieved before you disable it or revoke its sessions.",
+   "Step 3: setting AccountEnabled to $false blocks every new sign-in, so no new tokens can be issued from this point on. Learn lists this as the first action.",
+   "Step 4: Revoke-MgUserSignInSession invalidates the refresh tokens and session cookies. Because the account is already disabled, the attacker cannot simply sign in again after the revoke.",
+   "Incorrect: Disable-ADAccount disables the user in on-premises Active Directory. Contoso uses cloud-only accounts, so there is no on-premises object. Use it first in a hybrid environment, where Active Directory is the source of authority.",
+   "Incorrect: Remove-MgUser deletes the account, which breaks the requirement to keep the account and mailbox for the investigation. Delete accounts during offboarding, after data has been preserved.",
+   "Incorrect: removing the license is not needed to stop access and would put the mailbox at risk, which the investigation needs. Remove licenses when you offboard a user and free the license for someone else."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/users-revoke-access"
+ },
+ {
+  "id": "2.1.1-08",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Tailspin Toys is writing a Microsoft Graph PowerShell script that creates cloud-only member users. The draft command is:\n\n```powershell\nNew-MgUser -DisplayName \"User6\" -AccountEnabled\n```\n\nThe command must succeed for a user in the verified domain tailspintoys.com, and the user will be licensed later by a different script.\n\nWhich three parameters should you add? Each correct answer presents part of the solution.",
+  "choices": [
+   "-UserPrincipalName",
+   "-PasswordProfile",
+   "-MailNickname",
+   "-UsageLocation",
+   "-GivenName",
+   "-OnPremisesImmutableId"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Creating a user through Microsoft Graph requires accountEnabled, displayName, mailNickname, passwordProfile and userPrincipalName. onPremisesImmutableId is only required when the UPN uses a federated domain. Other properties, such as usage location or names, are optional at creation and can be set later.",
+  "rationale": [
+   "Correct: userPrincipalName is required. It is the sign-in name, and its domain must be one of the verified domains of the tenant, such as tailspintoys.com.",
+   "Correct: passwordProfile is required for a cloud-only user, and its password value must be supplied at creation.",
+   "Correct: mailNickname, the mail alias, is a required property when you create a user with Microsoft Graph.",
+   "Incorrect: UsageLocation is optional at creation. It becomes necessary before a license is assigned, which the stem says another script does later. Add it here when the same script also licenses the user.",
+   "Incorrect: GivenName is an optional profile property. Add it when you want first names in the address book, but its absence does not make the command fail.",
+   "Incorrect: onPremisesImmutableId is required only when the UPN uses a federated domain. Use it when you create accounts for a federated domain or match cloud users to on-premises objects."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/user-post-users?view=graph-rest-1.0"
+ },
+ {
+  "id": "2.1.1-09",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-c",
+  "stem": "Human resources asks you to change the Department and Job title values of 50 Chicago users after a reorganization.\n\nWhat should you do?",
+  "choices": [
+   "Change the values in on-premises Active Directory and wait for the next sync",
+   "Change the values by using Update-MgUser in a Microsoft Graph PowerShell loop",
+   "Change the values by using the Microsoft Entra admin center bulk operations",
+   "Change the values on the Active users page of the Microsoft 365 admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For users whose source of authority is Windows Server Active Directory, identity, contact and job information must be changed in Active Directory, and the change reaches Microsoft Entra ID with the next synchronization cycle. Only some cloud attributes, such as usage location, can be edited in the cloud for synced users.",
+  "rationale": [
+   "Correct: the Chicago users are synchronized from on-premises Active Directory by Microsoft Entra Connect Sync, so Active Directory is their source of authority. Department and job title must be changed there and then flow to Microsoft Entra ID.",
+   "Incorrect: Update-MgUser cannot change these synchronized job properties, because they are mastered on-premises and the update is rejected. Use a Graph loop for the cloud-only Paris users or for cloud attributes such as usage location.",
+   "Incorrect: bulk operations in the Microsoft Entra admin center work on cloud-mastered objects. For synced users the job fields are read-only in the cloud. Use bulk operations for cloud-only accounts.",
+   "Incorrect: the Microsoft 365 admin center also cannot edit job information of a synced user, because the source of authority is on-premises. Use it to edit cloud-only users such as the Paris accounts."
+  ],
+  "ref": "https://learn.microsoft.com/entra/fundamentals/how-to-manage-user-profile-info"
+ },
+ {
+  "id": "2.1.2-01",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Relecloud, any user can currently invite guest users. Management wants only users who hold the User Administrator or Guest Inviter role to be able to send B2B collaboration invitations.\n\nWhich setting should you configure in External collaboration settings?",
+  "choices": [
+   "Guest invite settings",
+   "Guest user access",
+   "Collaboration restrictions",
+   "External user leave settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "External collaboration settings group four controls: who can invite (guest invite settings), what guests can see (guest user access), which domains can be invited (collaboration restrictions), and whether guests can remove themselves (leave settings). The option 'Only users assigned to specific admin roles can invite guest users' limits invitations to User Administrators and Guest Inviters.",
+  "rationale": [
+   "Correct: guest invite settings define who may invite. Selecting 'Only users assigned to specific admin roles can invite guest users' allows only users with roles such as User Administrator or Guest Inviter to invite.",
+   "Incorrect: guest user access controls what guests can see in the directory, from member-like access to only their own profile. Use it to limit directory enumeration by guests, not to control who invites them.",
+   "Incorrect: collaboration restrictions allow or deny invitations to specific domains. Use them when the question is which organizations may be invited, not which internal users may invite.",
+   "Incorrect: external user leave settings decide whether guests can leave your organization themselves. They have nothing to do with sending invitations."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/external-collaboration-settings-configure"
+ },
+ {
+  "id": "2.1.2-02",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. allows only users assigned to specific admin roles to invite guest users. A project coordinator named User1 must be able to invite partners as guests. User1 must not be able to manage other users or groups.\n\nWhich role should you assign to User1?",
+  "choices": [
+   "Guest Inviter",
+   "User Administrator",
+   "Groups Administrator",
+   "External Identity Provider Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Guest Inviter role grants only the ability to invite guests, and it works even when invitations are limited to specific admin roles. User Administrator can also invite, but it adds broad user and group management, which violates least privilege here.",
+  "rationale": [
+   "Correct: Guest Inviter is designed to let individual users invite guests without a higher privileged admin role, and it keeps working under the 'Only users assigned to specific admin roles' setting.",
+   "Incorrect: User Administrator can invite guests, but it can also create, update and delete users and manage groups, which User1 must not do. Assign it to staff who run user lifecycle tasks.",
+   "Incorrect: Groups Administrator manages groups and group settings such as expiration and naming policies. It does not grant the guest invitation permission that User1 needs and adds group management that is not wanted.",
+   "Incorrect: External Identity Provider Administrator configures identity providers and can update external collaboration settings. It changes tenant-wide configuration instead of granting a single user the right to invite."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/external-collaboration-settings-configure"
+ },
+ {
+  "id": "2.1.2-03",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank collaborates with many partner companies. Users must be able to invite guests from any organization, except that invitations to personal email domains such as gmail.com and outlook.com must fail.\n\nWhat should you configure?",
+  "choices": [
+   "Deny invitations to the specified domains under Collaboration restrictions",
+   "Allow invitations only to the specified domains under Collaboration restrictions",
+   "Block inbound B2B collaboration in the default cross-tenant access settings",
+   "Restrict guest access to their own directory objects under Guest user access"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Collaboration restrictions hold either an allow list or a block list, never both. A block list fits when you work with almost everyone and want to stop a few domains; an allow list fits when only named partners may be invited. Cross-tenant access settings only apply to other Microsoft Entra organizations, not to consumer domains.",
+  "rationale": [
+   "Correct: a block list prevents invitations to the listed domains only. Woodgrove keeps inviting any partner while invitations to gmail.com and outlook.com fail with a blocked-domain message.",
+   "Incorrect: an allow list lets invitations reach only the listed domains, so every partner not on the list would be blocked. Use it when collaboration is limited to a few known organizations.",
+   "Incorrect: cross-tenant access settings control B2B with other Microsoft Entra organizations. Blocking inbound collaboration by default would stop all partner tenants, and it does not target consumer email domains. Use it for tenant-level partner policies.",
+   "Incorrect: this guest user access level limits what guests can see after they join. It does not stop invitations from being sent to any domain."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/allow-deny-list"
+ },
+ {
+  "id": "2.1.2-04",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft Entra ID P1 licenses. A Conditional Access policy requires multifactor authentication (MFA) for all guest users. Guests from the partner tenant Fabrikam, Inc. already perform MFA in their home tenant and complain that they must register for and perform MFA again in Contoso. The MFA requirement must stay in place for all guests.\n\nWhat should you configure?",
+  "choices": [
+   "Inbound trust settings for Fabrikam in cross-tenant access settings that trust MFA from Microsoft Entra tenants",
+   "Inbound B2B direct connect settings for Fabrikam in cross-tenant access settings that allow its users and groups",
+   "An exclusion for the Fabrikam guests in the Conditional Access policy that requires MFA for guest users",
+   "Outbound B2B collaboration settings for Fabrikam in cross-tenant access settings that allow all users"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Inbound trust settings let your Conditional Access policies accept MFA, compliant device and hybrid joined device claims from another Microsoft Entra tenant. The policy still applies, but users who already did MFA at home are not challenged again. Trust settings require Microsoft Entra ID P1 in the tenant that configures them.",
+  "rationale": [
+   "Correct: with 'Trust multifactor authentication from Microsoft Entra tenants' enabled for Fabrikam, the MFA claim from the home tenant satisfies Contoso's policy, so the requirement stays and the double prompt disappears. Contoso has the P1 license this setting needs.",
+   "Incorrect: B2B direct connect lets external users access Teams shared channels without a guest account. It does not change how guest MFA claims are evaluated. Use it when both organizations want shared channels.",
+   "Incorrect: excluding the Fabrikam guests removes the MFA requirement for them, which violates the rule that MFA stays in place for all guests. Use exclusions only for accounts that must bypass a policy, such as break-glass accounts.",
+   "Incorrect: outbound settings control whether Contoso users can access resources in Fabrikam. The MFA prompts happen when Fabrikam users come into Contoso, which inbound settings govern."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/cross-tenant-access-settings-b2b-collaboration"
+ },
+ {
+  "id": "2.1.2-05",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Users at Litware, Inc. need to chat, call and set up meetings in Microsoft Teams with employees of Adatum Corporation, which also uses Teams. Adatum users must not get accounts in the Litware directory and must not access Litware teams or files.\n\nWhat should you use?",
+  "choices": [
+   "External access in Microsoft Teams",
+   "Guest access in Microsoft Teams",
+   "B2B direct connect with Teams shared channels",
+   "B2B collaboration invitations by using New-MgInvitation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Teams external access (federation) lets users find, call, chat and meet with people in other organizations that use Microsoft identities, without adding them to your directory. Guest access adds a B2B guest account that can join teams and access files. B2B direct connect is limited to shared channels.",
+  "rationale": [
+   "Correct: external access supports chat, calls and meetings with users from other organizations, and those users get no account in Litware and no access to Litware teams or files, which matches both constraints.",
+   "Incorrect: guest access creates a Microsoft Entra B2B guest account so the person can join teams and collaborate on files. Use it when partners need team membership; here the directory account and file access are not allowed.",
+   "Incorrect: B2B direct connect gives external users access to Teams shared channels with their home credentials. It requires a shared channel and gives access to its content. Use it for ongoing channel collaboration across tenants.",
+   "Incorrect: New-MgInvitation creates guest accounts in the Litware directory, which the stem forbids. Use it to bulk invite guests who need access to your resources."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/communicate-with-users-from-other-organizations"
+ },
+ {
+  "id": "2.1.2-06",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A guest user at Tailspin Toys redeemed an invitation two years ago with the address user7@fabrikam.net. The person moved to a new company and now has the address user7@wingtiptoys.com. The guest must keep the same object ID, group memberships and app assignments, and must sign in with the new address. You have added the new address to the mail property of the guest account.\n\nWhat should you do next?",
+  "choices": [
+   "Run New-MgInvitation for the new address with -ResetRedemption and -InvitedUser set to the existing guest",
+   "Delete the existing guest account, and then run New-MgInvitation for the new address",
+   "Run Update-MgUser to replace the OtherMails value of the guest with the new address",
+   "Run New-MgInvitation for the new address with -InvitedUserType Member and -SendInvitationMessage"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Resetting the redemption status sends a new invitation to an existing guest object. When the guest redeems it with the new email address, the object ID, group memberships and app assignments stay the same, and only the sign-in identity changes. Before this feature, admins had to delete and reinvite the guest.",
+  "rationale": [
+   "Correct: -ResetRedemption with -InvitedUser targets the existing object, so the guest redeems again with the new address while keeping its object ID, memberships and app assignments.",
+   "Incorrect: deleting and reinviting creates a new object with a new ID and no group memberships or app assignments. This was the old workaround; use it only when the old access should not carry over.",
+   "Incorrect: changing OtherMails records an extra address but does not change the identity the guest redeemed with, so the person still cannot sign in with the new account. Updating mail is a preparation step for the reset, not the reset itself.",
+   "Incorrect: without -ResetRedemption and -InvitedUser this creates a second account for the new address, here even as a member, and the existing memberships stay on the old object. Use -InvitedUserType Member when an external person should get member-level defaults."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/reset-redemption-status"
+ },
+ {
+  "id": "2.1.2-07",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Relecloud must invite 80 external consultants listed in C:\\data\\invitations.csv (columns Name and InvitedUserEmailAddress) as B2B guests, send each of them an invitation email, and add every new guest to the existing security group Project Falcon. Then you must confirm the group membership.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"User.Invite.All\",\"GroupMember.ReadWrite.All\"`",
+   "`$group = Get-MgGroup -Filter \"displayName eq 'Project Falcon'\"`",
+   "For each CSV row: `$inv = New-MgInvitation -InvitedUserEmailAddress $_.InvitedUserEmailAddress -InvitedUserDisplayName $_.Name -InviteRedirectUrl \"https://myapplications.microsoft.com\" -SendInvitationMessage` followed by `New-MgGroupMember -GroupId $group.Id -DirectoryObjectId $inv.InvitedUser.Id`",
+   "`Get-MgGroupMember -GroupId $group.Id -All`",
+   "`Connect-AzureAD`",
+   "For each CSV row: `New-MailContact -Name $_.Name -ExternalEmailAddress $_.InvitedUserEmailAddress`",
+   "For each CSV row: `New-MgUser -DisplayName $_.Name -UserPrincipalName $_.InvitedUserEmailAddress -AccountEnabled -MailNickname $_.Name -PasswordProfile $pp`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Bulk guest invitations with PowerShell loop over a CSV file and call New-MgInvitation for each row. The invitation object returns the created guest user, whose ID you can add to a group in the same loop. Lookups that later commands depend on, such as the group ID, must run before the loop.",
+  "rationale": [
+   "Step 1: User.Invite.All allows sending invitations and GroupMember.ReadWrite.All allows adding members; every later Graph cmdlet needs this session.",
+   "Step 2: the loop uses $group.Id, so the existing group must be looked up before any guest is added to it.",
+   "Step 3: New-MgInvitation creates the guest and sends the email because of -SendInvitationMessage; the returned invitation contains the new guest user, whose ID New-MgGroupMember adds to Project Falcon.",
+   "Step 4: listing the group members after the loop confirms that all invited guests were added.",
+   "Incorrect: Connect-AzureAD belongs to the retired AzureAD module. Use Connect-MgGraph from Microsoft Graph PowerShell instead.",
+   "Incorrect: New-MailContact creates an Exchange mail contact with no sign-in, so the consultants could not access anything. Use mail contacts when external people only need to appear in the address book and receive email.",
+   "Incorrect: New-MgUser creates internal member accounts with Relecloud passwords, and an external email domain is not a verified domain for the UPN. Use it for employees, not for B2B guests who sign in with their home identity."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/bulk-invite-powershell"
+ },
+ {
+  "id": "2.1.2-08",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Adatum Corporation must meet four external access requirements in the Microsoft Entra admin center. Adatum has Microsoft Entra ID P1 licenses, and Woodgrove Bank has enabled outbound B2B direct connect toward Adatum.\n\nWhich setting should you use for each requirement? To answer, drag the appropriate settings to the correct requirements. Each setting may be used once, more than once, or not at all.",
+  "choices": [
+   "Guest invite settings",
+   "Guest user access",
+   "Collaboration restrictions",
+   "Cross-tenant access settings: inbound trust settings",
+   "Cross-tenant access settings: inbound B2B direct connect",
+   "External user leave settings"
+  ],
+  "targets": [
+   "Guests can see only their own profile and cannot list users, groups or group memberships",
+   "Invitations can be sent only to users in the fabrikam.com domain",
+   "Conditional Access accepts compliant device claims from the Fabrikam tenant",
+   "Woodgrove Bank users can join Teams shared channels without guest accounts"
+  ],
+  "answer": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "rationale": [
+   "Guest user access set to 'restricted to properties and memberships of their own directory objects' is the most restrictive level, so guests see only their own profile.",
+   "Collaboration restrictions with 'Allow invitations only to the specified domains' make fabrikam.com the only domain that can receive invitations.",
+   "Inbound trust settings include 'Trust compliant devices', which lets Conditional Access accept the device compliance claim from Fabrikam. Trust settings need Microsoft Entra ID P1, which Adatum has.",
+   "B2B direct connect lets users from another Microsoft Entra tenant use Teams shared channels with home credentials. It needs inbound settings in Adatum and outbound settings in Woodgrove, which Woodgrove already has."
+  ],
+  "notes": [
+   "Guest invite settings decide who in your tenant can invite guests, from anyone to no one. Use them to limit inviters, for example to admin roles and the Guest Inviter role.",
+   "Guest user access sets what guests can see in the directory, from the same as members to only their own objects. Use it to stop guests from enumerating the directory.",
+   "Collaboration restrictions hold one allow list or one block list of domains for invitations. Use them to control which organizations can be invited.",
+   "Inbound trust settings let Conditional Access trust MFA, compliant device and hybrid joined device claims from another Microsoft Entra tenant. Use them to avoid repeated MFA or device checks for partners.",
+   "Inbound B2B direct connect settings allow users and groups of another tenant to reach your Teams shared channels without guest accounts. Both tenants must enable it.",
+   "External user leave settings decide whether guests can remove themselves from your organization. They need privacy information configured in the tenant and do not affect access."
+  ],
+  "explanation": "External collaboration settings govern guest invitations and what guests can see, while cross-tenant access settings govern relationships with other Microsoft Entra tenants: inbound and outbound access, trust of MFA and device claims, and B2B direct connect for shared channels.",
+  "ref": "https://learn.microsoft.com/entra/external-id/external-collaboration-settings-configure"
+ },
+ {
+  "id": "2.1.2-09",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-c",
+  "stem": "You need to meet the guest invitation and partner sign-in requirements.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Configure Collaboration restrictions to allow invitations only to fabrikam.com and tailspintoys.com",
+   "Enable the inbound trust setting for MFA from Microsoft Entra tenants for the Fabrikam organization",
+   "Configure Collaboration restrictions to deny invitations to gmail.com and outlook.com",
+   "Enable inbound B2B direct connect for all users and groups of the Fabrikam organization",
+   "Exclude guest users from the Conditional Access policy that requires MFA"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Domain-level control of who can be invited lives in collaboration restrictions, which support either an allow list or a block list. Avoiding double MFA for users of another Microsoft Entra tenant, while keeping the MFA policy, is done with inbound trust settings in cross-tenant access settings, which Litware's P1 licenses support.",
+  "rationale": [
+   "Correct: the requirement names exactly two partner domains that may receive invitations, which is an allow list. Every other domain, including personal email providers, is blocked automatically.",
+   "Correct: Fabrikam uses its own Microsoft Entra tenant and performs MFA there. Trusting MFA claims from Fabrikam keeps the Litware MFA policy while preventing a second MFA prompt.",
+   "Incorrect: a block list for two consumer domains still allows invitations to every other organization, which breaks the two-domain rule. Use a block list when you want to stop only a few known domains.",
+   "Incorrect: B2B direct connect is for Teams shared channels without guest accounts. The case says Fabrikam engineers are invited as guests, and direct connect does not change how guest MFA is evaluated.",
+   "Incorrect: excluding guests removes MFA for all guests, which violates the requirement that every guest is protected by MFA. Use exclusions only for special accounts such as emergency access accounts."
+  ],
+  "ref": "https://learn.microsoft.com/entra/external-id/cross-tenant-access-overview"
+ },
+ {
+  "id": "2.1.3-01",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "The marketing team at Fabrikam, Inc. needs one group that gives its members a shared inbox, a shared calendar, a SharePoint site for files and a team in Microsoft Teams. Members will be added by the group owner.\n\nWhich type of group should you create?",
+  "choices": [
+   "Microsoft 365 group",
+   "Distribution list",
+   "Mail-enabled security group",
+   "Security group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 groups are the collaboration group type: each group gets a group email address and a shared workspace with conversations, calendar, files in SharePoint and Planner, and it can be connected to Teams. Distribution lists only deliver email, and security groups only grant access, optionally with an email address.",
+  "rationale": [
+   "Correct: a Microsoft 365 group provides the shared mailbox and calendar, a SharePoint site and can be connected to a team, which covers every requirement.",
+   "Incorrect: a distribution list sends email to all members but has no shared inbox, calendar, files or team. Use it for announcements to a fixed audience.",
+   "Incorrect: a mail-enabled security group delivers email and can be used to assign permissions, but it has no shared workspace or team. Use it when one group must both receive mail and grant access.",
+   "Incorrect: a security group grants access to resources and apps but has no email address or workspace. Use it for permissions, Conditional Access scoping or group-based licensing."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/create-groups/compare-groups?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.3-02",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank plans 20 dynamic membership groups. In total, 1,200 unique users will be members of one or more of those groups.\n\nWhich licensing requirement should you plan for?",
+  "choices": [
+   "At least 1,200 Microsoft Entra ID P1 licenses in the tenant",
+   "At least 1,200 Microsoft Entra ID P2 licenses in the tenant",
+   "One Microsoft Entra ID P1 license for each of the 20 groups",
+   "One Microsoft Entra ID P1 license for the admin who creates the groups"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Dynamic membership groups need a Microsoft Entra ID P1 license for each unique user who is a member of one or more dynamic groups. The licenses do not have to be assigned to those users, but the tenant must own enough of them. Device members need no license.",
+  "rationale": [
+   "Correct: the requirement is counted per unique user across all dynamic groups, so 1,200 unique members need at least 1,200 P1 licenses in the tenant, assigned or not.",
+   "Incorrect: P2 also includes the feature, but P1 is the minimum edition for dynamic membership. Plan for P2 when you also need features like PIM or ID Protection.",
+   "Incorrect: licensing is counted per unique user, not per group. Twenty licenses would cover only 20 users.",
+   "Incorrect: one license for the creator does not cover the members. The per-admin model applies to administrative unit administrators, not to dynamic group membership."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership"
+ },
+ {
+  "id": "2.1.3-03",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud users create many Microsoft 365 groups for short projects, and unused groups pile up. Groups must be cleaned up automatically after 180 days unless they are still in use or their owners renew them.\n\nWhat should you configure?",
+  "choices": [
+   "A Microsoft 365 group expiration policy",
+   "A Microsoft 365 group naming policy",
+   "An access review of group memberships",
+   "A restriction on who can create Microsoft 365 groups"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The expiration policy sets a group lifetime. Groups with user activity are renewed automatically, owners get renewal notices 30, 15 and 1 days before expiration, and groups that are not renewed are deleted and stay restorable for 30 days. Only one expiration policy exists per tenant.",
+  "rationale": [
+   "Correct: an expiration policy with a 180-day lifetime deletes groups that are neither renewed by owners nor renewed automatically through activity, which is exactly the clean-up behavior required.",
+   "Incorrect: a naming policy enforces prefixes, suffixes and blocked words in group names. It controls how groups are named, not how long they live.",
+   "Incorrect: an access review asks reviewers to confirm who should stay a member. It cleans up memberships, not the groups themselves. Use it to recertify access to sensitive groups.",
+   "Incorrect: limiting group creation reduces new groups but does nothing about the existing unused ones. Use it when only approved people should create groups."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/groups-lifecycle"
+ },
+ {
+  "id": "2.1.3-04",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A Microsoft 365 group at Tailspin Toys that backs a team in Microsoft Teams was deleted 12 days ago because its owner did not renew it. The team, its conversations and its SharePoint files must come back with the original group ID.\n\nWhat should you do?",
+  "choices": [
+   "Restore the group from Deleted groups in the Microsoft Entra admin center",
+   "Create a new group with the same name and connect a new team to it",
+   "Run Restore-SPODeletedSite for the SharePoint site of the group",
+   "Change the expiration policy so that the group lifetime is longer"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Deleted Microsoft 365 groups are soft-deleted for 30 days, and that period cannot be changed. Restoring the group brings back the same object with its connected services; restoring content such as SharePoint sites can take up to 24 hours.",
+  "rationale": [
+   "Correct: the group is inside the 30-day restore window. Restoring it brings back the same object ID and the associated team, conversations and files.",
+   "Incorrect: a new group gets a new ID and an empty workspace, so conversations and files are not recovered. Create a new group only after the 30-day window has expired.",
+   "Incorrect: restoring only the site leaves the group, mailbox and team deleted. The site is restored as part of the group restore. Use Restore-SPODeletedSite for standalone sites or OneDrive accounts.",
+   "Incorrect: a longer lifetime prevents future expirations but does not restore a group that is already deleted. Adjust the policy after the restore if groups expire too soon."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/groups-lifecycle"
+ },
+ {
+  "id": "2.1.3-05",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. wants to assign the Helpdesk Administrator role to a group instead of to individual users. The security team suggests that membership be calculated automatically from the jobTitle attribute. You must implement a supported configuration, even if membership must then be maintained by the group owners.\n\nWhat should you do?",
+  "choices": [
+   "Create a new security group with assigned membership and isAssignableToRole set to true",
+   "Create a dynamic security group with a jobTitle rule and isAssignableToRole set to true",
+   "Create a dynamic security group with a jobTitle rule, and then set isAssignableToRole later",
+   "Create a dynamic Microsoft 365 group and assign the role to it in Roles and admins"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Only groups created with isAssignableToRole = true can receive Microsoft Entra roles, the property cannot be changed later, and role-assignable groups must use assigned membership. Dynamic membership would let anyone who can change the attribute grant themselves the role, so it is blocked.",
+  "rationale": [
+   "Correct: an assigned-membership group created as role-assignable is the supported way to give the role to a group. Owners can be added to delegate membership management.",
+   "Incorrect: role-assignable groups cannot use dynamic membership, because automatic population could add an unwanted account to an admin role. The creation request fails.",
+   "Incorrect: isAssignableToRole can only be set when the group is created and is immutable afterwards, so an existing group can never become role-assignable.",
+   "Incorrect: only role-assignable groups appear when you add a group to a role, and a dynamic group cannot be role-assignable. Use dynamic Microsoft 365 groups for collaboration teams, not for admin roles."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/groups-concept"
+ },
+ {
+  "id": "2.1.3-06",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. needs one email address for a steering committee. The members are 25 internal users and 12 external advisors who exist as mail contacts in Exchange Online. The committee needs no shared files, calendar or team, and members do not need permissions on any resource.\n\nWhich type of group should you create?",
+  "choices": [
+   "Distribution list",
+   "Microsoft 365 group",
+   "Security group",
+   "Mail-enabled security group that is used to assign permissions"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Distribution lists exist to deliver email to a fixed set of recipients, and mail contacts can be members of them. Microsoft 365 groups cannot contain contacts; external people join them as guests. A plain security group has no email address at all.",
+  "rationale": [
+   "Correct: a distribution list gives one address that delivers to all members, and mail contacts can be added as members, which covers the external advisors without workspaces or permissions.",
+   "Incorrect: organizational contacts cannot be members of a Microsoft 365 group, and the shared workspace is not needed. Use a Microsoft 365 group when external people are invited as guests to collaborate.",
+   "Incorrect: a security group is not mail-enabled, so it cannot provide the committee email address. Use it to grant access to apps and resources.",
+   "Incorrect: a mail-enabled security group also delivers email, but its purpose is to combine mail with permissions, which the committee does not need. Use it when the same members must get access rights."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/resources/groups-overview?view=graph-rest-1.0"
+ },
+ {
+  "id": "2.1.3-07",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Adatum Corporation needs a Microsoft 365 group named Project Falcon with the alias projectfalcon. The members are listed by object ID in C:\\temp\\members.csv (column memberObjectId). After you add the members, you must confirm the membership. You will use Microsoft Graph PowerShell.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Group.ReadWrite.All\",\"GroupMember.ReadWrite.All\"`",
+   "`$group = New-MgGroup -DisplayName \"Project Falcon\" -MailNickname \"projectfalcon\" -GroupTypes \"Unified\" -MailEnabled:$true -SecurityEnabled:$false`",
+   "`Import-Csv -Path \"C:\\temp\\members.csv\" | ForEach-Object { New-MgGroupMember -GroupId $group.Id -DirectoryObjectId $_.memberObjectId }`",
+   "`Get-MgGroupMember -GroupId $group.Id -All`",
+   "`$group = New-MgGroup -DisplayName \"Project Falcon\" -MailNickname \"projectfalcon\" -MailEnabled:$false -SecurityEnabled`",
+   "`Import-Csv -Path \"C:\\temp\\members.csv\" | ForEach-Object { Add-DistributionGroupMember -Identity \"Project Falcon\" -Member $_.memberObjectId }`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A Microsoft 365 group is created in Microsoft Graph with GroupTypes Unified and mail enabled. New-MgGroupMember adds members by directory object ID, which needs the ID of the group that New-MgGroup returns, and Get-MgGroupMember lists the result.",
+  "rationale": [
+   "Step 1: the session needs Group.ReadWrite.All to create the group and GroupMember.ReadWrite.All to add members.",
+   "Step 2: GroupTypes Unified with mail enabled creates a Microsoft 365 group, and $group holds the ID that the next step uses.",
+   "Step 3: each CSV row provides a member object ID, and New-MgGroupMember adds it to the group created in step 2.",
+   "Step 4: Get-MgGroupMember with -All lists every member, which confirms that the import worked.",
+   "Incorrect: without GroupTypes Unified and with mail disabled, this creates a security group, not a Microsoft 365 group. Use it for groups that only grant access.",
+   "Incorrect: Add-DistributionGroupMember is an Exchange Online cmdlet for distribution and mail-enabled security groups, not for Microsoft 365 groups created in Graph. Use it when you manage Exchange distribution lists."
+  ],
+  "ref": "https://learn.microsoft.com/graph/api/resources/groups-overview?view=graph-rest-1.0"
+ },
+ {
+  "id": "2.1.3-08",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys has four group requirements.\n\nWhich type of group should you use for each requirement? To answer, drag the appropriate group types to the correct requirements. Each group type may be used once, more than once, or not at all.",
+  "choices": [
+   "Microsoft 365 group",
+   "Security group",
+   "Mail-enabled security group",
+   "Distribution list",
+   "Dynamic distribution group"
+  ],
+  "targets": [
+   "Grant a set of users access to an enterprise app and a Conditional Access policy; no email is needed",
+   "Provide one email address to a team and also grant its members permissions to a shared mailbox",
+   "Give a project team a shared calendar, shared files and a team in Microsoft Teams",
+   "Email all mailboxes in the Paris office, with membership calculated by Exchange recipient filters"
+  ],
+  "answer": [
+   1,
+   2,
+   0,
+   4
+  ],
+  "rationale": [
+   "A security group grants access to apps and is used to scope policies such as Conditional Access, and no email address is required.",
+   "A mail-enabled security group is both a distribution point for email and a security principal, so the same group can receive mail and be granted permissions.",
+   "A Microsoft 365 group provides the shared calendar, files and can be connected to a team in Microsoft Teams.",
+   "A dynamic distribution group calculates its members from recipient filters and conditions in Exchange Online, such as the office of each mailbox."
+  ],
+  "notes": [
+   "Microsoft 365 group: collaboration group with a group mailbox, calendar, SharePoint site and optional team. Use it for teams that work together.",
+   "Security group: grants access to resources and apps and scopes policies; not mail-enabled. Use it for permissions and licensing.",
+   "Mail-enabled security group: delivers email and is a security principal. Use it when the same members must receive mail and get permissions.",
+   "Distribution list: delivers email to a fixed list of members, including mail contacts. Use it for announcements when no permissions or workspace are needed.",
+   "Dynamic distribution group: Exchange recalculates membership from recipient filters each time. Use it for mailing lists that follow attributes like office or department."
+  ],
+  "explanation": "Choose a group type by its purpose: Microsoft 365 groups for collaboration, security groups for access, mail-enabled security groups for access plus email, distribution lists for email to fixed members, and dynamic distribution groups for email to filter-based recipients.",
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/recipients-in-exchange-online"
+ },
+ {
+  "id": "2.1.3-09",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "case": "C-c",
+  "stem": "You need to create the department groups.\n\nWhat should you create for each department?",
+  "choices": [
+   "A Microsoft 365 group with a dynamic membership rule on the department attribute",
+   "A security group with a dynamic membership rule on the department attribute",
+   "A dynamic distribution group filtered on the department attribute",
+   "A Microsoft 365 group with assigned membership managed by the department manager"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft 365 groups can use dynamic membership in Microsoft Entra ID, so collaboration features and automatic membership can be combined. Dynamic membership needs Microsoft Entra ID P1 for each unique member, which Microsoft 365 E5 includes. Rules can only define members, not owners.",
+  "rationale": [
+   "Correct: each department needs a team, a shared mailbox and a calendar, which only a Microsoft 365 group provides, and a dynamic rule on the department attribute adds and removes members automatically when a user changes department. The E5 licenses include the Microsoft Entra ID P1 that dynamic membership requires.",
+   "Incorrect: a dynamic security group keeps membership current, but it has no mailbox, calendar or team. Use it to grant access to apps or resources by attribute.",
+   "Incorrect: a dynamic distribution group only delivers email and cannot be connected to a team in Microsoft Teams. Use it for mailing lists based on recipient filters.",
+   "Incorrect: assigned membership depends on managers adding and removing people, which breaks the requirement that membership updates automatically when users change department."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/groups-dynamic-membership"
+ },
+ {
+  "id": "2.1.4-01",
+  "obj": "2.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Microsoft Entra Privileged Identity Management (PIM). Auditors require that every activation of the Exchange Administrator role records the number of a change request from the service desk system in a dedicated field. Activation must not wait for anyone to approve it.\n\nWhich role setting should you configure for the Exchange Administrator role?",
+  "choices": [
+   "Require ticket information on activation",
+   "Require justification on activation",
+   "Require approval to activate",
+   "Require justification on active assignment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "PIM role settings are defined per role and control activation: maximum duration, MFA or Conditional Access authentication context, justification, ticket information and approval. Ticket information is an information-only field, and PIM does not check it against the ticketing system. Settings that end in 'on active assignment' apply when an admin creates an active assignment, not when a user activates an eligible one.",
+  "rationale": [
+   "Correct: Require ticket information on activation makes eligible users enter a support ticket number when they activate the role. It is a dedicated field and needs no approver, so activation is not delayed.",
+   "Incorrect: Require justification on activation asks for a free-text business justification, not a dedicated ticket number field, so the audit requirement is not met. Use it when users must explain why they need the role each time.",
+   "Incorrect: Require approval to activate holds each activation until an approver accepts it, which the stem forbids. Use it when a second person must confirm every activation of a sensitive role.",
+   "Incorrect: Require justification on active assignment applies when an administrator creates an active assignment, not when an eligible user activates the role. Use it to document why someone receives standing access."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings"
+ },
+ {
+  "id": "2.1.4-02",
+  "obj": "2.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has Microsoft 365 E3 licenses for all users. The company wants admins to receive eligible role assignments that they activate just in time by using Microsoft Entra Privileged Identity Management (PIM).\n\nWhich license should Relecloud add for the users who receive eligible assignments?",
+  "choices": [
+   "Microsoft Entra ID P2",
+   "Microsoft Entra ID P1",
+   "Microsoft Entra ID Free",
+   "Microsoft 365 E3"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "PIM requires Microsoft Entra ID P2 or Microsoft Entra ID Governance for users with eligible or time-bound assignments, approvers and access reviewers. Microsoft 365 E3 includes only Microsoft Entra ID P1; Microsoft 365 E5 includes P2.",
+  "rationale": [
+   "Correct: Microsoft Entra ID P2 (or Microsoft Entra ID Governance) is required for users with eligible assignments in PIM. Relecloud's E3 licenses do not include it.",
+   "Incorrect: P1 is already part of Microsoft 365 E3 and covers features like Conditional Access and dynamic groups, but not PIM. Choose P1 for those features.",
+   "Incorrect: the Free edition supports permanent built-in role assignments only. Eligible, just-in-time assignments are not available.",
+   "Incorrect: Relecloud already has E3, and E3 includes only P1. An upgrade to E5 or a P2 add-on would be needed."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/licensing-fundamentals"
+ },
+ {
+  "id": "2.1.4-03",
+  "obj": "2.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Tailspin Toys, an admin named User2 must create and manage all groups in the tenant and configure the group naming and expiration policies. User2 must not manage user accounts.\n\nWhich role should you assign to User2?",
+  "choices": [
+   "Groups Administrator",
+   "User Administrator",
+   "Exchange Administrator",
+   "SharePoint Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Groups Administrator can create and manage groups and group settings such as naming and expiration policies across workloads. User Administrator can manage groups too, but it also manages users, so it is broader than needed.",
+  "rationale": [
+   "Correct: Groups Administrator manages all groups and their settings, including naming and expiration policies, without permissions on user accounts.",
+   "Incorrect: User Administrator can manage groups, but it also creates, updates and deletes users, which User2 must not do. Use it for staff who own the full user lifecycle.",
+   "Incorrect: Exchange Administrator manages mailboxes and can manage Microsoft 365 groups, but it does not cover security groups or the tenant-wide naming policy in Microsoft Entra ID. Use it for Exchange Online administration.",
+   "Incorrect: SharePoint Administrator manages sites and can manage Microsoft 365 groups linked to them, but not all group types or the group policies. Use it for SharePoint and OneDrive settings."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference"
+ },
+ {
+  "id": "2.1.4-04",
+  "obj": "2.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank uses Microsoft Entra Privileged Identity Management (PIM). When an eligible user activates the Exchange Administrator role, a member of the security team must approve the request before the role becomes active.\n\nWhich role setting should you configure for the Exchange Administrator role?",
+  "choices": [
+   "Require approval to activate",
+   "Require justification on activation",
+   "On activation, require multifactor authentication",
+   "Expire eligible assignment after"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "PIM role settings are defined per role. Require approval to activate holds the activation until an approver accepts it; justification and ticket fields only collect information, and MFA checks the identity of the requester. If no approvers are selected, Privileged Role Administrators and Global Administrators become the default approvers.",
+  "rationale": [
+   "Correct: with approval required, the activation stays pending until a selected approver, here a security team member, approves it.",
+   "Incorrect: justification makes the user type a business reason, but the role activates without anyone approving it. Use it for an audit trail.",
+   "Incorrect: MFA on activation verifies the identity of the user, but nobody else approves the request. Use it to protect activations against stolen passwords.",
+   "Incorrect: this setting limits how long an eligible assignment exists before it expires. It does not control the activation itself."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings"
+ },
+ {
+  "id": "2.1.4-05",
+  "obj": "2.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Microsoft Entra Privileged Identity Management (PIM). Eligible SharePoint Administrators must lose the role automatically no later than eight hours after each activation. Their eligible assignments must stay valid for one year.\n\nWhich role setting should you change?",
+  "choices": [
+   "Activation maximum duration",
+   "Expire active assignment after",
+   "Expire eligible assignment after",
+   "Require ticket information on activation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "PIM separates the lifetime of an assignment from the lifetime of an activation. Activation maximum duration (1 to 24 hours) limits how long each activation lasts, while the assignment duration settings define how long eligible or active assignments exist.",
+  "rationale": [
+   "Correct: setting Activation maximum duration to eight hours ends every activation after at most eight hours, while the one-year eligible assignment stays untouched.",
+   "Incorrect: this setting limits active (standing) assignments that an admin creates, not activations of eligible assignments. Use it to time-box permanent-style assignments.",
+   "Incorrect: this setting limits how long the eligibility itself exists. Changing it would affect the one-year assignment, not the length of each activation.",
+   "Incorrect: ticket information is an information-only field that users fill in at activation. It does not limit how long the role stays active."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings"
+ },
+ {
+  "id": "2.1.4-06",
+  "obj": "2.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Adatum Corporation, a security engineer named User3 must manage Microsoft Entra Privileged Identity Management (PIM) role settings and create eligible assignments for Microsoft Entra roles. User3 must not be a Global Administrator.\n\nWhich role should you assign to User3?",
+  "choices": [
+   "Privileged Role Administrator",
+   "Privileged Authentication Administrator",
+   "Security Administrator",
+   "User Administrator"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Managing PIM role settings and role assignments for Microsoft Entra roles requires at least Privileged Role Administrator. The similarly named Privileged Authentication Administrator manages authentication methods, not role assignments.",
+  "rationale": [
+   "Correct: Privileged Role Administrator can manage all aspects of PIM for Microsoft Entra roles, including role settings and eligible assignments, without being Global Administrator.",
+   "Incorrect: Privileged Authentication Administrator can set or reset authentication methods for any user, including admins. It cannot assign roles. Use it to recover an admin's sign-in methods.",
+   "Incorrect: Security Administrator manages security features and policies, such as Conditional Access and Defender settings, but not PIM role settings for directory roles.",
+   "Incorrect: User Administrator manages users and groups but cannot assign admin roles or change PIM settings."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings"
+ },
+ {
+  "id": "2.1.4-07",
+  "obj": "2.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. uses Microsoft Entra Privileged Identity Management (PIM). Admins sign in to their devices with Windows Hello for Business. When they activate the Global Reader role, they must authenticate again with passwordless sign-in in Microsoft Authenticator, even if they already performed MFA in the current session. A Conditional Access policy with an authentication strength and sign-in frequency set to Every time already exists for an authentication context.\n\nWhich role setting should you configure?",
+  "choices": [
+   "On activation, require Microsoft Entra Conditional Access authentication context",
+   "On activation, require multifactor authentication",
+   "Require approval to activate, with the security team as approvers",
+   "Require multifactor authentication on active assignment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The plain MFA setting can be satisfied by strong credentials already in the session, so it does not guarantee a new, specific method. Linking activation to a Conditional Access authentication context lets a policy enforce an authentication strength and, with sign-in frequency Every time, reauthentication at each activation.",
+  "rationale": [
+   "Correct: requiring the authentication context sends activation through the existing Conditional Access policy, which enforces passwordless Authenticator through the authentication strength and forces reauthentication with sign-in frequency Every time.",
+   "Incorrect: users might not be prompted when they already used strong credentials such as Windows Hello earlier in the session, and the setting cannot require a specific method. Use it for basic MFA on activation.",
+   "Incorrect: approval adds a second person to the process but does not make the requester authenticate again with a specific method.",
+   "Incorrect: this setting applies when an admin creates an active assignment, not when an eligible user activates the role."
+  ],
+  "ref": "https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings"
+ },
+ {
+  "id": "2.1.4-08",
+  "obj": "2.1.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fabrikam, Inc. uses Microsoft Entra ID P2. You must use Microsoft Graph PowerShell to make User4 eligible for the User Administrator role at tenant scope for 180 days. User4 will then activate the role for one hour to test the assignment.\n\nWhich five actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"RoleManagement.ReadWrite.Directory\"`",
+   "Retrieve `$user` with `Get-MgUser` and `$role` with `Get-MgRoleManagementDirectoryRoleDefinition -Filter \"displayName eq 'User Administrator'\"`",
+   "Build `$params` with `Action = \"AdminAssign\"`, `PrincipalId = $user.Id`, `RoleDefinitionId = $role.Id`, `DirectoryScopeId = \"/\"` and an `AfterDuration` expiration of `P180D`",
+   "`New-MgRoleManagementDirectoryRoleEligibilityScheduleRequest -BodyParameter $params`",
+   "As User4, run `New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest` with `Action = \"SelfActivate\"` and a duration of `PT1H`",
+   "`New-MgRoleManagementDirectoryRoleAssignment -DirectoryScopeId '/' -PrincipalId $user.Id -RoleDefinitionId $role.Id`",
+   "`New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.Id -BodyParameter $DirObject`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "In PIM, eligibility is created with a role eligibility schedule request (action AdminAssign) and activation with a role assignment schedule request (action SelfActivate) by the eligible user. Direct role assignment cmdlets create standing active assignments, which bypass just-in-time access.",
+  "rationale": [
+   "Step 1: RoleManagement.ReadWrite.Directory is the scope needed to create PIM role assignment and eligibility requests.",
+   "Step 2: the request needs the object ID of User4 and the role definition ID, so both are looked up first.",
+   "Step 3: AdminAssign creates an eligibility, DirectoryScopeId / means tenant scope, and AfterDuration P180D ends the eligibility after 180 days.",
+   "Step 4: the eligibility schedule request submits the parameters and creates the eligible assignment for User4.",
+   "Step 5: once eligible, User4 activates the role by submitting an assignment schedule request with SelfActivate for one hour.",
+   "Incorrect: New-MgRoleManagementDirectoryRoleAssignment creates a permanent active assignment, so User4 would hold the role all the time instead of being eligible. Use it when a standing assignment is acceptable.",
+   "Incorrect: New-MgDirectoryRoleMemberByRef adds a member to an activated directory role, which is also a standing active assignment. It is used for simple role membership, for example the Guest Inviter role."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/microsoftgraph/how-to-assign-microsoft-entra-roles-in-pim?view=graph-powershell-1.0"
+ },
+ {
+  "id": "2.1.4-09",
+  "obj": "2.1.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys wants to assign the Helpdesk Administrator role at tenant scope to a new group named Helpdesk Admins by using Microsoft Graph PowerShell. The group owners will add members later. You are a Privileged Role Administrator.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"Group.ReadWrite.All\",\"RoleManagement.ReadWrite.Directory\"`",
+   "`$group = New-MgGroup -DisplayName \"Helpdesk Admins\" -MailEnabled:$false -MailNickname \"helpdeskadmins\" -SecurityEnabled -IsAssignableToRole:$true`",
+   "`New-MgRoleManagementDirectoryRoleAssignment -DirectoryScopeId '/' -PrincipalId $group.Id -RoleDefinitionId (Get-MgRoleManagementDirectoryRoleDefinition -Filter \"displayName eq 'Helpdesk Administrator'\").Id`",
+   "`Update-MgGroup -GroupId $group.Id -IsAssignableToRole:$true`",
+   "`$group = New-MgGroup -DisplayName \"Helpdesk Admins\" -MailEnabled:$false -MailNickname \"helpdeskadmins\" -SecurityEnabled -GroupTypes \"DynamicMembership\" -MembershipRule '(user.department -eq \"Helpdesk\")' -MembershipRuleProcessingState \"On\" -IsAssignableToRole:$true`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A role can only be assigned to a group that was created with isAssignableToRole = true; the property is immutable and requires assigned membership. The role assignment needs the group ID, so the group must exist first.",
+  "rationale": [
+   "Step 1: creating a role-assignable group and assigning a role both require the connected session with these scopes and the Privileged Role Administrator role.",
+   "Step 2: IsAssignableToRole must be set when the group is created, with assigned membership and SecurityEnabled true.",
+   "Step 3: the role assignment at scope / uses the group ID from step 2 and the role definition ID of Helpdesk Administrator.",
+   "Incorrect: isAssignableToRole cannot be set or changed on an existing group, so this update fails. Set the property at creation instead.",
+   "Incorrect: role-assignable groups cannot have dynamic membership, so this creation request is rejected. Use dynamic rules for groups that do not receive admin roles."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/groups-create-eligible"
+ },
+ {
+  "id": "2.1.4-10",
+  "obj": "2.1.4",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Relecloud must delegate four tasks by using the least privileged built-in Microsoft Entra role for each.\n\nWhich role should you assign for each task? To answer, drag the appropriate roles to the correct tasks. Each role may be used once, more than once, or not at all.",
+  "choices": [
+   "Helpdesk Administrator",
+   "User Administrator",
+   "License Administrator",
+   "Groups Administrator",
+   "Guest Inviter",
+   "Privileged Role Administrator"
+  ],
+  "targets": [
+   "Reset passwords of non-admin users and invalidate their refresh tokens",
+   "Configure the Microsoft 365 group expiration and naming policies",
+   "Assign product licenses to users and update their usage location",
+   "Create eligible role assignments in Privileged Identity Management"
+  ],
+  "answer": [
+   0,
+   3,
+   2,
+   5
+  ],
+  "rationale": [
+   "Helpdesk Administrator can change passwords and invalidate refresh tokens for non-admins and some limited admins, without broader user management.",
+   "Groups Administrator manages groups and group settings such as naming and expiration policies.",
+   "License Administrator manages license assignments and usage location and nothing else.",
+   "Privileged Role Administrator manages role assignments and every aspect of PIM for Microsoft Entra roles."
+  ],
+  "notes": [
+   "Helpdesk Administrator: resets passwords and invalidates refresh tokens for non-admin users. Use it for help desk staff.",
+   "User Administrator: creates and manages users and groups, resets passwords and assigns licenses. Use it for full user lifecycle work; it is broader than each single task here.",
+   "License Administrator: assigns and removes licenses on users and groups and updates usage location. Use it for license management only.",
+   "Groups Administrator: creates and manages groups and their settings, including naming and expiration policies.",
+   "Guest Inviter: can invite guest users even when invitations are limited to admin roles. Use it for people who only invite partners.",
+   "Privileged Role Administrator: manages role assignments, role-assignable groups and PIM settings. Use it for admins who govern other admins."
+  ],
+  "explanation": "Least privilege means choosing the narrowest built-in role that covers the task. User Administrator covers several of these tasks, but it grants much more than each one needs.",
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference"
+ },
+ {
+  "id": "2.1.4-11",
+  "obj": "2.1.4",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "case": "C-c",
+  "stem": "You need to configure the role assignment for User1 by using Microsoft Graph PowerShell. $user and $role already contain User1 and the User Administrator role definition.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\n$params = @{\n  Action           = \"[[1]]\"\n  PrincipalId      = $user.Id\n  RoleDefinitionId = $role.Id\n  DirectoryScopeId = \"/\"\n  Justification    = \"IT operations eligibility\"\n  ScheduleInfo     = @{\n    StartDateTime = Get-Date\n    Expiration    = @{\n      Type        = \"[[2]]\"\n      EndDateTime = [System.DateTime]::Parse(\"2027-06-30T00:00:00Z\")\n    }\n  }\n}\n[[3]] -BodyParameter $params\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "AdminAssign",
+     "SelfActivate",
+     "AdminExtend"
+    ],
+    "why": [
+     "Correct: AdminAssign is the action an administrator uses to create a new eligible assignment for another user, which is what the IT operations requirement asks for.",
+     "Incorrect: SelfActivate is used by the eligible user to activate an existing eligibility. User1 has no eligibility yet, so there is nothing to activate.",
+     "Incorrect: AdminExtend lengthens an existing eligible assignment that is about to expire. Use it when an eligibility already exists and must last longer."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "AfterDateTime",
+     "AfterDuration",
+     "NoExpiration"
+    ],
+    "why": [
+     "Correct: the eligibility must end on a fixed date, June 30, 2027, and AfterDateTime uses the EndDateTime value in the script.",
+     "Incorrect: AfterDuration uses a Duration value such as P180D instead of an end date. Use it when the requirement is a length of time.",
+     "Incorrect: NoExpiration creates a permanent eligibility, which breaks the requirement that it ends on June 30, 2027."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "New-MgRoleManagementDirectoryRoleEligibilityScheduleRequest",
+     "New-MgRoleManagementDirectoryRoleAssignmentScheduleRequest",
+     "New-MgRoleManagementDirectoryRoleAssignment"
+    ],
+    "why": [
+     "Correct: eligibility schedule requests create, extend or remove eligible assignments in PIM, so User1 becomes eligible and must activate the role just in time.",
+     "Incorrect: assignment schedule requests create active assignments or self-activations. They would give User1 an active role instead of an eligibility.",
+     "Incorrect: this cmdlet creates a standing active assignment outside the PIM schedule model, so User1 would hold the role permanently."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "PIM eligibility is created with an eligibility schedule request and action AdminAssign. The expiration pattern decides when it ends: AfterDateTime with EndDateTime for a fixed date, AfterDuration with Duration for a length of time, or NoExpiration for permanent eligibility.",
+  "ref": "https://learn.microsoft.com/graph/tutorial-assign-azureadroles"
+ },
+ {
+  "id": "2.1.5-01",
+  "obj": "2.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank plans to create 10 administrative units that contain 6,000 users in total. Fifteen regional admins will receive Microsoft Entra roles scoped to those administrative units. Membership of the administrative units will be assigned manually.\n\nWhich licensing requirement should you plan for?",
+  "choices": [
+   "Microsoft Entra ID P1 for each of the 15 administrative unit administrators",
+   "Microsoft Entra ID P1 for each of the 6,000 administrative unit members",
+   "Microsoft Entra ID P2 for each of the 15 administrative unit administrators",
+   "Microsoft Entra ID P1 for each of the 10 administrative units"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Administrative units need Microsoft Entra ID P1 for each administrator who is assigned a role scoped to an administrative unit; members only need the Free edition, and creating administrative units is free. Members need P1 only when the administrative unit uses dynamic membership rules.",
+  "rationale": [
+   "Correct: the license follows the scoped administrators, so the 15 regional admins need P1. The members are added manually and need only Microsoft Entra ID Free.",
+   "Incorrect: P1 for every member is needed only when membership is calculated by dynamic rules. With manual membership, members need the Free edition.",
+   "Incorrect: P2 includes the feature, but P1 is the minimum for administrative unit administrators. Plan for P2 if you also want PIM for those admins.",
+   "Incorrect: licensing is not counted per administrative unit. Creating administrative units is available with the Free edition."
+  ],
+  "ref": "https://learn.microsoft.com/entra/fundamentals/licensing"
+ },
+ {
+  "id": "2.1.5-02",
+  "obj": "2.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys has an administrative unit named Seattle Office. An admin named User1 must assign and remove product licenses only for the users in Seattle Office.\n\nWhich role should you assign to User1 with Seattle Office as the scope?",
+  "choices": [
+   "License Administrator",
+   "Billing Administrator",
+   "Exchange Administrator",
+   "Global Reader"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Only some built-in roles can be scoped to an administrative unit, mostly roles that manage users, groups and devices, such as User Administrator, Groups Administrator, Helpdesk Administrator, Authentication Administrator and License Administrator. Roles that manage tenant-wide services or billing cannot be scoped this way.",
+  "rationale": [
+   "Correct: License Administrator can be assigned at administrative unit scope and then assigns, removes and updates licenses only within that administrative unit.",
+   "Incorrect: Billing Administrator manages purchases and subscriptions for the whole tenant and cannot be scoped to an administrative unit.",
+   "Incorrect: Exchange Administrator manages Exchange Online for the tenant and is not in the list of roles that support administrative unit scope.",
+   "Incorrect: Global Reader can only read and cannot be scoped to an administrative unit. It would not let User1 change licenses."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-assign-roles"
+ },
+ {
+  "id": "2.1.5-03",
+  "obj": "2.1.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has Microsoft Entra ID P1 licenses for all users. Regional admins manage the users in an administrative unit named Germany. New users whose country attribute is Germany must be added to the administrative unit automatically, and users who leave Germany must be removed automatically.\n\nWhat should you configure?",
+  "choices": [
+   "A dynamic membership rule on the Germany administrative unit",
+   "A dynamic security group for German users, added to the administrative unit",
+   "A restricted management setting on the Germany administrative unit",
+   "A scheduled script that adds new German users to the administrative unit"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Administrative units can calculate their membership with the same rule syntax as dynamic groups, for users or for devices but not both. Adding a group to an administrative unit brings only the group object into scope, not its members.",
+  "rationale": [
+   "Correct: a rule such as (user.country -eq 'Germany') adds and removes users automatically. Relecloud has the P1 licenses that dynamic administrative unit members need.",
+   "Incorrect: adding a group puts only the group itself in scope, so the regional admins could manage the group name and membership but not the users in it. Use groups in administrative units to delegate group management.",
+   "Incorrect: restricted management blocks tenant-level admins from changing members of the administrative unit. It protects objects but does not add or remove members.",
+   "Incorrect: a script must be built, scheduled and maintained, and users who leave Germany are not removed unless the script also handles that. Dynamic rules provide this without code."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-members-dynamic"
+ },
+ {
+  "id": "2.1.5-04",
+  "obj": "2.1.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Adatum Corporation has Microsoft Entra ID P1 licenses for all users. You must create an administrative unit named France Office whose members are calculated automatically from the country attribute, assign the Helpdesk Administrator role to a helpdesk user at the scope of that administrative unit, and then confirm the scoped assignment. $helpdeskRole contains the activated Helpdesk Administrator directory role and $staff contains the helpdesk user.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"AdministrativeUnit.ReadWrite.All\",\"RoleManagement.ReadWrite.Directory\"`",
+   "`$au = New-MgDirectoryAdministrativeUnit -BodyParameter @{ displayName = \"France Office\"; membershipType = \"Dynamic\"; membershipRule = \"(user.country -eq 'France')\"; membershipRuleProcessingState = \"On\" }`",
+   "`New-MgDirectoryAdministrativeUnitScopedRoleMember -AdministrativeUnitId $au.Id -BodyParameter @{ roleId = $helpdeskRole.Id; roleMemberInfo = @{ id = $staff.Id } }`",
+   "`Get-MgDirectoryAdministrativeUnitScopedRoleMember -AdministrativeUnitId $au.Id | Format-List *`",
+   "`New-MgDirectoryAdministrativeUnitMemberByRef -AdministrativeUnitId $au.Id -OdataId \"https://graph.microsoft.com/v1.0/users/$($user.Id)\"`",
+   "`New-MgRoleManagementDirectoryRoleAssignment -DirectoryScopeId '/' -PrincipalId $staff.Id -RoleDefinitionId $roleDefinition.Id`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A dynamic administrative unit is created with membershipType Dynamic, a rule and processing turned on. A scoped role assignment is added as a scoped role member of the administrative unit, so it needs the ID of the new administrative unit, and the scoped role members can then be listed to confirm.",
+  "rationale": [
+   "Step 1: the scopes allow creating administrative units and managing role assignments; every later command needs this session.",
+   "Step 2: membershipType Dynamic with the country rule makes Microsoft Entra ID maintain the membership, and $au holds the ID for the next steps.",
+   "Step 3: adding a scoped role member assigns Helpdesk Administrator to the helpdesk user only over the members of France Office.",
+   "Step 4: listing the scoped role members of the administrative unit confirms the assignment.",
+   "Incorrect: members of an administrative unit that uses dynamic rules cannot be added or removed manually; you change the rule instead. Use this cmdlet for administrative units with assigned membership.",
+   "Incorrect: DirectoryScopeId / assigns the role for the whole tenant, so the helpdesk user could reset passwords for everyone. Use '/administrativeUnits/' plus the ID to scope it."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-members-dynamic"
+ },
+ {
+  "id": "2.1.5-05",
+  "obj": "2.1.5",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Litware, Inc. wants User2 to have a permanent active User Administrator assignment that applies only to the members of the administrative unit Seattle Admin Unit.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\n$user = Get-MgUser -Filter \"userPrincipalName eq 'user2@litware.com'\"\n$roleDefinition = Get-MgRoleManagementDirectoryRoleDefinition -Filter \"displayName eq 'User Administrator'\"\n$adminUnit = Get-MgDirectoryAdministrativeUnit -Filter \"displayName eq 'Seattle Admin Unit'\"\n$directoryScope = [[1]] + $adminUnit.Id\n[[2]] -DirectoryScopeId $directoryScope -PrincipalId [[3]] -RoleDefinitionId $roleDefinition.Id\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "'/administrativeUnits/'",
+     "'/'",
+     "'/directory/administrativeUnits/'"
+    ],
+    "why": [
+     "Correct: a scope of /administrativeUnits/ plus the ID means the principal manages the members of that administrative unit, according to the role.",
+     "Incorrect: a scope of / followed by an object ID means the principal manages that single Microsoft Entra object itself, which is how roles are scoped to an app registration. It does not limit the role to the members of the administrative unit. Use / alone for tenant scope.",
+     "Incorrect: /directory/administrativeUnits/ is part of the Microsoft Graph URL used to list administrative units, not a valid directory scope ID for a role assignment."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "New-MgRoleManagementDirectoryRoleAssignment",
+     "New-MgRoleManagementDirectoryRoleEligibilityScheduleRequest",
+     "New-MgDirectoryAdministrativeUnitMemberByRef"
+    ],
+    "why": [
+     "Correct: New-MgRoleManagementDirectoryRoleAssignment creates an active, standing role assignment at the given scope, which is the permanent assignment Litware wants.",
+     "Incorrect: an eligibility schedule request creates a PIM eligibility that User2 would have to activate, and it takes a -BodyParameter with an action and schedule. Use it for just-in-time access.",
+     "Incorrect: this cmdlet adds a user, group or device as a member of the administrative unit. It would put User2 in scope, not make User2 an administrator of the unit."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "$user.Id",
+     "$adminUnit.Id",
+     "$roleDefinition.Id"
+    ],
+    "why": [
+     "Correct: the principal is the identity that receives the role, which is User2.",
+     "Incorrect: the administrative unit is already part of the directory scope. It cannot receive a role as a principal.",
+     "Incorrect: the role definition ID is already passed to -RoleDefinitionId. The principal must be a user, role-assignable group or service principal."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "A role assignment combines a principal, a role definition and a directory scope. For administrative units the scope is /administrativeUnits/{id}, which limits the role to the members of the unit. The same result can be reached with a scoped role member on the administrative unit.",
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-assign-roles"
+ },
+ {
+  "id": "2.1.5-06",
+  "obj": "2.1.5",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Contoso, Ltd. creates a restricted management administrative unit named Executives that contains the user accounts of the executive team. The Executive Support group is assigned the User Administrator role scoped to Executives. Other admins have roles at tenant scope only.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A Global Administrator with tenant scope can reset the password of an executive in Executives.",
+   "A Global Administrator with tenant scope can add users to Executives and assign roles scoped to it.",
+   "You can turn on restricted management later for an existing administrative unit named Sales.",
+   "An Exchange Administrator with tenant scope can change the mailbox settings of an executive in Executives."
+  ],
+  "answer": [
+   1,
+   3
+  ],
+  "explanation": "Restricted management administrative units block changes to the Microsoft Entra properties of their members by anyone without an explicit assignment at that scope, including Global Administrators. Tenant-level admins can still manage the unit itself, and changes to related objects in Microsoft 365 services, such as Exchange mailbox settings, are not blocked. The setting is fixed at creation.",
+  "rationale": [
+   "No: updating the password of a user in a restricted management administrative unit is blocked for tenant-scoped admins, including Global Administrators. Only admins assigned at the Executives scope can do it.",
+   "Yes: Global Administrators and Privileged Role Administrators cannot modify the members, but they can manage the restricted unit itself, including adding or removing members and assigning roles at its scope.",
+   "No: restricted management must be applied when the administrative unit is created and cannot be changed afterwards. You would create a new restricted unit and move the members.",
+   "Yes: operations on related objects in Microsoft 365 services are allowed. Modifying email and mailbox settings in Exchange for a user in a restricted unit is not blocked."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-restricted-management"
+ },
+ {
+  "id": "2.1.5-07",
+  "obj": "2.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Fabrikam, Inc. has 4,000 users and Microsoft 365 E3 licenses for all users. The 300 users in the Lisbon office have the city attribute set to Lisbon and are members of a security group named LisbonUsers. Helpdesk staff in Lisbon must be able to reset passwords for the Lisbon users only. The tenant-level User Administrators must continue to manage the Lisbon users.\n\nSolution: You create an administrative unit, add the LisbonUsers group to it, and assign the Helpdesk Administrator role to the helpdesk staff with the administrative unit as the scope.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Adding a group to an administrative unit brings the group object into scope, not its members. A scoped admin can rename the group or change its membership, but cannot reset passwords for the users in it unless those users are members of the administrative unit themselves.",
+  "rationale": [
+   "Incorrect: the helpdesk staff would manage only the LisbonUsers group object. Password resets for its members are not in scope, because the users themselves are not members of the administrative unit.",
+   "Correct: the solution does not meet the goal. It would work if the 300 user accounts were added to the administrative unit directly, or through a dynamic rule, instead of the group."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/administrative-units"
+ },
+ {
+  "id": "2.1.5-08",
+  "obj": "2.1.5",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Fabrikam, Inc. has 4,000 users and Microsoft 365 E3 licenses for all users. The 300 users in the Lisbon office have the city attribute set to Lisbon and are members of a security group named LisbonUsers. Helpdesk staff in Lisbon must be able to reset passwords for the Lisbon users only. The tenant-level User Administrators must continue to manage the Lisbon users.\n\nSolution: You create an administrative unit with the dynamic membership rule (user.city -eq \"Lisbon\") and assign the Helpdesk Administrator role to the helpdesk staff with the administrative unit as the scope.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A dynamic administrative unit adds the users that match the rule as members, and a Helpdesk Administrator scoped to it can reset passwords only for those members. Dynamic membership needs Microsoft Entra ID P1 per member, which Microsoft 365 E3 includes.",
+  "rationale": [
+   "Correct: the rule makes the 300 Lisbon user accounts members of the administrative unit, so the scoped Helpdesk Administrators can reset their passwords and nobody else's. Tenant-level User Administrators keep managing them because the unit is not restricted, and E3 provides the P1 licenses.",
+   "Incorrect: the solution does meet the goal. No would be right if the unit were a restricted management administrative unit, which would block the tenant-level User Administrators, or if the city attribute were not populated."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-members-dynamic"
+ },
+ {
+  "id": "2.1.5-09",
+  "obj": "2.1.5",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Fabrikam, Inc. has 4,000 users and Microsoft 365 E3 licenses for all users. The 300 users in the Lisbon office have the city attribute set to Lisbon and are members of a security group named LisbonUsers. Helpdesk staff in Lisbon must be able to reset passwords for the Lisbon users only. The tenant-level User Administrators must continue to manage the Lisbon users.\n\nSolution: You create a restricted management administrative unit, add the 300 Lisbon user accounts as members, and assign the Helpdesk Administrator role to the helpdesk staff with the administrative unit as the scope.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "In a restricted management administrative unit, only admins with an assignment at that scope can modify the Microsoft Entra properties of its members. Tenant-scoped admins, including User Administrators and Global Administrators, are blocked, which conflicts with the requirement that tenant-level User Administrators keep managing the users.",
+  "rationale": [
+   "Incorrect: the helpdesk staff could reset the Lisbon passwords, but restricted management blocks the tenant-level User Administrators from modifying, resetting or deleting those users, which the goal does not allow.",
+   "Correct: the solution does not meet the goal. Use a regular administrative unit instead; choose restricted management only when tenant-level admins must be kept away from the members, such as for executives."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/role-based-access-control/admin-units-restricted-management"
+ },
+ {
+  "id": "2.1.6-01",
+  "obj": "2.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud works with an external tax consultant who uses an email address at a different company. The consultant must appear in the Relecloud global address list and receive email sent to a distribution list. The consultant must not be able to sign in to Relecloud resources.\n\nWhat should you create?",
+  "choices": [
+   "A mail contact",
+   "A mail user",
+   "A guest user",
+   "A shared mailbox"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A mail contact represents an external person with an external email address. It is visible in the global address list, can be a distribution list member, and has no sign-in credentials. A mail user is similar but has credentials, and a guest is a B2B account that can access resources.",
+  "rationale": [
+   "Correct: a mail contact has an external email address, shows up in the global address list and can be added to distribution lists, and it has no credentials, so the consultant cannot sign in.",
+   "Incorrect: a mail user also has an external address, but it has sign-in credentials in Relecloud and can be granted access to resources. Use it for external people who need to sign in with an account from your organization.",
+   "Incorrect: a guest user is a B2B account that signs in with its home identity to access resources. Use it when the consultant must collaborate in Teams or SharePoint.",
+   "Incorrect: a shared mailbox stores mail inside Relecloud for several internal users. It does not forward mail to an external address."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/recipients-in-exchange-online"
+ },
+ {
+  "id": "2.1.6-02",
+  "obj": "2.1.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An admin at Tailspin Toys wants to add an external supplier as a contact so that it appears in the shared address book. The admin wants to use the Microsoft 365 admin center instead of the Exchange admin center.\n\nWhich page should the admin use to create the contact?",
+  "choices": [
+   "Users > Contacts",
+   "Users > Guest users",
+   "Teams & groups > Active teams & groups",
+   "Settings > Org settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Mail contacts can be created and viewed in the Microsoft 365 admin center under Users > Contacts, and in the Exchange admin center under Recipients > Contacts. Contacts created in either place appear in the shared address book in Outlook.",
+  "rationale": [
+   "Correct: the Contacts page under Users is where you add and manage mail contacts in the Microsoft 365 admin center.",
+   "Incorrect: Guest users lists B2B guest accounts that can sign in and access resources. Use it to view or remove guests, not to create address book contacts.",
+   "Incorrect: Active teams & groups manages groups and their members. After the contact exists, you can add it to a distribution list there, but you cannot create it there.",
+   "Incorrect: Org settings holds tenant-wide service and security settings, not individual recipients."
+  ],
+  "ref": "https://learn.microsoft.com/purview/bulk-import-external-contacts"
+ },
+ {
+  "id": "2.1.6-03",
+  "obj": "2.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has hundreds of mail contacts in Exchange Online. All mail contacts whose Department is Public Relations must be hidden from the global address list. The contacts must keep receiving email that is sent to them.\n\nWhich command should you run?",
+  "choices": [
+   "Get-Contact -ResultSize unlimited -Filter \"Department -eq 'Public Relations'\" | foreach {Set-MailContact -Identity $_ -HiddenFromAddressListsEnabled $true}",
+   "Get-Contact -ResultSize unlimited -Filter \"Department -eq 'Public Relations'\" | foreach {Set-Contact -Identity $_ -Department \"Hidden\"}",
+   "Get-Contact -ResultSize unlimited -Filter \"Department -eq 'Public Relations'\" | foreach {Remove-MailContact -Identity $_}",
+   "Get-Contact -ResultSize unlimited -Filter \"Department -eq 'Public Relations'\" | foreach {Set-MailContact -Identity $_ -CustomAttribute15 Hidden}"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Get-Contact and Set-Contact handle organization and contact information such as Department, Title or Company. Get-MailContact and Set-MailContact handle mail-related properties such as email addresses, custom attributes and whether the contact is hidden from address lists. Filtering on Department therefore uses Get-Contact, and hiding uses Set-MailContact.",
+  "rationale": [
+   "Correct: Get-Contact can filter on Department, and Set-MailContact with HiddenFromAddressListsEnabled $true removes each contact from address lists while email to it still works.",
+   "Incorrect: Set-Contact changes organization information. Changing the department only relabels the contacts; they stay visible in the address book. Use Set-Contact to maintain title, company or manager.",
+   "Incorrect: Remove-MailContact deletes the contacts, so mail to them stops working. Use it when the external people should no longer be recipients at all.",
+   "Incorrect: a custom attribute only stores a value, for example for filters or address lists. Setting it to Hidden does not hide the contact. Use custom attributes to tag recipients."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-mail-contacts"
+ },
+ {
+  "id": "2.1.6-04",
+  "obj": "2.1.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. hires 20 short-term consultants from a partner. The consultants keep using their partner email addresses for mail, which must appear in the Fabrikam address book. They must also sign in with an account issued by Fabrikam to open a SharePoint site. They do not need Fabrikam mailboxes.\n\nWhat should you create for each consultant in Exchange Online PowerShell?",
+  "choices": [
+   "A mail user by running New-MailUser with -ExternalEmailAddress and -MicrosoftOnlineServicesID",
+   "A mail contact by running New-MailContact with -ExternalEmailAddress and -Name",
+   "A user mailbox by running New-Mailbox with -MicrosoftOnlineServicesID and -Password",
+   "A shared mailbox by running New-Mailbox with -Shared and -DisplayName"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A mail user combines an external email address, visibility in the address book and sign-in credentials in your organization, so it can be granted permissions to resources. It needs no Exchange Online license. A mail contact has no credentials, and a user mailbox stores mail inside your organization.",
+  "rationale": [
+   "Correct: New-MailUser creates an account with Fabrikam credentials (MicrosoftOnlineServicesID) whose mail goes to the partner address (ExternalEmailAddress), so the consultants can sign in to SharePoint and keep their own mailboxes.",
+   "Incorrect: a mail contact appears in the address book with the external address but has no credentials, so the consultants could not sign in. Use contacts when external people only receive email.",
+   "Incorrect: a user mailbox stores email in Exchange Online, which the consultants do not need, and it requires a license. Use it for employees who receive mail at Fabrikam.",
+   "Incorrect: a shared mailbox is accessed by several internal users and has no individual sign-in. Use it for team addresses such as support or sales."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-mail-users"
+ },
+ {
+  "id": "2.1.6-05",
+  "obj": "2.1.6",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys must import 150 external contacts from .\\ExternalContacts.csv into Exchange Online. The file contains Name, ExternalEmailAddress, FirstName, LastName, Company, Title and Phone. The contacts must appear in the shared address book with their company, title and phone number. The contacts must not be able to sign in.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-ExchangeOnline`",
+   "`Import-Csv .\\ExternalContacts.csv | %{New-MailContact -Name $_.Name -DisplayName $_.Name -ExternalEmailAddress $_.ExternalEmailAddress -FirstName $_.FirstName -LastName $_.LastName}`",
+   "`Import-Csv .\\ExternalContacts.csv | %{Set-Contact -Identity $_.Name -Company $_.Company -Title $_.Title -Phone $_.Phone}`",
+   "`Import-Csv .\\ExternalContacts.csv | %{New-MailUser -Name $_.Name -ExternalEmailAddress $_.ExternalEmailAddress -MicrosoftOnlineServicesID $_.ExternalEmailAddress}`",
+   "`Import-Csv .\\ExternalContacts.csv | %{New-MgInvitation -InvitedUserEmailAddress $_.ExternalEmailAddress -InviteRedirectUrl \"https://myapplications.microsoft.com\"}`"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Bulk contact import is a two-pass job in Exchange Online PowerShell: New-MailContact creates each contact with the mail properties, and Set-Contact then fills in organization and contact information such as company, title and phone. Set-Contact needs the contacts to exist first.",
+  "rationale": [
+   "Step 1: the Exchange Online cmdlets for recipients need a connected Exchange Online PowerShell session.",
+   "Step 2: New-MailContact creates each contact with its name and external email address, which makes it visible in the shared address book.",
+   "Step 3: Set-Contact adds Company, Title and Phone to the contacts that step 2 created; it fails for contacts that do not exist yet.",
+   "Incorrect: New-MailUser creates mail users with sign-in credentials, which the requirement forbids, and it also needs a password and an internal sign-in name. Use mail users for external people who must sign in.",
+   "Incorrect: New-MgInvitation creates B2B guest accounts that can sign in and access resources. Use it to invite collaborators, not to add address book entries."
+  ],
+  "ref": "https://learn.microsoft.com/purview/bulk-import-external-contacts"
+ },
+ {
+  "id": "2.1.6-06",
+  "obj": "2.1.6",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-c",
+  "stem": "You plan how to meet the auditor requirements.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "You can meet the requirements by creating the auditors with New-MailContact in Exchange Online PowerShell.",
+   "Each auditor needs an Exchange Online license so that the auditor appears in the global address list.",
+   "To hide the auditors from address lists when the audit ends, you run Set-Contact with -HiddenFromAddressListsEnabled $true."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Mail contacts represent external people in the address book, can be distribution list members, have no credentials and need no license. Mail-related properties, including hiding from address lists, are changed with Set-MailContact, while Set-Contact changes organization and contact information.",
+  "rationale": [
+   "Yes: the auditors need an address book entry, membership of the Audit Committee distribution list and no sign-in. A mail contact created with New-MailContact provides exactly that.",
+   "No: mail contacts are not licensed objects. They appear in the global address list without any license because their mailbox is hosted elsewhere.",
+   "No: hiding from address lists is a mail-related property that is set with Set-MailContact -HiddenFromAddressListsEnabled $true. Set-Contact handles organization fields such as title and department."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-mail-contacts"
+ },
+ {
+  "id": "2.1.7-01",
+  "obj": "2.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An admin at Contoso, Ltd. uses Bulk create on the Users page of the Microsoft Entra admin center to add 300 internal users. The admin keeps the column headers of the downloaded CSV template unchanged.\n\nWhich values should the admin enter for every user?",
+  "choices": [
+   "Name, User name and Initial password",
+   "User name, Usage location and License",
+   "Email address, Display name and Redirection URL",
+   "Display name, Department and Manager"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Bulk create template requires only Name, User name and Initial password; the other columns are optional. The operation creates internal member accounts with the passwords from the file and does not send invitation emails, so credentials must be handed over through your own process.",
+  "rationale": [
+   "Correct: these three are the only required values in the Bulk create CSV template. The file must keep the exact column names from the download.",
+   "Incorrect: usage location is optional and Bulk create has no license column. Licenses are assigned afterwards, for example with group-based licensing.",
+   "Incorrect: email address and redirection URL belong to the Bulk invite template for B2B guests. Use that template to invite external users.",
+   "Incorrect: department and manager are optional profile values. They can be included but do not make an account valid."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/users-bulk-add"
+ },
+ {
+  "id": "2.1.7-02",
+  "obj": "2.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A group owner at Relecloud must add 400 users to a security group by using Bulk operations > Import members in the Microsoft Entra admin center.\n\nWhich value should each row of the CSV file contain?",
+  "choices": [
+   "The user principal name or the object ID of the member",
+   "The display name of the member as shown in the admin center",
+   "The mail nickname of the member",
+   "The employee ID of the member"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Bulk import group members template has one required column, Member object ID or user principal name. Group owners can also bulk import members of groups they own, and failed rows are listed with the reason on the Bulk operation results page.",
+  "rationale": [
+   "Correct: each row needs either the UPN, such as user@relecloud.com, or the object ID GUID, one member per row.",
+   "Incorrect: display names are not unique, so the template does not accept them for matching members.",
+   "Incorrect: the mail nickname is an alias for email and is not one of the accepted identifiers in the import template.",
+   "Incorrect: employee ID is an HR attribute and is not accepted as a member identifier in the template."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/groups-bulk-import-members"
+ },
+ {
+  "id": "2.1.7-03",
+  "obj": "2.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has 2,500 users. A script that updates the office location of every user processes only 100 users:\n\n```powershell\nGet-MgUser | ForEach-Object { Update-MgUser -UserId $_.Id -OfficeLocation \"HQ\" }\n```\n\nWhich parameter should you add to Get-MgUser?",
+  "choices": [
+   "-All",
+   "-ConsistencyLevel eventual",
+   "-CountVariable userCount",
+   "-Property OfficeLocation"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Microsoft Graph returns results in pages. Without -All, Get-MgUser returns only the first page, which for users is 100 accounts. -All makes the cmdlet follow the paging links until every object is returned.",
+  "rationale": [
+   "Correct: -All retrieves every page of results, so all 2,500 users are passed to Update-MgUser.",
+   "Incorrect: ConsistencyLevel eventual enables advanced queries such as $count or endsWith filters. It does not change paging, so only 100 users are still returned.",
+   "Incorrect: CountVariable stores the total count of an advanced query in a variable, together with ConsistencyLevel. It reports how many users exist but does not return them all.",
+   "Incorrect: -Property selects which properties come back for each user. It does not affect how many users are returned."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-04",
+  "obj": "2.1.7",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys must invite 200 people from partner companies as B2B guests. Each person must receive an invitation email. The admin wants to upload a CSV file in the Microsoft Entra admin center instead of using PowerShell.\n\nWhich bulk operation should the admin use?",
+  "choices": [
+   "Bulk invite",
+   "Bulk create",
+   "Import members",
+   "Add multiple users in the Microsoft 365 admin center"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Bulk invite creates B2B guest accounts from a CSV file and sends invitation emails. Bulk create makes internal member accounts with passwords from the file and sends no invitations, and Import members only adds existing objects to a group.",
+  "rationale": [
+   "Correct: Bulk invite takes the external email addresses from the CSV file, creates guest accounts and sends each person an invitation email.",
+   "Incorrect: Bulk create creates internal member accounts with initial passwords and does not send invitation emails. Use it for new employees.",
+   "Incorrect: Import members adds existing users to a group. The partners do not exist in the directory yet.",
+   "Incorrect: Add multiple users creates licensed member accounts in your organization, not guests who sign in with their home identity. Use it for new employees with licenses."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/users-bulk-add"
+ },
+ {
+  "id": "2.1.7-05",
+  "obj": "2.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank wants a list of all member users who have no license assigned. Guest users must not be included.\n\nWhich command should you run?",
+  "choices": [
+   "Get-MgUser -Filter \"assignedLicenses/`$count eq 0 and userType eq 'Member'\" -ConsistencyLevel eventual -CountVariable unlicensedCount -All",
+   "Get-MgUser -Filter \"assignedLicenses/`$count eq 0 and userType eq 'Member'\" -All",
+   "Get-MgUser -Filter 'assignedLicenses/$count eq 0' -ConsistencyLevel eventual -CountVariable unlicensedCount -All",
+   "Get-MgSubscribedSku -All | Select-Object SkuPartNumber, ConsumedUnits"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Filtering on assignedLicenses/$count is an advanced query, so it needs -ConsistencyLevel eventual and a count variable. Adding userType eq 'Member' removes guests, and -All returns every page instead of the first 100 results.",
+  "rationale": [
+   "Correct: the $count filter finds users without licenses, userType eq 'Member' excludes guests, and ConsistencyLevel with CountVariable makes the advanced query valid.",
+   "Incorrect: the filter is right, but without -ConsistencyLevel eventual and a count the advanced query on $count is not supported and the request fails.",
+   "Incorrect: this valid query returns all unlicensed users, including guests, which the requirement excludes. Use it when guests should be counted too.",
+   "Incorrect: Get-MgSubscribedSku shows how many licenses each subscription has and uses, not which users are unlicensed. Use it to check available units before assigning licenses."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/view-licensed-and-unlicensed-users-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-06",
+  "obj": "2.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation moves its 350-person Accounting department to France. All Accounting users must get the usage location France so that licenses for that country can be assigned.\n\nWhich command should you run?",
+  "choices": [
+   "Get-MgUser -Filter \"department eq 'Accounting'\" -All | ForEach-Object { Update-MgUser -UserId $_.Id -UsageLocation \"FR\" }",
+   "Get-MgUser -Filter \"department eq 'Accounting'\" | ForEach-Object { Update-MgUser -UserId $_.Id -UsageLocation \"FR\" }",
+   "Get-MgUser -Filter \"department eq 'Accounting'\" -All | ForEach-Object { Update-MgUser -UserId $_.Id -Country \"FR\" }",
+   "Get-MgUser -Filter \"department eq 'Accounting'\" -All | ForEach-Object { Update-MgUser -UserId $_.Id -PreferredDataLocation \"FRA\" }"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Bulk updates combine a filtered Get-MgUser with Update-MgUser in a pipeline. UsageLocation is the two-letter country code that licensing checks; -All is needed because without it only the first 100 users are returned.",
+  "rationale": [
+   "Correct: the filter selects Accounting, -All returns all 350 users, and UsageLocation FR is the value that license assignment uses.",
+   "Incorrect: without -All only the first 100 Accounting users are updated, so 250 users keep the old usage location.",
+   "Incorrect: Country is a profile field for the address. It is not read by license assignment, so licenses for France still cannot be checked against the users.",
+   "Incorrect: PreferredDataLocation chooses the Multi-Geo geography for user data. Use it in Multi-Geo tenants to place mailboxes and OneDrive in a satellite geo, not for licensing."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/configure-user-account-properties-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-07",
+  "obj": "2.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. must delete 120 cloud-only users listed by user principal name in C:\\temp\\leavers.csv. If a user was listed by mistake, the account must be recoverable with its data for the standard period.\n\nWhich command should you run after you connect with the User.ReadWrite.All scope?",
+  "choices": [
+   "Import-Csv -Path \"C:\\temp\\leavers.csv\" | ForEach-Object { Remove-MgUser -UserId $_.UserPrincipalName -Confirm:$false }",
+   "Import-Csv -Path \"C:\\temp\\leavers.csv\" | ForEach-Object { Remove-MgDirectoryDeletedItem -DirectoryObjectId $_.UserPrincipalName }",
+   "Import-Csv -Path \"C:\\temp\\leavers.csv\" | ForEach-Object { Update-MgUser -UserId $_.UserPrincipalName -AccountEnabled:$false }",
+   "Import-Csv -Path \"C:\\temp\\leavers.csv\" | ForEach-Object { Revoke-MgUserSignInSession -UserId $_.UserPrincipalName }"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Remove-MgUser soft-deletes a user: the account stays restorable with all its properties for 30 days, after which it is permanently deleted. Remove-MgDirectoryDeletedItem permanently deletes an object that is already soft-deleted, and nobody can restore it afterwards.",
+  "rationale": [
+   "Correct: Remove-MgUser deletes each listed user, and the accounts remain in Deleted users for 30 days, so a mistake can be undone by restoring the user.",
+   "Incorrect: Remove-MgDirectoryDeletedItem permanently deletes objects from the deleted items container and takes their object ID. It cannot be undone. Use it only when data must be removed immediately.",
+   "Incorrect: disabling the accounts blocks sign-in but does not delete the users. Use it when access must stop but the account must stay, for example during an investigation.",
+   "Incorrect: revoking sessions forces users to sign in again but keeps their accounts active, so they are neither deleted nor blocked."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/delete-and-restore-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-08",
+  "obj": "2.1.7",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud is moving all Sales users from Microsoft 365 E3 to Microsoft 365 E5. You first need to remove the E3 license from every Sales user. $e3Sku contains the result of Get-MgSubscribedSku for SPE_E3, and $salesUsers contains the Sales users.\n\nWhich command should you run for each user in $salesUsers?",
+  "choices": [
+   "Set-MgUserLicense -UserId $u.Id -AddLicenses @{} -RemoveLicenses @($e3Sku.SkuId)",
+   "Set-MgUserLicense -UserId $u.Id -AddLicenses @{SkuId = $e3Sku.SkuId} -RemoveLicenses @()",
+   "Set-MgUserLicense -UserId $u.Id -AddLicenses @{} -RemoveLicenses @($e3Sku.SkuPartNumber)",
+   "Update-MgUser -UserId $u.Id -UsageLocation $null"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Set-MgUserLicense always takes both AddLicenses and RemoveLicenses. AddLicenses is a list of hashtables with a SkuId, and RemoveLicenses is an array of SKU IDs (GUIDs). Pass an empty value for the side you do not use.",
+  "rationale": [
+   "Correct: an empty AddLicenses and the E3 SKU ID in RemoveLicenses unassigns E3 from the user.",
+   "Incorrect: this assigns E3 instead of removing it. Use this form to add a license with an empty RemoveLicenses array.",
+   "Incorrect: RemoveLicenses expects SKU IDs, not the SkuPartNumber string SPE_E3, so the license is not removed.",
+   "Incorrect: usage location is required to assign licenses, and clearing it does not remove an assigned license. Use Update-MgUser to set usage location before licensing."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/remove-licenses-from-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-09",
+  "obj": "2.1.7",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. receives C:\\temp\\NewAccounts.csv with DisplayName, UserPrincipalName, MailNickname and UsageLocation for 250 new employees. With Microsoft Graph PowerShell, you must create the cloud-only accounts, assign each one a Microsoft 365 E5 license (SPE_E5), and then confirm that no member account is left without a license.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MgGraph -Scopes \"User.ReadWrite.All\",\"Organization.Read.All\"`",
+   "`$sku = Get-MgSubscribedSku -All | Where SkuPartNumber -eq 'SPE_E5'`",
+   "For each CSV row: `$u = New-MgUser` with `-UsageLocation`, `-PasswordProfile` and `-AccountEnabled`, followed by `Set-MgUserLicense -UserId $u.Id -AddLicenses @{SkuId = $sku.SkuId} -RemoveLicenses @()`",
+   "`Get-MgUser -Filter \"assignedLicenses/`$count eq 0 and userType eq 'Member'\" -ConsistencyLevel eventual -CountVariable unlicensedCount -All`",
+   "`Connect-MsolService`",
+   "For each CSV row: `New-MgInvitation -InvitedUserEmailAddress $_.UserPrincipalName -InviteRedirectUrl \"https://myapplications.microsoft.com\" -SendInvitationMessage`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A bulk provisioning script connects with scopes to write users and read subscriptions, resolves the SKU ID once, then creates each user with a usage location and licenses it in the same loop. An advanced $count query at the end proves that nobody was missed.",
+  "rationale": [
+   "Step 1: User.ReadWrite.All creates users and assigns licenses, and Organization.Read.All reads the subscribed SKUs.",
+   "Step 2: the loop uses $sku.SkuId, so the E5 SKU must be resolved before any license is assigned.",
+   "Step 3: each user is created with a usage location, which licensing requires, and the returned $u.Id is licensed right away.",
+   "Step 4: the advanced query with $count, ConsistencyLevel and CountVariable lists member users without licenses, which should return none.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module. Use Connect-MgGraph from Microsoft Graph PowerShell.",
+   "Incorrect: New-MgInvitation creates B2B guest accounts for external people. The new employees need internal member accounts."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/create-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-10",
+  "obj": "2.1.7",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Tailspin Toys must assign a Microsoft 365 E5 license to every user in the Sales department, about 600 users, who all work in the United Kingdom.\n\nHow should you complete the script? To answer, select the appropriate options in the answer area.\n\n```powershell\nConnect-MgGraph -Scopes \"User.ReadWrite.All\",\"Organization.Read.All\"\n$sku = [[1]] | Where SkuPartNumber -eq 'SPE_E5'\n$users = Get-MgUser -Filter \"department eq 'Sales'\" [[2]]\nforeach ($u in $users) {\n  Update-MgUser -UserId $u.Id -UsageLocation \"GB\"\n  Set-MgUserLicense -UserId $u.Id -AddLicenses [[3]] -RemoveLicenses @()\n}\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Get-MgSubscribedSku -All",
+     "Get-MgUserLicenseDetail -UserId $u.Id",
+     "Get-MgOrganization"
+    ],
+    "why": [
+     "Correct: Get-MgSubscribedSku lists the licensing plans of the tenant, including SkuPartNumber and SkuId, so the E5 SKU can be found.",
+     "Incorrect: Get-MgUserLicenseDetail shows the licenses already assigned to one user, and $u is not defined yet at this point. Use it to check a user's current licenses.",
+     "Incorrect: Get-MgOrganization returns tenant properties such as verified domains, not the subscribed SKUs with their SKU IDs."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "-All",
+     "-Top 100",
+     "-CountVariable salesCount"
+    ],
+    "why": [
+     "Correct: -All follows every page of results, so all 600 Sales users are returned.",
+     "Incorrect: -Top 100 limits the result to 100 users, so 500 users would get no license. Use -Top to sample results.",
+     "Incorrect: CountVariable stores a count for advanced queries with ConsistencyLevel; it does not return every page of users."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "@{SkuId = $sku.SkuId}",
+     "@{SkuId = $sku.SkuPartNumber}",
+     "@($sku.SkuId)"
+    ],
+    "why": [
+     "Correct: AddLicenses expects hashtables with a SkuId key that holds the GUID of the SKU.",
+     "Incorrect: SkuPartNumber is the readable name SPE_E5, not the GUID that SkuId requires, so the assignment fails.",
+     "Incorrect: a plain array of GUIDs is the format for RemoveLicenses. AddLicenses needs hashtables, optionally with disabled plans."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "To license users in bulk, resolve the SKU ID with Get-MgSubscribedSku, retrieve all target users with -All, set a usage location, and pass @{SkuId = ...} to AddLicenses with an empty RemoveLicenses array.",
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide"
+ },
+ {
+  "id": "2.1.7-11",
+  "obj": "2.1.7",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. has no on-premises Active Directory. You must create 500 cloud-only member accounts from a CSV file that contains the name, user name and initial password of each employee. No invitation emails must be sent.\n\nWhich two methods should you use? Each correct answer presents a complete solution.",
+  "choices": [
+   "Bulk create on the Users page of the Microsoft Entra admin center",
+   "A Microsoft Graph PowerShell script that runs Import-Csv and New-MgUser for each row",
+   "Bulk invite on the Users page of the Microsoft Entra admin center",
+   "A Microsoft Graph PowerShell script that runs Import-Csv and New-MgInvitation for each row",
+   "Microsoft Entra Connect Sync with a filter on the organizational unit of the employees"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Internal member accounts with passwords from a file can be created in the portal with Bulk create or in PowerShell with New-MgUser in a loop. Invitations create guests, and Microsoft Entra Connect Sync needs an on-premises directory as the source.",
+  "rationale": [
+   "Correct: Bulk create imports the CSV template with name, user name and initial password, creates member accounts and sends no invitation emails.",
+   "Correct: a script that reads the CSV and calls New-MgUser with a PasswordProfile creates the same cloud-only member accounts without invitations. It also handles large tenants where portal bulk jobs time out.",
+   "Incorrect: Bulk invite creates B2B guest accounts and sends invitation emails, which breaks both requirements. Use it for partners.",
+   "Incorrect: New-MgInvitation also creates guests and is meant for external people. Use it for scripted bulk guest invitations.",
+   "Incorrect: Microsoft Entra Connect Sync synchronizes accounts from on-premises Active Directory, which Fabrikam does not have, and the accounts would not be cloud-only."
+  ],
+  "ref": "https://learn.microsoft.com/entra/identity/users/users-bulk-add"
+ }
+]

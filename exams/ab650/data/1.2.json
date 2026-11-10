@@ -1,0 +1,1205 @@
+[
+ {
+  "id": "1.2.1-01",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. creates a shared mailbox named Claims. Five claims handlers must be able to open Claims, read and delete messages, and update the shared calendar. They must not be able to send messages that appear to come from Claims.\n\nWhich permission should you assign to the claims handlers?",
+  "choices": [
+   "Full Access",
+   "Send As",
+   "Send on Behalf",
+   "Full Access and Send As"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Shared mailboxes use three separate permissions. Full Access lets a delegate open the mailbox and work with its items, Send As lets the delegate send as the mailbox, and Send on Behalf adds 'on behalf of' to messages. Full Access by itself does not allow sending, so it is the right permission when users must only read and manage items.",
+  "rationale": [
+   "Correct: Full Access lets the handlers open Claims and read, delete and change messages and calendar items. It does not let them send as the mailbox, which meets the restriction on sending.",
+   "Incorrect: Send As lets a user send messages that look like they came from Claims, which the stem forbids, and it does not open the mailbox. Use it when delegates must reply as the shared address.",
+   "Incorrect: Send on Behalf lets a user send messages shown as 'User on behalf of Claims', which is still sending from the mailbox. Use it when recipients must see who sent the message.",
+   "Incorrect: adding Send As to Full Access lets the handlers send as Claims, which breaks the requirement. This combination is the normal setup when the team must both read and reply from the shared address."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/create-a-shared-mailbox"
+ },
+ {
+  "id": "1.2.1-02",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. has a shared mailbox named Reception. User1 must be able to send messages from Reception. Recipients must see that the message was sent by User1 on behalf of Reception.\n\nWhich Exchange Online PowerShell command should you run?",
+  "choices": [
+   "`Set-Mailbox -Identity Reception -GrantSendOnBehalfTo User1`",
+   "`Add-RecipientPermission -Identity Reception -Trustee User1 -AccessRights SendAs`",
+   "`Add-MailboxPermission -Identity Reception -User User1 -AccessRights FullAccess`",
+   "`Set-Mailbox -Identity Reception -MessageCopyForSendOnBehalfEnabled $true`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Send on Behalf is a property of the mailbox, set with Set-Mailbox -GrantSendOnBehalfTo, and the sender name shows 'User on behalf of mailbox'. Send As is a recipient permission (Add-RecipientPermission) and hides the real sender. Full Access is a mailbox permission (Add-MailboxPermission) and does not allow sending.",
+  "rationale": [
+   "Correct: GrantSendOnBehalfTo gives User1 the Send on Behalf permission, so recipients see 'User1 on behalf of Reception', which is exactly the required sender display.",
+   "Incorrect: Send As makes messages look as if Reception itself sent them, so recipients would not see User1. Use Add-RecipientPermission with SendAs when the real sender must stay hidden.",
+   "Incorrect: Full Access lets User1 open Reception and manage its items, but it does not grant any right to send from it. Use it when a delegate must read and organize the mailbox.",
+   "Incorrect: MessageCopyForSendOnBehalfEnabled only saves a copy of on-behalf messages in the Sent Items of Reception. It assumes the permission already exists; use it after Send on Behalf is granted."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/create-a-shared-mailbox"
+ },
+ {
+  "id": "1.2.1-03",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys grants a mail-enabled security group named SupportTeam the Full Access permission to a shared mailbox named Support. Members of SupportTeam can open Support manually, but the mailbox does not appear automatically in their Outlook desktop client. The mailbox must appear automatically for each support agent.\n\nWhat should you do?",
+  "choices": [
+   "Grant Full Access to each support agent individually instead of to the group",
+   "Run Add-MailboxPermission for SupportTeam again with the AutoMapping parameter set to $true",
+   "Grant SupportTeam the Send As permission to Support by running Add-RecipientPermission",
+   "Assign an Exchange Online Plan 2 license to the Support shared mailbox"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Automapping is written to the delegate's own mailbox when Full Access is granted to that user. When the permission is granted to a security group, no user mailbox is updated, so automapping does not work. To get automapping, assign Full Access to users explicitly.",
+  "rationale": [
+   "Correct: automapping is set on each user's mailbox when that user receives Full Access. Granting the permission to each agent directly lets Outlook add Support automatically after a restart.",
+   "Incorrect: AutoMapping $true is the default and still has no effect when the trustee is a security group, because automapping is stored on user mailboxes. Use the parameter, set to $false, to stop automapping for individual users.",
+   "Incorrect: Send As controls sending from Support and has no effect on whether the mailbox appears in Outlook. Grant it when the agents must reply as the Support address.",
+   "Incorrect: a license (Exchange Online Plan 2, or Plan 1 with Exchange Online Archiving) is needed only for more than 50 GB, in-place archiving or Litigation Hold on a shared mailbox. It does not change how Outlook adds the mailbox."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/create-a-shared-mailbox"
+ },
+ {
+  "id": "1.2.1-04",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has a shared mailbox named Sales. Users who have the Send As permission send messages as Sales, but the messages are saved only in each sender's own Sent Items folder. A copy of each message must also be saved in the Sent Items folder of Sales.\n\nWhich command should you run?",
+  "choices": [
+   "`Set-Mailbox -Identity Sales -MessageCopyForSentAsEnabled $true`",
+   "`Set-Mailbox -Identity Sales -MessageCopyForSendOnBehalfEnabled $true`",
+   "`Set-Mailbox -Identity Sales -HiddenFromAddressListsEnabled $false`",
+   "`Add-RecipientPermission -Identity Sales -Trustee User1 -AccessRights SendAs`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, a message sent as or on behalf of another mailbox is saved in the sender's Sent Items. Set-Mailbox has two switches on the shared mailbox: MessageCopyForSentAsEnabled for Send As and MessageCopyForSendOnBehalfEnabled for Send on Behalf. Pick the one that matches the permission the senders use.",
+  "rationale": [
+   "Correct: MessageCopyForSentAsEnabled on the shared mailbox saves a copy of every message sent as Sales in the Sent Items folder of Sales, which matches the Send As permission the users have.",
+   "Incorrect: this switch copies only messages sent on behalf of Sales. The users send as Sales, so their messages are not covered. Use it when delegates have Send on Behalf permission.",
+   "Incorrect: HiddenFromAddressListsEnabled controls whether Sales appears in the global address list. It does not change where sent messages are saved; set it to $false when Send As fails in Outlook desktop.",
+   "Incorrect: Add-RecipientPermission grants Send As, which the users already have. Granting it again does not change where sent messages are saved. Use it when a delegate cannot send as Sales at all."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-user-mailboxes/automatically-save-sent-items-in-delegator-s-mailbox"
+ },
+ {
+  "id": "1.2.1-05",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Woodgrove Bank needs a new shared mailbox named Loans with the alias loans. User1 must be able to send messages that appear to come from Loans. You must perform the work by using PowerShell and then confirm that the permission is in place. Another administrator will assign Full Access later.\n\nWhich four commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-ExchangeOnline -UserPrincipalName admin@woodgrovebank.com`",
+   "`New-Mailbox -Shared -Name \"Loans\" -DisplayName \"Loans\" -Alias loans`",
+   "`Add-RecipientPermission -Identity loans -Trustee User1 -AccessRights SendAs`",
+   "`Get-RecipientPermission -Identity loans`",
+   "`Add-MailboxPermission -Identity loans -User User1 -AccessRights SendAs`",
+   "`Connect-MsolService`",
+   "`Enable-Mailbox -Identity loans -Archive`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Shared mailbox work in Exchange Online PowerShell starts with Connect-ExchangeOnline. New-Mailbox -Shared creates the mailbox without a license, Send As is a recipient permission added with Add-RecipientPermission, and Get-RecipientPermission lists who holds it. Full Access is a different, mailbox-level permission added with Add-MailboxPermission.",
+  "rationale": [
+   "Step 1: Connect-ExchangeOnline opens the Exchange Online PowerShell session that every other command in the sequence needs.",
+   "Step 2: New-Mailbox -Shared creates Loans. The mailbox must exist before any permission can be assigned on it.",
+   "Step 3: Add-RecipientPermission with AccessRights SendAs lets User1 send messages that appear to come from Loans.",
+   "Step 4: Get-RecipientPermission lists the trustees that have Send As on Loans, which confirms the assignment after it is made.",
+   "Incorrect: in Exchange Online, Add-MailboxPermission manages mailbox permissions such as FullAccess, not Send As. Use it for Full Access, which another administrator assigns later.",
+   "Incorrect: Connect-MsolService belongs to the retired MSOnline module and does not manage Exchange Online recipients. Use Connect-ExchangeOnline for mailbox work and Microsoft Graph PowerShell for directory work.",
+   "Incorrect: Enable-Mailbox -Archive turns on an archive mailbox, which is not requested, and in-place archiving on a shared mailbox requires an Exchange Online Plan 2 license. Use it when old items must move out of the primary mailbox."
+  ],
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-permissions-for-recipients"
+ },
+ {
+  "id": "1.2.1-06",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Northwind Traders has a user named User2 who left the company. The license team removed the license from User2 yesterday. The mailbox of User2 is 18 GB and is not on hold. The manager of User2 must keep all mail and calendar items, and the company must stop paying for a license for the mailbox. You use the Microsoft 365 admin center.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "On the Active users page, assign a license that includes Exchange Online to User2 again.",
+   "Select User2, and on the Mail tab, select Convert to shared mailbox.",
+   "Remove the license from User2 on the Active users page.",
+   "Delete the User2 account after the conversion finishes.",
+   "Assign an Exchange Online Plan 2 license to the mailbox.",
+   "In the Exchange admin center, select the mailbox and select Convert to regular mailbox."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The option to convert a user mailbox to a shared mailbox appears only while the user has a license. After conversion, a shared mailbox under 50 GB without archive or hold needs no license, so you can remove it. The user account must stay because it anchors the shared mailbox.",
+  "rationale": [
+   "Step 1: the convert option is shown only for a licensed mailbox. Because the license was removed yesterday, you must add it back before you can convert the mailbox.",
+   "Step 2: Convert to shared mailbox keeps all existing mail and calendar items and lets the manager be added as a member.",
+   "Step 3: the mailbox is 18 GB and not on hold, so as a shared mailbox it needs no license. Remove the license from the Active users page to stop paying for it.",
+   "Incorrect: the user account anchors the shared mailbox, and deleting it removes the mailbox. Delete an account only when its mailbox is no longer needed.",
+   "Incorrect: a shared mailbox needs a license only when it is over 50 GB (Exchange Online Plan 2), uses in-place archiving, or is on Litigation Hold (Plan 2, or Plan 1 with Exchange Online Archiving). None applies to an 18 GB mailbox that is not on hold.",
+   "Incorrect: Convert to regular mailbox turns a shared mailbox back into a user mailbox, which is the opposite direction. Use it when a new employee takes over a shared mailbox as a personal one."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/convert-user-mailbox-to-shared-mailbox"
+ },
+ {
+  "id": "1.2.1-07",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. has a shared mailbox named Claims. User2 already has access to many shared mailboxes, and Outlook desktop starts slowly. User2 must be able to open Claims and manage its items. Claims must not be added to the Outlook profile of User2 automatically; User2 will open it manually when needed.\n\nHow should you complete the command? To answer, select the appropriate options in the answer area.\n\n```powershell\nAdd-MailboxPermission -Identity \"Claims\" -User \"User2\" -AccessRights [[1]] -InheritanceType All -AutoMapping [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "FullAccess",
+     "ReadPermission",
+     "SendAs"
+    ],
+    "why": [
+     "Correct: FullAccess lets User2 open Claims and read, change and delete its items, which is what managing the mailbox requires.",
+     "Incorrect: ReadPermission lets the user read the permissions on the mailbox, not its content. Grant it only when someone must audit mailbox permissions.",
+     "Incorrect: in Exchange Online, Send As is not an Add-MailboxPermission right; it is granted with Add-RecipientPermission. Use that cmdlet when User2 must send as Claims."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "$false",
+     "$true"
+    ],
+    "why": [
+     "Correct: AutoMapping $false grants the permission without adding Claims to the Outlook profile of User2, so Outlook does not load another mailbox at startup.",
+     "Incorrect: $true is the default and makes Outlook add Claims automatically after a restart, which the stem forbids. Keep it when users should see the mailbox without extra steps."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Add-MailboxPermission grants mailbox-level rights such as FullAccess. Its AutoMapping parameter decides whether Outlook adds the mailbox to the delegate's profile automatically; it is on by default. Turn it off for users with many delegated mailboxes or when they open the mailbox only now and then.",
+  "ref": "https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-permissions-for-recipients"
+ },
+ {
+  "id": "1.2.1-08",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-b",
+  "stem": "You need to meet the legal requirement for the Orders mailbox.\n\nWhich license should you assign to the Orders mailbox?",
+  "choices": [
+   "Exchange Online Plan 2",
+   "Exchange Online Plan 1",
+   "Exchange Online Plan 1 with the Exchange Online Archiving add-on",
+   "No license, because Litigation Hold is included for shared mailboxes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An unlicensed shared mailbox is limited to 50 GB and cannot be placed on hold. Exchange Online Plan 2 raises the limit to 100 GB and supports Litigation Hold. Plan 1 with the Exchange Online Archiving add-on also supports hold, but extra space then comes from the archive.",
+  "rationale": [
+   "Correct: Plan 2 supports Litigation Hold and raises the primary mailbox limit to 100 GB, so the expected 70 GB stays in the primary mailbox without an archive.",
+   "Incorrect: Plan 1 alone does not allow Litigation Hold on a shared mailbox. It suits user mailboxes that need a standard mailbox without compliance holds.",
+   "Incorrect: this combination supports Litigation Hold, but growth beyond the primary limit must go to the archive, which the order desk must not depend on. Use it when an auto-expanding archive is acceptable.",
+   "Incorrect: an unlicensed shared mailbox is limited to 50 GB and cannot be placed on Litigation Hold. No license is right only for small shared mailboxes without holds or archiving."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/convert-user-mailbox-to-shared-mailbox"
+ },
+ {
+  "id": "1.2.1-09",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lucerne Publishing has a shared mailbox named Press. User3 has Full Access and Send As permissions on Press. When User3 sends as Press from Outlook on the web, the message is sent. When User3 sends as Press from the Outlook desktop client, the send fails. Last week an administrator ran a script that changed several properties of Press so that it no longer appears in the global address list.\n\nWhat should you do to resolve the issue for the Outlook desktop client?",
+  "choices": [
+   "Set HiddenFromAddressListsEnabled to $false on Press",
+   "Grant User3 Send on Behalf permission on Press",
+   "Run Add-MailboxPermission for User3 with AutoMapping $false",
+   "Set MessageCopyForSentAsEnabled to $true on Press"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Send As and Send on Behalf in Outlook desktop resolve the shared mailbox through the global address list. If HiddenFromAddressListsEnabled is True, Outlook desktop cannot use those permissions, while Outlook on the web still can. Making the mailbox visible again fixes sending without changing permissions.",
+  "rationale": [
+   "Correct: Send As and Send on Behalf do not work in Outlook desktop when HiddenFromAddressListsEnabled is True, because the mailbox must be visible in the global address list. Setting it to $false fixes the client.",
+   "Incorrect: Send on Behalf has the same dependency on the global address list in Outlook desktop, so it fails too, and it changes how recipients see the sender. Grant it when 'on behalf of' is wanted.",
+   "Incorrect: AutoMapping only controls whether Press is added to the Outlook profile automatically. It does not affect sending; use it when a user has too many mailboxes loading at startup.",
+   "Incorrect: MessageCopyForSentAsEnabled only saves a copy in the Sent Items of Press after a successful send. It does not fix a send that fails; use it once sending works."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/admin/email/create-a-shared-mailbox"
+ },
+ {
+  "id": "1.2.2-01",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles wants to stop most users from creating private channels in Microsoft Teams. Users in the project management office must keep the ability. You plan to use the Teams admin center.\n\nWhich location in the Teams admin center should you use to configure the setting?",
+  "choices": [
+   "Teams > Teams policies, in a policy that has Create private channels set to Off",
+   "Meetings > Meeting policies, in a policy that has Create private channels set to Off",
+   "Teams > Teams settings, by turning off private channels for the organization",
+   "Messaging > Messaging policies, in a policy that has Create private channels set to Off"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Channel creation rights are controlled by Teams policies (CsTeamsChannelsPolicy), which can be assigned per user or group. Edit the global policy for most users and assign a custom policy to the exception group. Team owners can further limit member creation inside each team.",
+  "rationale": [
+   "Correct: Teams policies contain the Create private channels setting. You can turn it off in the global policy and assign a custom policy with it on to the project management office.",
+   "Incorrect: meeting policies control meeting features such as recording, transcription and Copilot in meetings, not channel creation. Use them to manage what organizers can do in meetings.",
+   "Incorrect: Teams settings are organization-wide and cover features such as email integration and cloud storage, so they cannot keep an exception for one group. Use them for tenant-wide Teams options.",
+   "Incorrect: messaging policies control chat and channel message features such as editing, deleting and read receipts. Use them to manage message behavior, not who creates channels."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/teams-policies"
+ },
+ {
+  "id": "1.2.2-02",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee has a team named Marketing. The only owner of the team left the company. User4 is already a member of Marketing and must become an owner of the team. You use Microsoft Teams PowerShell.\n\nWhich command should you run?",
+  "choices": [
+   "`Add-TeamUser -GroupId $gid -User user4@fourthcoffee.com -Role Owner`",
+   "`Add-TeamChannelUser -GroupId $gid -DisplayName \"General\" -User user4@fourthcoffee.com -Role Owner`",
+   "`Set-Team -GroupId $gid -AllowCreateUpdateChannels $true`",
+   "`Grant-CsTeamsChannelsPolicy -Identity user4@fourthcoffee.com -PolicyName Owners`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Team membership and ownership are managed with Add-TeamUser; the Role parameter set to Owner promotes a user to team owner. Add-TeamChannelUser manages membership of private and shared channels only. Policies control what users may create, not who owns a team.",
+  "rationale": [
+   "Correct: Add-TeamUser with Role Owner makes User4 an owner of the team, which also makes the user an owner of the underlying Microsoft 365 group.",
+   "Incorrect: Add-TeamChannelUser adds owners or members to a private or shared channel. The General channel is a standard channel whose membership follows the team. Use it for private channel owners.",
+   "Incorrect: Set-Team changes team settings, here whether members can create and update channels. It does not change who owns the team; use it to adjust member permissions.",
+   "Incorrect: a channels policy controls what a user can create, such as private or shared channels, across all teams. It does not grant ownership of a specific team."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoftteams/new-team?view=teams-ps"
+ },
+ {
+  "id": "1.2.2-03",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Alpine Ski House has a team named Events. You must choose a channel type for three collaboration needs in the team.\n\nWhich channel type should you use for each need? To answer, drag the appropriate channel types to the correct needs. Each channel type may be used once, more than once, or not at all.",
+  "choices": [
+   "Standard channel",
+   "Private channel",
+   "Shared channel",
+   "Org-wide team"
+  ],
+  "targets": [
+   "Need1: A budget discussion for four team members, one of whom is a guest who is already a member of Events",
+   "Need2: Collaboration with staff from a partner company who must keep using accounts in their own Microsoft Entra tenant",
+   "Need3: Announcements that every member of Events must be able to read"
+  ],
+  "answer": [
+   1,
+   2,
+   0
+  ],
+  "rationale": [
+   "Need1: a private channel limits access to selected members of the team, and any team member, including a guest, can be added. The guest is already on the team, so this fits.",
+   "Need2: a shared channel lets people outside the team, including external participants from another Microsoft Entra organization, join without guest accounts in your tenant.",
+   "Need3: a standard channel is open to every member of the team, so all members of Events can read the announcements."
+  ],
+  "notes": [
+   "Standard channel: open to all team members, and its membership follows the team. Use it for content the whole team should see.",
+   "Private channel: limited to selected team members, including guests who are already on the team. Use it for sensitive topics inside one team.",
+   "Shared channel: can include people who are not members of the team, including external users through cross-tenant trust. Use it for cross-team or cross-organization work.",
+   "Org-wide team: a team that automatically includes every user in the organization, up to 10,000 members. Use it for company-wide communication, not for one team's channels."
+  ],
+  "explanation": "Pick the channel type by who must be in it: everyone on the team (standard), a subset of the team (private), or people outside the team or organization (shared). Private channel members must already belong to the team, while shared channels do not have that requirement.",
+  "ref": "https://learn.microsoft.com/microsoftteams/teams-channels-overview"
+ },
+ {
+  "id": "1.2.2-04",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Trey Research has a Microsoft 365 group named Lab with 2,000 members, a group mailbox, and a connected SharePoint site. The research director wants to use Microsoft Teams with the same membership and the same SharePoint site, without creating a second group.\n\nWhich command should you run?",
+  "choices": [
+   "`New-Team -GroupId <Lab group ID>`",
+   "`New-Team -DisplayName \"Lab\" -Visibility Private`",
+   "`New-TeamChannel -GroupId <Lab group ID> -DisplayName \"Lab\"`",
+   "`Set-TeamArchivedState -GroupId <Lab group ID> -Archived:$false`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Every team is built on a Microsoft 365 group. New-Team has a parameter set that takes the GroupId of an existing group and adds Teams to it, so the members, the mailbox and the SharePoint site stay the same. Creating a team by display name always creates a new group.",
+  "rationale": [
+   "Correct: New-Team with GroupId adds a team to the existing Lab group, so the existing members and the connected SharePoint site are reused and no second group is created.",
+   "Incorrect: New-Team with DisplayName creates a new Microsoft 365 group and a new site, which the director wants to avoid. Use it when no suitable group exists yet.",
+   "Incorrect: New-TeamChannel adds a channel to a team that already exists. Lab is not a team yet, so the command fails; use it after the team is created.",
+   "Incorrect: Set-TeamArchivedState archives or reactivates an existing team. It does not turn a group into a team; use it to make an inactive team read-only or bring it back."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoftteams/new-team?view=teams-ps"
+ },
+ {
+  "id": "1.2.2-05",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Coho Winery finished a project. The project team, Project Falcon, must become read-only in Microsoft Teams, and team members must have read-only access to the connected SharePoint site. Team owners must still be able to manage membership. You must use Microsoft Teams PowerShell and then confirm the result.\n\nWhich four commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MicrosoftTeams`",
+   "`$t = Get-Team -DisplayName \"Project Falcon\"`",
+   "`Set-TeamArchivedState -GroupId $t.GroupId -Archived:$true -SetSpoSiteReadOnlyForMembers:$true`",
+   "`Get-Team -Archived $true`",
+   "`Remove-Team -GroupId $t.GroupId`",
+   "`Set-SPOSite -Identity https://cohowinery.sharepoint.com/sites/ProjectFalcon -LockState ReadOnly`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Archiving a team freezes its activity in Teams while owners and admins can still manage membership. Set-TeamArchivedState needs the GroupId, so you look up the team first; SetSpoSiteReadOnlyForMembers also makes the SharePoint site read-only for members. Get-Team -Archived lists archived teams for verification.",
+  "rationale": [
+   "Step 1: Connect-MicrosoftTeams opens the session that the Teams cmdlets in the following steps require.",
+   "Step 2: Get-Team -DisplayName returns the team object, and its GroupId is needed by the archive command in the next step.",
+   "Step 3: Set-TeamArchivedState with Archived $true makes the team read-only, and SetSpoSiteReadOnlyForMembers makes the site read-only for members while owners keep control.",
+   "Step 4: Get-Team -Archived $true lists the archived teams, which confirms that Project Falcon is now archived.",
+   "Incorrect: Remove-Team deletes the team and its group, so content is no longer available read-only. Use it when the team and its content are no longer needed at all.",
+   "Incorrect: a ReadOnly lock state locks the whole site for everyone, including owners, and does not freeze the team in Teams. Use it to lock a site that is not tied to an active team."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoftteams/set-teamarchivedstate?view=teams-ps"
+ },
+ {
+  "id": "1.2.2-06",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Wide World Importers has a team named Sales that contains a private channel named Pricing. User5 is an owner of Sales but is not a member of Pricing.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A user must be a member of Sales before the user can be added to Pricing.",
+   "User5 can read the conversations in Pricing because User5 owns Sales.",
+   "If a user is removed from Sales, the user is also removed from Pricing."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Private channels are a subset of a team: only team members can be added, and leaving the team removes the user from its private channels. Team owners can see that a private channel exists and can delete it, but they cannot read its content unless they are added to it.",
+  "rationale": [
+   "Yes: anyone, including guests, can be added to a private channel only if they are already members of the parent team. Add the user to Sales first, then to Pricing.",
+   "No: team owners who are not members of a private channel see the channel only under Manage team, not its conversations. Add User5 to Pricing if User5 must read it.",
+   "Yes: when a user leaves or is removed from a team, the user is removed from all private channels in that team and must be added back if they rejoin."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/private-channels"
+ },
+ {
+  "id": "1.2.2-07",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys has a team named Finance with GroupId stored in $gid. The team has a private channel named Budget. User6 is not a member of Finance. User6 must become an owner of Budget but must not become an owner of Finance. You use Microsoft Teams PowerShell.\n\nWhich four commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-MicrosoftTeams`",
+   "`Add-TeamUser -GroupId $gid -User user6@tailspintoys.com`",
+   "`Add-TeamChannelUser -GroupId $gid -DisplayName \"Budget\" -User user6@tailspintoys.com`",
+   "`Add-TeamChannelUser -GroupId $gid -DisplayName \"Budget\" -User user6@tailspintoys.com -Role Owner`",
+   "`Add-TeamUser -GroupId $gid -User user6@tailspintoys.com -Role Owner`",
+   "`New-TeamChannel -GroupId $gid -DisplayName \"Budget\" -MembershipType Private -Owner user6@tailspintoys.com`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Private channel membership is layered. A user must be a member of the team before being added to the private channel, and must be a member of the channel before being promoted to channel owner. Team ownership and channel ownership are separate roles.",
+  "rationale": [
+   "Step 1: Connect-MicrosoftTeams opens the session for the Teams cmdlets that follow.",
+   "Step 2: Add-TeamUser without a role adds User6 as a member of Finance. A user must be a team member before being added to a private channel.",
+   "Step 3: Add-TeamChannelUser adds User6 as a member of Budget. The user must be a channel member before being made a channel owner.",
+   "Step 4: Add-TeamChannelUser with Role Owner promotes User6 to owner of Budget only, without any ownership of the team.",
+   "Incorrect: Role Owner on Add-TeamUser makes User6 an owner of Finance, which the stem forbids. Use it when a user must manage the whole team.",
+   "Incorrect: Budget already exists, so creating a private channel with the same name does not change the existing channel. Use New-TeamChannel with MembershipType Private to create a new private channel."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoftteams/add-teamchanneluser?view=teams-ps"
+ },
+ {
+  "id": "1.2.2-08",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a team named Design. User7 is a member of Design. The Teams policy assigned to User7 has Create shared channels set to On. User7 needs to create a shared channel in Design to work with another department, but the shared option is not available to User7. Other members of Design must not get new rights.\n\nWhat should you do?",
+  "choices": [
+   "Make User7 an owner of the Design team",
+   "Set Create private channels to On in the Teams policy for User7",
+   "Turn on Allow members to create and update channels in the Design team settings",
+   "Assign User7 the Teams Administrator role in Microsoft Entra ID"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Create shared channels policy applies to team owners: only owners can create shared channels, even when the policy is On. Team settings for member permissions cover standard and private channels, not shared channels. Granting an admin role is far broader than needed.",
+  "rationale": [
+   "Correct: only team owners can create shared channels. Making User7 an owner of Design lets the policy take effect for User7 without changing rights for the other members.",
+   "Incorrect: Create private channels controls private channels, not shared channels, so the shared option stays unavailable. Turn it on when a user needs to create private channels.",
+   "Incorrect: this member setting lets every member create and edit standard channels, which gives new rights to all members and still does not allow shared channels.",
+   "Incorrect: Teams Administrator manages Teams across the whole organization, which breaks least privilege. Use the role for administrators who manage policies and teams tenant-wide."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/shared-channels"
+ },
+ {
+  "id": "1.2.2-09",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "case": "C-b",
+  "stem": "You need to meet the Litware collaboration requirement.\n\nWhich three actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Create a shared channel in Pump Design and add the selected Fabrikam engineers.",
+   "Configure Microsoft Entra cross-tenant access settings for the Litware tenant to allow B2B direct connect.",
+   "Set Invite external users to shared channels to On in EngineeringPolicy.",
+   "Create a private channel in Pump Design and invite the Litware engineers as guests.",
+   "Turn on guest access in the Teams admin center and add the Litware engineers to Pump Design.",
+   "Set Create private channels to On in EngineeringPolicy."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Shared channels let external participants work in your channel with their own home-tenant accounts, so no guest account is created, and other team members do not see the channel. This needs a shared channel created by a team owner, a cross-tenant trust (B2B direct connect) in Microsoft Entra ID that Litware must also allow on its side, and a Teams policy that lets the channel owners invite external users.",
+  "rationale": [
+   "Correct: a shared channel is visible only to its members, so the other members of Pump Design do not see it, and it can include people from another organization.",
+   "Correct: external participants join shared channels through B2B direct connect, which is configured in Microsoft Entra cross-tenant access settings. No such settings exist yet for Litware.",
+   "Correct: Invite external users to shared channels is Off in EngineeringPolicy, so the Pump Design owners cannot invite Litware users until it is turned On.",
+   "Incorrect: a private channel can include only team members, so the Litware engineers would need guest accounts and team membership, which the requirement forbids. Use it for a subset of existing members.",
+   "Incorrect: adding the Litware engineers to Pump Design gives them guest accounts in the Fabrikam tenant and access to all standard channels, which the requirement forbids. Teams guest access must be on (the default) to invite external participants, but they join only the shared channel through B2B direct connect.",
+   "Incorrect: Create private channels affects private channels only and does not let external users join. Turn it on when owners or members need to create private channels."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/shared-channels"
+ },
+ {
+  "id": "1.2.3-01",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. assigns Microsoft 365 Copilot licenses to its sales team. You must control how the sales team uses Copilot in scheduled Teams meetings and in Meet now meetings.\n\nWhich policy type should you configure?",
+  "choices": [
+   "Teams meeting policy",
+   "Teams calling policy",
+   "Teams events policy",
+   "Teams messaging policy"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot in Teams is controlled per workload: meeting policies (CsTeamsMeetingPolicy -Copilot) cover scheduled meetings, Meet now and events, while calling policies (CsTeamsCallingPolicy -Copilot) cover one-to-one and group calls. Events policies control event features such as webinar and town hall transcription.",
+  "rationale": [
+   "Correct: the Copilot setting in Teams meeting policies applies to scheduled meetings and Meet now, which are the experiences in the requirement.",
+   "Incorrect: the Copilot setting in calling policies applies to one-to-one and group calls, including PSTN calls, not to scheduled meetings. Use it to control Copilot in calls.",
+   "Incorrect: events policies control features of webinars and town halls, such as transcription for events. They do not hold the Copilot setting for scheduled meetings.",
+   "Incorrect: messaging policies control chat and channel messaging features such as editing and deleting messages. They do not control Copilot in meetings."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-02",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers requires that Copilot be usable in Teams meetings only when a transcript is saved, so that every Copilot interaction is backed by a transcript. Meeting organizers must not be able to change this behavior in meeting options.\n\nWhich value should you select for the Copilot setting in the meeting policy?",
+  "choices": [
+   "On with saved transcript required",
+   "On with transcript saved by default",
+   "On",
+   "Off"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The meeting policy Copilot setting has four values. Only On with saved transcript required (EnabledWithTranscript, the default) enforces During and after the meeting and prevents organizers from changing it. The other On values set a default that organizers can change, and Off sets a default of Off.",
+  "rationale": [
+   "Correct: On with saved transcript required (EnabledWithTranscript) sets the meeting option to During and after the meeting and enforces it, so organizers cannot change it.",
+   "Incorrect: On with transcript saved by default also defaults to During and after the meeting, but organizers can change it to Only during the meeting or Off. Use it when a default, not enforcement, is enough.",
+   "Incorrect: On (Enabled) defaults to Only during the meeting, which uses temporary speech-to-text data and no saved transcript. Use it when Copilot should work without transcripts by default.",
+   "Incorrect: Off (Disabled) sets the default Copilot option to Off, and organizers can still turn Copilot on. Use it when Copilot should not be used unless an organizer chooses it."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-03",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works Cycles wants to change the Copilot setting for the meetings that members of its legal department organize. You use the Teams admin center.\n\nWhich location should you use?",
+  "choices": [
+   "Meetings > Meeting policies > Recording & transcription section",
+   "Voice > Calling policies > Copilot setting of the policy",
+   "Meetings > Meeting settings > Participants section of the page",
+   "Teams > Teams policies > Copilot setting"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In the Teams admin center, the Copilot setting for meetings is in a meeting policy, in the Recording & transcription section next to the transcription setting. You assign the policy to users or groups. Calling policies hold the separate Copilot setting for calls.",
+  "rationale": [
+   "Correct: the Copilot setting for meetings and events is in the Recording & transcription section of a meeting policy, which you can assign to the legal department.",
+   "Incorrect: calling policies under Voice contain a Copilot setting for one-to-one and group calls, not for meetings. Use them to control Copilot in Teams Phone calls.",
+   "Incorrect: meeting settings are organization-wide and cover items such as anonymous participants and email invitations. They cannot target one department and do not hold the Copilot setting.",
+   "Incorrect: Teams policies control team and channel features, such as creating private or shared channels. They do not include a Copilot setting for meetings."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-04",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders wants Copilot in the meetings of its product managers to default to During and after the meeting. Organizers must be able to change the Copilot option to Only during the meeting or Off for individual sensitive meetings.\n\nWhich PowerShell value should you use for the Copilot parameter of Set-CsTeamsMeetingPolicy?",
+  "choices": [
+   "EnabledWithTranscriptDefaultOn",
+   "EnabledWithTranscript",
+   "Enabled",
+   "Disabled"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "EnabledWithTranscriptDefaultOn and EnabledWithTranscript both default the meeting option to During and after the meeting, but only the DefaultOn value lets organizers change it. Enabled defaults to Only during the meeting, and Disabled defaults to Off.",
+  "rationale": [
+   "Correct: EnabledWithTranscriptDefaultOn sets the default to During and after the meeting and lets organizers switch to Only during the meeting or Off per meeting.",
+   "Incorrect: EnabledWithTranscript also defaults to During and after the meeting, but the option is enforced, so organizers cannot change it for sensitive meetings. Use it when transcripts must be required.",
+   "Incorrect: Enabled sets the default to Only during the meeting. Organizers can change it, but the default does not match the requirement. Use it when no transcript should be saved by default.",
+   "Incorrect: Disabled sets the default to Off. Organizers can turn Copilot on, but the default is wrong. Use it when Copilot should be opt-in per meeting."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-05",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud assigns a meeting policy to User1 in which Copilot is set to On with saved transcript required and Transcription is Off. User1 has a Microsoft 365 Copilot license. In meetings that User1 organizes, no participant can use Copilot. Copilot must be available during and after these meetings, and the Copilot setting must not change.\n\nWhat should you do?",
+  "choices": [
+   "Turn Transcription On in the meeting policy assigned to User1",
+   "Set the Copilot setting in the policy to On",
+   "Turn on AllowTranscriptionForCalling in the calling policy assigned to User1",
+   "Assign a Teams Premium license to User1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Transcription is a per-organizer and per-user policy setting. With the option During and after the meeting, Copilot works only after someone starts a transcript, and nobody can transcribe User1's meetings while the organizer's policy blocks transcription. Turning transcription on lets a licensed user start a transcript and use Copilot.",
+  "rationale": [
+   "Correct: the organizer's policy must allow transcription for the meeting to be transcribed. With transcription allowed, a licensed user can start a transcript and then use Copilot during and after the meeting.",
+   "Incorrect: changing Copilot to On would allow Copilot only during the meeting without a transcript, but the stem says the Copilot setting must not change and Copilot must also work after the meeting.",
+   "Incorrect: AllowTranscriptionForCalling controls transcription in one-to-one and group calls, not in scheduled meetings. Use it with the calling policy Copilot setting.",
+   "Incorrect: Teams Premium adds features such as intelligent recap and live translated captions. Copilot in meetings needs a Microsoft 365 Copilot license, which User1 already has."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-06",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 Copilot and Teams Premium licenses. User2 organizes a confidential meeting. The meeting policy for User2 has Copilot set to On and Transcription set to On, and the attendees are licensed for Copilot. During the meeting, nobody can use Copilot. User2 explains that the meeting options were set to use end-to-end encryption for extra protection.\n\nWhat should you do to allow Copilot in future meetings of this type?",
+  "choices": [
+   "Turn off end-to-end encryption for these meetings",
+   "Set the Copilot setting in the meeting policy to On with saved transcript required",
+   "Turn on live captions in the meeting policy for User2",
+   "Set Copilot to During and after the meeting in the meeting options"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot in Teams meetings, events and calls is not available when end-to-end encryption is used. Licensing and policy settings cannot override that limit. For confidential meetings that need Copilot, use other protections, such as sensitivity labels or meeting options, instead of end-to-end encryption.",
+  "rationale": [
+   "Correct: Copilot is not available in end-to-end encrypted meetings, so the encryption is the cause. Meetings without end-to-end encryption let licensed users use Copilot again.",
+   "Incorrect: requiring a saved transcript changes how Copilot runs, but Copilot is still unavailable in an end-to-end encrypted meeting. Use it when every Copilot meeting must keep a transcript.",
+   "Incorrect: live captions show real-time subtitles and are not required for Copilot. They do not change the end-to-end encryption limit; turn them on for accessibility.",
+   "Incorrect: the meeting option only chooses whether Copilot uses a transcript. With end-to-end encryption, Copilot is unavailable for any option; use it once encryption is off."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-07",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Lucerne Publishing has a meeting policy for editors with Copilot set to On and Recording and Transcription set to On. User3, an editor, reports that in one weekly meeting that User3 organizes, nobody can record, transcribe, or use Copilot. In other meetings that User3 organizes, all three features work.\n\nWhat should you identify as the most likely cause?",
+  "choices": [
+   "User3 set the Copilot meeting option to Off for the weekly meeting",
+   "The meeting policy for User3 has Copilot set to Off",
+   "The weekly meeting uses the Only during the meeting Copilot option",
+   "The attendees of the weekly meeting have no Copilot licenses"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Organizers choose the Copilot option per meeting: During and after the meeting, Only during the meeting, or Off. When an organizer sets Copilot to Off, recording and transcription are also turned off for that meeting. A policy change would affect all meetings of the organizer, not one.",
+  "rationale": [
+   "Correct: setting the Copilot option to Off in meeting options also turns off recording and transcription, and it applies only to that meeting, which matches the symptoms.",
+   "Incorrect: the policy affects every meeting that User3 organizes, but the other meetings work. The stem also states that Copilot is On in the policy.",
+   "Incorrect: Only during the meeting still lets licensed users use Copilot with temporary speech-to-text data, and it does not block recording or transcription.",
+   "Incorrect: missing Copilot licenses would stop only Copilot, not recording and transcription. Check licenses when Copilot alone is missing for some attendees."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-08",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. creates a meeting policy named Legal for the members of its legal department. In meetings that legal staff organize, Copilot must default to Off, but organizers must be able to turn Copilot on for a meeting. Legal staff must be able to transcribe their meetings. You must assign the policy to the Legal group.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```powershell\nSet-CsTeamsMeetingPolicy -Identity \"Legal\" -Copilot [[1]] -AllowTranscription [[2]]\n[[3]] -Group \"<Legal group object ID>\" -PolicyName \"Legal\"\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Disabled",
+     "Enabled",
+     "EnabledWithTranscript",
+     "EnabledWithTranscriptDefaultOn"
+    ],
+    "why": [
+     "Correct: Disabled sets the organizer's default Copilot option to Off, and organizers can change it to Only during the meeting or During and after the meeting.",
+     "Incorrect: Enabled defaults to Only during the meeting, so Copilot would be on by default. Use it when Copilot without a saved transcript is the desired default.",
+     "Incorrect: EnabledWithTranscript enforces During and after the meeting, so organizers cannot turn Copilot off. Use it when a transcript must back every Copilot session.",
+     "Incorrect: EnabledWithTranscriptDefaultOn defaults to During and after the meeting. Organizers can change it, but the default is not Off."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "$true",
+     "$false"
+    ],
+    "why": [
+     "Correct: AllowTranscription $true lets legal staff transcribe the meetings they organize and attend, which the requirement asks for.",
+     "Incorrect: $false blocks transcription for meetings these organizers create, so legal staff could not transcribe. Use it when meetings must never be transcribed."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Grant-CsTeamsMeetingPolicy",
+     "Grant-CsTeamsCallingPolicy",
+     "Grant-CsTeamsEventsPolicy"
+    ],
+    "why": [
+     "Correct: Grant-CsTeamsMeetingPolicy with the Group parameter assigns the Legal meeting policy to the members of the Legal group.",
+     "Incorrect: Grant-CsTeamsCallingPolicy assigns calling policies, which control calls, not meetings. A meeting policy named Legal cannot be assigned with it.",
+     "Incorrect: Grant-CsTeamsEventsPolicy assigns events policies for webinars and town halls. It cannot assign a meeting policy."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "The meeting policy Copilot parameter sets the organizer's default option and whether it is enforced, while AllowTranscription controls whether meetings can be transcribed. A policy only takes effect after it is assigned, here to a group with Grant-CsTeamsMeetingPolicy.",
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.3-09",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-b",
+  "stem": "You review BoardPolicy to plan how to meet the board meeting requirement.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "With BoardPolicy as currently configured, board members can use Copilot in meetings they organize without anyone starting a transcript.",
+   "If you set the Copilot setting of BoardPolicy to On, the default Copilot option for meetings that board members organize becomes Only during the meeting.",
+   "To control Copilot in one-to-one Teams calls between board members, you must modify BoardPolicy."
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "On with saved transcript required enforces During and after the meeting, so Copilot needs a transcript, and BoardPolicy blocks transcription. Setting Copilot to On makes Only during the meeting the default, which uses temporary speech-to-text data and keeps no transcript. Calls are governed by calling policies.",
+  "rationale": [
+   "No: On with saved transcript required enforces During and after the meeting, so Copilot works only after a transcript starts, and Transcription is Off in BoardPolicy. Copilot is therefore not usable without a transcript.",
+   "Yes: the On (Enabled) value sets the organizer's default to Only during the meeting, where Copilot uses temporary speech-to-text data that is not saved. With Transcription Off, no transcript is retained.",
+   "No: Copilot in one-to-one and group calls is controlled by the Copilot setting in Teams calling policies. Meeting policies such as BoardPolicy control scheduled meetings and Meet now."
+  ],
+  "ref": "https://learn.microsoft.com/microsoftteams/copilot-teams-transcription"
+ },
+ {
+  "id": "1.2.4-01",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Tailspin Toys has a communication site named Site1 at https://tailspintoys.sharepoint.com/sites/Site1. Site1 is not connected to a Microsoft 365 group. User1 must be able to manage all settings and permissions of Site1, including adding other site admins. User1 must not get permissions to any other site and must not be assigned any admin role in Microsoft 365.\n\nSolution: You run `Set-SPOUser -Site https://tailspintoys.sharepoint.com/sites/Site1 -LoginName user1@tailspintoys.com -IsSiteCollectionAdmin $true`.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Site admins (formerly site collection admins) have full control of one site, including its settings, permissions and the list of site admins. Set-SPOUser with IsSiteCollectionAdmin adds a user to that list for a single site, without any tenant role.",
+  "rationale": [
+   "Correct: IsSiteCollectionAdmin $true makes User1 a site admin of Site1 only. Site admins can manage every setting and permission of the site, including other site admins, and no admin role is assigned.",
+   "Incorrect: the solution meets the goal, because the site admin permission is scoped to Site1 and is not a Microsoft 365 admin role. No would be the answer if the solution used a tenant-wide role such as SharePoint Administrator."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/manage-sharepoint-users-and-groups-with-powershell"
+ },
+ {
+  "id": "1.2.4-02",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Tailspin Toys has a communication site named Site1 at https://tailspintoys.sharepoint.com/sites/Site1. Site1 is not connected to a Microsoft 365 group. User1 must be able to manage all settings and permissions of Site1, including adding other site admins. User1 must not get permissions to any other site and must not be assigned any admin role in Microsoft 365.\n\nSolution: You assign User1 the SharePoint Administrator role in the Microsoft 365 admin center.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "SharePoint Administrator is a tenant-wide role that manages all sites and SharePoint settings. Assigning it gives User1 access far beyond Site1 and is an admin role, which the stem forbids. Site-level control belongs to site admins.",
+  "rationale": [
+   "Incorrect: the SharePoint Administrator role is an admin role that can manage every site in the organization, so it breaks both restrictions in the stem. Use it for staff who administer SharePoint tenant-wide.",
+   "Correct: the solution does not meet the goal. Making User1 a site admin of Site1 is the scoped alternative that grants full control of one site only."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/manage-site-collection-administrators"
+ },
+ {
+  "id": "1.2.4-03",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-b",
+  "stem": "Tailspin Toys has a communication site named Site1 at https://tailspintoys.sharepoint.com/sites/Site1. Site1 is not connected to a Microsoft 365 group. User1 must be able to manage all settings and permissions of Site1, including adding other site admins. User1 must not get permissions to any other site and must not be assigned any admin role in Microsoft 365.\n\nSolution: You run `Add-SPOUser -Site https://tailspintoys.sharepoint.com/sites/Site1 -LoginName user1@tailspintoys.com -Group \"Site1 Visitors\"`.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Default SharePoint groups grant different permission levels: Visitors read, Members edit, and Owners have full control. Adding User1 to the Visitors group grants read access only, so User1 cannot manage settings, permissions or site admins.",
+  "rationale": [
+   "Incorrect: the Visitors group has read permissions only, so User1 could view Site1 but not change settings or permissions. Add users to the Visitors group when they only need to read content.",
+   "Correct: the solution does not meet the goal. User1 needs to be a site admin of Site1, for example by running Set-SPOUser with IsSiteCollectionAdmin $true."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/manage-sharepoint-users-and-groups-with-powershell"
+ },
+ {
+  "id": "1.2.4-04",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Coho Winery has a Microsoft 365 group-connected team site named Vineyard. User2 must be able to add, edit and delete documents in Vineyard. User2 must not be able to manage the site's permissions or settings.\n\nWhich role should you give User2?",
+  "choices": [
+   "Member of the Microsoft 365 group",
+   "Owner of the Microsoft 365 group",
+   "Site admin of Vineyard",
+   "Member of the Vineyard Visitors group"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a group-connected team site, the Microsoft 365 group owners become site owners (full control) and the group members become site members (edit). The Visitors group grants read access, and site admins have full control of the site.",
+  "rationale": [
+   "Correct: members of the Microsoft 365 group are site members with edit permissions, so User2 can add, edit and delete documents without managing permissions or settings.",
+   "Incorrect: group owners are site owners with full control, so User2 could manage permissions and settings, which the stem forbids. Make users owners when they must manage the site.",
+   "Incorrect: a site admin has full control of the site, including permissions and settings. Use it for people who must administer the site completely.",
+   "Incorrect: the Visitors group grants read permission, so User2 could not add or edit documents. Use it for people who only consume content."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/manage-site-collection-administrators"
+ },
+ {
+  "id": "1.2.4-05",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Alpine Ski House wants users to stop creating SharePoint sites from the SharePoint start page and OneDrive. Users must still be able to create teams in Microsoft Teams. Administrators will create communication sites on request.\n\nWhat should you do?",
+  "choices": [
+   "In the SharePoint admin center, go to Settings > Site creation and turn off site creation from tools",
+   "Restrict creation of Microsoft 365 groups to a security group of administrators",
+   "In the Teams admin center, turn off team creation in the Teams policies",
+   "In the SharePoint admin center, set the organization external sharing level to Only people in your organization"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Site creation setting in the SharePoint admin center controls whether users can create sites from SharePoint, OneDrive, the PnP PowerShell cmdlet and the REST API. It does not affect creating teams or Microsoft 365 groups, which always create a connected team site. Restricting group creation is a separate control that would also stop team creation.",
+  "rationale": [
+   "Correct: the Site creation setting stops users from creating sites from SharePoint and OneDrive, and it does not affect whether users can create teams or Microsoft 365 groups.",
+   "Incorrect: restricting group creation also stops users from creating teams, because every team needs a Microsoft 365 group. Use it when only approved users may create groups and teams.",
+   "Incorrect: Teams policies do not control site creation from SharePoint, and blocking team creation breaks the requirement. Teams policies manage channel creation and similar features.",
+   "Incorrect: the external sharing level controls sharing with people outside the organization, not who can create sites. Change it to limit guest access."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/manage-site-creation"
+ },
+ {
+  "id": "1.2.4-06",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank deleted a site at https://woodgrovebank.sharepoint.com/sites/treasury last week. Today you run `New-SPOSite` to create a new site at the same URL, but the command fails. The old site and its content are no longer needed, and the new site must use the same URL.\n\nWhat should you do first?",
+  "choices": [
+   "Permanently delete the old site from Deleted sites, and then run New-SPOSite again",
+   "Restore the old site from Deleted sites, and then run New-SPOSite again",
+   "Delete the redirect site at the URL, and then run New-SPOSite again",
+   "Run New-SPOSite again and add the NoWait parameter"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Deleted sites stay in the SharePoint recycle bin (Deleted sites) for a period, and New-SPOSite fails while a deleted site with the same URL is there. Permanently deleting it frees the URL. Redirect sites are a different case that appears when a site URL was changed.",
+  "rationale": [
+   "Correct: New-SPOSite fails when a deleted site with the same URL is still in the recycle bin. Permanently deleting the old site, which is no longer needed, frees the URL for the new site.",
+   "Incorrect: restoring brings the old site back at the same URL, so the URL is still taken and the unwanted content returns. Restore a site when it was deleted by mistake.",
+   "Incorrect: redirect sites exist when a site address was changed, not when a site was deleted. Delete a redirect when you want to reuse the old address of a renamed site.",
+   "Incorrect: NoWait only returns control before provisioning finishes. It does not remove the conflict with the deleted site; use it when creating many sites in a script."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.online.sharepoint.powershell/new-sposite?view=sharepoint-ps"
+ },
+ {
+  "id": "1.2.4-07",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Trey Research needs a new SharePoint team site that is not connected to a Microsoft 365 group, at https://treyresearch.sharepoint.com/sites/audit. The administrator account admin@treyresearch.com must be the owner. External auditor User7, who already has a guest account, must have read-only access through a new SharePoint group named Auditors. You use SharePoint Online Management Shell.\n\nWhich four commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-SPOService -Url https://treyresearch-admin.sharepoint.com`",
+   "`New-SPOSite -Url https://treyresearch.sharepoint.com/sites/audit -Owner admin@treyresearch.com -StorageQuota 1024 -Template STS#3 -Title \"Audit\"`",
+   "`New-SPOSiteGroup -Site https://treyresearch.sharepoint.com/sites/audit -Group \"Auditors\" -PermissionLevels \"View Only\"`",
+   "`Add-SPOUser -Site https://treyresearch.sharepoint.com/sites/audit -Group \"Auditors\" -LoginName <User7 sign-in name>`",
+   "`Set-SPOUser -Site https://treyresearch.sharepoint.com/sites/audit -LoginName <User7 sign-in name> -IsSiteCollectionAdmin $true`",
+   "`Set-SPOTenant -EnableRestrictedAccessControl $true`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "SharePoint Online Management Shell work starts with Connect-SPOService to the admin URL. A site must exist before you create a SharePoint group in it, and a group must exist before you add users to it. STS#3 is the modern team site template without a Microsoft 365 group.",
+  "rationale": [
+   "Step 1: Connect-SPOService connects to the SharePoint admin URL, which every following cmdlet needs.",
+   "Step 2: New-SPOSite with template STS#3 creates a team site that is not connected to a Microsoft 365 group, with the required owner. The site must exist before groups can be added to it.",
+   "Step 3: New-SPOSiteGroup creates the Auditors group with the View Only permission level in the new site. The group must exist before users are added to it.",
+   "Step 4: Add-SPOUser adds User7 to the Auditors group, which gives the guest read-only access to the site.",
+   "Incorrect: IsSiteCollectionAdmin $true gives User7 full control of the site, far more than read-only access. Use it for people who must administer a site.",
+   "Incorrect: EnableRestrictedAccessControl turns on site access restriction for the tenant, a SharePoint Advanced Management feature that limits access to group members. It is not needed to grant read access."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-365/enterprise/manage-sharepoint-users-and-groups-with-powershell"
+ },
+ {
+  "id": "1.2.4-08",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Lucerne Publishing has a non-group team site named Partners. The organization-level sharing setting is New and existing guests, and other sites must keep that setting. For Partners, only guests who already exist in the directory may be given access, and only site owners may share the site or invite people.\n\nWhich two commands should you run? Each correct answer presents part of the solution.",
+  "choices": [
+   "`Set-SPOSite -Identity <Partners URL> -SharingCapability ExistingExternalUserSharingOnly`",
+   "`Set-SPOSite -Identity <Partners URL> -DisableSharingForNonOwners`",
+   "`Set-SPOTenant -SharingCapability ExistingExternalUserSharingOnly`",
+   "`Set-SPOSite -Identity <Partners URL> -SharingCapability Disabled`",
+   "`Set-SPOSite -Identity <Partners URL> -RestrictedAccessControl $true`"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Each site has its own sharing setting, which can be the same as or more restrictive than the organization setting. ExistingExternalUserSharingOnly allows only guests already in the directory. DisableSharingForNonOwners stops members from sharing or inviting, so only owners can do it.",
+  "rationale": [
+   "Correct: the site-level ExistingExternalUserSharingOnly setting allows sharing only with guests who already exist in the directory and leaves the organization setting unchanged.",
+   "Correct: DisableSharingForNonOwners prevents non-owners from inviting new users to the site, so only site owners can share it.",
+   "Incorrect: changing the organization-level setting applies the restriction to every site, which the stem forbids. Change the tenant setting when all sites need the same limit.",
+   "Incorrect: Disabled allows sharing only with people in the organization, so the existing guests could not be given access. Use it for sites that must stay internal.",
+   "Incorrect: site access restriction limits access to members of chosen groups, but it does not limit sharing to existing guests or to owners. Use it to block access by users outside a control group."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.online.sharepoint.powershell/set-sposite?view=sharepoint-ps"
+ },
+ {
+  "id": "1.2.4-09",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-b",
+  "stem": "You need to create the Quality site.\n\nWhich command should you include in the script?",
+  "choices": [
+   "`New-SPOSite -Url https://fabrikam.sharepoint.com/sites/Quality -Owner qmanager@fabrikam.com -StorageQuota 2048 -Template SITEPAGEPUBLISHING#0 -Title \"Quality\"`",
+   "`New-SPOSite -Url https://fabrikam.sharepoint.com/sites/Quality -Owner qmanager@fabrikam.com -StorageQuota 2048 -Template STS#3 -Title \"Quality\"`",
+   "`New-Team -DisplayName \"Quality\" -Owner qmanager@fabrikam.com -Visibility Public -MailNickName Quality`",
+   "`New-SPOSite -Url https://fabrikam.sharepoint.com/sites/Quality -Owner qmanager@fabrikam.com -StorageQuota 2 -Template SITEPAGEPUBLISHING#0 -Title \"Quality\"`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "New-SPOSite creates sites that are not connected to a Microsoft 365 group. The template chooses the site type: SITEPAGEPUBLISHING#0 for a communication site and STS#3 for a team site without a group. StorageQuota is given in megabytes.",
+  "rationale": [
+   "Correct: SITEPAGEPUBLISHING#0 is the communication site template, the owner is the quality manager, and StorageQuota 2048 is 2 GB because the value is in megabytes.",
+   "Incorrect: STS#3 creates a team site without a Microsoft 365 group, not a communication site for publishing bulletins. Use it for collaboration sites that do not need a group.",
+   "Incorrect: New-Team creates a Microsoft 365 group and a group-connected team site, which the requirement forbids. Use it when people need a team with chat and channels.",
+   "Incorrect: StorageQuota is measured in megabytes, so 2 sets a quota of 2 MB instead of 2 GB. The template and owner are right, but the quota is not."
+  ],
+  "ref": "https://learn.microsoft.com/powershell/module/microsoft.online.sharepoint.powershell/new-sposite?view=sharepoint-ps"
+ },
+ {
+  "id": "1.2.5-01",
+  "obj": "1.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank has Microsoft 365 E5 licenses for all users and has not bought the SharePoint Advanced Management add-on. The bank wants to use Restricted Content Discovery on several SharePoint sites before a wider Copilot rollout.\n\nWhich license should the organization obtain?",
+  "choices": [
+   "Microsoft 365 Copilot",
+   "Microsoft Entra ID P2",
+   "Microsoft Teams Premium",
+   "Microsoft Defender for Office 365 Plan 2"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "SharePoint Advanced Management is available as part of Microsoft 365 Copilot or as a separate add-on. Restricted Content Discovery is a SharePoint Advanced Management feature intended for Copilot deployments, and it requires the organization to have a Copilot license. E5 alone does not include it.",
+  "rationale": [
+   "Correct: SharePoint Advanced Management features such as Restricted Content Discovery are included with Microsoft 365 Copilot, so a Copilot license makes the feature available without the add-on.",
+   "Incorrect: Entra ID P2 adds identity features such as ID Protection and Privileged Identity Management. It does not include SharePoint Advanced Management.",
+   "Incorrect: Teams Premium adds advanced meeting features such as intelligent recap and live translated captions. It does not unlock SharePoint governance features.",
+   "Incorrect: Defender for Office 365 Plan 2 adds threat protection for email and collaboration, such as Threat Explorer and automated investigation. It does not include SharePoint Advanced Management."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "1.2.5-02",
+  "obj": "1.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has Microsoft 365 Copilot licenses. You must apply Restricted Content Discovery to a site named Mergers by using the SharePoint admin center.\n\nWhich location should you use?",
+  "choices": [
+   "Sites > Active sites > Mergers > Settings tab > Restrict content from Microsoft Copilot",
+   "Policies > Access control > Site-level access restriction",
+   "Reports > Data access governance > Content shared with Everyone except external users",
+   "Policies > Sharing > More external sharing settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Restricted Content Discovery is a site-level setting. In the SharePoint admin center you turn it on for a site on the Settings tab of the site in Active sites; in PowerShell you use Set-SPOSite -RestrictContentOrgWideSearch $true. Access control and Data access governance are different SharePoint Advanced Management features.",
+  "rationale": [
+   "Correct: on the Settings tab of the site in Active sites, the Restrict content from Microsoft Copilot toggle applies Restricted Content Discovery to that site.",
+   "Incorrect: Site-level access restriction under Access control turns on restricted access control for the tenant, which limits who can open sites. Use it before you restrict access to a site to specific groups.",
+   "Incorrect: Data access governance reports identify overshared sites, such as content shared with Everyone except external users. They help you choose sites but do not apply the restriction.",
+   "Incorrect: the Sharing page sets organization-level external sharing and default link options. It does not control whether a site is discoverable in org-wide search or Copilot; use it to limit guest sharing."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "1.2.5-03",
+  "obj": "1.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Alpine Ski House wants employees who search for the word benefits in Copilot Search to see a link to the HR benefits portal at the top of their results. The portal is a SharePoint site that is already searchable.\n\nWhat should you create?",
+  "choices": [
+   "A bookmark in the Search settings of Copilot controls in the Microsoft 365 admin center",
+   "An entry for the portal in the Restricted SharePoint Search allowed list",
+   "A hub site registration for the portal site in the SharePoint admin center",
+   "A manual request to crawl and reindex the portal site"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Bookmarks in Copilot Search map keywords to a title and URL so that important sites appear prominently when users search for those keywords. They are created in the Microsoft 365 admin center under Copilot controls > Search. Reindexing and allowed lists change what is in the index or in scope, not how a result is promoted.",
+  "rationale": [
+   "Correct: a bookmark with the keyword benefits and the portal URL makes the portal show as a prominent answer when users search for that keyword, and a published bookmark is available right away.",
+   "Incorrect: the Restricted SharePoint Search allowed list limits org-wide search and Copilot to selected sites; it does not promote a site, and the feature is retiring. Use bookmarks for promotion.",
+   "Incorrect: registering a hub site connects related sites for shared navigation and search scope. It does not put a link at the top of results for a keyword.",
+   "Incorrect: a reindex request makes SharePoint recrawl content after schema changes. The portal is already searchable, so reindexing does not promote it."
+  ],
+  "ref": "https://learn.microsoft.com/copilot/manage/copilot-search-admin-experience"
+ },
+ {
+  "id": "1.2.5-04",
+  "obj": "1.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys uses Restricted Content Discovery on 40 SharePoint sites. Today only SharePoint Administrators can change the setting. The company wants site admins to turn Restricted Content Discovery on or off for their own sites and to give a justification for each change.\n\nWhich command should you run?",
+  "choices": [
+   "`Set-SPOTenant -DelegateRestrictedContentDiscoverabilityManagement $true`",
+   "`Set-SPOTenant -DelegateRestrictedAccessControlManagement $true`",
+   "`Set-SPOSite -Identity <site URL> -RestrictContentOrgWideSearch $true`",
+   "`Set-SPOTenant -EnableRestrictedAccessControl $true`"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default only SharePoint Administrators manage Restricted Content Discovery. The tenant setting DelegateRestrictedContentDiscoverabilityManagement lets site admins manage it for their own sites, and they must give a justification that is audited. Restricted access control has its own, separate delegation setting.",
+  "rationale": [
+   "Correct: this tenant setting delegates management of Restricted Content Discovery to site admins, who then must provide a justification when they change it.",
+   "Incorrect: this setting delegates restricted access control, which limits who can open a site, not Restricted Content Discovery. Use it when site admins should manage site access restriction.",
+   "Incorrect: this command turns on Restricted Content Discovery for one site as an administrator. It does not let site admins manage the setting themselves.",
+   "Incorrect: EnableRestrictedAccessControl turns on site access restriction for the tenant. It has no effect on who manages Restricted Content Discovery."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "1.2.5-05",
+  "obj": "1.2.5",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Relecloud is preparing SharePoint for Microsoft 365 Copilot and has Microsoft 365 Copilot licenses. You must choose a control for each requirement.\n\nWhich control should you use for each requirement? To answer, drag the appropriate controls to the correct requirements. Each control may be used once, more than once, or not at all.",
+  "choices": [
+   "Restricted Content Discovery",
+   "Restricted access control for the site",
+   "Allow this site to appear in search results set to No",
+   "Site access review from a data access governance report",
+   "Restricted SharePoint Search allowed list"
+  ],
+  "targets": [
+   "Req1: Temporarily keep the Finance site out of organization-wide search and Copilot responses without changing any permissions",
+   "Req2: Only members of a security group may open the R&D site, even if other users received sharing links earlier",
+   "Req3: Remove the Payroll site from the Microsoft Search and semantic index, including searches inside the site",
+   "Req4: Ask the owners of overshared sites to check and fix their own site permissions"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "rationale": [
+   "Req1: Restricted Content Discovery hides a site from organization-wide search and Copilot while permissions stay the same, and it is designed as a temporary control during reviews.",
+   "Req2: restricted access control blocks users who are not in the control group from opening the site or its files, even if they have permissions or a shared link.",
+   "Req3: setting Allow this site to appear in search results to No removes the site from Microsoft Search and the semantic index, and also from site search.",
+   "Req4: a site access review, started from a data access governance report, sends owners of overshared sites a request to review and fix permissions."
+  ],
+  "notes": [
+   "Site-level SharePoint Advanced Management setting that limits discovery in org-wide search and Copilot without changing permissions or removing content from the index.",
+   "SharePoint Advanced Management policy that allows access to a site only for members of up to 10 specified Microsoft 365 or security groups, also honored in search and Copilot.",
+   "Site search setting that excludes all site content from the search index, so it affects org-wide search, site search and the semantic index used by Copilot.",
+   "SharePoint Advanced Management workflow that delegates the review of oversharing found in data access governance reports to the site owners.",
+   "Tenant allowed list of up to 100 sites for org-wide search and Copilot. It is retiring, new enablement is blocked from July 31, 2026, and Restricted Content Discovery replaces it."
+  ],
+  "explanation": "Match the control to what must change: discovery only (Restricted Content Discovery), who can open the site (restricted access control), what is in the index at all (the search visibility setting), or who fixes permissions (site access review). Restricted SharePoint Search is a retiring tenant-wide allowed list.",
+  "ref": "https://learn.microsoft.com/copilot/implement/copilot-controls-security-governance"
+ },
+ {
+  "id": "1.2.5-06",
+  "obj": "1.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders has Microsoft 365 Copilot licenses and has never enabled Restricted SharePoint Search. In November 2026, the company finds 40 sites that have not had a permissions review. Until the reviews finish, content from these sites must not appear in organization-wide search or Copilot responses. Permissions must not change, and site members must still be able to search inside each site.\n\nWhat should you do?",
+  "choices": [
+   "Run Set-SPOSite -RestrictContentOrgWideSearch $true for each of the 40 sites",
+   "Enable Restricted SharePoint Search and add all other sites to the allowed list",
+   "Turn on restricted access control for each site and add the site members group",
+   "Set Allow this site to appear in search results to No on each of the 40 sites"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Restricted Content Discovery is the current control for keeping specific sites out of org-wide search and Copilot during a review: permissions do not change, the index is kept, and site-scoped search still works. Restricted SharePoint Search is retiring and new enablement is blocked from July 31, 2026.",
+  "rationale": [
+   "Correct: RestrictContentOrgWideSearch applies Restricted Content Discovery, which hides the sites from org-wide search and Copilot without changing permissions and does not affect searches from inside the site.",
+   "Incorrect: Restricted SharePoint Search is retiring, and new enablement is blocked from July 31, 2026, so a tenant that never enabled it cannot turn it on. It also allows only 100 sites.",
+   "Incorrect: restricted access control blocks access for users outside the control group, which is a change to effective access, and it does not hide content from users who are in the group.",
+   "Incorrect: turning off search visibility removes the site from the index, so site members could no longer search inside the site. Use it to exclude highly sensitive sites from all search."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-sharepoint-search"
+ },
+ {
+  "id": "1.2.5-07",
+  "obj": "1.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Trey Research applied Restricted Content Discovery to a site named Archive two days ago. Archive contains about 800,000 items. Users without a recent connection to the site still see Archive files in organization-wide search results and Copilot responses. Running Get-SPOSite for Archive shows RestrictContentOrgWideSearch set to True.\n\nWhat should you do?",
+  "choices": [
+   "Wait for the setting to propagate through the search index, which can take more than a week",
+   "Request a full reindex of the Archive site from its site settings",
+   "Run Set-SPOTenant -DelegateRestrictedContentDiscoverabilityManagement $true",
+   "Turn on restricted access control for Archive in addition to the current setting"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Restricted Content Discovery is a site property that must propagate through the search systems. Latency depends on the number of items and on how many sites are updated at the same time; for sites with more than 500,000 items, it can take more than a week. The setting is already correct, so the fix is time.",
+  "rationale": [
+   "Correct: the setting is True, and for a site with more than 500,000 items the update can take more than a week to show in search and Copilot, so the change is still propagating.",
+   "Incorrect: a reindex request recrawls content after schema changes. It does not speed up the Restricted Content Discovery property, and it adds crawl load to a very large site.",
+   "Incorrect: delegation only lets site admins manage the setting for their sites. It does not change how fast the existing setting takes effect.",
+   "Incorrect: restricted access control changes who can open the site, which is a different goal and also propagates through the index. Use it when access, not discovery, must be limited."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "1.2.5-08",
+  "obj": "1.2.5",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Fourth Coffee must apply Restricted Content Discovery to the site https://fourthcoffee.sharepoint.com/sites/Pricing, and then give the compliance team a downloaded report of all sites in the tenant that have Restricted Content Discovery turned on. Only SharePoint Administrators may manage the setting.\n\nWhich five commands should you run in sequence? To answer, move the appropriate commands from the list of commands to the answer area and arrange them in the correct order.",
+  "choices": [
+   "`Connect-SPOService -Url https://fourthcoffee-admin.sharepoint.com`",
+   "`Set-SPOSite -Identity https://fourthcoffee.sharepoint.com/sites/Pricing -RestrictContentOrgWideSearch $true`",
+   "`Start-SPORestrictedContentDiscoverabilityReport`",
+   "`Get-SPORestrictedContentDiscoverabilityReport`",
+   "`Get-SPORestrictedContentDiscoverabilityReport -Action Download -ReportId <ReportGUID>`",
+   "`Set-SPOTenant -DelegateRestrictedContentDiscoverabilityManagement $true`",
+   "`Set-SPOTenantRestrictedSearchMode -Mode Enabled`"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Restricted Content Discovery is set per site with Set-SPOSite -RestrictContentOrgWideSearch. Tenant reporting is asynchronous: you start a report, check its status to get the report ID, and then download it with that ID. Delegation to site admins is an optional tenant setting.",
+  "rationale": [
+   "Step 1: Connect-SPOService connects to the SharePoint admin URL, which the site and report cmdlets need.",
+   "Step 2: RestrictContentOrgWideSearch $true applies Restricted Content Discovery to Pricing. It must be set before the report runs so that Pricing is included.",
+   "Step 3: Start-SPORestrictedContentDiscoverabilityReport starts generating the tenant report of sites that have the setting turned on.",
+   "Step 4: Get-SPORestrictedContentDiscoverabilityReport shows the status of the report and its report ID, which the download command requires.",
+   "Step 5: the Download action with the report ID saves the completed report so it can be given to the compliance team.",
+   "Incorrect: delegation lets site admins manage Restricted Content Discovery for their own sites, which the stem forbids. Use it when site owners should control the setting with a justification.",
+   "Incorrect: Set-SPOTenantRestrictedSearchMode enables Restricted SharePoint Search, a retiring tenant-wide allowed list, not Restricted Content Discovery. It is not needed and cannot be newly enabled after July 31, 2026."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ },
+ {
+  "id": "1.2.5-09",
+  "obj": "1.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-b",
+  "stem": "You need to meet the requirement for HR-Records.\n\nWhat should you do?",
+  "choices": [
+   "Turn on Restrict content from Microsoft Copilot for HR-Records",
+   "Turn on restricted access control for HR-Records and add the HR group",
+   "Set Allow this site to appear in search results to No for HR-Records",
+   "Enable Restricted SharePoint Search and leave HR-Records off the allowed list"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Restricted Content Discovery is the temporary control for keeping a site out of org-wide search and Copilot while a permissions review runs. It needs a Copilot license, which Fabrikam has, keeps permissions unchanged and does not affect search inside the site. Turning off search visibility or restricting access would break the other requirements.",
+  "rationale": [
+   "Correct: Restricted Content Discovery hides HR-Records from org-wide search and Copilot without changing permissions, and searches from inside the site still work for HR staff. Fabrikam's Copilot licenses make it available.",
+   "Incorrect: restricted access control blocks everyone outside the HR group from opening the site, which changes effective access during the review, and HR group members would still see HR-Records content in org-wide search and Copilot. Use it when only a control group may access a site.",
+   "Incorrect: this setting removes the site from the search index, including the search box inside the site that HR staff use every day. Use it to exclude a site from all search permanently.",
+   "Incorrect: Restricted SharePoint Search was never enabled at Fabrikam, and new enablement is blocked from July 31, 2026. It is also a tenant-wide setting that affects all other sites."
+  ],
+  "ref": "https://learn.microsoft.com/sharepoint/restricted-content-discovery"
+ }
+]

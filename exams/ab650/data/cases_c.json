@@ -1,0 +1,32 @@
+[
+ {
+  "id": "C-c",
+  "title": "Litware, Inc.",
+  "sections": [
+   [
+    "Overview",
+    "Litware, Inc. is a manufacturer of industrial sensors with 2,600 employees. The headquarters is in Chicago, and a sales and engineering office is in Paris. Litware acquired the Paris office last year. The company is expanding its partner programs and is preparing for an external financial audit."
+   ],
+   [
+    "Existing environment",
+    "Litware has a Microsoft 365 tenant that uses the domain litware.com. All employees have Microsoft 365 E5 licenses.\n\nThe 2,100 Chicago users are synchronized from an on-premises Active Directory domain by using Microsoft Entra Connect Sync. The department, job title and office attributes of every Chicago user are maintained in Active Directory by human resources and are always populated.\n\nThe 500 Paris users are cloud-only accounts that were created after the acquisition. New Paris employees arrive each month, and human resources sends their details in a CSV file.\n\nEach department, such as Engineering, Sales and Finance, currently uses a shared distribution list. Managers add and remove members manually, and the lists are often out of date.\n\nA Conditional Access policy named CA-Guests requires multifactor authentication (MFA) for all guest users. Today, any Litware user can invite guests from any domain.\n\nThe IT operations team has five members. User1 is a member of the team and currently holds no admin roles.\n\nLitware uses Microsoft Teams for all internal meetings, and Teams external access with Adatum Corporation is already enabled. The Chicago office also runs a legacy file server that is scheduled for retirement next year."
+   ],
+   [
+    "Partner requirements",
+    "Engineers from Fabrikam, Inc. and Tailspin Toys will join Litware projects as B2B guest users. Fabrikam uses its own Microsoft Entra tenant and requires MFA for all its employees. Tailspin Toys also uses Microsoft Entra ID.\n\n- Guest invitations must be possible only for addresses in the fabrikam.com and tailspintoys.com domains.\n- Every guest must remain subject to the MFA requirement of CA-Guests.\n- Fabrikam engineers who already completed MFA in their home tenant must not be prompted for MFA again by Litware."
+   ],
+   [
+    "Identity and access requirements",
+    "- Each department must have a group that provides a shared mailbox, a shared calendar and a team in Microsoft Teams.\n- Membership of each department group must update automatically when a user changes department.\n- User1 must be eligible for the User Administrator role at tenant scope by using Microsoft Entra Privileged Identity Management (PIM). User1 must activate the role when needed, and the eligibility must end on June 30, 2027.\n- Changes to the profile data of synchronized users must not be overwritten by synchronization."
+   ],
+   [
+    "Audit requirements",
+    "Forty auditors from Woodgrove Bank will review Litware financial records from their own offices for six months. The auditors use their Woodgrove Bank email addresses.\n\n- The auditors must appear in the Litware global address list.\n- The auditors must be members of a distribution list named Audit Committee so that Litware users can email all of them at once.\n- The auditors must not be able to sign in to any Litware resource.\n- When the audit ends, the auditors must be hidden from address lists but kept for reference."
+   ],
+   [
+    "Constraints",
+    "- Use the least privileged method that meets each requirement.\n- Use Microsoft Graph PowerShell or Exchange Online PowerShell for scripted tasks. The MSOnline and AzureAD modules must not be used.\n- Minimize ongoing administrative effort."
+   ]
+  ]
+ }
+]
