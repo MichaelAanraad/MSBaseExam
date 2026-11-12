@@ -8,6 +8,7 @@ difficulty levels. Original questions, not exam dumps.
 |---|---|---|
 | AI-500 | Designing and Implementing Multi-Agent AI Solutions | `docs/ai500/` |
 | AB-650 | Administering Microsoft 365 and AI Services | `docs/ab650/` |
+| GH-600 | Developing in Agentic AI Systems | setup only, no questions yet |
 
 Open `docs/index.html` in a browser, or host it on GitHub Pages:
 
@@ -79,6 +80,7 @@ AZ-104.
 | `STUDY_GUIDE` | source for the objectives |
 | `DOMAINS`, `GROUPS`, `OVERRIDE` | domains, weights, questions per objective |
 | `TOTAL` | bank size the validator and build check |
+| `REF_PREFIXES` | optional; allowed `ref` URL prefixes (default learn.microsoft.com; GH-600 adds docs.github.com) |
 
 The simulation (50 questions, 100 minutes) matches role-based exams; adjust it
 in `template.html` if your exam differs.
@@ -87,8 +89,9 @@ in `template.html` if your exam differs.
 
 Open this folder in Claude Code and the project skills load automatically:
 
-- `ai500-buddy` / `ab650-buddy`: interactive quiz partner in chat for AI-500
-  or AB-650, with score and weak-domain tracking. Say "AI-500" or "AB-650".
+- `ai500-buddy` / `ab650-buddy` / `gh600-buddy`: interactive quiz partner in
+  chat for AI-500, AB-650 or GH-600, with score and weak-domain tracking. Say
+  "AI-500", "AB-650" or "GH-600".
   For another exam, copy one of these folders and change the exam ID.
 - `ms-cert-item-creator`: writes exam-realistic questions for any Microsoft
   exam, following the WWL style guide.
