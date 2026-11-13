@@ -1,0 +1,788 @@
+[
+  {
+    "id": "4.3.1-01",
+    "obj": "4.3.1",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "Fabrikam, Inc. wants every Copilot agent that works in a repository to use the same build command and test command. The guidance must apply to the whole repository.\n\nWhich location should you use for the guidance?",
+    "choices": [
+      "In the .github/copilot-instructions.md file",
+      "In a .github/agents/conventions.agent.md profile",
+      "In a Copilot Memory repository fact",
+      "In the copilot-setup-steps.yml workflow file"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Repository-wide custom instructions in .github/copilot-instructions.md are added to the context of requests in that repository. They are the documented place for build, test, and convention guidance that every agent should receive.",
+    "rationale": [
+      "Correct: .github/copilot-instructions.md holds repository-wide custom instructions, so build and test commands written there apply to work in the whole repository.",
+      "Incorrect: a custom agent profile defines a specialist agent with its own prompt and tools. Its prompt only applies when that agent is used, so it is right for a persona, not for repository-wide rules.",
+      "Incorrect: Copilot Memory stores facts that Copilot learns and validates, and a fact is not guaranteed to be applied. You cannot create a fact in the settings; use memory for accumulated detail, not for mandatory rules.",
+      "Incorrect: copilot-setup-steps.yml prepares the agent's development environment, for example by installing tools. It runs steps; it does not give the model instructions about which commands to use."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-02",
+    "obj": "4.3.1",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Contoso, Ltd. has a path-specific instructions file named .github/instructions/frontend.instructions.md that contains the following frontmatter.\n\n```yaml\n---\napplyTo: \"web/**/*.ts\"\n---\n```\n\nThe instructions must also apply to .tsx files in the web folder and its subfolders.\n\nHow should you revise the frontmatter?",
+    "choices": [
+      "Set applyTo to \"web/**/*.ts,web/**/*.tsx\".",
+      "Add a second applyTo line set to \"web/**/*.tsx\".",
+      "Rename the file to frontend.tsx.instructions.md.",
+      "Add an excludeAgent line set to \"web/**/*.ts\"."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The applyTo property accepts one or more glob patterns separated by commas. Adding the .tsx pattern to the same value extends the file to both file types.",
+    "rationale": [
+      "Correct: applyTo accepts several glob patterns separated by commas, so one value can match both the .ts and the .tsx files under web.",
+      "Incorrect: YAML frontmatter keys must be unique, so a second applyTo key is not a supported way to add a pattern. Use one applyTo value with comma-separated patterns.",
+      "Incorrect: the file name only needs the .instructions.md suffix; the part before it is a free name and does not select file types. File matching comes from applyTo.",
+      "Incorrect: excludeAgent takes an agent name, such as code-review or cloud-agent, to stop that agent from using the file. It does not hold glob patterns and cannot add files."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-03",
+    "obj": "4.3.1",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Litware, Inc. has a sentence in its .github/copilot-instructions.md file that tells agents never to run terraform apply. Session logs show that Copilot CLI sessions in the repository still run the command occasionally.\n\nYou need to block the command reliably in Copilot CLI sessions for the repository.\n\nWhat should you do?",
+    "choices": [
+      "Add a preToolUse hook in .github/hooks that denies terraform apply.",
+      "Repeat the rule in capital letters at the top of the instructions file.",
+      "Store the rule as a Copilot Memory repository fact in a session.",
+      "Add a postToolUse hook in .github/hooks that logs terraform apply."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Custom instructions ask the model to follow a rule, and the model can still deviate. A preToolUse hook runs code before each tool call and can deny the execution, so it enforces the constraint instead of requesting it.",
+    "rationale": [
+      "Correct: preToolUse runs before the agent uses a tool and can approve or deny the execution. A script that denies terraform apply enforces the rule in code, which instructions cannot do.",
+      "Incorrect: stronger wording still only asks the model to comply. Instructions are the right place for guidance, but they do not guarantee compliance, so they cannot meet a reliable block requirement.",
+      "Incorrect: a memory fact is not a guaranteed rule and Copilot decides whether to use it. GitHub Docs recommends custom instructions, not memory, for important rules, and neither one blocks a tool call.",
+      "Incorrect: postToolUse runs after a tool completes, so the command has already run. It is right for logging results and audit trails, not for preventing an action."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/customizations/hooks"
+  },
+  {
+    "id": "4.3.1-04",
+    "obj": "4.3.1",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Relecloud has a .github/copilot-instructions.md file that is 12 pages long. It mixes repository conventions with notes about individual past tasks, and some notes contradict each other. Copilot cloud agent follows the conventions inconsistently.\n\nWhat should you do first?",
+    "choices": [
+      "Shorten the file to concise repository-wide rules without task notes.",
+      "Copy the whole file into AGENTS.md so that agents read it twice.",
+      "Store each note as a Copilot Memory user preference for developers.",
+      "Move the file content into the prompt body of a custom agent."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Repository instructions work best when they are short, repository-wide, and free of conflicts. Removing task-specific notes and contradictions gives the agent a clear set of rules instead of noise.",
+    "rationale": [
+      "Correct: GitHub Docs advises avoiding conflicting instructions, and its suggested prompt for generating the file keeps it to about two pages of guidance that is not task-specific.",
+      "Incorrect: duplicating the content in AGENTS.md adds a second instruction source with the same contradictions. AGENTS.md is useful for agent instructions per folder, not for repeating an oversized file.",
+      "Incorrect: user preferences follow one developer across repositories and are not shared with the repository. They suit personal style choices, not repository conventions that every agent must use.",
+      "Incorrect: a custom agent prompt only applies when that agent runs, and moving the text keeps the conflicts. A custom agent is right for a specialist role, not for cleaning up repository guidance."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-05",
+    "obj": "4.3.1",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Woodgrove Bank has a repository instruction that requires two-space indentation. User1 has personal custom instructions that require tab indentation. Copilot uses tabs in User1's chats about the repository.\n\nThe repository rule must apply to User1 as well.\n\nWhat should you do?",
+    "choices": [
+      "Remove the indentation rule from the personal instructions of User1.",
+      "Add the two-space rule to the organization custom instructions.",
+      "Add the two-space rule to an AGENTS.md file in the repository root.",
+      "Add the two-space rule to a Copilot Memory repository fact."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Personal instructions take priority over repository instructions, which take priority over organization instructions. All sets are provided to Copilot, so the conflicting personal rule must be removed for the repository rule to win.",
+    "rationale": [
+      "Correct: personal instructions have the highest priority, so the tab rule overrides the repository rule. Removing the conflict lets the repository instruction apply, which matches the advice to avoid conflicting instructions.",
+      "Incorrect: organization instructions have the lowest priority of the three levels, so the personal rule still wins. Use organization instructions for defaults that repositories and users do not override.",
+      "Incorrect: AGENTS.md is another repository-level instruction source, so it still ranks below personal instructions. It is right for agent guidance per folder, not for overriding a personal setting.",
+      "Incorrect: a memory fact is not a guaranteed rule and does not outrank personal instructions. Memory suits accumulated details that Copilot learns, not conflict resolution between instruction levels."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-06",
+    "obj": "4.3.1",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "Tailspin Toys has an AGENTS.md file in the root of a repository. Agents working in the services/payments folder must follow different rules than agents working elsewhere in the repository.\n\nWhat should you do?",
+    "choices": [
+      "Add an AGENTS.md file with the payments rules to services/payments.",
+      "Add a CLAUDE.md file with the payments rules to services/payments.",
+      "Add the payments rules to the root AGENTS.md under a new heading.",
+      "Add a GEMINI.md file with the payments rules to services/payments."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot supports several AGENTS.md files in a repository, and the nearest file in the directory tree takes precedence. A file in services/payments therefore applies to work in that folder.",
+    "rationale": [
+      "Correct: the nearest AGENTS.md in the directory tree takes precedence, so a file in services/payments gives that folder its own rules while the root file covers the rest.",
+      "Incorrect: Copilot supports a single CLAUDE.md file stored in the root of the repository, not one per folder. Use it as an alternative to AGENTS.md when the repository already uses that convention.",
+      "Incorrect: a heading in the root file still applies to the whole repository, so agents elsewhere also receive the payments rules. A single root file is fine only when rules are the same everywhere.",
+      "Incorrect: like CLAUDE.md, GEMINI.md is supported as a single file in the repository root. It cannot scope rules to a subfolder the way a nested AGENTS.md can."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-07",
+    "obj": "4.3.1",
+    "difficulty": "medium",
+    "type": "dropdown",
+    "stem": "Fabrikam, Inc. adds Terraform rules to a repository. The rules must apply to every file in the infra folder and its subfolders. Copilot code review must use the rules, and Copilot cloud agent must not use them.\n\nYou create the following file.\n\n```yaml\n# .github/instructions/terraform.instructions.md\n---\napplyTo: [[1]]\nexcludeAgent: [[2]]\n---\n```\n\nHow should you complete the frontmatter? To answer, select the appropriate options in the answer area.",
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "applyTo selects the files with glob patterns, and excludeAgent names the agent that must not use the file. Excluding cloud-agent leaves the file for Copilot code review only.",
+    "targets": [
+      {
+        "label": "Box 1",
+        "options": [
+          "\"infra/**\"",
+          "\"**/*.md\"",
+          "\"terraform\""
+        ],
+        "why": [
+          "Correct: infra/** matches every file in the infra folder and in all of its subfolders, which is the scope the rules must cover.",
+          "Incorrect: **/*.md matches Markdown files anywhere in the repository, not the Terraform files in infra. Use it for documentation rules.",
+          "Incorrect: terraform is not a glob that matches the infra folder; applyTo patterns are matched against file paths, so this value matches no Terraform file paths."
+        ]
+      },
+      {
+        "label": "Box 2",
+        "options": [
+          "\"code-review\"",
+          "\"cloud-agent\"",
+          "\"copilot-cli\""
+        ],
+        "why": [
+          "Incorrect: excluding code-review stops Copilot code review from using the file, which is the opposite of the requirement. Use it when only the cloud agent needs the rules.",
+          "Correct: excludeAgent set to cloud-agent stops Copilot cloud agent from using the file, so only Copilot code review receives the Terraform rules.",
+          "Incorrect: GitHub Docs documents code-review and cloud-agent as the values for excludeAgent. copilot-cli is not a documented value for this property."
+        ]
+      }
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-08",
+    "obj": "4.3.1",
+    "difficulty": "hard",
+    "type": "dragdrop",
+    "stem": "Litware, Inc. is reorganizing the guidance that Copilot agents receive. You must store each type of guidance in the most appropriate place.\n\nWhich location should you use for each type of guidance? To answer, drag the appropriate locations to the correct guidance types. Each location may be used once, more than once, or not at all.",
+    "choices": [
+      "Repository custom instructions",
+      "Path-specific custom instructions",
+      "Copilot Memory repository fact",
+      "Copilot Memory user preference",
+      "Custom agent profile"
+    ],
+    "answer": [
+      0,
+      1,
+      3,
+      4
+    ],
+    "explanation": "Mandatory rules belong in custom instructions because memory is not guaranteed to be applied. Path-specific files scope rules to matching files, user preferences follow a person, and a custom agent profile defines a specialist with its own tools.",
+    "rationale": [
+      "Guidance1 is a mandatory review step for every agent in the repository. GitHub Docs recommends custom instructions, not memory, for important rules such as mandatory review steps.",
+      "Guidance2 only applies to files in one folder, so a path-specific instructions file with an applyTo glob limits it to those files.",
+      "Guidance3 belongs to one person and must follow that person across repositories, which is what a user preference in Copilot Memory does.",
+      "Guidance4 needs its own persona and a restricted tool list, which only a custom agent profile provides through its prompt body and tools property."
+    ],
+    "targets": [
+      "Guidance1: a mandatory security review step that every agent in the repository must follow",
+      "Guidance2: conventions for SQL migration files in the db/migrations folder only",
+      "Guidance3: User1 prefers short commit summaries in every repository that User1 works in",
+      "Guidance4: a release-notes specialist that has its own restricted list of tools"
+    ],
+    "notes": [
+      "Applies to all work in the repository from .github/copilot-instructions.md. Use it for rules that every agent must follow.",
+      "A .instructions.md file whose applyTo glob limits the rules to matching files. Use it for folder- or file-type-specific conventions.",
+      "A fact that Copilot learns and validates against code. Use it for accumulated detail, not for mandatory rules, because it is not guaranteed to be applied.",
+      "A preference stored for one user that follows that user across repositories. Use it for personal style choices.",
+      "A .agent.md file with a prompt, tools, and model for a specialist agent. Use it when a role needs its own behavior and tool access."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-09",
+    "obj": "4.3.1",
+    "difficulty": "easy",
+    "type": "order",
+    "stem": "Contoso, Ltd. wants Copilot cloud agent to follow extra rules only when it edits YAML pipeline files in a repository.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+    "choices": [
+      "Create a .github/instructions directory in the repository.",
+      "Create a file named pipelines.instructions.md in the directory.",
+      "Add frontmatter with an applyTo glob that matches the pipeline files.",
+      "Write the rules in Markdown below the frontmatter.",
+      "Add the rules to the description property of a custom agent profile.",
+      "Create a Copilot Memory repository fact with the rules in the repository settings."
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Path-specific instructions live in .instructions.md files in .github/instructions. The file starts with frontmatter that has an applyTo glob, and the rules follow in natural language.",
+    "rationale": [
+      "Step 1: path-specific instruction files live in the .github/instructions directory, so the directory must exist first.",
+      "Step 2: the file name must end with .instructions.md for Copilot to treat it as a path-specific instructions file.",
+      "Step 3: the frontmatter at the start of the file holds applyTo, which limits the rules to the matching pipeline files.",
+      "Step 4: the natural-language rules follow the frontmatter; Copilot adds them when it works on files that match applyTo.",
+      "Incorrect: the description of a custom agent profile explains the agent's purpose for selection. It does not deliver path-scoped rules to Copilot cloud agent.",
+      "Incorrect: you cannot create or edit memories in the repository settings; you can only delete them there. Memory is also not intended for mandatory rules."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.1-10",
+    "obj": "4.3.1",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "You need to meet the requirements for the Terraform rules.\n\nWhat should you do?",
+    "choices": [
+      "Create .github/instructions/terraform.instructions.md with applyTo \"infra/**\" and excludeAgent \"code-review\".",
+      "Add a Terraform section to .github/copilot-instructions.md and disable custom instructions for code review.",
+      "Create an AGENTS.md file that contains the Terraform rules in the infra folder of the repository.",
+      "Create a custom agent profile named infra with the Terraform rules in its prompt body and tools list."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A path-specific instructions file limits rules to the files that match applyTo, and excludeAgent removes one agent from the audience. Together they give the cloud agent the Terraform rules only for infra files while code review keeps the repository-wide instructions.",
+    "rationale": [
+      "Correct: applyTo infra/** scopes the rules to the infra folder and its subfolders, and excludeAgent code-review stops Copilot code review from receiving this file while it still uses copilot-instructions.md.",
+      "Incorrect: a section in the repository-wide file applies to every file, and disabling custom instructions for code review removes the repository-wide instructions too, which breaks a requirement.",
+      "Incorrect: an AGENTS.md file in infra scopes the rules to that folder, but it has no setting to keep the rules away from Copilot code review. Use it when every agent should receive the folder rules.",
+      "Incorrect: a custom agent prompt applies only when developers or the planner select that agent, not whenever the cloud agent edits infra files. Use a profile for a specialist role."
+    ],
+    "case": "C-e",
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions"
+  },
+  {
+    "id": "4.3.2-01",
+    "obj": "4.3.2",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "User1 notices that Copilot Memory stored an incorrect repository fact for a repository named App1. User1 is a repository administrator.\n\nWhich location should User1 use to remove the fact?",
+    "choices": [
+      "In the settings of the App1 repository on GitHub.com",
+      "In the personal Copilot settings of User1 on GitHub.com",
+      "In the .github/copilot-instructions.md file of App1",
+      "In the audit log of the organization that owns App1"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Repository facts are stored per repository and are managed from the repository settings on GitHub.com. Personal settings manage user preferences instead.",
+    "rationale": [
+      "Correct: repository facts are listed and deleted in the repository settings on GitHub.com, where people with the right access can review the stored memories.",
+      "Incorrect: personal Copilot settings list user preferences, which follow a user across repositories. Use them to delete a personal preference, not a repository fact.",
+      "Incorrect: the instructions file contains custom instructions that you write; memories are stored by Copilot outside the repository files. Editing the file does not delete a memory.",
+      "Incorrect: the audit log records events for review and investigation. It is read-only history and cannot delete a stored memory."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-02",
+    "obj": "4.3.2",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Woodgrove Bank has a Copilot Memory repository fact that names the wrong port for a local test server. The rest of the fact is correct.\n\nYou need Copilot to stop using the wrong port and to learn the correct value.\n\nWhat should you do?",
+    "choices": [
+      "Delete the fact in the repository settings, and state the correct port clearly in a session.",
+      "Edit the fact text in the repository settings and replace the port with the correct value.",
+      "Downvote the fact once so that Copilot rewrites it with the correct port on the next run.",
+      "Create a corrected fact in the repository settings and leave the original fact in place."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Memories cannot be created or edited in the GitHub.com settings, only deleted. You can influence what Copilot stores by stating facts clearly while you work with it.",
+    "rationale": [
+      "Correct: deleting removes the wrong value immediately, and stating the correct fact clearly in a Copilot session is the documented way to influence which memories Copilot creates.",
+      "Incorrect: the settings let you delete memories but not edit them. Editing would be the natural choice for a typo, but GitHub Docs states that memories cannot be created or edited there.",
+      "Incorrect: votes change how likely a memory is to be sent to the model, and memories are dropped only after enough downvotes. Voting does not rewrite a fact.",
+      "Incorrect: you cannot create a memory in the settings, and leaving the original keeps the wrong port available. Create memories by working with Copilot or by importing them with Copilot CLI."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-03",
+    "obj": "4.3.2",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Contoso, Ltd. sets the repository fact expiration to 60 days at the enterprise level. The organization that owns a repository sets the expiration to 30 days. Nobody upvotes a fact that Copilot stored in the repository, although Copilot retrieves it often.\n\nHow long should you expect the fact to remain available after it was stored?",
+    "choices": [
+      "30 days",
+      "60 days",
+      "90 days",
+      "180 days"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "When both an enterprise and an organization set the expiration, the lower value applies. Retrieval does not reset the timer; only an upvote does.",
+    "rationale": [
+      "Correct: the lower of the enterprise and organization values applies, so the fact expires after 30 days. Frequent retrieval does not reset the timer, so the fact still expires.",
+      "Incorrect: 60 days is the enterprise value, but the organization value is lower and the lower setting wins. 60 days would apply if the organization did not set a lower value.",
+      "Incorrect: 90 days is the default expiration when no owner changes it. Both owners set a lower value here, so the default does not apply.",
+      "Incorrect: 180 days is the maximum value that owners can choose. It would apply only if an owner set it and no other level set a lower value."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-04",
+    "obj": "4.3.2",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Fabrikam, Inc. assigns Copilot Business licenses to its developers. Copilot stores repository facts in the company repositories, but it never stores user preferences for any developer.\n\nWhat should you do?",
+    "choices": [
+      "Ask an administrator to enable the Copilot Memory user preferences policy.",
+      "Ask each repository administrator to turn on repository facts for the repository.",
+      "Tell each developer to run /memory on in a Copilot CLI session in each repository.",
+      "Ask an organization owner to set the repository fact expiration to 180 days."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "For Copilot Business and Copilot Enterprise, user preferences are disabled until an administrator enables the policy. Repository facts are allowed by default and are controlled separately.",
+    "rationale": [
+      "Correct: user preferences stay disabled for Copilot Business and Copilot Enterprise users until an administrator enables the policy, which explains why only repository facts appear.",
+      "Incorrect: repository facts already work here, and the repository setting for facts is independent of user preferences. Use it to stop or allow facts in one repository.",
+      "Incorrect: /memory on turns memory back on locally after /memory off, but it cannot override a policy that disables user preferences for the account.",
+      "Incorrect: the expiration setting changes how long repository facts last and does not apply to user preferences. It does not enable a disabled memory type."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-05",
+    "obj": "4.3.2",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Relecloud runs a Copilot CLI /fleet task. A subagent discovers that the integration tests require a local database container. The fact must be stored in Copilot Memory for future sessions.\n\nWhat should you do?",
+    "choices": [
+      "Have the subagent return the fact to the root agent, which stores the memory.",
+      "Add the store_memory tool to the tools list of the subagent's custom agent.",
+      "Start the fleet run with --enable-memory so that each subagent stores memories.",
+      "Instruct the subagent to call vote_memory to upvote the fact after it is found."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "In Copilot CLI only the root agent can use the tools that store or vote on memories. Subagents can read memories, so a fact they find must be passed back to the root agent.",
+    "rationale": [
+      "Correct: only the root agent can store memories in Copilot CLI, so the subagent reports the fact in its result and the root agent stores it.",
+      "Incorrect: storing memories is limited to the root agent, so listing the tool for a subagent does not let it store facts. Subagents can only read memories.",
+      "Incorrect: --enable-memory turns memory on for non-interactive runs, but it does not change which agent can store memories. Use it for scripted runs with -p.",
+      "Incorrect: voting is also limited to the root agent, and an upvote changes the priority of an existing memory. It cannot store a new fact."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-06",
+    "obj": "4.3.2",
+    "difficulty": "medium",
+    "type": "yesno",
+    "stem": "Tailspin Toys uses Copilot Memory with Copilot cloud agent and Copilot code review in a repository.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+    "choices": [
+      "Repository facts that Copilot cloud agent stores can be used by Copilot code review in the same repository.",
+      "Copilot code review applies user preferences that Copilot Memory stored for the pull request author.",
+      "When a developer forks the repository, the repository facts are copied to the fork.",
+      "Copilot Memory rejects a fact that contains a secret."
+    ],
+    "answer": [
+      0,
+      3
+    ],
+    "explanation": "Memories are shared across Copilot surfaces in a repository, but code review never applies user preferences. Forks do not receive memories, and Copilot rejects secrets.",
+    "rationale": [
+      "Yes: memories are shared across surfaces, so a fact that the cloud agent learns can be applied later by Copilot code review in the same repository.",
+      "No: Copilot code review and Agentic Autofix never apply user preferences. They only use repository-level information such as repository facts.",
+      "No: forking a repository does not copy its memories. The fork starts without stored facts and builds its own over time.",
+      "Yes: Copilot Memory rejects secrets, and Copilot is told not to store sensitive or short-lived task-specific information."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-07",
+    "obj": "4.3.2",
+    "difficulty": "easy",
+    "type": "order",
+    "stem": "User1 works in an interactive Copilot CLI session. User1 must check the local memory setting, perform a sensitive task without memory, and then use memory again.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+    "choices": [
+      "Run /memory show.",
+      "Run /memory off.",
+      "Perform the sensitive task in the session.",
+      "Run /memory on.",
+      "Run /compact.",
+      "Run /clear."
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "/memory show displays the local memory setting, /memory off disables both memory types locally, and /memory on turns memory back on after the sensitive work.",
+    "rationale": [
+      "Step 1: /memory show displays the current local memory setting, so User1 checks the state before changing it.",
+      "Step 2: /memory off disables repository facts and user preferences locally, so the sensitive task does not use or store memories.",
+      "Step 3: the sensitive task runs while memory is off, which is the purpose of turning it off first.",
+      "Step 4: /memory on restores memory for the rest of the work after the sensitive task is complete.",
+      "Incorrect: /compact summarizes the conversation to free context window space. It does not turn off or remove memories.",
+      "Incorrect: /clear starts with a clear context for an unrelated task. It does not disable memory, so memories can still be used."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-08",
+    "obj": "4.3.2",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "You need to meet the requirement for the outdated Jest information.\n\nWhat should you do?",
+    "choices": [
+      "Delete the Jest fact in the repository settings, and add the Vitest rule to .github/copilot-instructions.md.",
+      "Downvote the Jest fact in each session, and wait for the fact to expire after the default 90 days.",
+      "Delete the Jest fact in your personal settings, and store a Vitest user preference for each developer.",
+      "Run /memory off in Copilot CLI for each developer, and add the Vitest rule to a Copilot Memory fact."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The outdated fact must be removed from the repository, and a rule that must be applied consistently belongs in custom instructions. Memory is not guaranteed to be applied.",
+    "rationale": [
+      "Correct: deleting the repository fact stops Copilot from using it, and custom instructions are the recommended place for rules that must be followed consistently.",
+      "Incorrect: votes only lower the chance that a memory is used until a threshold is reached, and downvoting does not reset the timer. The fact stays usable in the meantime.",
+      "Incorrect: repository facts are deleted in the repository settings, not in personal settings, and user preferences are not shared with the repository or used by code review.",
+      "Incorrect: /memory off is a local CLI setting and does not affect Copilot cloud agent. You also cannot create a memory directly, and memory is not meant for consistent rules."
+    ],
+    "case": "C-e",
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.2-09",
+    "obj": "4.3.2",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "Litware, Inc. runs Copilot CLI in a script by using copilot -p with a prompt. The runs must use Copilot Memory, but the session logs show that no memories are used.\n\nWhich option should you add to the command?",
+    "choices": [
+      "--enable-memory",
+      "--resume",
+      "--allow-tool write",
+      "--fleet"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Non-interactive Copilot CLI runs need the --enable-memory option to use Copilot Memory. Interactive sessions use the /memory commands instead.",
+    "rationale": [
+      "Correct: GitHub Docs states that non-interactive runs need --enable-memory to use memory, so adding it to the scripted command enables memory.",
+      "Incorrect: --resume opens an earlier session by its ID or from a picker. It continues a conversation but does not turn on memory for a scripted run.",
+      "Incorrect: --allow-tool write lets the run modify files without asking. It controls tool permissions, not whether memories are used.",
+      "Incorrect: --fleet runs the prompt with parallel subagents. It changes how work is split, not whether memory is enabled."
+    ],
+    "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+  },
+  {
+    "id": "4.3.3-01",
+    "obj": "4.3.3",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Litware, Inc. has a custom agent profile named docs-writer.agent.md for Copilot cloud agent. The agent must be able to read, search, and edit files. It must not run shell commands and must not invoke other custom agents.\n\nSolution: You set tools to [\"read\", \"edit\", \"search\"] in the frontmatter.\n\nDoes this meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "A specific tools list enables only the listed tools. read, edit, and search cover the required work, and execute and agent are not enabled.",
+    "rationale": [
+      "Correct: a tools list enables only the named tools, so the agent can read, search, and edit files while execute and agent stay disabled.",
+      "Incorrect: the solution meets the goal. No would be right if the list also contained execute, which runs shell commands, or agent, which invokes other custom agents."
+    ],
+    "series": "S-e",
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-02",
+    "obj": "4.3.3",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "Litware, Inc. has a custom agent profile named docs-writer.agent.md for Copilot cloud agent. The agent must be able to read, search, and edit files. It must not run shell commands and must not invoke other custom agents.\n\nSolution: You omit the tools property and add a sentence to the prompt body that forbids shell commands and calls to other agents.\n\nDoes this meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "Omitting tools enables all available tools. A sentence in the prompt asks the model to comply but does not remove the execute and agent tools.",
+    "rationale": [
+      "Incorrect: when tools is omitted, all available tools are enabled, including execute and agent. The prompt sentence is guidance that the model can ignore.",
+      "Correct: the solution does not meet the goal. Use a specific tools list to remove tools; prompt text is right for describing behavior, not for restricting access."
+    ],
+    "series": "S-e",
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-03",
+    "obj": "4.3.3",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Litware, Inc. has a custom agent profile named docs-writer.agent.md for Copilot cloud agent. The agent must be able to read, search, and edit files. It must not run shell commands and must not invoke other custom agents.\n\nSolution: You set tools to [\"read\", \"edit\", \"search\", \"agent\"] in the frontmatter.\n\nDoes this meet the goal?",
+    "choices": [
+      "Yes",
+      "No"
+    ],
+    "answer": [
+      1
+    ],
+    "explanation": "The agent alias lets a custom agent invoke another custom agent. Including it breaks the requirement even though execute is not listed.",
+    "rationale": [
+      "Incorrect: execute is absent, so shell commands are blocked, but the agent alias allows the custom agent to invoke other custom agents, which the goal forbids.",
+      "Correct: the solution does not meet the goal. Include agent only when a profile must delegate, for example an orchestrator that hands work to specialist agents."
+    ],
+    "series": "S-e",
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-04",
+    "obj": "4.3.3",
+    "difficulty": "hard",
+    "type": "dropdown",
+    "stem": "You need to update the test-writer and security-reviewer profiles to meet the agent configuration requirements.\n\n```yaml\n# test-writer.agent.md\n---\ndescription: Writes and runs unit tests\n[[1]]\n---\n\n# security-reviewer.agent.md\n---\ndescription: Reviews changes for insecure patterns\n[[2]]\n---\n```\n\nHow should you complete the frontmatter? To answer, select the appropriate options in the answer area.",
+    "answer": [
+      0,
+      1
+    ],
+    "explanation": "disable-model-invocation: true stops the model from choosing an agent automatically, so it must be selected manually. user-invocable: false removes manual selection, so only other agents or programmatic calls can use the agent.",
+    "case": "C-e",
+    "targets": [
+      {
+        "label": "Box 1",
+        "options": [
+          "disable-model-invocation: true",
+          "user-invocable: false",
+          "tools: []",
+          "target: vscode"
+        ],
+        "why": [
+          "Correct: disable-model-invocation: true prevents the main agent from selecting test-writer on its own, so it runs only when a developer selects it manually.",
+          "Incorrect: user-invocable: false removes test-writer from manual selection, which is the opposite of the requirement. Use it for agents that only other agents call.",
+          "Incorrect: tools: [] disables all tools, so the agent could not edit files or run tests. Use an empty list for agents that must only reason and answer.",
+          "Incorrect: target: vscode makes the profile available only in VS Code, so it cannot be used in the other Copilot environments. It does not stop automatic selection."
+        ]
+      },
+      {
+        "label": "Box 2",
+        "options": [
+          "disable-model-invocation: true",
+          "user-invocable: false",
+          "tools: []",
+          "target: vscode"
+        ],
+        "why": [
+          "Incorrect: disable-model-invocation: true keeps manual selection and blocks automatic invocation, so developers could still pick the agent and the planner could not call it.",
+          "Correct: user-invocable: false removes the agent from manual selection, so it can be accessed only programmatically, such as by the planner agent.",
+          "Incorrect: tools: [] removes the tools that the reviewer needs to read code, and developers could still select it manually. It does not control who invokes the agent.",
+          "Incorrect: target: vscode makes the profile available only in VS Code, where developers can still select it. It does not restrict invocation to the planner."
+        ]
+      }
+    ],
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-05",
+    "obj": "4.3.3",
+    "difficulty": "medium",
+    "type": "order",
+    "stem": "Fabrikam, Inc. wants Copilot cloud agent to use a Sentry MCP server in a repository. The server needs an access token, and only read-only tools must be enabled. An Agents secret named COPILOT_MCP_SENTRY_ACCESS_TOKEN already exists. You must confirm that the server starts in an agent session.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+    "choices": [
+      "In the repository settings, open Copilot and then MCP servers.",
+      "Enter a JSON configuration in which mcpServers lists the Sentry server, its read-only tools, and the COPILOT_MCP_SENTRY_ACCESS_TOKEN secret.",
+      "Click Save MCP configuration.",
+      "Assign an issue to Copilot, and then check the Start MCP Servers step in the session logs.",
+      "Add the server to the mcpServers section of .github/copilot-instructions.md.",
+      "Add a repository Actions secret named SENTRY_ACCESS_TOKEN."
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Repository MCP servers are configured as JSON in the repository settings and saved there, and the JSON references Agents secrets whose names start with COPILOT_MCP_. A test session confirms the server in the Start MCP Servers step of the session logs.",
+    "rationale": [
+      "Step 1: repository administrators configure MCP servers on the MCP servers page under Copilot in the repository settings.",
+      "Step 2: the JSON configuration needs an mcpServers object; listing specific read-only tools is recommended because the agent uses them without asking for approval.",
+      "Step 3: Save MCP configuration validates and stores the JSON for the cloud agent and Copilot code review.",
+      "Step 4: a saved configuration is validated with Copilot cloud agent by assigning an issue and expanding the Start MCP Servers step in the session logs to confirm the server and its tools.",
+      "Incorrect: custom instructions are natural-language guidance for the model. MCP server configuration is entered in the repository settings or in a custom agent profile.",
+      "Incorrect: the MCP configuration can only reference Agents secrets and variables whose names start with COPILOT_MCP_. A repository Actions secret with another name is not available to it."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+  },
+  {
+    "id": "4.3.3-06",
+    "obj": "4.3.3",
+    "difficulty": "easy",
+    "type": "dragdrop",
+    "stem": "Relecloud reviews the session logs of four custom agents that run in Copilot cloud agent. You need to refine the tools property of each agent profile so that each agent gets the access that the logs show it needs, and no more.\n\nWhich change should you make for each agent? To answer, drag the appropriate changes to the correct agents. Each change may be used once, more than once, or not at all.",
+    "choices": [
+      "add the edit alias",
+      "add the agent alias",
+      "remove the execute alias",
+      "add the playwright/* entry",
+      "add the web alias",
+      "replace the list with [\"*\"]"
+    ],
+    "answer": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "explanation": "Refining tool access means changing the tools list to match observed needs: add edit to change files, agent to delegate, a server/* entry for one MCP server, and remove execute when no shell is needed. The web alias does not apply in Copilot cloud agent, and \"*\" grants every tool.",
+    "rationale": [
+      "Agent1 can read and search but has no edit tools, so adding the edit alias lets it change files without granting shell access.",
+      "Agent2 needs to invoke another custom agent, and the agent alias maps to the custom agent tools that delegate a task.",
+      "Agent3 does not need a shell, so removing the execute alias removes the bash or powershell tools and keeps read, edit, and search.",
+      "Agent4 needs browser automation, and the out-of-the-box playwright MCP server is configured to access localhost, so playwright/* enables its tools."
+    ],
+    "targets": [
+      "Agent1: has tools [\"read\", \"search\"] and describes fixes in its response, but it cannot save them to files",
+      "Agent2: must hand off documentation work to a separate custom agent named docs-writer",
+      "Agent3: has tools [\"read\", \"edit\", \"search\", \"execute\"] and ran shell commands, but it only updates Markdown files",
+      "Agent4: must check the web app that it starts on localhost in a browser"
+    ],
+    "notes": [
+      "Maps to edit tools such as str_replace. Use it when an agent must change files.",
+      "Maps to the custom agent tools. Use it when an agent must delegate work to another custom agent.",
+      "Removes the bash or powershell shell tools. Use it when logs show shell commands that the task does not need.",
+      "Enables every tool of the out-of-the-box playwright MCP server, which accesses localhost. Use it for browser checks of a local app.",
+      "Fetches URLs and runs web searches in IDE clients, but it is currently not applicable for Copilot in the cloud.",
+      "Enables every available tool, the same as omitting tools. It breaks least privilege for a focused agent."
+    ],
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-07",
+    "obj": "4.3.3",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Contoso, Ltd. adds an MCP server for its ticket system to the repository MCP configuration. The configuration sets tools to [\"*\"], and the server provides tools that create and close tickets. A security engineer is concerned about autonomous changes.\n\nWhat should you do?",
+    "choices": [
+      "Set tools to a list of the specific read-only tools that the agent needs.",
+      "Keep tools set to [\"*\"] and require approval prompts for each MCP tool call.",
+      "Change type from local to http so that the server runs in read-only mode.",
+      "Move the server definition into the mcp-servers property of an IDE agent."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "Copilot cloud agent uses configured MCP tools autonomously without asking for approval. GitHub Docs recommends allowlisting specific read-only tools instead of enabling all tools.",
+    "rationale": [
+      "Correct: the tools allowlist limits which MCP tools the agent can call, and GitHub Docs recommends specific read-only tools because the agent will not ask before using them.",
+      "Incorrect: once an MCP server is configured, Copilot cloud agent uses its tools autonomously and does not ask for approval, so approval prompts are not an available control.",
+      "Incorrect: type describes how the server is reached, such as local, stdio, http, or sse. It does not make tools read-only.",
+      "Incorrect: mcp-servers is not used in VS Code or other IDE profiles, so moving the definition there does not restrict the cloud agent tools."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+  },
+  {
+    "id": "4.3.3-08",
+    "obj": "4.3.3",
+    "difficulty": "hard",
+    "type": "single",
+    "stem": "Woodgrove Bank creates a custom agent profile named triage.agent.md. The agent must be able to read files and call only the list_issues tool of the out-of-the-box github MCP server.\n\nWhich tools value should you use?",
+    "choices": [
+      "[\"read\", \"github/list_issues\"]",
+      "[\"read\", \"github/*\"]",
+      "[\"read\", \"github.list_issues\"]",
+      "[\"*\", \"github/list_issues\"]"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "MCP tools are referenced as server/tool, and server/* enables every tool of the server. A specific list enables only the named tools.",
+    "rationale": [
+      "Correct: github/list_issues uses the server/tool syntax to enable one tool of the github MCP server, and read adds file viewing. Nothing else is enabled.",
+      "Incorrect: github/* enables all tools of the github MCP server. Use it when the agent needs the whole server, not a single tool.",
+      "Incorrect: MCP tools use a slash between the server and tool name. Unrecognized tool names are ignored, so this entry would not enable list_issues.",
+      "Incorrect: * enables all available tools, so adding a specific MCP tool does not narrow access. Use * only when the agent needs every tool."
+    ],
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  },
+  {
+    "id": "4.3.3-09",
+    "obj": "4.3.3",
+    "difficulty": "medium",
+    "type": "single",
+    "stem": "Adatum Corporation uses Copilot cloud agent with the default firewall settings. A pull request from Copilot shows a firewall warning: a request to api.test.adatum.com was blocked while the agent ran the integration tests. The agent must reach this host, and the firewall must keep blocking other hosts.\n\nWhat should you do?",
+    "choices": [
+      "On the Internet access page of the repository settings, add api.test.adatum.com to the custom allowlist.",
+      "On the Internet access page of the repository settings, turn off the Enable firewall setting.",
+      "Add a step that calls api.test.adatum.com to .github/workflows/copilot-setup-steps.yml.",
+      "Add api.test.adatum.com as an allowed host to .github/copilot-instructions.md."
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "The Copilot firewall blocks hosts that are not on an allowlist. Adding the host to the custom allowlist on the Internet access page grants access to that host only, while the firewall keeps blocking everything else.",
+    "rationale": [
+      "Correct: a custom allowlist rule allows traffic to the domain and its subdomains, and the firewall stays enabled for every other host.",
+      "Incorrect: disabling the firewall lets Copilot connect to any host, which increases exfiltration risk and does not keep other hosts blocked.",
+      "Incorrect: setup steps run before the agent starts. The integration tests that the agent runs later are still subject to the firewall.",
+      "Incorrect: custom instructions are natural-language guidance for the model. They do not change the firewall rules that block the request."
+    ],
+    "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall"
+  },
+  {
+    "id": "4.3.3-10",
+    "obj": "4.3.3",
+    "difficulty": "easy",
+    "type": "single",
+    "stem": "Tailspin Toys creates a custom agent named estimator. The agent must only reason about the text in the prompt and must not have access to any tools.\n\nWhat should you set in the frontmatter of the profile?",
+    "choices": [
+      "tools: []",
+      "tools: [\"*\"]",
+      "disable-model-invocation: true",
+      "user-invocable: false"
+    ],
+    "answer": [
+      0
+    ],
+    "explanation": "An empty tools list disables all tools. Omitting the property or using * enables all tools.",
+    "rationale": [
+      "Correct: an empty list disables all tools for the custom agent, which is the documented way to create an agent without tool access.",
+      "Incorrect: [\"*\"] enables all available tools, which is the same as omitting the property. Use it for general-purpose agents.",
+      "Incorrect: disable-model-invocation controls whether the model can select the agent automatically. The agent keeps its tools.",
+      "Incorrect: user-invocable controls whether people can select the agent manually. It does not change which tools the agent can use."
+    ],
+    "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+  }
+]

@@ -1,0 +1,630 @@
+[
+ {
+  "id": "5.1.1-01",
+  "obj": "5.1.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User1 must use Copilot CLI to plan a large refactoring task and then run the independent parts of the plan in parallel. User1 must be able to follow the progress of the parallel work.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Press Shift+Tab to switch to plan mode, and describe the task.",
+   "Review the plan that Copilot creates.",
+   "Select Accept plan and continue in Autopilot execution mode + /fleet.",
+   "Run /tasks to view the background subagent tasks.",
+   "Run /delegate to send each subagent to Copilot cloud agent.",
+   "Run /compact to split the plan into subagent tasks."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "/fleet is typically used after plan mode: Copilot builds a plan, you approve it with the fleet option, and the orchestrator runs independent parts as subagents. /tasks shows the background subagent tasks.",
+  "rationale": [
+   "Step 1: plan mode lets Copilot build a structured plan before any change is made, which gives /fleet clear parts to parallelize.",
+   "Step 2: reviewing the plan before accepting it confirms that the parts are correct and independent enough to run in parallel.",
+   "Step 3: this option accepts the plan and starts Autopilot with /fleet, so the orchestrator dispatches subagents for the independent parts.",
+   "Step 4: /tasks lists the background subagent tasks, where User1 can open details or a summary of each task.",
+   "Incorrect: /delegate hands the session to Copilot cloud agent, which works in a single pull request. It does not run local parallel subagents.",
+   "Incorrect: /compact summarizes the conversation to free context window space. It does not create or dispatch subagent tasks."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/speed-up-task-completion"
+ },
+ {
+  "id": "5.1.1-02",
+  "obj": "5.1.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Contoso, Ltd. runs Copilot CLI from a scheduled script. The script must run a prompt in fleet mode without an interactive session, and the subagents must be able to change files without asking for approval.\n\n```bash\ncopilot [[1]] -p \"Update all deprecated API calls in the services folder\" [[2]]\n```\n\nHow should you complete the command? To answer, select the appropriate options in the answer area.",
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The --fleet option runs the prompt with parallel subagents, -p supplies the prompt non-interactively, and --allow-tool write lets the run change files without prompts.",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "--fleet",
+     "--acp",
+     "--resume"
+    ],
+    "why": [
+     "Correct: --fleet runs the prompt in fleet mode, so the orchestrator splits the work into parallel subagents in a non-interactive run.",
+     "Incorrect: --acp runs Copilot CLI in a different mode, and GitHub Docs states that fleet mode is not compatible with --acp, so it cannot start parallel subagents.",
+     "Incorrect: --resume continues an earlier session from a picker or by ID. It does not enable parallel subagents."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "--allow-tool write",
+     "--deny-tool write",
+     "--continue"
+    ],
+    "why": [
+     "Correct: --allow-tool write approves file changes in advance, which a scripted run needs because nobody can answer approval prompts.",
+     "Incorrect: --deny-tool write blocks file changes, so the subagents could not update the API calls. Use it for read-only analysis runs.",
+     "Incorrect: --continue resumes the most recent session. It does not grant permission to write files."
+    ]
+   }
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/speed-up-task-completion"
+ },
+ {
+  "id": "5.1.1-03",
+  "obj": "5.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. must update the documentation, the unit tests, and the logging code of five independent services. The changes do not depend on each other.\n\nWhich approach should you use with Copilot?",
+  "choices": [
+   "An orchestrator that gives each part to a subagent and runs the parts in parallel",
+   "A single agent that completes the parts one after another in one context window",
+   "A sequential chain in which each agent waits for the output of the agent before it",
+   "Five separate chat sessions in which you paste the results of each session by hand"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Independent parts of a goal are a good fit for an orchestrator that delegates to subagents. Each subagent has its own context window, and independent tasks can run in parallel before the orchestrator combines the results.",
+  "rationale": [
+   "Correct: an orchestrator breaks down the goal, assigns parts to subagents with their own context, runs independent parts in parallel, and then reviews and combines the results.",
+   "Incorrect: one agent can complete the work, but it does it serially and fills one context window with every service. Use a single agent for small or tightly coupled tasks.",
+   "Incorrect: a sequential chain suits work in which each step needs the previous output. These parts are independent, so waiting adds time without benefit.",
+   "Incorrect: separate manual sessions can work in parallel, but nobody coordinates or combines the results. An orchestrator does that review and integration for you."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agent-capabilities/choosing-and-delegating-agent-work/delegating-and-parallelizing-work-with-agents"
+ },
+ {
+  "id": "5.1.1-04",
+  "obj": "5.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. has a migration task in which each step needs the output of the previous step: export the schema, transform it, and then generate the new data access code.\n\nWhich approach should you use?",
+  "choices": [
+   "Run the steps in order in a single agent session instead of fleet mode.",
+   "Run the steps in fleet mode so that subagents complete them in parallel.",
+   "Assign each step to a separate subagent and merge their results at the end.",
+   "Run the steps as three Copilot cloud agent tasks that start at the same time."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fleet mode and parallel subagents only help when parts are independent. For inherently sequential work, a single session that runs the steps in order is the better choice.",
+  "rationale": [
+   "Correct: GitHub Docs says not to use fleet mode for sequential tasks, because each step depends on the previous output and parallel workers would have nothing to start from.",
+   "Incorrect: fleet mode runs independent work in parallel. It gives no benefit for sequential steps and uses more AI credits.",
+   "Incorrect: separate subagents still cannot start a step before the previous output exists, so this adds coordination overhead without gaining parallelism.",
+   "Incorrect: parallel cloud agent tasks would each work without the output of the earlier step. Use parallel tasks only for work that does not depend on other tasks."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.1-05",
+  "obj": "5.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud builds an app with the GitHub Copilot SDK that registers several custom agents. The main agent must coordinate the work and must not edit files itself, so that every edit is made by a specialist agent.\n\nWhat should you configure?",
+  "choices": [
+   "Add the edit tools to defaultAgent.excludedTools for the session.",
+   "Set the agent session option to the name of one specialist agent.",
+   "Set tools to null for each specialist agent in the session.",
+   "Set infer to false for each specialist agent in the session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "defaultAgent.excludedTools hides tools from the main agent while sub-agents keep them. The main agent must then delegate the work, which is the orchestrator pattern.",
+  "rationale": [
+   "Correct: excluding tools from the default agent leaves them available to custom agents, so the main agent must delegate edits to the specialists.",
+   "Incorrect: the agent option pre-selects one custom agent for the session. That agent then does the work itself instead of coordinating several specialists.",
+   "Incorrect: tools set to null gives the specialists all session tools, but it does not remove the edit tools from the main agent.",
+   "Incorrect: infer set to false stops the runtime from selecting those agents automatically, which makes delegation harder instead of forcing it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.1.1-06",
+  "obj": "5.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank wants agents to process a loan feature request. A requirements agent, a coding agent, and a compliance agent must run in a fixed order, and a person must approve the output before the next agent starts. Every step must be auditable.\n\nWhich orchestration pattern should you use?",
+  "choices": [
+   "A sequential workflow with approval gates between the agents",
+   "Concurrent orchestration that runs all three agents at the same time",
+   "Group chat orchestration in which the agents discuss until they agree",
+   "Handoff orchestration in which each agent chooses the next agent itself"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A workflow-oriented design runs agents in a defined order and supports approval gates and auditability. The other patterns favor parallelism or dynamic routing over a fixed, approved sequence.",
+  "rationale": [
+   "Correct: a sequential, workflow-oriented design runs the agents in a fixed order and supports approval gates and auditability, which matches the bank's requirements.",
+   "Incorrect: concurrent orchestration runs agents in parallel on the same input. It suits independent analyses, not steps that need the previous result and an approval.",
+   "Incorrect: group chat lets agents discuss in a shared conversation. It suits brainstorming or review, but the order and approval points are not fixed.",
+   "Incorrect: handoff lets an agent transfer control dynamically. It suits routing to the right specialist, not a predefined order with approvals."
+  ],
+  "ref": "https://learn.microsoft.com/agents/architecture/multi-agent-workflow-oriented"
+ },
+ {
+  "id": "5.1.1-07",
+  "obj": "5.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys uses the fleet mode of the GitHub Copilot SDK. The orchestrator creates a todo for implementing an API and a todo for writing integration tests for the API. The tests todo must not start until the API todo is done.\n\nWhat should the orchestrator do?",
+  "choices": [
+   "Insert a row into todo_deps that makes the tests todo depend on the API todo.",
+   "Set the status of the tests todo to blocked until the API todo is done.",
+   "Give both todos the same ID so that one worker claims them together.",
+   "Put both tasks in one todo description so that one subagent does both."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fleet mode tracks dependencies in the todo_deps table, and workers only claim ready todos whose dependencies are done. A dependency row is the documented way to order todos.",
+  "rationale": [
+   "Correct: todo_deps records that one todo depends on another, and the ready query only returns todos whose dependencies are done, so no worker claims the tests todo early.",
+   "Incorrect: blocked means that a todo cannot proceed and needs an explanation. Using it for ordering requires a manual reset and hides a real dependency.",
+   "Incorrect: todo IDs must be unique and durable, so two todos cannot share one ID. Durable IDs are what make dependencies and handoffs work.",
+   "Incorrect: merging the tasks loses the separate ownership and status of each todo. Combine tasks only when they are too small to justify separate work."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.1-08",
+  "obj": "5.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 runs /fleet in Copilot CLI. The subagents that write tests must use a custom agent named test-writer that is defined in the repository.\n\nWhat should User1 include in the /fleet prompt?",
+  "choices": [
+   "@test-writer",
+   "#test-writer",
+   "/delegate",
+   "/tasks"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a /fleet prompt you can name a custom agent with @ followed by its name, so the orchestrator uses that agent for the matching subagent work.",
+  "rationale": [
+   "Correct: naming the custom agent as @test-writer in the prompt tells Copilot to use that agent for the relevant subagent tasks.",
+   "Incorrect: a # prefix is not the documented way to name a custom agent in a /fleet prompt. Use @ followed by the agent name.",
+   "Incorrect: /delegate hands the work to Copilot cloud agent, which creates a pull request. It does not choose a custom agent for local fleet subagents.",
+   "Incorrect: /tasks lists background subagent tasks so that you can monitor them. It does not choose which agent the subagents use."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/speed-up-task-completion"
+ },
+ {
+  "id": "5.1.2-01",
+  "obj": "5.1.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. wants Copilot cloud agent to fix three unrelated bugs in parallel. Each fix must be isolated so that it can be reviewed and merged on its own.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a separate issue for each bug that describes its scope.",
+   "Assign each issue to Copilot.",
+   "Monitor each agent session from the agents panel.",
+   "Review each draft pull request, and click Approve and run workflows.",
+   "Create one issue for all three bugs, and assign it to Copilot.",
+   "Ask Copilot to mark each pull request as Ready for review."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Copilot cloud agent works on one branch with one pull request per task, so separate issues give isolated branches and pull requests. Workflows wait until a person with write access approves them.",
+  "rationale": [
+   "Step 1: separate issues define a separate task for each bug, which leads to a separate branch and pull request for each fix.",
+   "Step 2: assigning each issue to Copilot starts a separate agent session that pushes only to its own copilot/ branch.",
+   "Step 3: the agents panel shows the progress and session log of each session while the agents work in parallel.",
+   "Step 4: each draft pull request needs human review, and workflows do not run until someone with write access clicks Approve and run workflows.",
+   "Incorrect: one issue becomes one task with one branch and one pull request, so the three fixes would not be isolated or reviewable on their own.",
+   "Incorrect: Copilot cloud agent cannot mark its pull requests as Ready for review. A person must do that after reviewing the changes."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.1.2-02",
+  "obj": "5.1.2",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Fabrikam, Inc. builds an app with the GitHub Copilot SDK that registers several custom agents as sub-agents.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Each sub-agent runs in its own isolated context.",
+   "A sub-agent whose tools value is null has access to no tools.",
+   "A sub-agent can use skills only when skills are configured for that sub-agent.",
+   "A tool that the session excludes becomes available when a sub-agent lists it in its tools."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Sub-agents run in isolated contexts. A null tools value means all session tools, skills are opt-in per agent, and session-level exclusions win over agent settings.",
+  "rationale": [
+   "Yes: each sub-agent runs in its own isolated context and streams lifecycle events back to the parent, which keeps parallel work separate.",
+   "No: tools set to null gives the sub-agent all tools in the session. Use an explicit list to apply least privilege.",
+   "Yes: skills are opt-in for each custom agent and are not inherited from the parent, so a sub-agent only gets the skills configured for it.",
+   "No: session-level availableTools and excludedTools are applied first, and a session exclusion wins, so a sub-agent cannot add the tool back."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.1.2-03",
+  "obj": "5.1.2",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Relecloud uses fleet mode to run several subagents in parallel. In earlier runs, the subagents interfered with each other's work.\n\nWhich three actions should you take to isolate the subagents? Each correct answer presents part of the solution.",
+  "choices": [
+   "Give each todo a single owner.",
+   "Assign todos that change files that do not overlap.",
+   "Give each subagent complete context in its prompt.",
+   "Let each subagent read the context window of the other subagents.",
+   "Let all subagents change the same file and keep the last change.",
+   "Give each subagent all session tools so that it can fix the other subagents' work."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Fleet best practices are one owner per todo, no overlapping files unless the parent reconciles them, and complete context for each stateless subagent.",
+  "rationale": [
+   "Correct: one owner per todo means that only one worker claims and changes the todo, which prevents two subagents from doing the same work.",
+   "Correct: keeping the files of parallel todos separate avoids conflicting edits. Overlap is acceptable only when the parent reconciles the changes.",
+   "Correct: subagents are stateless and have their own context, so the prompt must contain everything they need instead of relying on shared conversation history.",
+   "Incorrect: each subagent has its own context window that other subagents cannot read. Share information through the prompt or the todo state.",
+   "Incorrect: last-write-wins silently discards work, which is the interference the team wants to avoid. Use one owner per file or reconcile in the parent.",
+   "Incorrect: broad tool access increases the risk that a subagent changes work it does not own. Give each agent only the tools it needs."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.2-04",
+  "obj": "5.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 assigns a new issue to Copilot cloud agent in a repository that has a protected main branch.\n\nWhich branch should User1 expect Copilot to push its changes to?",
+  "choices": [
+   "A new branch whose name starts with copilot/",
+   "The default branch of the repository",
+   "The branch that User1 has checked out locally",
+   "Any branch to which User1 has write access"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For a new task, Copilot cloud agent creates a copilot/ branch and can push only to that branch. This isolates its work from other branches and agents.",
+  "rationale": [
+   "Correct: when Copilot is not working on an existing pull request, it creates a new copilot/ branch and can only push to that branch.",
+   "Incorrect: Copilot cloud agent cannot push to the default branch; its changes reach main only through a pull request that a person reviews and merges.",
+   "Incorrect: the cloud agent works in its own environment on GitHub and has no access to User1's local checkout.",
+   "Incorrect: the agent is limited to a single branch and does not inherit all the branches that the requester can push to."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.1.2-05",
+  "obj": "5.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 works on two unrelated tasks in Copilot CLI at the same time: a dependency upgrade and a documentation update. The context of one task must not affect the other task.\n\nWhat should User1 do?",
+  "choices": [
+   "Run each task in its own CLI session, and name each session.",
+   "Run both tasks in one session, and run /compact between them.",
+   "Run both tasks in one session by using /fleet with two todos.",
+   "Run both tasks in one session, and run /rename between them."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot CLI can run several sessions side by side, each with its own history. Separate named sessions keep unrelated contexts apart and make them easy to resume.",
+  "rationale": [
+   "Correct: separate sessions keep separate conversation histories, and a name from --name or /rename makes each session easy to find and resume.",
+   "Incorrect: /compact summarizes the history but keeps it in the same context. GitHub Docs recommends a fresh context for unrelated tasks.",
+   "Incorrect: /fleet splits one goal into parallel subagents under one orchestrator. It is not meant to keep two unrelated tasks apart.",
+   "Incorrect: /rename only changes the name of the current session. Both tasks would still share one history and context."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/work-with-multiple-sessions"
+ },
+ {
+  "id": "5.1.2-06",
+  "obj": "5.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. builds an app with the GitHub Copilot SDK. A sub-agent named scanner must only read files, but its configuration does not set tools.\n\nWhat should you do?",
+  "choices": [
+   "Set tools for scanner to an explicit list that contains only read tools.",
+   "Set tools for scanner to null so that it inherits no session tools.",
+   "Add the write tools to defaultAgent.excludedTools for the session.",
+   "Set infer to false for scanner so that it cannot be selected."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A sub-agent without a tools list can use all session tools. An explicit tools list applies least privilege to that sub-agent only.",
+  "rationale": [
+   "Correct: an explicit tools list restricts the sub-agent to the named tools, which GitHub Docs recommends for least privilege.",
+   "Incorrect: null means that the sub-agent gets all tools in the session, which is the current problem.",
+   "Incorrect: defaultAgent.excludedTools hides tools from the main agent only. Sub-agents such as scanner keep access to them.",
+   "Incorrect: infer set to false stops automatic selection of the agent, but when it runs, it still has every session tool."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.1.2-07",
+  "obj": "5.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys builds an app with the GitHub Copilot SDK. The session sets excludedTools to block a deploy tool. A sub-agent named releaser lists the deploy tool in its tools, but it cannot call the tool. The releaser agent must be able to deploy.\n\nWhat should you do?",
+  "choices": [
+   "Remove the deploy tool from excludedTools at the session level.",
+   "Add the deploy tool to the tools list of the releaser agent again.",
+   "Add the deploy tool to defaultAgent.excludedTools for the session.",
+   "Set the agent session option to releaser when the session starts."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Session-level availableTools and excludedTools are applied before agent settings, and a session exclusion wins. The tool must be allowed at the session level before an agent can use it.",
+  "rationale": [
+   "Correct: a session-level exclusion wins over a sub-agent tools list, so the tool must no longer be excluded for the session.",
+   "Incorrect: the releaser agent already lists the tool. Listing it again does not override the session exclusion.",
+   "Incorrect: defaultAgent.excludedTools hides tools from the main agent. It does not remove the session-level exclusion that blocks releaser.",
+   "Incorrect: pre-selecting releaser changes which agent runs first, but the session exclusion still applies to every agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.1.2-08",
+  "obj": "5.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank wants to avoid parallel subagents that edit the same files. A planned change requires many tightly coupled edits to the same three files.\n\nHow should you run the change?",
+  "choices": [
+   "Run the change in a single agent session instead of fleet mode.",
+   "Run the change in fleet mode with one todo for each of the files.",
+   "Run the change in fleet mode with more workers than todos.",
+   "Run the change as one Copilot cloud agent task for each file."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fleet mode is not recommended for tightly coupled edits to the same files. A single agent keeps the related changes consistent without a reconciliation step.",
+  "rationale": [
+   "Correct: GitHub Docs lists tightly coupled edits to the same files as a case in which to avoid fleet mode, so a single session is the safer choice.",
+   "Incorrect: one todo per file still runs coupled edits in parallel, and each worker lacks the other workers' changes, which leads to inconsistent code.",
+   "Incorrect: more workers than todos does not create more parallel work; each todo has one owner, and coupled edits remain a conflict risk.",
+   "Incorrect: separate cloud agent tasks create separate branches and pull requests for coupled edits, which then conflict when merged."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.3-01",
+  "obj": "5.1.3",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "You need to meet the requirements for parallel work.\n\nWhich three actions should you take? Each correct answer presents part of the solution.",
+  "choices": [
+   "Give each todo one owner, and have workers claim only ready todos.",
+   "Assign the todos so that no two subagents change the same file.",
+   "Have the parent agent verify the combined result before it finishes.",
+   "Increase the number of subagents so that each todo finishes sooner.",
+   "Let each subagent pick any todo without updating the todo status.",
+   "Give each subagent all session tools so that it can fix other subagents' files."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "One owner per todo prevents duplicate work, separate files prevent overlapping edits, and the parent verifies the combined result. These are the fleet mode practices that address the case problems.",
+  "rationale": [
+   "Correct: a worker claims one ready todo and marks it in progress, so two subagents do not write the same test file for the discount module.",
+   "Correct: avoiding overlapping files stops two subagents from editing cart.ts at the same time. Overlap is acceptable only when the parent reconciles the changes.",
+   "Correct: the parent agent verifies the combined result of all workers, which meets the requirement that the merged work builds and passes tests.",
+   "Incorrect: more subagents finish work faster but increase the chance of overlap and duplicate effort. Add workers only after the todos are independent.",
+   "Incorrect: without a status change, several workers can claim the same todo, which is how the duplicate test file happened.",
+   "Incorrect: broad tool access lets subagents change files that they do not own, which increases conflicts instead of preventing them."
+  ],
+  "case": "C-e",
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.3-02",
+  "obj": "5.1.3",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "A pull request that Copilot cloud agent created has a merge conflict with its base branch. User1 wants Copilot to resolve the conflict and to fix the pull request if it conflicts again later.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Open the pull request on GitHub.",
+   "In the merge box, click Watch and fix.",
+   "Select Resolve merge conflicts.",
+   "Review the changes Copilot makes, and check the workflow results.",
+   "Enable auto-merge so that Copilot resolves the conflict.",
+   "In the merge box, click Unassign Copilot."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Agent Merge is enabled from the merge box with Watch and fix, where you choose the blockers Copilot may fix. It watches the pull request and starts again when a selected blocker appears, but human review is still required.",
+  "rationale": [
+   "Step 1: Agent Merge is enabled per pull request, so User1 starts on the pull request page.",
+   "Step 2: Watch and fix in the merge box enables Agent Merge for the pull request.",
+   "Step 3: Resolve merge conflicts allows Copilot to resolve conflicts between the branch and its base branch whenever they appear.",
+   "Step 4: Agent Merge does not replace human review, so User1 reviews the changes and checks workflow results before merging.",
+   "Incorrect: auto-merge merges the pull request after requirements pass. It does not resolve conflicts, and enabling Agent Merge does not enable auto-merge.",
+   "Incorrect: Unassign Copilot disables Agent Merge for the pull request, which is the opposite of what User1 wants."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/watch-and-fix-pull-requests"
+ },
+ {
+  "id": "5.1.3-03",
+  "obj": "5.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud runs fleet mode with the GitHub Copilot SDK. Two workers finish the same todo, and both commit a migration script for it.\n\nWhat should you change to prevent the duplicated effort?",
+  "choices": [
+   "Have each worker set the todo to in_progress when it claims the todo.",
+   "Have each worker set the todo to done before it starts the work.",
+   "Have each worker create a new todo with the same title as a backup.",
+   "Have each worker skip the ready query and choose any pending todo."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fleet mode uses the todo status as shared coordination state. A worker claims one ready todo by moving it from pending to in_progress, so other workers skip it.",
+  "rationale": [
+   "Correct: the status flow pending, in_progress, done lets a worker claim a todo. Other workers query only pending, ready todos, so they skip claimed work.",
+   "Incorrect: done means that the work is complete. Setting it early hides failures and breaks the dependency checks of other todos.",
+   "Incorrect: duplicate todos create the duplicated effort that the team wants to remove. Each todo should have one owner and a durable ID.",
+   "Incorrect: the ready query ensures that dependencies are done. Skipping it lets workers start work too early or pick work that is already claimed."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.3-04",
+  "obj": "5.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs Copilot CLI /fleet. One subagent assumed version 2 of an internal API, and another subagent assumed version 3. Both subagents report success.\n\nWhat should you do?",
+  "choices": [
+   "Have the parent agent reconcile the outputs and verify the combined result.",
+   "Keep the output of the subagent that finished last, and discard the other.",
+   "Run /fleet again with more subagents so that more results can be compared.",
+   "Mark both todos as done because each subagent reported a successful result."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Parallel workers can make inconsistent assumptions. The orchestrator must reconcile them, and the parent verifies the combined result instead of trusting individual reports.",
+  "rationale": [
+   "Correct: the parent agent is responsible for reconciling inconsistent assumptions and verifying the combined result of all workers.",
+   "Incorrect: finish order says nothing about which assumption is correct, so this keeps a random version. Decide based on the requirement, not timing.",
+   "Incorrect: more workers produce more outputs with the same missing information. Fix the context or reconcile before running again.",
+   "Incorrect: individual success does not prove that the parts work together. Each worker's report is input for the parent's verification."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.1.3-05",
+  "obj": "5.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. receives a pull request from a contributor's fork. The pull request now has merge conflicts with the base branch. User1 wants Copilot to resolve the conflicts automatically.\n\nWhat should User1 do?",
+  "choices": [
+   "Resolve the conflicts without Agent Merge, because it does not support fork pull requests.",
+   "Click Watch and fix in the merge box, and select Resolve merge conflicts for the pull request.",
+   "Enable auto-merge for the pull request so that GitHub resolves the conflicts before merging.",
+   "Turn on Enable Agent Merge automatically for pull requests I create in the Copilot settings."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Merge does not support pull requests opened from a fork or stacked pull requests. The conflicts must be resolved another way, for example by the contributor or by User1.",
+  "rationale": [
+   "Correct: Agent Merge does not support pull requests opened from a fork, so User1 must resolve the conflicts another way.",
+   "Incorrect: Watch and fix is the right control for pull requests in the repository, but Agent Merge does not support pull requests from forks.",
+   "Incorrect: auto-merge merges a pull request after required reviews and checks pass. It does not resolve merge conflicts.",
+   "Incorrect: this setting only applies to pull requests that User1 creates, and it still cannot act on a pull request from a fork."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/watch-and-fix-pull-requests"
+ },
+ {
+  "id": "5.1.3-06",
+  "obj": "5.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. wants Copilot to keep a pull request free of merge conflicts and failing workflows, and to merge the pull request as soon as all required reviews and checks pass.\n\nWhat should you do?",
+  "choices": [
+   "Enable Agent Merge and auto-merge for the pull request.",
+   "Enable Agent Merge for the pull request and nothing else.",
+   "Enable auto-merge for the pull request and nothing else.",
+   "Ask Copilot to approve and merge the pull request when ready."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Merge fixes blockers, and auto-merge merges when requirements pass. Enabling Agent Merge does not enable auto-merge, so both are needed.",
+  "rationale": [
+   "Correct: Agent Merge fixes failed workflows and merge conflicts, and auto-merge merges once required reviews and checks pass. Combined, they meet both goals.",
+   "Incorrect: Agent Merge keeps the pull request ready but does not enable auto-merge, so the pull request still waits for a manual merge.",
+   "Incorrect: auto-merge waits for requirements to pass but does not fix conflicts or failing workflows, so the pull request might never become mergeable.",
+   "Incorrect: Copilot cloud agent cannot approve or merge pull requests. A person or auto-merge must perform the merge."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/watch-and-fix-pull-requests"
+ },
+ {
+  "id": "5.1.3-07",
+  "obj": "5.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys runs three reviewer agents in parallel on the same pull request by using concurrent orchestration. The agents often return contradictory recommendations. The team needs one recommendation in which the majority opinion wins.\n\nWhat should you add to the orchestration?",
+  "choices": [
+   "An aggregation step that combines the results by voting",
+   "A shared file that each agent overwrites with its result",
+   "A rule that accepts the first result that is returned",
+   "A fourth reviewer agent that runs at the same time"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Concurrent orchestration needs a strategy to combine or resolve conflicting results. Voting, weighted merging, and model-generated summaries are common aggregation options.",
+  "rationale": [
+   "Correct: concurrent results are aggregated by a defined strategy, and voting selects the majority opinion, which meets the requirement.",
+   "Incorrect: agents that overwrite shared state without coordination lose results. Concurrent orchestration should be avoided when agents cannot coordinate shared state.",
+   "Incorrect: the first result depends on timing, not on agreement, so it does not reflect the majority opinion of the reviewers.",
+   "Incorrect: an extra reviewer adds another opinion but does not combine the results, so the contradiction remains unresolved."
+  ],
+  "ref": "https://learn.microsoft.com/azure/architecture/ai-ml/guide/ai-agent-design-patterns"
+ },
+ {
+  "id": "5.1.3-08",
+  "obj": "5.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 merges a pull request that Copilot cloud agent created. A second Copilot pull request that changed the same file now shows merge conflicts. User1 wants Copilot to resolve the conflicts.\n\nWhat should User1 click in the merge box of the second pull request?",
+  "choices": [
+   "Watch and fix",
+   "Approve and run workflows",
+   "Unassign Copilot",
+   "Ready for review"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Watch and fix enables Agent Merge, which can resolve merge conflicts between a pull request branch and its base branch.",
+  "rationale": [
+   "Correct: Watch and fix enables Agent Merge, where User1 can let Copilot resolve merge conflicts with the base branch.",
+   "Incorrect: Approve and run workflows lets GitHub Actions workflows run on a Copilot pull request. It does not change the code to resolve conflicts.",
+   "Incorrect: Unassign Copilot disables Agent Merge for the pull request. Use it when you no longer want Copilot to watch the pull request.",
+   "Incorrect: Ready for review moves a draft pull request out of draft so it can be reviewed. It does not resolve conflicts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/watch-and-fix-pull-requests"
+ }
+]

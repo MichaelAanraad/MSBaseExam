@@ -1,0 +1,531 @@
+[
+ {
+  "id": "3.3.1-01",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Copilot Memory. While it works on an issue, the Copilot cloud agent learns that two configuration files in a repository must always be updated together. Other developers who work in the same repository must benefit from this knowledge.\n\nWhich mechanism should hold this knowledge?",
+  "choices": [
+   "A user-level preference",
+   "A repository-level fact",
+   "An organization custom instruction",
+   "A personal custom instruction"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Copilot Memory has two types. Repository-level facts are shared with everyone who works in the same repository, while user-level preferences follow one user across repositories. Custom instructions are written by people, not captured by Copilot.",
+  "rationale": [
+   "Incorrect: user-level preferences belong to a single user and follow that user to other repositories. Use them for personal working styles, not for repository knowledge that collaborators must share.",
+   "Correct: repository-level facts are shared with collaborators and applied only in the repository where they were captured, which is exactly the scope of a rule about two files in that repository.",
+   "Incorrect: organization custom instructions are written by owners and apply across repositories on GitHub website sessions and code review. They are not where Copilot stores what it learns while working.",
+   "Incorrect: personal custom instructions are written by one user and apply only to that user's requests. Other developers in the repository would not receive the knowledge."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.1-02",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys enables Copilot Memory for a repository. The Copilot cloud agent stores a repository fact about how the code handles database connections while it fixes an issue. A week later, Copilot code review reviews an unrelated pull request in the same repository that changes database code.\n\nWhat should you expect Copilot code review to do with the fact?",
+  "choices": [
+   "Ignore the fact, because facts are scoped to the surface that stored them",
+   "Use the fact only after a user approves it in the cloud agent session",
+   "Use the fact, because memories are shared across Copilot surfaces",
+   "Use the fact only if it is copied into .github/copilot-instructions.md"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Copilot Memory is shared across Copilot surfaces such as the cloud agent, Copilot CLI, and Copilot code review. Knowledge captured by one surface can be applied by another in the same repository, which is how agents share state without hand-written notes.",
+  "rationale": [
+   "Incorrect: memories are not tied to the surface that created them. The documentation describes the cloud agent learning database connection handling and code review later applying it.",
+   "Incorrect: the cloud agent does not ask for approval before it stores a memory. Approval prompts exist only in the GitHub Copilot app and interactive Copilot CLI sessions.",
+   "Correct: facts captured by one Copilot surface are available to other surfaces in the same repository, so code review can apply what the cloud agent learned, after it checks the fact's citations.",
+   "Incorrect: copying a fact into custom instructions is a way to make a rule consistent, but it is not a prerequisite. Code review can use repository facts directly from Copilot Memory."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.1-03",
+  "obj": "3.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Litware, Inc., User1 assigned an issue to the Copilot cloud agent. Other developers on the team must be able to open the session log of that agent session to see what the agent did. You need to minimize administrative effort.\n\nWhat should User1 do?",
+  "choices": [
+   "Nothing; teammates can open it from the All sessions view on the Agents tab",
+   "Share the session as view-only by using the Copilot CLI",
+   "Run /chronicle reindex and send the session store to the team",
+   "Copy ~/.copilot/session-state/ to a shared network folder"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Cloud agent sessions are shared by default, so collaborators can find them in the All sessions view on the repository's Agents tab. Local sessions are different: they are unshared by default and are stored on the developer's machine.",
+  "rationale": [
+   "Correct: Copilot cloud agent sessions are shared by default and appear in the All sessions view on the repository's Agents tab, so no extra action is needed.",
+   "Incorrect: view-only sharing is how you share a local session, which is unshared by default. A cloud agent session is already shared with the repository's collaborators.",
+   "Incorrect: /chronicle reindex rebuilds the local session store on one machine. It does not share a cloud agent session with other people.",
+   "Incorrect: ~/.copilot/session-state/ holds local session data. A cloud agent session does not run on User1's machine, and copying files adds effort for no benefit."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.3.1-04",
+  "obj": "3.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Fabrikam, Inc., User2 starts a Copilot session in a cloud sandbox from the GitHub Copilot app. Later, User2 must continue the same session from a terminal with the full conversation history.\n\nWhich Copilot CLI command should User2 use?",
+  "choices": [
+   "/memory show",
+   "/chronicle reindex",
+   "/resume",
+   "/memory off"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Cloud sandbox sessions can continue across clients such as the GitHub Copilot app, GitHub Mobile, GitHub.com, and Copilot CLI, and keep their full history. In Copilot CLI you pick up such a session with /resume.",
+  "rationale": [
+   "Incorrect: /memory show displays the local Copilot Memory setting. It does not open or continue a session.",
+   "Incorrect: /chronicle reindex rebuilds the local session store. It does not attach the terminal to a cloud sandbox session.",
+   "Correct: /resume continues an existing session in Copilot CLI, and cloud sandbox sessions keep their full history when you move between clients.",
+   "Incorrect: /memory off disables Copilot Memory for the CLI. It changes what Copilot remembers, not which session you work in."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.3.1-05",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has two repositories named Repo1 and Repo2 in the same organization. In Repo1, Copilot Memory holds a validated repository fact that all currency values must use a shared Money type. The Copilot cloud agent must apply the same rule for every developer who assigns work in Repo2.\n\nWhat should you do?",
+  "choices": [
+   "Rely on the Repo1 fact, because facts are pooled across organization repositories",
+   "Fork Repo1 and use the fork in place of Repo2",
+   "Ask User1 to store the rule as a user-level preference",
+   "Add the rule to .github/copilot-instructions.md in Repo2"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Repository facts stay in the repository where they were captured: they are not pooled across an organization and are not copied to forks. To share a rule with every agent task in another repository, put it in that repository's custom instructions.",
+  "rationale": [
+   "Incorrect: Copilot Memory does not pool facts across the repositories of an organization. A fact from Repo1 is applied only in Repo1.",
+   "Incorrect: forking a repository does not copy its memories, so a fork would start without the fact. Forking would also replace Repo2 rather than configure it.",
+   "Incorrect: a user-level preference follows only User1. Tasks that other developers assign in Repo2 would not receive the rule.",
+   "Correct: repository-wide custom instructions in Repo2 are applied to every cloud agent task in that repository, regardless of who assigns the work, so the rule is shared consistently."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.1-06",
+  "obj": "3.3.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Proseware, Inc. enables Copilot Memory for repository facts and user preferences. Developers use the Copilot cloud agent, Copilot CLI, and Copilot code review.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A user-level preference that User1 creates is applied when User1 works in a different repository.",
+   "Copilot code review applies the user-level preferences of the pull request author.",
+   "A Copilot CLI subagent that has the read_memories tool can store a new repository fact.",
+   "Facts that the Copilot cloud agent stores can later be used by Copilot CLI in the same repository."
+  ],
+  "answer": [
+   0,
+   3
+  ],
+  "explanation": "User preferences follow a user across repositories, and repository facts are shared across Copilot surfaces in one repository. Some surfaces and agents have limits: code review never applies user preferences, and only the root agent in Copilot CLI can store or vote on memories.",
+  "rationale": [
+   "Yes: user-level preferences follow the user across repositories, so User1's preference is applied wherever User1 works with Copilot.",
+   "No: Copilot code review and Agentic Autofix never apply user-level preferences. They use repository facts and instructions instead.",
+   "No: only the root agent can use store_memory and vote_memory. A subagent with read_memories can read memories but cannot create or change them.",
+   "Yes: memory is shared across Copilot surfaces, so a fact the cloud agent captured can be used by Copilot CLI, code review, and other surfaces in that repository."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.2-01",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to resolve the package manager problem in the src/web pull requests and meet the technical requirements.\n\nWhat should you do?",
+  "choices": [
+   "Store a repository fact in Copilot Memory that says pnpm is required",
+   "Edit the instruction files so that src/web receives only one package manager rule",
+   "Ask each web developer to add pnpm to their personal custom instructions",
+   "Add organization custom instructions that say to use pnpm"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "When several instruction sets give contradictory guidance, Copilot may follow either of them, because all relevant instructions are provided together. The documented fix is to avoid conflicting instruction sets rather than to add another source that repeats one side of the conflict.",
+  "rationale": [
+   "Incorrect: a memory adds a third source of guidance and does not remove the contradiction between the two instruction files. Memory is also applied by judgment, not guaranteed.",
+   "Correct: scoping the npm rule to the backend, for example in a path-specific file for src/api, and keeping pnpm only in src/web/AGENTS.md gives src/web one consistent rule and meets the requirement.",
+   "Incorrect: personal instructions apply to Copilot Chat on GitHub.com for one user, not to the cloud agent, and they add yet another source while the conflicting files remain.",
+   "Incorrect: organization instructions have the lowest priority and would leave both conflicting repository instructions in place, so the conflict remains."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/custom-instructions",
+  "case": "C-d"
+ },
+ {
+  "id": "3.3.2-02",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Fabrikam, Inc. keeps backend and web conventions in .github/copilot-instructions.md. The Copilot cloud agent applies web conventions to backend files. You need the web conventions to apply only to files under src/web.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a .github/instructions directory in the repository.",
+   "Add a file named web.instructions.md to that directory.",
+   "Add frontmatter to the file that sets applyTo to \"src/web/**\".",
+   "Below the frontmatter, add the web conventions, remove them from .github/copilot-instructions.md, and commit.",
+   "Add the web conventions to an AGENTS.md file at the repository root.",
+   "Store the web conventions as a user-level preference in Copilot Memory."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Path-specific instructions live in .github/instructions as files that end in .instructions.md. The applyTo frontmatter limits them to matching paths, and moving the web rules out of the repository-wide file removes the source of the misapplied guidance.",
+  "rationale": [
+   "Step 1: path-specific instruction files must be stored in the .github/instructions directory, so the directory has to exist first.",
+   "Step 2: the file name must end in .instructions.md for Copilot to treat it as a path-specific instructions file.",
+   "Step 3: the applyTo glob in the frontmatter limits the instructions to files under src/web, which is the scoping requirement.",
+   "Step 4: the conventions go in the body after the frontmatter, and removing them from the repository-wide file before committing stops them from applying to backend files.",
+   "Incorrect: an AGENTS.md file at the repository root applies to the whole repository, so the web conventions would still reach backend files. Use a nested AGENTS.md when a directory needs its own agent instructions.",
+   "Incorrect: a user-level preference follows one user, not a path. It cannot limit conventions to src/web and would not reach work assigned by other developers."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions?tool=webui"
+ },
+ {
+  "id": "3.3.2-03",
+  "obj": "3.3.2",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Adatum Corporation wants each piece of guidance for the Copilot cloud agent to live in exactly one place so that sources do not contradict each other.\n\nWhich source should you use for each piece of guidance? To answer, drag the appropriate sources to the correct guidance. Each source may be used once, more than once, or not at all.",
+  "choices": [
+   ".github/copilot-instructions.md",
+   "A path-specific .instructions.md file",
+   "A repository fact in Copilot Memory",
+   "Personal custom instructions",
+   "Organization custom instructions"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Rules that must apply to every task in a repository belong in repository-wide instructions, rules for some paths belong in path-specific files, and details that Copilot discovers while working belong in memory. Keeping each item in one place avoids conflicting context.",
+  "rationale": [
+   "Guidance1 must apply to every task and to code review in the repository, which is what .github/copilot-instructions.md provides; memory or personal instructions would not guarantee that reach.",
+   "Guidance2 is limited to src/jobs, so a path-specific .instructions.md file with an applyTo glob keeps it away from other files and avoids contradicting their conventions.",
+   "Guidance3 is accumulated detail that Copilot learned while working, which is the purpose of a repository fact; the fact is cited to code and checked before it is used."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions?tool=webui",
+  "targets": [
+   "Guidance1: an input validation rule that every agent task and code review in the repository must follow",
+   "Guidance2: naming conventions that apply only to files under src/jobs",
+   "Guidance3: a detail Copilot discovered while working, that two files must be kept in sync"
+  ],
+  "notes": [
+   "Repository-wide instructions apply to every request in the repository, including cloud agent tasks and Copilot code review. Use them for rules that must always apply.",
+   "Path-specific instructions use an applyTo glob so they apply only to matching files. Use them when a convention is limited to part of the repository.",
+   "Repository facts are captured by Copilot while it works and are shared across surfaces. Use memory for accumulated detail, not for mandatory rules.",
+   "Personal custom instructions apply only to the user who wrote them. They are the wrong place for guidance that every developer's tasks must follow.",
+   "Organization custom instructions apply across repositories and have the lowest priority. They do not fit guidance that is specific to one repository."
+  ]
+ },
+ {
+  "id": "3.3.2-04",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. wants API conventions to apply to files under src/api and src/jobs. The Copilot cloud agent must use the conventions, but Copilot code review must not, because code review uses a separate checklist.\n\nHow should you complete the file .github/instructions/api.instructions.md? To answer, select the appropriate options in the answer area.\n\n```markdown\n---\napplyTo: [[1]]\nexcludeAgent: [[2]]\n---\nUse the shared logger in every request handler.\n```",
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Path-specific instructions use the applyTo frontmatter, with multiple globs separated by commas. The excludeAgent key keeps one Copilot agent from using the file, which prevents code review from receiving guidance that conflicts with its own checklist.",
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions?tool=webui",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"src/api/**,src/jobs/**\"",
+     "\"src/api/** | src/jobs/**\"",
+     "\"src/api/\""
+    ],
+    "why": [
+     "Correct: applyTo accepts several glob patterns separated by commas, so this value matches every file under both directories.",
+     "Incorrect: a vertical bar is not the documented separator for applyTo globs. Separate multiple patterns with commas instead.",
+     "Incorrect: this value names only one directory and has no glob, so files under src/jobs would not receive the conventions."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"cloud-agent\"",
+     "\"code-review\""
+    ],
+    "why": [
+     "Incorrect: excluding cloud-agent would stop the Copilot cloud agent from using the file, which is the opposite of the requirement.",
+     "Correct: excludeAgent set to code-review keeps Copilot code review from using the file while the cloud agent still applies it."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "3.3.2-05",
+  "obj": "3.3.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "In a Relecloud repository, .github/copilot-instructions.md says to write tests with Jest, and tests/AGENTS.md says to use Vitest. Copilot Memory also holds a repository fact, captured before a migration, that says the project uses Mocha. The Copilot cloud agent switches between frameworks from task to task.\n\nWhich two actions should you perform to stop the agent from receiving conflicting guidance? Each correct answer presents part of the solution.",
+  "choices": [
+   "Delete the outdated repository fact in the repository settings",
+   "Rely on instruction precedence to make Copilot ignore the lower-priority file",
+   "Edit the instruction files so that only one of them names the test framework",
+   "Add organization custom instructions that name the correct framework",
+   "Ask each developer to add the framework to a user-level preference"
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Conflicting context comes from every source that Copilot reads, so each source must agree. Contradicting instruction files must be edited so that only one states the rule, and a memory that is wrong must be deleted explicitly to make sure Copilot stops using it.",
+  "rationale": [
+   "Correct: to make sure Copilot stops using a memory, you delete it explicitly in the repository settings. Waiting for citation checks or expiry is not guaranteed.",
+   "Incorrect: Copilot receives all relevant instruction sets, and most clients combine them without a defined precedence. The documentation advises avoiding conflicting sets instead of relying on priority.",
+   "Correct: keeping the framework rule in one instruction file removes the contradiction between Jest and Vitest that Copilot receives on every task.",
+   "Incorrect: organization instructions have the lowest priority and add a fourth source of guidance. They do not remove the existing contradictions.",
+   "Incorrect: user-level preferences follow individual users and add more sources. Tasks assigned by developers without the preference would still see the conflict."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.2-06",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders wants a single set of coding standards that the Copilot cloud agent and Copilot code review both use for every task in a repository.\n\nWhich file should you create?",
+  "choices": [
+   ".github/agents/standards.agent.md",
+   ".github/copilot-instructions.md",
+   ".github/instructions/standards.md",
+   ".github/copilot/settings.json"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Repository-wide custom instructions are stored in .github/copilot-instructions.md and apply to cloud agent tasks, Copilot Chat, and Copilot code review in the repository. One shared file prevents each surface from receiving different standards.",
+  "rationale": [
+   "Incorrect: a .agent.md file defines a custom agent that applies only when that agent is selected. Code review and default agent tasks would not use it.",
+   "Correct: .github/copilot-instructions.md holds repository-wide instructions that both the cloud agent and Copilot code review read for every request in the repository.",
+   "Incorrect: path-specific instructions must end in .instructions.md and target paths with applyTo. A file named standards.md in that directory is not recognized.",
+   "Incorrect: .github/copilot/settings.json configures plugins such as enabledPlugins and extraKnownMarketplaces. It does not hold coding standards."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions?tool=webui"
+ },
+ {
+  "id": "3.3.2-07",
+  "obj": "3.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation has organization custom instructions that say to use tabs for indentation. A repository has repository custom instructions that say to use two spaces. Both sets are provided to the Copilot cloud agent.\n\nWhich instructions should you expect the cloud agent to prioritize?",
+  "choices": [
+   "The organization instructions",
+   "Whichever instructions were changed most recently",
+   "The repository instructions",
+   "Neither, because Copilot rejects both conflicting sets"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The Copilot cloud agent uses organization custom instructions, but repository instructions take priority over them. Even so, conflicting sets should be avoided, because priority does not guarantee that the lower-priority guidance is ignored.",
+  "rationale": [
+   "Incorrect: organization instructions have the lowest priority. They are used, but repository instructions are prioritized when both apply.",
+   "Incorrect: priority is based on the type of instructions, not on when a file changed. Edit dates do not affect which guidance wins.",
+   "Correct: the documentation states that the cloud agent uses organization instructions with repository instructions prioritized, so the two-space rule wins.",
+   "Incorrect: Copilot does not reject conflicting sets; it receives all relevant instructions. That is why you should remove contradictions instead of relying on a block."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "3.3.3-01",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Copilot Memory with the default settings. A repository fact is created and Copilot never validates it again.\n\nHow long should you expect the fact to remain before it expires?",
+  "choices": [
+   "7 days",
+   "90 days",
+   "180 days",
+   "365 days"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Memories expire by default 90 days after creation, and the timer resets when Copilot upvotes a memory that it validated. Expiry keeps unused knowledge from lingering as stale context.",
+  "rationale": [
+   "Incorrect: 7 days is the shortest value that an owner can configure for repository facts. It is not the default.",
+   "Correct: the default expiry is 90 days, measured from creation, and it resets only when Copilot upvotes the memory.",
+   "Incorrect: 180 days is the longest value that an owner can configure for repository facts, not the default.",
+   "Incorrect: 365 days is outside the configurable range of 7 to 180 days, so it can be neither the default nor a valid setting."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.3-02",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "In a Tailspin Toys repository, Copilot retrieves a repository fact in many sessions. Copilot never upvotes the fact, and nobody changes the expiry settings.\n\nWhat should you expect to happen to the fact?",
+  "choices": [
+   "It expires 90 days after it was created",
+   "Each retrieval resets its 90-day expiry",
+   "It never expires while it is retrieved",
+   "It expires at the end of each session"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Expiry is measured from creation and resets only when Copilot upvotes the memory after validating it. Merely reading a memory does not keep it alive, which limits how long unvalidated knowledge can influence agents.",
+  "rationale": [
+   "Correct: retrieving a memory does not reset its expiry, so a fact that is never upvoted expires 90 days after it was created.",
+   "Incorrect: only an upvote resets the timer. Retrieval alone does not count as validation.",
+   "Incorrect: use does not extend a memory. Without upvotes the default 90-day expiry still applies.",
+   "Incorrect: memories persist across sessions by design. Session-scoped context would not be shared knowledge at all."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.3-03",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. refactors a module and removes a retry helper. A repository fact in Copilot Memory still says to use the retry helper. You must make sure that Copilot stops using the fact now.\n\nWhat should you do?",
+  "choices": [
+   "Wait for Copilot to check the citations of the fact against the branch",
+   "Add a note to .github/copilot-instructions.md that the fact is outdated",
+   "Change the repository fact expiry setting to 7 days",
+   "Delete the fact in the repository settings"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Copilot checks a fact's citations before using it, but that check is a judgment, not a guarantee. The documented way to make sure Copilot stops using a memory is to delete it explicitly.",
+  "rationale": [
+   "Incorrect: the citation check usually catches facts whose code changed, but it is not guaranteed, so it does not meet the requirement to stop use now.",
+   "Incorrect: a note in custom instructions adds a contradiction alongside the stale fact. Copilot could still receive both and follow either.",
+   "Incorrect: changing the expiry setting does not re-date existing facts. They adopt the new period only the next time they are reinforced.",
+   "Correct: explicitly deleting the fact in the repository settings makes sure that Copilot no longer uses it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.3-04",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Woodgrove Bank, the enterprise sets the expiry for repository facts to 60 days, and an organization owner sets it to 30 days. Many repository facts in the organization were created before these changes.\n\nWhat should you expect?",
+  "choices": [
+   "60 days applies, and existing facts change when they are reinforced",
+   "30 days applies, and existing facts change when they are reinforced",
+   "30 days applies, and all existing facts are re-dated immediately",
+   "30 days applies to repository facts and to user preferences"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Owners can set the repository fact expiry between 7 and 180 days, and when organization and enterprise values differ, the lower value applies. Existing facts are not re-dated; they adopt the new period the next time they are reinforced.",
+  "rationale": [
+   "Incorrect: when the organization and enterprise values differ, the lower value applies, so 60 days is not used.",
+   "Correct: the lower value of 30 days applies, and existing facts move to the new period the next time Copilot reinforces them.",
+   "Incorrect: changing the setting does not re-date existing facts. Expect stale facts to remain until they expire or are reinforced.",
+   "Incorrect: the setting affects repository facts only. User-level preferences always use the default expiry."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.3-05",
+  "obj": "3.3.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Litware, Inc. replaced the build system of a repository. The old .github/copilot-instructions.md describes commands that no longer exist, so you delete it. You want the Copilot cloud agent to generate a new file that reflects the current repository.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Go to the agents tab at github.com/copilot/agents.",
+   "Select the repository in the prompt field dropdown.",
+   "Paste the documented onboarding prompt and submit it.",
+   "Review the pull request that adds the new file and merge it.",
+   "Store the new build commands as a user-level preference.",
+   "Ask Copilot to make the file task-specific for the current issue."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The cloud agent can generate repository-wide instructions from the agents tab by using a documented onboarding prompt. Regenerating after a large change replaces stale build guidance, and reviewing the pull request keeps a human in control of what agents will read.",
+  "rationale": [
+   "Step 1: the agents tab is where you start a cloud agent task that generates the instructions file.",
+   "Step 2: the prompt field dropdown selects the repository that the new copilot-instructions.md file is written for.",
+   "Step 3: the documented prompt asks the agent to add .github/copilot-instructions.md with validated build, test, and layout details for an agent seeing the repository for the first time.",
+   "Step 4: the agent delivers the file in a pull request; a reviewer checks it before merging so that the new context is accurate.",
+   "Incorrect: a user-level preference follows one user and is not shared with collaborators. Build commands for the repository belong in repository instructions.",
+   "Incorrect: the documented prompt states that instructions must not be task specific. Task-specific details become stale as soon as the task ends."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions?tool=webui"
+ },
+ {
+  "id": "3.3.3-06",
+  "obj": "3.3.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Adatum Corporation reviews how Copilot Memory limits stale context in its repositories.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "When Copilot downvotes a memory, the time remaining before the memory expires is shortened.",
+   "Copilot is instructed not to store short-lived or task-specific instructions as memories.",
+   "Copilot checks the citations of a repository fact against the current branch before it uses the fact.",
+   "User-level preferences use the expiry period that an organization owner sets for repository facts."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "Copilot Memory limits stale context through citation checks, voting, expiry, and rules about what is stored. Each mechanism has limits, so important rules belong in custom instructions and wrong memories should be deleted.",
+  "rationale": [
+   "No: downvoting does not change the remaining time. Memories downvoted past a threshold are no longer used and are deleted after disuse.",
+   "Yes: Copilot is instructed not to store short-lived or task-specific instructions, which would quickly become stale context.",
+   "Yes: before it uses a fact, Copilot checks the fact's citations against the current branch, which helps it skip facts about code that changed.",
+   "No: the configurable expiry applies to repository facts only. User-level preferences always use the default expiry."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.3.3-07",
+  "obj": "3.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud has a mandatory security rule that the Copilot cloud agent must follow in every task in a repository. The rule must not depend on knowledge that can expire.\n\nWhich location should you use to record the rule?",
+  "choices": [
+   "In a repository fact in Copilot Memory",
+   "In a user-level preference in Copilot Memory",
+   "In the repository custom instructions",
+   "In the description of a closed pull request"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Custom instructions are the place for important, consistent rules, while Copilot Memory holds accumulated detail that can be downvoted or expire. Neither guarantees compliance, but instructions do not age out.",
+  "rationale": [
+   "Incorrect: repository facts expire after a period without validation and are applied by judgment, so a mandatory rule could silently disappear.",
+   "Incorrect: a user-level preference follows one user and also expires. Tasks assigned by other users would not receive the rule.",
+   "Correct: the documentation recommends custom instructions for important rules such as security requirements, because they are provided on every request and do not expire.",
+   "Incorrect: Copilot can capture facts from closed pull requests, but this is not guaranteed and the result would still be a memory that can expire."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ }
+]

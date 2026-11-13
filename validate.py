@@ -9,9 +9,11 @@ import sys
 from collections import Counter
 
 import exam  # noqa: F401  (selects exams/<exam>, must come before objectives)
+import objectives as _settings
 from objectives import GROUPS, TOTAL, objectives
 
 OBJ = objectives()
+REF_PREFIXES = tuple(getattr(_settings, "REF_PREFIXES", ("https://learn.microsoft.com/",)))
 DIFF = ("easy", "medium", "hard")
 TYPES = ("single", "multi", "yesno", "order", "dragdrop", "dropdown")
 YN_STEM = "For each of the following statements, select Yes if the statement is true. Otherwise, select No."
@@ -125,8 +127,8 @@ def check(qs, groups):
         boxes = [x["label"] + " " + " ".join(x.get("options", [])) if isinstance(x, dict) else x for x in tg]
         if len(set(c.strip().lower() for c in ch)) != len(ch):
             err.append(f"{i}: duplicate choices")
-        if not str(q.get("ref", "")).startswith("https://learn.microsoft.com/"):
-            err.append(f"{i}: ref must be a learn.microsoft.com URL")
+        if not str(q.get("ref", "")).startswith(REF_PREFIXES):
+            err.append(f"{i}: ref must start with one of {', '.join(REF_PREFIXES)}")
         if not q.get("explanation"):
             err.append(f"{i}: missing explanation")
         if q.get("case") and q["case"] not in cases:

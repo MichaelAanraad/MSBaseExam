@@ -1,0 +1,559 @@
+[
+ {
+  "id": "3.2.1-01",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A reviewer at Northwind Traders opens a pull request from Copilot cloud agent after Copilot made several rounds of changes in response to comments. The reviewer wants a current summary of what the pull request now does.\n\nWhat should the reviewer check first?",
+  "choices": [
+   "The title and body of the pull request",
+   "The first comment of the original issue",
+   "The repository-level facts in Copilot Memory",
+   "The list of workflow runs in the Actions tab"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot keeps the title and body of its pull request up to date as it changes the pull request. The description is therefore a durable, current record of the work.",
+  "rationale": [
+   "Correct: Copilot updates the pull request title and body as it makes changes, so the description reflects the current state of the work.",
+   "Incorrect: the issue describes the original request. It does not change when Copilot iterates on the pull request, so it can be out of date.",
+   "Incorrect: repository-level facts are general conventions about the codebase. They do not summarize one pull request.",
+   "Incorrect: workflow runs show check results for each push. They do not describe what the pull request changes."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "3.2.1-02",
+  "obj": "3.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Fabrikam, Inc. uses Copilot CLI to fix 300 linter errors in a migration that will take several sessions. User1 wants a durable record of which errors are fixed and which remain.\n\nWhat should User1 ask Copilot to do?",
+  "choices": [
+   "Write the errors to a checklist file and check each one off when it is fixed.",
+   "Store each fixed error as a repository-level fact in Copilot Memory.",
+   "Keep the list of errors in the conversation and run /compact regularly.",
+   "Run the linter again at the start of each session and fix the first error."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A checklist file, such as migration-checklist.md, keeps progress outside the context window. Copilot can read it in later sessions and continue from the first unchecked item.",
+  "rationale": [
+   "Correct: GitHub describes writing the errors to a file such as migration-checklist.md and checking them off, which gives a durable record of progress across sessions.",
+   "Incorrect: memories are for lasting conventions, and Copilot is told not to store task-specific details. They are not a progress tracker.",
+   "Incorrect: compaction summarizes the conversation and can lose fine-grained details, such as the status of individual errors.",
+   "Incorrect: re-running the linter shows what remains, but it records no decisions or progress, and each session must rediscover the state."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "3.2.1-03",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User2 at Contoso, Ltd. used a Copilot session on GitHub to research, plan, and iterate on a change. The changes are on a copilot/ branch. User2 wants the team to review the result through the normal process.\n\nWhat should User2 do?",
+  "choices": [
+   "Review the changes in Diff, and then select Create pull request.",
+   "Wait for the session to open a pull request automatically.",
+   "Ask Copilot to merge the copilot/ branch into the default branch.",
+   "Archive the session so that the branch is shared with the team."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Sessions that research, plan, and iterate do not create pull requests automatically. You review the changes in the Diff view and create the pull request when the work is ready.",
+  "rationale": [
+   "Correct: when the work is ready, you review it in Diff and select Create pull request, which turns the branch into a reviewable, durable record.",
+   "Incorrect: these sessions do not create pull requests automatically, so waiting leaves the work on the branch without review.",
+   "Incorrect: Copilot cannot merge to the default branch, and skipping the pull request would bypass the review process.",
+   "Incorrect: archiving moves a stopped session out of the active list. It does not create a pull request or start a review."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/research-plan-iterate"
+ },
+ {
+  "id": "3.2.1-04",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User3 at Woodgrove Bank works in a Copilot CLI session in plan mode that will run for many hours. Early in the session, User3 decides that the public API must not change. The decision must survive automatic compaction without being reduced to a vague summary.\n\nWhat should User3 do?",
+  "choices": [
+   "Ask Copilot to add the decision to the plan of the session.",
+   "Rely on the checkpoint summary that each compaction creates.",
+   "Run /context regularly to check that the decision is still present.",
+   "Raise COPILOT_LARGE_OUTPUT_THRESHOLD_BYTES for the session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Compaction replaces old history with a summary but keeps the original user instructions and the current state of plans and to-do lists. A decision written into the plan survives compaction intact.",
+  "rationale": [
+   "Correct: compaction keeps the current state of plans and to-do lists alongside the summary, so a decision recorded in the plan is carried forward as written.",
+   "Incorrect: a checkpoint is a summary, and GitHub notes that minor decisions made early in a long conversation may not be included.",
+   "Incorrect: /context shows token usage by category. It does not show or protect individual decisions in the history.",
+   "Incorrect: this threshold controls when large tool output is saved to a file. It has nothing to do with how decisions survive compaction."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.2.1-05",
+  "obj": "3.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User1 at Relecloud completed a local Copilot CLI session in which the team made several design decisions. Session syncing is enabled. User1 wants teammates who have access to the repository to read the session as a record of the decisions.\n\nWhat should User1 do?",
+  "choices": [
+   "Share the session as a link, a gist, or a file.",
+   "Rely on session syncing to show it to teammates.",
+   "Archive the session so that it moves to the team view.",
+   "Ask Copilot to store the session as a repository-level fact."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Local sessions are unshared by default, and syncing does not share them with anyone. Sharing a session creates a view-only copy for people who have access to the repository.",
+  "rationale": [
+   "Correct: you can share an individual local session with people who have access to the repository as a link, gist, or file, and recipients get view-only access.",
+   "Incorrect: syncing ties the session data to the personal account of User1, and synced data is accessible only to User1 by default.",
+   "Incorrect: archiving moves a session out of the active list of User1 without deleting it. It does not make the session visible to others.",
+   "Incorrect: a memory is a short fact that Copilot may use. It does not preserve the session as a readable record of the decisions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/session-data"
+ },
+ {
+  "id": "3.2.1-06",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "User2 at Adventure Works wants to know which durable artifacts Copilot CLI keeps for a session in the ~/.copilot/session-state/SESSION-ID folder.\n\nWhich three items should User2 expect to find in that folder? Each correct answer presents part of the solution. Choose three.",
+  "choices": [
+   "The plan.md file that plan mode writes",
+   "The checkpoints folder with compaction history",
+   "The files folder with persistent session artifacts",
+   "The .github/copilot-instructions.md file of the repository",
+   "The repository-level facts from Copilot Memory",
+   "The logs of the GitHub Actions runs for the repository"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The session folder holds the event log, workspace data, plan.md, the checkpoints folder, and a files folder for persistent artifacts. Instructions, memories, and Actions logs live elsewhere.",
+  "rationale": [
+   "Correct: plan mode writes the checkbox plan to plan.md in the session folder, which records the approved steps.",
+   "Correct: the checkpoints folder holds the compaction history, so you can review what was preserved at each compaction.",
+   "Correct: the files folder holds persistent artifacts of the session that should not be committed to the repository.",
+   "Incorrect: custom instructions are stored in the repository, not in the session folder, so that every session in the repository can load them.",
+   "Incorrect: Copilot Memory is stored by GitHub and managed in the repository or personal settings, not in a local session folder.",
+   "Incorrect: Actions run logs are stored on GitHub with the workflow runs. They are not written to the local session folder."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "3.2.1-07",
+  "obj": "3.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User3 at Tailspin Toys starts a complex change in Copilot CLI. The approach must be recorded as a reviewed plan before any code is written, the session must be easy to find later, and implementation can then run without further approval of each step.\n\nWhich four actions should User3 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run copilot --name \"add-pagination\" to start a named session.",
+   "Run /plan with a prompt that describes the change, constraints, and tests.",
+   "Review the plan, and press Ctrl+y to edit the plan if it needs changes.",
+   "Select Accept plan and continue in Autopilot execution mode.",
+   "Run /compact to save the plan as a checkpoint before implementation.",
+   "Run copilot --continue to start the implementation in a new session."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A named session is easy to resume. Plan mode writes a checkbox plan to plan.md and waits for approval, and accepting the plan can hand implementation to Autopilot mode.",
+  "rationale": [
+   "Step 1: copilot --name gives the session a name, so User3 can find and resume it later by name.",
+   "Step 2: /plan switches to plan mode, in which Copilot asks clarifying questions and writes a checkbox plan to plan.md before it changes code.",
+   "Step 3: Copilot waits for approval, and Ctrl+y opens the plan for editing, so the recorded plan matches the agreed approach.",
+   "Step 4: accepting the plan and continuing in Autopilot mode lets Copilot implement the approved plan without waiting for input after each step.",
+   "Incorrect: /compact summarizes the conversation. The plan is already a file in the session folder, and compaction is not how you save it.",
+   "Incorrect: --continue resumes the most recent session rather than starting a new one, and implementation belongs in the session that holds the plan."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "3.2.2-01",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User1 at Proseware, Inc. started a cloud sandbox session in the GitHub Copilot app. User1 now wants to continue the same session from a terminal without losing the files and work in progress.\n\nWhat should User1 do?",
+  "choices": [
+   "Run /resume in Copilot CLI and select the session.",
+   "Run /delegate in Copilot CLI with the original prompt.",
+   "Run copilot --name with the title of the session.",
+   "Start a new cloud session with the original prompt."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Cloud sandbox sessions continue across clients, including Copilot CLI through /resume. The sandbox keeps the state while the session is stopped, so files and progress are intact.",
+  "rationale": [
+   "Correct: cloud sandbox sessions can be continued from other clients, and /resume in Copilot CLI lets User1 pick up the same session.",
+   "Incorrect: /delegate hands new work to Copilot cloud agent. It creates another session instead of continuing the existing one.",
+   "Incorrect: --name names a new session that User1 starts. It does not attach to the existing cloud session.",
+   "Incorrect: a new session starts without the state of the earlier one, so completed steps would be repeated."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.2.2-02",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Litware, Inc. runs a script that calls copilot -p to update the dependencies of a project. The run finished, but two tests still fail. User1 wants to continue the same session interactively to fix the tests, without Copilot repeating the dependency analysis that it already did.\n\nWhat should User1 run?",
+  "choices": [
+   "The copilot --resume=SESSION-ID command from the exit summary of the run",
+   "The same copilot -p command with a prompt that asks to fix the tests",
+   "The copilot --name command with the ID of the session from the script",
+   "The /session checkpoints command in a new interactive Copilot CLI session"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A programmatic copilot -p run prints a copilot --resume=SESSION-ID hint in its exit summary. Resuming that session restores its conversation context, so follow-up work builds on what was already done.",
+  "rationale": [
+   "Correct: the exit summary of a copilot -p run includes a copilot --resume=SESSION-ID hint, which reopens the same session with its context, so Copilot continues without redoing the analysis.",
+   "Incorrect: another copilot -p run starts a new session without the earlier context, so Copilot repeats the analysis. It would fit if the earlier work were not needed.",
+   "Incorrect: --name sets the name of a new session. It does not reopen an existing session, so the earlier context is not available. It is right when you start work that you plan to resume later.",
+   "Incorrect: /session checkpoints lists the compaction checkpoints of the current session. In a new session, it does not show or restore the scripted run. It is right inside the resumed session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "3.2.2-03",
+  "obj": "3.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent finished a session on a pull request at Fabrikam, Inc. Later, the team wants an additional change that builds on the decisions that Copilot made in that pull request.\n\nWhat should the team do?",
+  "choices": [
+   "Mention @copilot in a comment on the same pull request with the request.",
+   "Open a new issue for the change and assign it to Copilot.",
+   "Unassign and reassign the original issue to Copilot.",
+   "Add the request as a comment on the original issue."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot remembers context from previous sessions on the same pull request. A follow-up on that pull request continues from the earlier decisions instead of starting over.",
+  "rationale": [
+   "Correct: Copilot remembers context from previous sessions on the same pull request, so a follow-up there builds on the earlier work and pushes to the same branch by default.",
+   "Incorrect: a new issue starts a new session without the context of the pull request, so Copilot may diverge from the earlier decisions.",
+   "Incorrect: reassigning the issue starts the work from the beginning and is the retry for a stuck session, not a follow-up.",
+   "Incorrect: Copilot does not see issue comments that are added after the issue was assigned to it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/use-cloud-agent-on-github"
+ },
+ {
+  "id": "3.2.2-04",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. runs a script that resumes a specific Copilot CLI session by its ID. Another session has a name that starts with the same characters as that ID, and the script must not resume the wrong session by prefix or name matching.\n\nWhich option should the script use?",
+  "choices": [
+   "--session-id with the exact ID",
+   "--resume with the exact ID",
+   "--continue with the exact ID",
+   "--name with the exact ID"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "--resume accepts a session ID, an ID prefix, or a session name, so it can match more broadly. --session-id uses an exact session or task ID.",
+  "rationale": [
+   "Correct: --session-id uses the exact ID and avoids the broader matching by ID prefix or session name that --resume performs.",
+   "Incorrect: --resume can match a session ID, an ID prefix, or a session name, which is the broader matching the script must avoid.",
+   "Incorrect: --continue resumes the most recent session in the current working directory. It is not the option for an exact session ID.",
+   "Incorrect: --name gives a new session a name. It does not resume an existing session by ID."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "3.2.2-05",
+  "obj": "3.2.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "User2 at Northwind Traders returns to a project in Copilot CLI. User2 must first resume the most recent session for the current folder and then read the full content of the second compaction checkpoint to check which decisions were kept.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```shell\ncopilot [[1]]\n```\n\n```copilot\n/session [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "--continue",
+     "--name",
+     "--session-id"
+    ],
+    "why": [
+     "Correct: --continue resumes the most recent session in the current working directory and falls back to the globally most recent session.",
+     "Incorrect: --name names a new session. It does not resume the most recent session for the folder.",
+     "Incorrect: --session-id needs an exact session ID. It is for a known session, not for the most recent one."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "checkpoints 2",
+     "files",
+     "plan"
+    ],
+    "why": [
+     "Correct: /session checkpoints followed by a number shows the full content of that checkpoint, so User2 can see what the second compaction kept.",
+     "Incorrect: /session files lists the files of the session. It does not show the compaction summaries.",
+     "Incorrect: /session plan shows the current plan of the session, not the content of an earlier compaction checkpoint."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "copilot --continue resumes the most recent session for the current folder. /session checkpoints with a number shows the content of that checkpoint.",
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.2.2-06",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User3 at Adventure Works stopped a named Copilot CLI session called checkout refactor yesterday. Today, User3 must continue it, check what earlier compactions preserved, check the remaining steps of the plan, and then continue the work without repeating completed steps.\n\nWhich four actions should User3 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run copilot --resume=\"checkout refactor\".",
+   "Run /session checkpoints to list the compaction checkpoints.",
+   "Run /session plan to view the remaining steps of the plan.",
+   "Ask Copilot to continue with the first unchecked step of the plan.",
+   "Run /new to start a clean conversation for today.",
+   "Run /session delete to remove the stale session data."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Resuming by name restores the conversation and session state. Reviewing checkpoints and the plan confirms what was decided and what remains before Copilot continues.",
+  "rationale": [
+   "Step 1: --resume accepts a session name, so User3 returns to the same session with its context, plan, and state.",
+   "Step 2: /session checkpoints lists the compaction summaries, which show what earlier phases preserved.",
+   "Step 3: /session plan shows the plan, so User3 can see which steps are done and which remain.",
+   "Step 4: pointing Copilot at the first unchecked step continues the work from the right place without redoing completed steps.",
+   "Incorrect: /new starts a new conversation and loses the context of the resumed session, so earlier decisions are no longer available.",
+   "Incorrect: /session delete removes session data, which destroys the record that User3 needs to resume."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/work-with-multiple-sessions"
+ },
+ {
+  "id": "3.2.2-07",
+  "obj": "3.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the state requirements for User1.\n\nWhat should User1 do?",
+  "choices": [
+   "Start the session with copilot --name, and resume it each morning with copilot --resume and the name.",
+   "Run /compact each evening, and start each morning with /new and a copy of the compaction summary.",
+   "Ask Copilot to store each decision as a user-level preference, and start a new session each morning.",
+   "Run /clear each evening, and start each morning with /context to check what Copilot still remembers."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A named session saved with /exit can be resumed by name, which restores its conversation, context, and plan. Starting new sessions each day loses context and repeats work.",
+  "rationale": [
+   "Correct: a named session can be resumed with --resume and its name, which brings back the conversation, context, and plan, so User1 continues without repeating steps.",
+   "Incorrect: a new conversation does not contain the plan and session state, and a pasted summary can lose fine-grained decisions.",
+   "Incorrect: preferences describe how a user likes to work, and task-specific details are not stored as memories. A new session also lacks the plan.",
+   "Incorrect: /clear starts a new conversation and drops the context, so /context the next morning would show nothing about the migration."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/work-with-multiple-sessions",
+  "case": "C-c"
+ },
+ {
+  "id": "3.2.3-01",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Note: This question is part of a series of questions that present the same scenario. Each question in the series contains a unique solution that might meet the stated goals.\n\nFabrikam, Inc. assigned an issue to Copilot cloud agent. While the session is running, the session log shows that Copilot started to rewrite the authentication module, which is outside the scope of the issue. You must redirect the running session back to the scope of the issue without starting a new session and without losing the commits that Copilot already pushed.\n\nSolution: You enter a follow-up instruction that restates the scope in the prompt box below the session log.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Steering a running session from the prompt box below the session log redirects Copilot without stopping it. Copilot applies the instruction after its current tool call, and pushed commits stay in place.",
+  "rationale": [
+   "Correct: steering sends a follow-up to the running session, and Copilot applies it after the current tool call, so the same session continues within scope.",
+   "Incorrect: the solution does meet the goal. No would be right if the session had already ended or if the session were run by a third-party agent, which does not support steering."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.2.3-02",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Note: This question is part of a series of questions that present the same scenario. Each question in the series contains a unique solution that might meet the stated goals.\n\nFabrikam, Inc. assigned an issue to Copilot cloud agent. While the session is running, the session log shows that Copilot started to rewrite the authentication module, which is outside the scope of the issue. You must redirect the running session back to the scope of the issue without starting a new session and without losing the commits that Copilot already pushed.\n\nSolution: You add a comment to the issue that restates the scope and mentions @copilot.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Copilot does not see comments that are added to an issue after it was assigned. New guidance belongs in the pull request or in the running session, not in the issue.",
+  "rationale": [
+   "Incorrect: the solution does not meet the goal. Yes would be right only if Copilot read new issue comments, but it does not see comments added after assignment.",
+   "Correct: comments added to the issue after assignment are not seen by Copilot, so the running session continues to drift. Steering the session or commenting on the pull request reaches Copilot."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/use-cloud-agent-on-github"
+ },
+ {
+  "id": "3.2.3-03",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-c",
+  "stem": "Note: This question is part of a series of questions that present the same scenario. Each question in the series contains a unique solution that might meet the stated goals.\n\nFabrikam, Inc. assigned an issue to Copilot cloud agent. While the session is running, the session log shows that Copilot started to rewrite the authentication module, which is outside the scope of the issue. You must redirect the running session back to the scope of the issue without starting a new session and without losing the commits that Copilot already pushed.\n\nSolution: You select Stop session, and then you unassign and reassign the issue to Copilot with a clearer description.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Stopping the session keeps the pushed commits, but reassigning the issue starts a new session. The goal requires redirecting the running session without starting a new one.",
+  "rationale": [
+   "Incorrect: the solution does not meet the goal. It would be acceptable if a new session were allowed, because Stop session preserves commits that were already pushed.",
+   "Correct: Stop session ends the run, and reassigning the issue starts a new session, which the goal explicitly rules out. Steering the running session is the fitting correction."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.2.3-04",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User1 at Woodgrove Bank has worked in one Copilot CLI session for days. The session went through many compactions, and the team now chose a different approach. Copilot keeps trying to reconcile the new approach with abandoned earlier decisions.\n\nWhat should User1 do?",
+  "choices": [
+   "Start a fresh session with a prompt that describes the new approach.",
+   "Run /compact with focus instructions that describe the new approach.",
+   "Run /session checkpoints to list the earlier compaction summaries.",
+   "Run /context to see how much of the context window is still free."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "GitHub suggests a fresh session when work went in a wrong direction and you want a clean slate rather than having Copilot reconcile earlier decisions, or when many compactions have lost context.",
+  "rationale": [
+   "Correct: a fresh session gives a clean slate, which GitHub recommends when you would rather start over than have Copilot reconcile earlier decisions with a new approach.",
+   "Incorrect: another compaction still carries a summary of the abandoned decisions forward, so the drift toward them can continue.",
+   "Incorrect: listing checkpoints helps you understand what was preserved, but it does not change what Copilot works from.",
+   "Incorrect: /context shows token usage. The problem is conflicting decisions in the history, not a lack of space."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.2.3-05",
+  "obj": "3.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys assigns large issues to Copilot cloud agent. The team wants to notice early when Copilot starts to diverge from the issue, instead of finding out only when the work is done.\n\nWhat should the team do while a session runs?",
+  "choices": [
+   "Follow the live session log from View session or the Agents panel.",
+   "Wait for the draft pull request and review the final diff.",
+   "Review the repository-level facts that Copilot stored during the session.",
+   "Review the Actions usage report for the session after it ends."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The session log shows the reasoning of Copilot and the tools it uses as it works. Watching it live lets the team spot divergence and steer the session before much work is wasted.",
+  "rationale": [
+   "Correct: the live session log shows what Copilot is doing as it works, so the team can detect drift early and steer the session.",
+   "Incorrect: reviewing only the final diff finds drift after the work is complete, which is exactly the late detection the team wants to avoid.",
+   "Incorrect: facts are learned conventions and are not a timeline of the session. They do not show whether the current work is in scope.",
+   "Incorrect: the usage report shows consumption after the fact. It does not describe what the agent did."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "3.2.3-06",
+  "obj": "3.2.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Relecloud uses Copilot cloud agent and Copilot CLI for long tasks. You must choose a correction for each sign of context drift.\n\nWhich correction should you use for each situation? To answer, drag the appropriate corrections to the correct situations. Each correction may be used once, more than once, or not at all.",
+  "choices": [
+   "Steer the session from the prompt box below the session log",
+   "Review /session checkpoints and restate the decision",
+   "Run /compact with focus instructions",
+   "Run /new and describe the new task",
+   "Re-run the failed jobs of the workflow run"
+  ],
+  "targets": [
+   "Situation1: a running cloud agent session starts to edit files outside the scope of its issue",
+   "Situation2: after several compactions in Copilot CLI, Copilot contradicts an early decision",
+   "Situation3: the CLI session continues on the same feature, but the context window is nearly full",
+   "Situation4: User2 switches from a payment fix to an unrelated documentation task in Copilot CLI"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Each correction matches a different cause of drift: steer a running cloud session, check what compaction kept, compact deliberately before a new phase, or start fresh for unrelated work.",
+  "rationale": [
+   "Situation1: steering applies a follow-up to the running session after the current tool call, which redirects it without restarting.",
+   "Situation2: checkpoints show what each compaction preserved, so you can see that the decision was lost and restate it.",
+   "Situation3: /compact frees context while keeping the essentials, and focus instructions steer what the summary keeps.",
+   "Situation4: unrelated work does not need the earlier context, and a new conversation keeps old details from steering the new task."
+  ],
+  "notes": [
+   "Sends a follow-up to a running cloud agent session. Use it to redirect the work without stopping the session.",
+   "Shows the compaction summaries of a CLI session. Use it to verify continuity and find decisions that were lost.",
+   "Summarizes the history to free context. Use it before a new phase of the same work, with focus on what matters.",
+   "Starts a new conversation. Use it between unrelated tasks so that old context does not influence new work.",
+   "Repeats failed CI jobs on the same commit. It helps with transient CI failures, not with drift in an agent session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.2.3-07",
+  "obj": "3.2.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "User1 at Contoso, Ltd. notices that, after several compactions, Copilot CLI is renaming database tables even though the team decided early in the session to keep the existing names. User1 must find out what the compactions kept, correct Copilot, and verify the result.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run /session checkpoints to list the compaction checkpoints.",
+   "Run /session checkpoints 2 to read the content of a checkpoint.",
+   "Restate the decision and ask Copilot to revert the table renames.",
+   "Run /diff to verify that the table renames were reverted.",
+   "Run /compact to make Copilot summarize the decision again.",
+   "Run /clear to remove the conflicting history from the session."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Checkpoints show what each compaction preserved, which reveals whether the decision was lost. After restating it and asking for a fix, /diff confirms the correction.",
+  "rationale": [
+   "Step 1: /session checkpoints lists every checkpoint with its number and title, so User1 can find the phase where the decision was made.",
+   "Step 2: adding the number shows the full content of that checkpoint, which reveals whether the decision survived the compaction.",
+   "Step 3: restating the decision puts it back in the active context and asks Copilot to undo the changes that drifted from it.",
+   "Step 4: /diff shows the changes in the session, so User1 can confirm that the original table names are back.",
+   "Incorrect: compaction cannot bring back a detail that an earlier summary dropped, and it does not undo the renames.",
+   "Incorrect: /clear starts a new conversation and loses the rest of the context, and the renamed tables stay as they are."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ }
+]

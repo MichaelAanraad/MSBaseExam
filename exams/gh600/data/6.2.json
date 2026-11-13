@@ -1,0 +1,1219 @@
+[
+ {
+  "id": "6.2.1-01",
+  "obj": "6.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-g",
+  "stem": "Copilot cloud agent opens the following draft pull requests in LabPortal. All checks pass on each pull request.\n\nWhich pull request should you route to SecTeam for a decision before it is merged?",
+  "choices": [
+   "A pull request that changes how src/auth/ validates session tokens",
+   "A pull request that adds UI integration tests to the tests/ folder",
+   "A pull request that updates button labels in src/ui/ components",
+   "A pull request that adds an npm package for formatting dates"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The business requirements reserve a SecTeam decision for authentication code and workflow definitions. Token validation in src/auth/ is authentication code, so a human with security judgment must decide on it. The other changes are covered by checks and normal review.",
+  "rationale": [
+   "Correct: src/auth/ holds sign-in and token validation, and the business requirements say that authentication changes need a decision by a member of SecTeam before merging, regardless of passing checks.",
+   "Incorrect: new tests under tests/ do not change authentication code or workflow definitions, so the normal required approval is enough. Route test changes to SecTeam only if they touch security-sensitive test fixtures.",
+   "Incorrect: label text in src/ui/ is a low-risk change that the existing required approval covers. A SecTeam decision would add delay without reducing risk, which conflicts with avoiding approvals that do not reduce risk.",
+   "Incorrect: Copilot cloud agent checks newly added dependencies against the GitHub Advisory Database by default, so a known malicious or high-severity package is flagged without SecTeam. Route it to SecTeam only if the requirements named dependencies."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.2.1-02",
+  "obj": "6.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User1 assigned an issue in Repo1 to Copilot cloud agent. Copilot opened a draft pull request that also modifies .github/workflows/ci.yml. Repo1 uses the default Copilot cloud agent settings and a CODEOWNERS file that assigns /.github/workflows/ to Team1. A branch protection rule on main requires review from code owners.\n\nA human must inspect the workflow change before any workflow runs, and the pull request must be merged with a valid code owner review.\n\nWhich four actions should be performed in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "User1 reviews the session log and the diff of .github/workflows/ci.yml in the pull request.",
+   "User1 selects Approve and run workflows in the merge box of the pull request.",
+   "User1 checks the workflow results and marks the pull request as ready for review.",
+   "A member of Team1 reviews and approves the pull request, and then the pull request is merged.",
+   "User1 approves the pull request to satisfy the code owner review requirement.",
+   "User1 asks Copilot in a comment to mark the pull request as ready for review."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Workflows on Copilot pull requests wait for a user with write access to approve them, so the workflow change must be inspected first. Code owners are not requested on draft pull requests, so the pull request must be marked ready before Team1 can review it. The requester cannot provide the required approval.",
+  "rationale": [
+   "Step 1: a changed workflow file can run with repository permissions, so the human must read the diff, especially under .github/workflows/, before allowing any workflow to run.",
+   "Step 2: by default, workflows on Copilot pull requests do not run until a user with write access selects Approve and run workflows in the merge box, which is the gate that the inspection protects.",
+   "Step 3: Copilot opens draft pull requests and cannot mark them ready. Code owners are notified only when a draft is marked ready, so User1 does this after the checks pass.",
+   "Step 4: the code owner review from Team1 satisfies the branch protection rule. An independent reviewer is needed because the requester's approval does not count.",
+   "Incorrect: when approvals are required, the approval of the user who asked Copilot to create the pull request does not count. This keeps an independent reviewer in the loop, so a member of Team1 must approve.",
+   "Incorrect: Copilot cloud agent cannot mark its own pull requests as ready for review. A human does this, which is one of the deliberate points where a person decides that the work is ready."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "6.2.1-03",
+  "obj": "6.2.1",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Fabrikam, Inc. uses Copilot cloud agent in Repo1. The company wants a human decision at three points and must use a built-in GitHub control for each point.\n\nWhich control should you use for each requirement? To answer, drag the appropriate controls to the correct requirements. Each control may be used once, more than once, or not at all.",
+  "choices": [
+   "Approve and run workflows",
+   "Required review from code owners",
+   "Environment required reviewers",
+   "Required status checks",
+   "Push protection"
+  ],
+  "targets": [
+   "Copilot changes a workflow file, and no workflow may run until a person with write access has looked at the change",
+   "Any change under /security/ must be accepted by a member of SecTeam before it is merged",
+   "A job that deploys main to production must wait until a release manager agrees"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Workflows on Copilot pull requests are held until a user with write access selects Approve and run workflows, so the person decides before any changed workflow executes.",
+   "A CODEOWNERS entry for /security/ plus the require review from Code Owners rule makes a SecTeam member's approval a condition for merging those files.",
+   "Required reviewers on the production environment pause the deploy job until one of the listed reviewers approves, which places the release manager's decision before the deployment."
+  ],
+  "notes": [
+   "Approve and run workflows is the default gate for workflow runs on Copilot pull requests. Use it when a person must look at a change before workflows execute with repository access.",
+   "Required review from code owners routes changes to owners of matching paths. Use it when a team must accept changes to sensitive folders such as /security/ before merge.",
+   "Environment required reviewers pause jobs that reference the environment until an approver agrees. Use it for deployments and other actions that must wait for a named person.",
+   "Required status checks are automated gates that block merging until checks pass. They do not involve human judgment, so they fit only when a tool can make the decision.",
+   "Push protection blocks pushes that contain detected secrets. It is an automated policy control for secret leaks, not a way to get a human decision at a chosen point."
+  ],
+  "explanation": "Each requirement maps to the control that pauses work at that exact point: workflow execution, merge of sensitive paths, and deployment. Status checks and push protection are automated blocks that do not ask a person to decide.",
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls"
+ },
+ {
+  "id": "6.2.1-04",
+  "obj": "6.2.1",
+  "difficulty": "easy",
+  "type": "multi",
+  "stem": "User1 assigns an issue in Repo1 to Copilot cloud agent. Repo1 uses the default Copilot cloud agent settings, and main requires one approval before merging.\n\nWhich three actions should a human perform because Copilot cloud agent cannot perform them? Each correct answer presents part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "Mark the draft pull request as ready for review",
+   "Approve and merge the pull request",
+   "Approve the pending workflow runs on the pull request",
+   "Push commits to a branch that starts with copilot/",
+   "Run the unit tests in the agent environment",
+   "Open a draft pull request with the changes"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Copilot cloud agent works on its own branch and opens draft pull requests, but it cannot mark them ready, approve them, or merge them. By default, workflows on its pull requests wait for a user with write access to approve them.",
+  "rationale": [
+   "Correct: Copilot cannot mark its pull requests as ready for review, so a person decides when the draft is ready for reviewers.",
+   "Correct: Copilot cannot approve or merge pull requests. A human reviewer approves, which keeps required approvals meaningful.",
+   "Correct: by default, workflows on Copilot pull requests do not run until a user with write access selects Approve and run workflows. A repository admin can change this setting.",
+   "Incorrect: pushing to a new copilot/ branch is exactly what Copilot does during a session. It can push only to that single branch, which limits its reach without human involvement.",
+   "Incorrect: Copilot runs tests and linters in its own ephemeral development environment as part of its work. No human action is needed for this step.",
+   "Incorrect: Copilot opens a draft pull request itself when it has changes to propose. The human decision comes later, when the draft is reviewed and marked ready."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.2.1-05",
+  "obj": "6.2.1",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Woodgrove Bank uses Copilot cloud agent in Repo1 with the default settings. The main branch requires one approval before merging. User1 has write access to Repo1 and assigns an issue to Copilot. User2 has read access to Repo1 only.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "User1 can approve the pull request that Copilot opens for the issue to meet the approval requirement.",
+   "A comment that User2 adds to the issue is passed to Copilot as context.",
+   "Copilot can approve and merge its own pull request when all checks pass.",
+   "When User1 mentions @copilot in a comment on the pull request, Copilot can push more commits to the pull request branch."
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The requester cannot approve the pull request that Copilot creates for them, and Copilot cannot approve or merge. Comments from users without write access never reach the agent. A mention by a user with write access on an existing pull request makes Copilot push to that pull request's branch.",
+  "rationale": [
+   "No: the user who asked Copilot to create the pull request cannot approve it, so the required approval must come from another reviewer. This keeps an independent person in the loop.",
+   "No: comments from users without write access are never shown to the agent. This reduces the risk that untrusted users steer Copilot with injected instructions.",
+   "No: Copilot cloud agent cannot approve or merge pull requests. Merging stays a human decision, together with branch protection and required checks.",
+   "Yes: when a user with write access mentions @copilot on an existing pull request, Copilot pushes its changes to that pull request's branch, and those pushes stay subject to branch protection."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.2.1-06",
+  "obj": "6.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. requires a member of PlatformTeam to review every change that Copilot cloud agent makes to GitHub Actions workflow files in Repo1. The main branch already requires review from code owners.\n\nWhich line should you add to the CODEOWNERS file?",
+  "choices": [
+   "/.github/workflows/ @contoso/platformteam",
+   "/.github/copilot/ @contoso/platformteam",
+   "/workflows/ @contoso/platformteam",
+   "*.md @contoso/platformteam"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Workflow files live in .github/workflows/, so a CODEOWNERS pattern for that folder makes PlatformTeam the owner. With review from code owners required, changes to those files need a PlatformTeam approval.",
+  "rationale": [
+   "Correct: the /.github/workflows/ pattern matches the workflow files of the repository, and the require review from Code Owners rule then makes a PlatformTeam approval a condition for merging those changes.",
+   "Incorrect: /.github/copilot/ covers Copilot configuration files, not workflow definitions. Use a pattern like this when a team must own changes to Copilot settings instead.",
+   "Incorrect: /workflows/ matches a workflows folder at the repository root, which is not where GitHub Actions reads workflow files. It would fit only if the repository had such a folder.",
+   "Incorrect: *.md assigns ownership of Markdown files, such as documentation, to the team. It does not match YAML workflow files, so workflow changes would not require PlatformTeam."
+  ],
+  "ref": "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners"
+ },
+ {
+  "id": "6.2.1-07",
+  "obj": "6.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User1 plans to ask Copilot cloud agent to change the Terraform files that define production networking in Repo1. The change is hard to reverse. For low-risk work, the team lets Copilot plan and implement in a single pull request.\n\nWhich approach should User1 use for the networking change?",
+  "choices": [
+   "Use a plan-first pull request that a human approves before implementation",
+   "Let Copilot plan and implement in one pull request with the usual checks",
+   "Let Copilot implement the change and merge it after all checks pass",
+   "Add a custom instruction that asks Copilot to be careful with networking"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "High-risk or hard-to-reverse work, such as infrastructure, workflows, authentication, or production changes, should start with a plan-first pull request. A human approves the plan before any implementation, while low-risk work can combine plan and execution.",
+  "rationale": [
+   "Correct: a plan-first pull request puts a human decision on the approach before code is written, which is the recommended pattern for infrastructure and production changes that are hard to reverse.",
+   "Incorrect: plan and execution in one pull request suits low or medium risk work where speed matters. For hard-to-reverse infrastructure changes, the plan needs its own human approval first.",
+   "Incorrect: Copilot cannot merge pull requests, and passing checks alone do not judge whether a networking design is right. A human must decide on the plan for this kind of change.",
+   "Incorrect: instructions are guidance that the model can misread, not an enforced gate. Use instructions for conventions, and use a plan-first pull request with review to control risky changes."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "6.2.1-08",
+  "obj": "6.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Copilot cloud agent works on a pull request in Repo1. A required status check named integration-tests fails. Copilot pushes a fix, and the same check fails again with the same error. The team wants humans involved only when their judgment is needed.\n\nWhat should the team do next?",
+  "choices": [
+   "Escalate the pull request to a human who decides on the next step",
+   "Let Copilot keep pushing fixes until the integration-tests check passes",
+   "Remove integration-tests from the required checks of the main branch",
+   "Ask Copilot to change the workflow so that the failing step is skipped"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A repeated failure of the same required check signals that automation is stuck, which is the point where human judgment adds value. Escalation keeps the check in place and lets a person decide how to proceed.",
+  "rationale": [
+   "Correct: when the same required check fails twice, the recommended control is to escalate to a human. A person can judge whether the test, the code, or the approach is wrong.",
+   "Incorrect: unlimited retries waste time and compute and can hide a real defect. Retrying fits a single transient failure, not a repeated failure with the same error.",
+   "Incorrect: removing a required check weakens the merge gate for every pull request just to get one change through. Change required checks only through a deliberate governance decision.",
+   "Incorrect: letting the agent edit the workflow to skip a failing step removes a control without human review. Workflow changes are governance-sensitive and should be decided by a person."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "6.2.1-09",
+  "obj": "6.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. builds an agent that requests human approval before it runs a database migration. A reviewer approves a request at 09:00. At 15:00, the agent runs the migration with different arguments that it generated after the approval.\n\nWhich design change should Fabrikam make to the approval flow?",
+  "choices": [
+   "Tie each approval to the exact action and arguments, and revalidate before running",
+   "Ask the reviewer to approve every action that the agent runs during the day",
+   "Log every migration that the agent runs so that auditors can review it later",
+   "Let the agent reuse an approval for any action of the same type that day"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An approval is only meaningful for what the reviewer actually saw. Binding the approval to the exact action and arguments, with an expiry, and revalidating before execution stops the agent from running something different under an old approval.",
+  "rationale": [
+   "Correct: binding each approval to the exact action and arguments, with an expiry, and revalidating before execution keeps the human decision tied to what actually runs.",
+   "Incorrect: approving every action turns reviewers into a bottleneck who start to rubber-stamp requests. Reserve human review for the high-impact actions where judgment changes the risk.",
+   "Incorrect: an audit trail helps after the fact but does not stop an unapproved migration from running. Use logging together with a binding approval, not instead of it.",
+   "Incorrect: reusing approvals across actions of the same type is the weakness that caused the problem. Broad reuse fits only low-impact actions that do not need human approval at all."
+  ],
+  "ref": "https://learn.microsoft.com/startups/build/enterprise-readiness/ai-guardrails/safety-to-controllability-enterprise-ai"
+ },
+ {
+  "id": "6.2.2-01",
+  "obj": "6.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "case": "C-g",
+  "stem": "You need to meet the business requirement for the anonymized patient sample files in LabPortal.\n\nWhat should you configure?",
+  "choices": [
+   "Content exclusion for the data/samples/ path in LabPortal",
+   "A push ruleset that restricts the data/samples/ file path",
+   "A CODEOWNERS entry that assigns data/samples/ to SecTeam",
+   "A custom instruction that tells Copilot to skip data/samples/"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Content exclusion stops excluded files from informing Copilot responses and from being reviewed by Copilot code review, and it is supported for Copilot in the cloud on Copilot Business and Enterprise. The other options control pushes, reviews, or guidance, not what Copilot can use.",
+  "rationale": [
+   "Correct: excluded files do not inform Copilot responses and are not reviewed by Copilot code review. Trey Research has Copilot Enterprise, which supports content exclusion for Copilot in the cloud and IDE agents.",
+   "Incorrect: a push ruleset that restricts file paths blocks pushes that change those paths. The files already exist and integration tests need them, and the rule does not stop Copilot from reading them.",
+   "Incorrect: CODEOWNERS routes reviews of changes to the folder to SecTeam. It does not prevent Copilot from using the file contents when it generates code or answers questions.",
+   "Incorrect: instructions are guidance that the model can ignore or misread, so they do not enforce the requirement. Use instructions for conventions and content exclusion to keep files out of Copilot context."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/context/content-exclusion"
+ },
+ {
+  "id": "6.2.2-02",
+  "obj": "6.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Adatum Corporation uses GitHub Secret Protection in Repo1. Developers sometimes commit Adatum internal service tokens, which have a custom format that secret scanning does not detect by default. The security team wants pushes that contain these tokens to be blocked, without creating false alerts before the pattern is checked.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In Repo1, open Settings > Advanced Security and, next to Custom patterns, click New pattern. Enter a pattern name and a regular expression for the token format.",
+   "Click Save and dry run, and review the sample results for false positives.",
+   "Click Publish pattern.",
+   "Next to push protection for the custom pattern, click Enable.",
+   "Add the regular expression to the paths-ignore list in .github/secret_scanning.yml.",
+   "Create a branch ruleset that requires code scanning results for Repo1."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A custom pattern defines the token format. A dry run finds matches without creating alerts, so you can fix false positives before you publish. Push protection for a custom pattern can be enabled only after the dry run succeeds and the pattern is published.",
+  "rationale": [
+   "Step 1: secret scanning detects a custom token format only after you define a custom pattern with a name and a regular expression. Secret Protection is already enabled, which is the prerequisite.",
+   "Step 2: Save and dry run identifies matches in the repository without creating alerts, so the team can review false positives before the pattern goes live.",
+   "Step 3: Publish pattern makes the pattern active, and secret scanning then scans the full Git history on all branches. Publishing must happen before push protection is available.",
+   "Step 4: the Enable button for push protection is available only after the dry run succeeds and the pattern is published. Once enabled, pushes that contain the token are blocked.",
+   "Incorrect: paths-ignore in secret_scanning.yml excludes paths from secret scanning. It does not define a new secret format, and it would reduce detection instead of adding it.",
+   "Incorrect: a code scanning rule blocks merges based on code scanning alerts such as CodeQL results. It does not detect secrets, and it does not block pushes."
+  ],
+  "ref": "https://docs.github.com/en/code-security/how-tos/secure-your-secrets/customize-leak-detection/define-custom-patterns"
+ },
+ {
+  "id": "6.2.2-03",
+  "obj": "6.2.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Proseware, Inc. adds the file .github/hooks/policy.json to Repo1. The script check-tool.sh inspects each tool call. When a call violates company policy, the call must be blocked without a prompt, both in Copilot CLI and in Copilot cloud agent sessions.\n\n```json\n{\n  \"version\": 1,\n  \"hooks\": {\n    \"[[1]]\": [\n      { \"type\": \"command\", \"bash\": \"./scripts/check-tool.sh\", \"timeoutSec\": 30 }\n    ]\n  }\n}\n```\n\nFor a violation, check-tool.sh writes this output:\n\n```json\n{ \"permissionDecision\": \"[[2]]\", \"permissionDecisionReason\": \"Blocked by policy\" }\n```\n\nHow should you complete the configuration? To answer, select the appropriate options in the answer area.",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "preToolUse",
+     "postToolUse",
+     "permissionRequest",
+     "errorOccurred"
+    ],
+    "why": [
+     "Correct: preToolUse runs before a tool executes and can return a permission decision, so it can stop a call in both Copilot CLI and Copilot cloud agent.",
+     "Incorrect: postToolUse runs after a tool completes successfully. It can change the result or add context, but the action has already happened, so it cannot block it.",
+     "Incorrect: in Copilot cloud agent, tool calls are pre-approved, so permissionRequest does not fire or has no effect there. The docs advise preToolUse for decisions in cloud agent.",
+     "Incorrect: errorOccurred fires when an error occurs during execution and cannot block anything. Use it for logging or alerting on failures, not for policy enforcement."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "deny",
+     "ask",
+     "allow"
+    ],
+    "why": [
+     "Correct: deny stops the tool from executing, and permissionDecisionReason, which is required for deny, tells the agent why the call was blocked.",
+     "Incorrect: in Copilot CLI, ask can prompt the user, which breaks the no-prompt requirement. Cloud agent treats ask as deny only because no user can answer there.",
+     "Incorrect: allow lets the tool execute, which is the opposite of what a policy violation requires. Return allow for calls that pass the check."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "A preToolUse hook in .github/hooks/ runs before each tool call in both Copilot CLI and Copilot cloud agent. Returning deny with a reason blocks the call independently of the model's reasoning, while ask can prompt a user in Copilot CLI.",
+  "ref": "https://docs.github.com/en/copilot/reference/hooks-reference"
+ },
+ {
+  "id": "6.2.2-04",
+  "obj": "6.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Repo1 is used by developers and by Copilot cloud agent. You must block any push to Repo1 that contains a detected secret, before the secret reaches the repository.\n\nWhich feature should you enable?",
+  "choices": [
+   "Push protection for secret scanning",
+   "Dependabot alerts for the repository",
+   "Code scanning with the default setup",
+   "Required signed commits on main"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Push protection scans pushes for secrets and blocks them before the secret is stored in the repository. The other features detect other problems or check commit metadata.",
+  "rationale": [
+   "Correct: push protection blocks pushes that contain supported secrets before they reach the repository, from the command line, web commits, file uploads, and other push surfaces.",
+   "Incorrect: Dependabot alerts report vulnerable dependencies after they are in the repository. They do not inspect pushes for secrets. Use them to track known vulnerabilities in packages.",
+   "Incorrect: code scanning finds security problems in code, such as injection flaws, and reports alerts. It does not block a push that contains a credential.",
+   "Incorrect: required signed commits checks that commits are signed by a verified key. It does not inspect commit content, so a signed commit can still contain a secret."
+  ],
+  "ref": "https://docs.github.com/en/code-security/concepts/secret-security/about-push-protection"
+ },
+ {
+  "id": "6.2.2-05",
+  "obj": "6.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Repo1 is a private repository in an organization that does not have GitHub Advanced Security. Packages that Copilot cloud agent adds must be checked for known malware and for high or critical vulnerabilities before a human reviews the pull request.\n\nWhat should you do?",
+  "choices": [
+   "Keep the default validation tools of Copilot cloud agent enabled",
+   "Buy GitHub Advanced Security and turn on Dependabot updates",
+   "Tell Copilot in custom instructions to check every new package",
+   "Turn on push protection for secret scanning in the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent runs built-in validation by default, without a GitHub Advanced Security license. It checks new dependencies against the GitHub Advisory Database for malware and for High or Critical CVSS vulnerabilities.",
+  "rationale": [
+   "Correct: the built-in validation checks newly added dependencies against the GitHub Advisory Database for malware and High or Critical vulnerabilities, and it needs no GitHub Advanced Security license.",
+   "Incorrect: buying a license adds cost and effort that the requirement does not need, because the built-in validation already covers new dependencies that Copilot adds.",
+   "Incorrect: an instruction is guidance that the model can skip, so it does not enforce the check. Built-in validation runs as a tool, independently of what the model decides.",
+   "Incorrect: push protection blocks secrets in pushes. It does not check packages for malware or vulnerabilities, so it addresses a different policy."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.2.2-06",
+  "obj": "6.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A security policy at Litware, Inc. limits the internet hosts that agents can reach. Copilot cloud agent works in Repo1 and must reach only approved package registries and the hosts of the company build service.\n\nWhich feature should you configure?",
+  "choices": [
+   "The Copilot cloud agent firewall with a custom allowlist",
+   "A push ruleset that restricts file extensions in Repo1",
+   "Content exclusion settings for the Repo1 repository",
+   "A branch ruleset that requires status checks on main"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Copilot cloud agent firewall is on by default and restricts internet access. A custom allowlist adds the company build hosts, and the recommended allowlist covers common package registries.",
+  "rationale": [
+   "Correct: the firewall restricts outbound internet access from the agent environment, and a custom allowlist adds approved domains or URLs, such as the company build service hosts.",
+   "Incorrect: a push ruleset that restricts file extensions blocks pushes of certain file types. It has no effect on which internet hosts the agent can reach.",
+   "Incorrect: content exclusion keeps selected files out of Copilot context. It does not filter network traffic, so it cannot enforce a list of allowed hosts.",
+   "Incorrect: required status checks block merges until checks pass. They act on pull requests, not on network calls that the agent makes during a session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall"
+ },
+ {
+  "id": "6.2.2-07",
+  "obj": "6.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Repo1 has code scanning configured with CodeQL. Company policy states that no pull request, including pull requests from Copilot cloud agent, can be merged into main while code scanning reports high or critical security alerts for the changes.\n\nWhich ruleset rule should you add for main?",
+  "choices": [
+   "Require code scanning results",
+   "Require signed commits",
+   "Require deployments to succeed",
+   "Block force pushes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Require code scanning results rule blocks merges based on code scanning alert severity. Copilot cloud agent is subject to rulesets like any other contributor, so the rule applies to its pull requests too.",
+  "rationale": [
+   "Correct: this rule lets you set the security alert severity, such as High or higher, at which a pull request cannot be merged, and it applies to Copilot pull requests like any other.",
+   "Incorrect: required signed commits checks commit signatures, not security alerts. Copilot signs its commits, so this rule would not stop a change with high-severity alerts.",
+   "Incorrect: this rule requires deployments to selected environments to succeed before merging. It checks deployment outcomes, not code scanning alerts, so it fits staging validation instead.",
+   "Incorrect: blocking force pushes protects branch history from being rewritten. It does not evaluate code scanning alerts, so vulnerable code could still be merged."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "6.2.2-08",
+  "obj": "6.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "An enterprise sets Restrict MCP access to registry servers to Registry only and points the MCP Registry URL to an Azure API Center registry. A developer runs an approved MCP server locally, but the server is not listed in the registry, and Copilot blocks it.\n\nWhat should the enterprise admin do so that the developer can use the server?",
+  "choices": [
+   "Add the server to the registry with an ID that matches the developer setup",
+   "Add the server host to the custom allowlist of the cloud agent firewall",
+   "Ask the developer to start the server as a remote server instead",
+   "Add the server name to the Copilot custom instructions of the repo"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With Registry only, local servers are also blocked unless they are in the registry with exactly matching IDs. Adding the server to the registry keeps the allowlist enforced while allowing the approved server.",
+  "rationale": [
+   "Correct: under Registry only, local MCP servers must also appear in the registry, and the IDs must match exactly, so registering the server is the supported way to allow it.",
+   "Incorrect: the firewall controls network egress from the Copilot cloud agent environment. It does not decide which MCP servers the policy allows, so the server stays blocked.",
+   "Incorrect: remote servers that are not in the registry are blocked by the same policy. Moving the server does not help unless it is registered.",
+   "Incorrect: custom instructions guide the model and do not change policy. The MCP access policy is evaluated independently of any instruction text."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/agent-tooling-mcp-execution-environments/3-model-context-protocol-servers-registries-allow-lists"
+ },
+ {
+  "id": "6.2.2-09",
+  "obj": "6.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "The custom instructions of Repo1 state that Copilot must not run terraform apply. During a Copilot cloud agent session, the agent ran terraform apply anyway. The platform team needs a control that blocks the command regardless of how the model interprets its instructions.\n\nWhat should the platform team add?",
+  "choices": [
+   "A pre-tool-use hook in .github/hooks/ that blocks the command",
+   "A stronger warning in the .github/copilot-instructions.md file",
+   "A note in the description of a custom agent for Terraform work",
+   "A CODEOWNERS entry for the Terraform folder in the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Instructions are guidance, while hooks are enforced independently of the model's reasoning. A pre-tool-use hook can block a command before it runs.",
+  "rationale": [
+   "Correct: a pre-tool-use hook runs before each tool call and can block it, which enforces the rule regardless of how the model reads its instructions. Hooks for Copilot cloud agent live in .github/hooks/.",
+   "Incorrect: stronger wording is still guidance that the model can misread or ignore, which is what already happened. Use instructions for conventions, not for enforcement.",
+   "Incorrect: an agent description tells Copilot when to use a custom agent. It is not an enforcement point and does not stop a shell command from running.",
+   "Incorrect: CODEOWNERS routes reviews of file changes. Running terraform apply does not change files in a pull request, so code owners would not see or block it."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "6.2.3-01",
+  "obj": "6.2.3",
+  "difficulty": "medium",
+  "type": "multi",
+  "case": "C-g",
+  "stem": "You need to meet the technical requirements for TrackerMCP.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "Create an Agents secret named COPILOT_MCP_TRACKER_TOKEN in LabPortal.",
+   "Reference the COPILOT_MCP_TRACKER_TOKEN secret in the TrackerMCP server configuration.",
+   "Rename the Actions secret TRACKER_TOKEN to COPILOT_MCP_TRACKER_TOKEN.",
+   "Create an Agents secret named TRACKER_TOKEN in LabPortal.",
+   "Store the token as an environment secret of the production environment."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Copilot reads dedicated Agents secrets, not GitHub Actions secrets. Agents secrets with the COPILOT_MCP_ prefix are passed only to MCP servers, and the MCP configuration must reference the secret to receive it.",
+  "rationale": [
+   "Correct: Agents secrets are dedicated to Copilot, so other Actions workflows cannot read them, and the COPILOT_MCP_ prefix keeps the value away from the agent's shell environment.",
+   "Correct: the MCP server receives the token only when its configuration references the COPILOT_MCP_ secret, which is what makes TrackerMCP authenticate during sessions.",
+   "Incorrect: data stored as GitHub Actions secrets is not accessible to Copilot, whatever its name. Other workflows could also read it, which breaks the isolation requirement.",
+   "Incorrect: an Agents secret without the COPILOT_MCP_ prefix is exposed to Copilot as a regular environment variable, which the requirements forbid. Use unprefixed secrets for values the agent itself needs.",
+   "Incorrect: production environment secrets are for deployment jobs and become available only after reviewers approve. Copilot does not read them, and they would mix deployment credentials with agent tooling."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
+ },
+ {
+  "id": "6.2.3-02",
+  "obj": "6.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. has 40 repositories in one organization. An MCP server that Copilot cloud agent uses in Repo1 and Repo2 needs an API key. Only Repo1 and Repo2 may use the key, and only the MCP server may receive it. The MCP server configuration in both repositories already references COPILOT_MCP_API_KEY.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the organization settings, open Security > Secrets and variables > Agents.",
+   "Click New organization secret, and enter COPILOT_MCP_API_KEY as the name and the key as the value.",
+   "Set the repository access of the secret to Selected repositories, and select Repo1 and Repo2.",
+   "Click Add secret.",
+   "Create the secret under Secrets and variables > Actions instead of Agents.",
+   "Set the repository access of the secret to All repositories."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Organization owners create Agents secrets at the organization level and choose which repositories can use them. The COPILOT_MCP_ prefix limits the value to MCP servers, and each repository's MCP configuration must reference it.",
+  "rationale": [
+   "Step 1: Agents secrets and variables are a dedicated category for Copilot, set at the organization or repository level under Security > Secrets and variables > Agents.",
+   "Step 2: the COPILOT_MCP_ prefix means the value is passed only to MCP servers and is not exposed to the agent as a regular environment variable.",
+   "Step 3: organization secrets can be limited to selected repositories, which keeps the key away from the other 38 repositories and applies least privilege.",
+   "Step 4: Add secret saves the secret with its repository access, and the existing MCP configuration in Repo1 and Repo2 can then receive the value.",
+   "Incorrect: GitHub Actions secrets are not accessible to Copilot, so the MCP server would not receive the key. Use Actions secrets for regular workflows.",
+   "Incorrect: All repositories would let every repository in the organization use the key, which breaks the requirement. It fits only keys that every repository legitimately needs."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
+ },
+ {
+  "id": "6.2.3-03",
+  "obj": "6.2.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Fabrikam, Inc. defines three custom agents in .github/agents/ for Copilot cloud agent. Each agent must get only the tools that it needs.\n\nWhich tools value should you use for each agent? To answer, drag the appropriate values to the correct agents. Each value may be used once, more than once, or not at all.",
+  "choices": [
+   "tools: [\"read\", \"search\"]",
+   "tools: [\"read\", \"edit\", \"search\", \"execute\"]",
+   "tools: []",
+   "tools: [\"*\"]",
+   "tools: [\"web\"]"
+  ],
+  "targets": [
+   "Agent1: reads code and writes an implementation plan in its response, without changing files",
+   "Agent2: implements changes and runs the test suite in a shell",
+   "Agent3: rewrites text that the user pastes into the prompt and needs no tools"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "rationale": [
+   "Agent1 only plans, so read and search are enough. A read-only toolset is the recommended pattern for planning and review agents.",
+   "Agent2 must edit files and run tests, so it needs edit and execute in addition to read and search, and nothing more.",
+   "Agent3 works only on prompt text, so an empty list disables all tools and removes any capability it does not need."
+  ],
+  "notes": [
+   "A read-only list of read and search lets an agent inspect code without changing it. Use it for planning and review agents.",
+   "Adding edit and execute lets an agent change files and run shell commands. Use it for implementation agents that must build and test.",
+   "An empty list disables all tools. Use it for agents that only transform or analyze what is in the prompt.",
+   "The wildcard enables all available tools, which is the same as omitting the property. It breaks least privilege for focused agents.",
+   "The web alias is not applicable to Copilot cloud agent, so an agent with only this alias would have no useful tools there."
+  ],
+  "explanation": "The tools property limits a custom agent to the listed tools, an empty list disables all tools, and a wildcard or omitted property enables all tools. Matching each list to the job keeps every agent at least privilege.",
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "6.2.3-04",
+  "obj": "6.2.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Repo1 uses a copilot-setup-steps.yml file that checks out the code and installs dependencies before Copilot cloud agent starts. The security team requires least privilege for the setup job and for the machines that run it. Copilot must still be able to push its changes.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "Set permissions to contents: read in the copilot-setup-steps job.",
+   "Use GitHub-hosted runners, or ephemeral single-use self-hosted runners.",
+   "Set permissions to contents: write so that Copilot can push its commits.",
+   "Reuse one persistent self-hosted runner so that dependency caches stay warm.",
+   "Set permissions to write-all so that no setup step fails on permissions."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "The setup job only needs contents: read to clone the repository, because Copilot gets its own token for its operations. Ephemeral runners start clean for every job, which limits what one session can leave behind for the next.",
+  "rationale": [
+   "Correct: contents: read is enough to clone the repository during setup. Copilot receives its own token for pushing, so the setup job does not need write access.",
+   "Correct: GitHub-hosted runners provide a fresh environment for each job, and for self-hosted runners only ephemeral, single-use runners are recommended for Copilot cloud agent.",
+   "Incorrect: Copilot is given its own token for its operations, so granting contents: write to the setup job adds privilege that nothing needs.",
+   "Incorrect: a reused runner keeps state between jobs, so one session could affect the next. Persistent runners fit trusted CI jobs, not agent sessions.",
+   "Incorrect: write-all grants every scope to the setup job, which is the opposite of least privilege. Grant only the specific permissions that the setup steps use."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment"
+ },
+ {
+  "id": "6.2.3-05",
+  "obj": "6.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 creates a custom agent profile named Agent1 for Copilot cloud agent. Agent1 must not be able to use any tools.\n\nWhich tools setting should User1 use in the profile?",
+  "choices": [
+   "tools: []",
+   "tools: [\"*\"]",
+   "tools: [\"read\"]",
+   "Omit the tools property"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a custom agent profile, an empty tools list disables all tools. Omitting the property or using the wildcard enables all tools.",
+  "rationale": [
+   "Correct: an empty list disables all tools for the custom agent, so it can only work with what is in its prompt and the conversation.",
+   "Incorrect: the wildcard enables all available tools, which grants the most access instead of none. Use it only for general-purpose agents that need every tool.",
+   "Incorrect: the read alias still lets the agent read files in the repository. Use a read-only list for planning or review agents, not for an agent that needs no tools.",
+   "Incorrect: when the tools property is omitted, the agent gets all available tools by default. Omit it only when full access is intended."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "6.2.3-06",
+  "obj": "6.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent in Repo1 needs a token to download packages from a private registry. The token is stored as a GitHub Actions repository secret, and Copilot cannot read it. Other workflows in Repo1 must not be able to read the token.\n\nWhich location should you use to store the token?",
+  "choices": [
+   "As an Agents secret in the settings of Repo1",
+   "As an Actions variable in the settings of Repo1",
+   "In the copilot-instructions.md file of Repo1",
+   "As a Dependabot secret in the settings of Repo1"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot uses dedicated Agents secrets and variables, which are separate from GitHub Actions secrets. Storing the token as an Agents secret gives Copilot access without sharing it with other workflows.",
+  "rationale": [
+   "Correct: Agents secrets are dedicated to Copilot and exposed to it during sessions, while data stored as GitHub Actions secrets or variables is not accessible to Copilot.",
+   "Incorrect: data stored as GitHub Actions variables is not accessible to Copilot, and variables are meant for non-sensitive values that other workflows can read. Use them for plain configuration of regular workflows.",
+   "Incorrect: instructions files are committed to the repository, so anyone with read access could see the token. Keep secrets out of instructions and configuration files.",
+   "Incorrect: Dependabot secrets are for Dependabot updates to private registries. Copilot cloud agent does not read them, so the session would still lack the token."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
+ },
+ {
+  "id": "6.2.3-07",
+  "obj": "6.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 wants Copilot cloud agent in Repo1 to read issues and pull requests in Repo1 through MCP. User1 wants no extra configuration and no MCP tools that can write data.\n\nWhich MCP server should User1 use?",
+  "choices": [
+   "The built-in github MCP server, read-only and scoped to Repo1",
+   "A custom GitHub MCP server with a PAT that has the repo scope",
+   "The built-in playwright MCP server, scoped to localhost only",
+   "A remote MCP server with a GitHub App token for every repo"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent includes a github MCP server out of the box. It exposes read-only tools, and its token is scoped to the source repository.",
+  "rationale": [
+   "Correct: the out-of-the-box github MCP server is configured with read-only tools and a token scoped to the source repository, which meets both requirements without setup.",
+   "Incorrect: a PAT with the repo scope grants write access to every repository the user can reach, and it needs extra configuration. Use a custom token only when write tools are required.",
+   "Incorrect: the playwright MCP server lets the agent browse web pages on localhost. It cannot read issues or pull requests.",
+   "Incorrect: a token for every repository grants more access than reading Repo1 requires, and it needs extra configuration. Scope tokens to the repositories that the agent works in."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "6.2.3-08",
+  "obj": "6.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User1 starts Copilot CLI in Repo1 to update the API documentation. Copilot must fetch reference pages from docs.contoso.com without a prompt. Copilot must never reach share.fabrikam.net, an external file-share host, and User1 must not be offered a prompt that could approve that access.\n\nWhich command should User1 run?",
+  "choices": [
+   "copilot --allow-url=docs.contoso.com --deny-url=share.fabrikam.net",
+   "copilot --allow-url=docs.contoso.com --deny-tool='shell(curl)'",
+   "copilot --allow-url=docs.contoso.com",
+   "copilot --excluded-tools='web_fetch'"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "--allow-url pre-approves only the documentation domain, and --deny-url blocks the file-share host outright. A deny rule takes precedence over allow rules, so no prompt for share.fabrikam.net can appear.",
+  "rationale": [
+   "Correct: --allow-url lets Copilot reach docs.contoso.com without a prompt, and --deny-url blocks share.fabrikam.net. --deny-url takes precedence over --allow-url, so the host stays blocked.",
+   "Incorrect: this pre-approves the documentation domain and blocks curl, but share.fabrikam.net has no deny rule, so a web fetch to it still triggers a prompt that User1 could approve.",
+   "Incorrect: this allows the documentation domain, but a URL without an allow or deny rule still triggers a prompt, and User1 could approve access to the file share.",
+   "Incorrect: --excluded-tools removes web_fetch from the model, which also stops Copilot from fetching the documentation, and URL access through shell commands is not denied."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "6.2.3-09",
+  "obj": "6.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Copilot cloud agent sessions for Repo1 run in a cloud sandbox and must keep running there. An MCP server reads its endpoint URL from an Agents variable, but the value is missing during sessions. The URL is not sensitive.\n\nWhat should you do?",
+  "choices": [
+   "Store the endpoint URL as an Agents secret instead of a variable",
+   "Store the endpoint URL as an Actions variable of the repository",
+   "Export the endpoint URL in a step of copilot-setup-steps.yml",
+   "Rename the Agents variable to start with the COPILOT_MCP_ prefix"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Sessions on GitHub Actions receive Agents secrets and variables, but sessions in a cloud sandbox receive only secrets. Storing the value as an Agents secret makes it available in the sandbox.",
+  "rationale": [
+   "Correct: cloud sandbox sessions receive Agents secrets but not Agents variables, so the value must be stored as a secret even though it is not sensitive.",
+   "Incorrect: data stored as GitHub Actions secrets or variables is not accessible to Copilot, so the MCP server would still lack the value.",
+   "Incorrect: copilot-setup-steps.yml applies only to sessions that run on GitHub Actions, not to sessions in a cloud sandbox. It fits when the session runs on Actions.",
+   "Incorrect: the prefix controls whether a value is passed only to MCP servers. It does not change the fact that variables are not delivered to cloud sandbox sessions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
+ },
+ {
+  "id": "6.2.4-01",
+  "obj": "6.2.4",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "case": "C-g",
+  "stem": "You need to configure the production environment of LabPortal to meet the business requirements. The deployment must not be possible without the required approval.\n\nHow should you configure the environment? To answer, select the appropriate options in the answer area.\n\nRequired reviewers: [[1]]\nPrevent self-reviews: [[2]]\nLocation of the deployment credential: [[3]]",
+  "targets": [
+   {
+    "label": "Required reviewers",
+    "options": [
+     "ReleaseTeam",
+     "SecTeam",
+     "PlatformTeam"
+    ],
+    "why": [
+     "Correct: the business requirements state that a member of ReleaseTeam must approve production deployments, so ReleaseTeam is the required reviewer of the environment.",
+     "Incorrect: SecTeam must decide on authentication and workflow changes before merge. It is not named as the approver of deployments, so it would put the wrong people in the gate.",
+     "Incorrect: PlatformTeam owns builds and infrastructure, but the requirements name ReleaseTeam for production approvals. Add PlatformTeam only if it is also accountable for releases."
+    ]
+   },
+   {
+    "label": "Prevent self-reviews",
+    "options": [
+     "Enabled",
+     "Disabled"
+    ],
+    "why": [
+     "Correct: Prevent self-reviews stops the user who started the deployment from approving it, even when that user is a member of ReleaseTeam.",
+     "Incorrect: without this option, a ReleaseTeam member who starts a deployment could approve it alone, which breaks the separation the requirements ask for."
+    ]
+   },
+   {
+    "label": "Location of the deployment credential",
+    "options": [
+     "Environment secret of production",
+     "Repository secret of LabPortal",
+     "Agents secret of LabPortal"
+    ],
+    "why": [
+     "Correct: environment secrets become available to a job only after the required reviewers approve it, so no workflow can use the credential to deploy without approval.",
+     "Incorrect: a repository secret is available to any workflow job in LabPortal, including jobs that do not reference the environment, so the credential could be used to deploy without approval.",
+     "Incorrect: Agents secrets are exposed to Copilot sessions, which would give the agent a production credential. Keep deployment secrets out of the agent's secret boundary."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "Required reviewers from ReleaseTeam with Prevent self-reviews give an independent approval for each deployment. Moving the credential to an environment secret ensures that only approved jobs can use it.",
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.4-02",
+  "obj": "6.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "series": "S-g",
+  "stem": "Repo1 has a workflow named deploy.yml that deploys main to production. The deploy job references an environment named production. Developers merge pull requests that Copilot cloud agent creates, and any developer can start deploy.yml.\n\nYou must ensure that every production deployment waits for approval from a member of Team1 and that the person who starts a deployment cannot approve it.\n\nSolution: You add Team1 as required reviewers of the production environment and select Prevent self-reviews.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Required reviewers pause every job that references the environment until a reviewer approves. Prevent self-reviews stops the user who started the deployment from approving it.",
+  "rationale": [
+   "Correct: the deploy job references production, so every run waits for a member of Team1, and Prevent self-reviews blocks the person who started the deployment from approving it.",
+   "Incorrect: the solution does meet the goal. No would be right if the deploy job did not reference the environment, because protection rules apply only to jobs that use it."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.4-03",
+  "obj": "6.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "series": "S-g",
+  "stem": "Repo1 has a workflow named deploy.yml that deploys main to production. The deploy job references an environment named production. Developers merge pull requests that Copilot cloud agent creates, and any developer can start deploy.yml.\n\nYou must ensure that every production deployment waits for approval from a member of Team1 and that the person who starts a deployment cannot approve it.\n\nSolution: You add a custom instruction that tells Copilot cloud agent not to deploy to production without approval.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Developers, not Copilot, start deploy.yml, and an instruction is only guidance for the model. Nothing in the solution makes a deployment wait for Team1.",
+  "rationale": [
+   "Incorrect: an instruction cannot pause a workflow that a developer starts, and the model can misread guidance. The deployment would still run without approval from Team1.",
+   "Correct: the solution does not meet the goal. Instructions are useful for conventions, but enforcing approval needs a gate such as environment required reviewers."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.4-04",
+  "obj": "6.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "series": "S-g",
+  "stem": "Repo1 has a workflow named deploy.yml that deploys main to production. The deploy job references an environment named production. Developers merge pull requests that Copilot cloud agent creates, and any developer can start deploy.yml.\n\nYou must ensure that every production deployment waits for approval from a member of Team1 and that the person who starts a deployment cannot approve it.\n\nSolution: You add a CODEOWNERS entry that assigns .github/workflows/deploy.yml to Team1 and require review from code owners on main.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A code owner review applies when a pull request changes deploy.yml, not when the workflow runs. Deployments of unchanged workflow files would still start without approval.",
+  "rationale": [
+   "Incorrect: CODEOWNERS gates changes to the workflow file at merge time. Each later run of deploy.yml still deploys immediately, so deployments do not wait for Team1.",
+   "Correct: the solution does not meet the goal. The CODEOWNERS entry is still useful to protect the workflow definition, but the per-deployment approval needs environment required reviewers."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.4-05",
+  "obj": "6.2.4",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Repo1 has a job named deploy in the deploy.yml workflow that deploys to production with a credential. The job must wait for approval from Team1, and the credential must be available only to jobs that are approved for production. You must then confirm that the gate works. The workflow file must not reference the production environment until the credential is stored in it.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In Settings > Environments of Repo1, create an environment named production with Team1 as required reviewers.",
+   "Add the deployment credential as an environment secret of the production environment.",
+   "Add environment: production to the deploy job, and reference the secret in its steps.",
+   "Run deploy.yml, and have a member of Team1 approve the pending deployment.",
+   "Add the deployment credential as a repository secret of Repo1.",
+   "Assign deploy.yml to Team1 in the CODEOWNERS file of Repo1."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The environment and its protection rule must exist before you can add environment secrets to it. The job then references the environment and secret, and a test run shows the pending approval.",
+  "rationale": [
+   "Step 1: the environment holds both the protection rule and the secret, so it must exist first. Required reviewers make jobs that reference it wait for Team1.",
+   "Step 2: environment secrets are available to a job only after the required reviewers approve it, which keeps the credential out of unapproved jobs.",
+   "Step 3: protection rules apply only to jobs that reference the environment, so the deploy job must name production before the gate takes effect.",
+   "Step 4: a test run confirms that the job pauses until a Team1 member approves, and that the secret is used only after approval.",
+   "Incorrect: a repository secret is available to every job in the repository, so an unapproved job could use the credential. Use repository secrets for values that every workflow may use.",
+   "Incorrect: CODEOWNERS gates changes to the workflow file in pull requests. It does not pause each deployment, so it does not create the approval gate."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.4-06",
+  "obj": "6.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 assigns an issue in Repo1 to Copilot cloud agent, and Copilot opens a pull request for the work. The main branch requires one approval before merging. User1 and User2 both have write access to Repo1.\n\nWhich user should provide the required approval?",
+  "choices": [
+   "User2, as a reviewer who did not request the work",
+   "User1, as the user who asked Copilot for the work",
+   "Copilot, after all checks on the pull request pass",
+   "Any user who has read access to the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When approvals are required, the approval of the user who asked Copilot to create the pull request does not count. Another reviewer must approve, which keeps an independent person in the path to main.",
+  "rationale": [
+   "Correct: User2 did not request the work, so User2's approval counts toward the required approval and adds an independent review of the agent's changes.",
+   "Incorrect: the requester cannot approve the pull request that Copilot created for them, so User1's approval does not satisfy the requirement. User1 reviews and iterates with Copilot instead.",
+   "Incorrect: Copilot cloud agent cannot approve or merge pull requests. Approval stays a human decision, together with the required checks.",
+   "Incorrect: users with read access can comment, but their reviews do not count toward required approvals. Required approvals come from users with write access."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "6.2.4-07",
+  "obj": "6.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A ruleset for main in Repo1 requires one approval before merging. The rule options for Copilot use their default values. A shared automation creates a pull request that is attributed to Copilot and not to any user.\n\nHow many approvals should the pull request get before it can be merged?",
+  "choices": [
+   "Two approvals",
+   "One approval",
+   "No approvals",
+   "Three approvals"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The option to require an additional approval for unattributed Copilot pull requests is on by default. When a ruleset requires one approval, an unattributed Copilot pull request needs two.",
+  "rationale": [
+   "Correct: the additional approval option is enabled by default, so a pull request that Copilot opens under its own identity needs one approval more than the ruleset requires.",
+   "Incorrect: one approval is enough for pull requests that are attributed to a user. Unattributed Copilot pull requests get an extra approval unless an admin turns the option off.",
+   "Incorrect: no approvals would apply only if the ruleset required none. The extra approval has no effect when zero approvals are required, but here one is required.",
+   "Incorrect: the option adds one approval, not two. Three approvals would apply only if the ruleset itself required two approvals."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "6.2.4-08",
+  "obj": "6.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "In Repo1, User2 approves a pull request from Copilot cloud agent. User3, who has write access but did not open the pull request, then pushes another commit to the pull request branch and approves the pull request. Commits pushed after a review must be approved by someone other than the person who pushed them.\n\nWhich pull request option should you enable in the ruleset for main?",
+  "choices": [
+   "Require approval of the most recent reviewable push",
+   "Dismiss stale pull request approvals on new commits",
+   "Require conversation resolution before merging",
+   "Require review from Code Owners for every change"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Requiring approval of the most recent reviewable push means the last push must be approved by someone other than the person who pushed it. Dismissing stale approvals alone would still let User3 approve the latest commit.",
+  "rationale": [
+   "Correct: this option requires that the most recent reviewable push is approved by someone other than the user who pushed it, so User3 cannot approve the commit that User3 pushed.",
+   "Incorrect: dismissing stale approvals removes User2's approval after the new push, but User3, who is not the author, could then approve the commit. Use it to force a fresh review after changes.",
+   "Incorrect: conversation resolution blocks merging while review comments are open. It does not control who approves the latest push.",
+   "Incorrect: code owner review requires an owner of the changed files to approve. If User3 is a code owner, User3 could still approve their own push."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "6.2.4-09",
+  "obj": "6.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "The production environment of Repo1 requires approval from Team1. A repository administrator deployed to production without an approval by bypassing the protection rules. A compliance rule states that nobody may skip the approval.\n\nWhat should you configure?",
+  "choices": [
+   "Disallow administrators from bypassing the environment protection rules",
+   "Add the repository administrators to the required reviewers of production",
+   "Add a wait timer of 60 minutes to the production environment rules",
+   "Limit the deployment branches of production to protected branches"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, administrators can bypass environment protection rules. Disallowing the bypass makes the required reviewers apply to everyone.",
+  "rationale": [
+   "Correct: administrators can bypass environment protection rules by default, and you can turn that off so the approval from Team1 is enforced for administrators too.",
+   "Incorrect: adding administrators as reviewers lets them approve deployments, which widens who can pass the gate. It does not stop them from bypassing it.",
+   "Incorrect: a wait timer delays a deployment for a set time, but an administrator could still bypass the rules. Use a wait timer for a cooling-off period, not to block bypass.",
+   "Incorrect: deployment branch limits control which branches can deploy. They do not change whether administrators can bypass the required reviewers."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "6.2.5-01",
+  "obj": "6.2.5",
+  "difficulty": "medium",
+  "type": "yesno",
+  "case": "C-g",
+  "stem": "You review options to meet the LabDocs business requirement and the technical requirements.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Workflows on Copilot pull requests in LabDocs wait for a manual approval because of a default Copilot cloud agent setting.",
+   "Disabling Require approval for workflow runs in LabDocs removes an approval that does not materially reduce risk for that repository.",
+   "Disabling Require approval for workflow runs in LabPortal as well meets the technical requirements.",
+   "Turning off the validation tools of Copilot cloud agent in LabPortal is an acceptable way to speed up Copilot."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Require approval for workflow runs is on by default, which explains the delay in LabDocs. LabDocs has no secrets or deployment credentials, so the approval adds little protection there, but LabPortal controls and validation must stay in place.",
+  "rationale": [
+   "Yes: by default, workflows on Copilot pull requests do not run until a user with write access approves them, so the LabDocs site build waits for a person.",
+   "Yes: the risk the setting addresses is unreviewed code reaching secrets or write access. LabDocs has no secrets or credentials and only builds a static site, so the approval adds delay without reducing risk.",
+   "No: the technical requirements say every control that protects LabPortal must remain. LabPortal has deployment credentials, so its workflow approval still reduces real risk.",
+   "No: the technical requirements keep the built-in security validation enabled for LabPortal. Disabling validation tools fits only when another product already performs the same checks."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "6.2.5-02",
+  "obj": "6.2.5",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Alpine Ski House uses Copilot cloud agent in two repositories. Repo1 contains documentation only, has no secrets, and runs a static site build on pull requests. Repo2 contains the payment service and its workflows use deployment secrets. Copilot pull requests in both repositories wait for workflow approval, and Copilot often installs packages from npm. The company wants to remove approvals and manual work that do not materially reduce risk.\n\nHow should you configure the settings? To answer, select the appropriate options in the answer area.\n\nRepo1, Require approval for workflow runs: [[1]]\nRepo2, Require approval for workflow runs: [[2]]\nOrganization firewall, Recommended allowlist: [[3]]",
+  "targets": [
+   {
+    "label": "Repo1, Require approval for workflow runs",
+    "options": [
+     "Enabled",
+     "Disabled"
+    ],
+    "why": [
+     "Incorrect: keeping the approval in Repo1 makes every Copilot pull request wait for a person, but the workflow has no secrets or write access to protect, so the wait buys no risk reduction.",
+     "Correct: the setting protects against unreviewed code gaining write access or reaching secrets. Repo1 has neither, so disabling it lets the site build run automatically."
+    ]
+   },
+   {
+    "label": "Repo2, Require approval for workflow runs",
+    "options": [
+     "Enabled",
+     "Disabled"
+    ],
+    "why": [
+     "Correct: Repo2 workflows use deployment secrets, so a person must review agent changes before workflows run. Here the approval materially reduces risk.",
+     "Incorrect: disabling the approval in Repo2 would let unreviewed agent code run in workflows that can reach deployment secrets, which is the risk the setting exists to prevent."
+    ]
+   },
+   {
+    "label": "Organization firewall, Recommended allowlist",
+    "options": [
+     "Enabled",
+     "Disabled"
+    ],
+    "why": [
+     "Correct: setting the recommended allowlist to Enabled at organization level enforces it for all repositories. It covers common package registries such as npm, so Copilot can install packages without manual allowlist work.",
+     "Incorrect: disabling it at organization level would block common registries for every repository, so admins would have to add each host by hand. Disable it only when policy requires a fully custom allowlist."
+    ]
+   }
+  ],
+  "answer": [
+   1,
+   0,
+   0
+  ],
+  "explanation": "Remove the workflow approval only where it protects nothing, as in the documentation repository, and keep it where workflows reach secrets. The recommended allowlist removes manual allowlist work for common registries without turning off the firewall.",
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "6.2.5-03",
+  "obj": "6.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 asks Copilot cloud agent to fix a typo in an error message in Repo1 and to update the matching unit test. The team uses plan-first pull requests for infrastructure and workflow changes, and required checks and reviews apply to every pull request.\n\nWhich approach should User1 use?",
+  "choices": [
+   "Let Copilot plan and implement in one pull request with the usual checks",
+   "Open a plan-first pull request and approve the plan before implementation",
+   "Ask the security team to approve the change before Copilot starts the work",
+   "Ask a release manager to approve the work in a deployment environment first"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Low-risk changes can combine planning and execution in one pull request when speed matters, as long as checks and reviews stay required. Plan-first pull requests are for high-risk or hard-to-reverse work.",
+  "rationale": [
+   "Correct: a typo fix with a test update is low risk, so a single pull request with the required checks and review keeps the work fast without losing control.",
+   "Incorrect: a separate plan approval adds a round trip without reducing risk for a typo. Use plan-first pull requests for infrastructure, workflow, authentication, or production changes.",
+   "Incorrect: a security approval before work starts adds delay for a change that does not touch security-sensitive code. Reserve security review for paths such as authentication.",
+   "Incorrect: deployment environment approvals gate deployments, not code changes. Adding one here would slow the work without addressing any risk of the change."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "6.2.5-04",
+  "obj": "6.2.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent in Repo1 often installs packages from npm and PyPI. An administrator proposes to disable the recommended allowlist and to add each package registry host to a custom allowlist by hand. The company wants to keep the firewall and avoid unnecessary manual work.\n\nWhat should you do?",
+  "choices": [
+   "Keep the recommended allowlist of the firewall enabled",
+   "Disable the firewall for the Repo1 repository entirely",
+   "Add each registry host to the custom allowlist by hand",
+   "Move Copilot sessions to a runner without the firewall"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The recommended allowlist is enabled by default and already allows common package registries. Keeping it avoids manual allowlist work while the firewall stays on.",
+  "rationale": [
+   "Correct: the recommended allowlist covers common language package registries, container registries, and OS package repositories, and it is enabled by default with the firewall.",
+   "Incorrect: disabling the firewall removes the network restriction entirely, which trades security for convenience. The requirement is to keep the firewall.",
+   "Incorrect: adding each host by hand is the manual work the company wants to avoid. Use the custom allowlist for hosts that the recommended allowlist does not cover.",
+   "Incorrect: avoiding the firewall removes a control instead of reducing manual work. The recommended allowlist already solves the problem with the firewall in place."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall"
+ },
+ {
+  "id": "6.2.5-05",
+  "obj": "6.2.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank requires a human approval for every tool call that its internal agents make, including file reads. Reviewers now approve hundreds of requests each day without reading them, and agent work is slow.\n\nWhich change should Woodgrove Bank make?",
+  "choices": [
+   "Require approval only for actions where human judgment changes the risk",
+   "Add a second reviewer to every tool call approval that the agents request",
+   "Remove all human approvals and rely on audit logs to find problems later",
+   "Group all requests so that reviewers approve them once at the end of the day"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Human-in-the-loop review should be reserved for decisions where judgment meaningfully changes risk. Approving everything turns reviewers into a bottleneck who rubber-stamp requests, which slows work and adds little protection.",
+  "rationale": [
+   "Correct: reserving approvals for high-impact actions removes low-value approvals, restores velocity, and lets reviewers focus on the decisions where their judgment matters.",
+   "Incorrect: a second reviewer doubles the bottleneck without fixing rubber-stamping. Two-person approval fits a few high-impact actions, not every file read.",
+   "Incorrect: removing all approvals drops the gate for high-impact actions too. Audit logs record what happened but do not prevent a harmful action.",
+   "Incorrect: a daily batch makes agents wait even longer and still asks reviewers to approve low-risk actions in bulk without reading them."
+  ],
+  "ref": "https://learn.microsoft.com/startups/build/enterprise-readiness/ai-guardrails/safety-to-controllability-enterprise-ai"
+ },
+ {
+  "id": "6.2.5-06",
+  "obj": "6.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. configures the Copilot cloud agent firewall at the organization level. Enable firewall is set to Enabled, the recommended allowlist is Enabled, and an organization custom allowlist contains approved company hosts. Allow repository custom rules is set to Disabled. Teams wait days for organization owners to add hosts that a single repository needs. Repository admins must be able to add hosts for their own repositories, and the organization entries must stay in effect.\n\nWhich setting should the organization owner change?",
+  "choices": [
+   "Set Allow repository custom rules to Enabled",
+   "Set Enable firewall to Let repositories decide",
+   "Set Recommended allowlist to Disabled",
+   "Move the organization allowlist into each repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Allowing repository custom rules lets repository admins add their own entries, which combine with the organization custom allowlist. Repositories cannot delete organization entries, so the central control stays in place.",
+  "rationale": [
+   "Correct: with repository custom rules allowed, repository admins add hosts themselves, and those rules combine with the organization custom allowlist, which repositories cannot delete.",
+   "Incorrect: Let repositories decide allows a repository to turn the firewall off entirely. That removes a control instead of letting admins add specific hosts.",
+   "Incorrect: disabling the recommended allowlist blocks common package registries, which creates more manual work. It does not let repository admins add hosts.",
+   "Incorrect: copying the entries into each repository spreads the central list across many places that each admin can change, and it does not give admins permission to add hosts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall"
+ },
+ {
+  "id": "6.2.5-07",
+  "obj": "6.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A ruleset for main in Repo1 requires an approval from SecTeam on every pull request. Most pull requests from Copilot cloud agent change only docs/ and tests/, and SecTeam has become a bottleneck. SecTeam must still approve every change in src/auth/.\n\nWhat should you configure in the ruleset?",
+  "choices": [
+   "A Required reviewers rule for SecTeam with the src/auth/** file pattern",
+   "A bypass list entry for SecTeam so that it skips reviews it does not need",
+   "Zero required approvals for the ruleset that targets the main branch",
+   "Required status checks that replace the SecTeam approval in the ruleset"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Required reviewers option assigns teams to file patterns, so SecTeam approval is required only when matching files change. Pull requests that touch only docs/ and tests/ no longer wait for SecTeam.",
+  "rationale": [
+   "Correct: required reviewers can be set per team and file pattern, so SecTeam approval applies to src/auth/ changes and not to documentation or test changes.",
+   "Incorrect: a bypass list lets the listed actors skip the rules. It does not remove the SecTeam approval from other pull requests, so the bottleneck stays.",
+   "Incorrect: zero required approvals removes the approval gate for src/auth/ as well, which breaks the requirement that SecTeam approves authentication changes.",
+   "Incorrect: status checks are automated, so replacing the approval removes the human decision for src/auth/. Use status checks next to targeted reviews, not instead of them."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "6.2.5-08",
+  "obj": "6.2.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A ruleset for main in Repo1 requires zero approvals and requires status checks to pass. The option to require an additional approval for unattributed Copilot pull requests is enabled. A manager proposes turning the option off so that pull requests from shared automations merge faster.\n\nWhat should you do?",
+  "choices": [
+   "Keep the option, because it adds no approval when none are required",
+   "Turn the option off to remove the extra approval from Copilot pull requests",
+   "Add the Copilot app to the bypass list of the ruleset for main",
+   "Set required approvals to one so that the option stops applying"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The additional approval for unattributed Copilot pull requests has no effect when the ruleset requires zero approvals. Turning it off gains no speed and removes protection if approvals are added later.",
+  "rationale": [
+   "Correct: the option adds an approval only when at least one approval is already required. With zero required approvals, it causes no delay, and it protects the branch if approvals are added later.",
+   "Incorrect: turning the option off changes nothing for speed in this ruleset, and it removes the extra review for unattributed Copilot pull requests if approvals are required later.",
+   "Incorrect: the bypass list lets the listed actors skip the rules, including the required status checks. Granting that to the agent removes controls instead of avoiding a needless approval.",
+   "Incorrect: one required approval makes the option apply, so unattributed Copilot pull requests would need two approvals. This adds delay instead of removing it."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "6.2.5-09",
+  "obj": "6.2.5",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "A repository admin reviews the Copilot cloud agent settings of Repo1 to make the agent faster without adding unneeded approvals.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "If the admin disables Require approval for workflow runs, workflows on Copilot pull requests run without a manual approval.",
+   "Disabling a tool in the Validation tools section can help Copilot cloud agent finish its work faster.",
+   "An administrator must enable the recommended allowlist before Copilot cloud agent can install packages from common package registries."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "The workflow approval and the validation tools are both repository settings for Copilot cloud agent that trade speed for control. The recommended allowlist is already enabled by default.",
+  "rationale": [
+   "Yes: disabling Require approval for workflow runs makes workflows run automatically on Copilot pull requests. Do this only where unreviewed code cannot reach secrets or write access.",
+   "Yes: the Validation tools section lets admins turn off built-in checks, for example to let Copilot work faster or to avoid conflicts with other security products.",
+   "No: the recommended allowlist is enabled by default, so common package registries are reachable without admin action. Admins add custom entries only for other hosts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ }
+]

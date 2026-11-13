@@ -1,0 +1,20 @@
+[
+ {
+  "id": "C-a",
+  "title": "Adventure Works Cycles",
+  "sections": [
+   [
+    "Overview",
+    "Adventure Works Cycles is a bicycle manufacturer and online retailer with its head office in Lisbon and a distribution center in Rotterdam. The company sells about 400 bike models and accessories through its own web store. The engineering department has 46 developers in three teams. The company plans to use Copilot cloud agent to reduce the backlog of small fixes, which grew to 1,200 open issues during a recent replatforming project. The marketing department also plans a new loyalty program next spring, which is out of scope for the engineering pilot."
+   ],
+   [
+    "Existing environment",
+    "**GitHub organization**\n\nAdventure Works uses GitHub Enterprise Cloud with an organization named adventureworks. Developers sign in by using Microsoft Entra ID through single sign-on. The organization contains the following repositories:\n\n- storefront: the Node.js web store, owned by the web-team team\n- payments-api: the service that tokenizes card data and handles customer authentication, owned by the security-team team\n- infra-live: Terraform files for the production environment, owned by the platform-team team\n- docs-site: the public help center, written in Markdown\n\nCopilot cloud agent is enabled for storefront and docs-site. Repository administrators have not changed any cloud agent settings, so the defaults apply.\n\n**Branch rules**\n\nA ruleset on the default branch of every repository requires a pull request, one approval, and a passing status check named unit-tests. The unit-tests workflow runs npm test on every pull request. No other workflows are configured as required checks.\n\nThe docs-site repository contains a CODEOWNERS file that has a single line: * @adventureworks/platform-team. The ruleset for docs-site has Require review from Code Owners enabled.\n\n**Custom agents**\n\nThe storefront repository contains .github/agents/planner.agent.md. The profile has a description and a prompt body that starts with the sentence \"Never edit files; only write a plan.\" The profile does not contain a tools property.\n\n**Recent events**\n\n- A cloud agent pull request upgraded a vulnerable npm package in storefront. All checks passed and the pull request was merged, but the security alert stayed open because an older version of the package was still pulled in by another dependency.\n- A cloud agent pull request in storefront that was meant to fix a CSS bug also changed .github/workflows/release.yml and two files in a folder that the issue never mentioned.\n- Technical writers report that typo fixes in docs-site wait up to three days for a platform-team review.\n- The web team moved its daily stand-up from 09:00 to 09:30."
+   ],
+   [
+    "Requirements",
+    "**Pilot scope**\n\n- During the pilot, the agent must only receive tasks that are low risk and well scoped.\n- Work that touches card data, authentication, or production infrastructure must stay with human developers.\n\n**Success criteria**\n\n- A dependency upgrade is complete only when the security finding that triggered it is resolved.\n- An agent pull request must change only the files that the plan or issue names. Unexpected files must block approval.\n\n**Planning**\n\n- Any future agent change to payments-api must have its plan reviewed and approved by security-team before any code is written.\n- The planner custom agent must be technically unable to modify files.\n\n**Review**\n\n- Changes to workflow files in any repository must be approved by platform-team before merge.\n- Documentation changes in docs-site must not wait for platform-team.\n- The developer who asks Copilot for a change must not be the only approver of that change.\n- Minimize the number of new tools and services. The finance team must approve any new paid service."
+   ]
+  ]
+ }
+]

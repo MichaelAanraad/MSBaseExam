@@ -1,0 +1,728 @@
+[
+ {
+  "id": "1.3.1-01",
+  "obj": "1.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A security reviewer at Litware, Inc. asks which built-in control limits where Copilot cloud agent can send data on the internet while it works on a task.\n\nWhich control should you name?",
+  "choices": [
+   "The CODEOWNERS file of the repository",
+   "The pull request template of the repository",
+   "The branch ruleset on the default branch",
+   "The firewall of Copilot cloud agent"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Copilot cloud agent runs with a firewall that restricts its internet access by default, which reduces the risk of data exfiltration from the agent session.",
+  "rationale": [
+   "Incorrect: CODEOWNERS assigns reviewers for paths. It has no effect on network access during the agent session.",
+   "Incorrect: a pull request template structures the description. It cannot restrict outbound traffic from the agent.",
+   "Incorrect: a ruleset controls how changes enter a branch. It does not limit internet access while the agent works.",
+   "Correct: the firewall restricts the agent's access to the internet, which limits where data from the session can be sent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "1.3.1-02",
+  "obj": "1.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. maintains a public repository that uses Copilot cloud agent. A security engineer worries that an outside user without write access could add a comment to an agent pull request to inject instructions into Copilot.\n\nHow should you describe the built-in mitigation?",
+  "choices": [
+   "Comments from users without write access are never passed to Copilot",
+   "Copilot passes each comment to the requester for approval first",
+   "Copilot reads all comments but ignores any that contain commands",
+   "Outside comments are passed to Copilot only after checks pass"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent responds only to users with write access, and comments from users without write access are never presented to the agent, which mitigates prompt injection through comments.",
+  "rationale": [
+   "Correct: Copilot only acts on input from users with write access, so outside comments never reach the agent as instructions.",
+   "Incorrect: there is no requester approval flow for comments. The mitigation is that comments without write access are never given to Copilot.",
+   "Incorrect: Copilot does not read those comments at all. Relying on the model to spot malicious commands would be a weaker control.",
+   "Incorrect: passing checks has no link to which comments Copilot receives. Comments without write access are never passed on."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "1.3.1-03",
+  "obj": "1.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. must run Copilot cloud agent on its own infrastructure. A security review requires that no files or processes from one agent session remain for a later session.\n\nHow should Fabrikam configure the runners?",
+  "choices": [
+   "Use persistent runners and disable the agent firewall",
+   "Use ephemeral self-hosted runners that run one job each",
+   "Use persistent self-hosted runners that are cleaned weekly",
+   "Use one shared self-hosted runner with a large disk"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "For self-hosted runners, GitHub recommends ephemeral, single-use runners so that no state carries over between jobs. Organization owners can also control which runner the agent uses.",
+  "rationale": [
+   "Incorrect: persistent runners keep state, and turning off the firewall removes another control instead of adding isolation.",
+   "Correct: an ephemeral runner handles one job and is then removed, so nothing from one agent session is left for the next.",
+   "Incorrect: a weekly cleanup still leaves state between sessions during the week, which breaks the requirement.",
+   "Incorrect: a shared persistent runner keeps files and processes from earlier sessions. Disk size does not isolate sessions."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails"
+ },
+ {
+  "id": "1.3.1-04",
+  "obj": "1.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation adds a preToolUse hook for Copilot cloud agent. The hook must block risky shell commands, and if the hook script itself crashes, the tool call must not run.\n\nHow should Adatum implement the hook?",
+  "choices": [
+   "As a permissionRequest hook that returns a deny decision",
+   "As a notification hook that alerts on risky commands",
+   "As a command hook that exits non-zero on failure",
+   "As an http hook that calls an internal policy service"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A command preToolUse hook is fail-closed: if it crashes or exits with a non-zero code, the tool call is denied. An http hook is fail-open, permissionRequest has no effect in the cloud, and notification does not fire there.",
+  "rationale": [
+   "Incorrect: permissionRequest has no effect in Copilot cloud agent, so it cannot block tool calls there.",
+   "Incorrect: a notification hook only reports events and does not fire in the cloud. It cannot block a tool call.",
+   "Correct: a command preToolUse hook denies the tool call when the script crashes or exits non-zero, so a broken hook does not let risky commands through.",
+   "Incorrect: an http hook is fail-open, so if the policy service fails, the tool call is allowed. That breaks the requirement."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/hooks-reference"
+ },
+ {
+  "id": "1.3.1-05",
+  "obj": "1.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A developer at Relecloud runs GitHub Copilot CLI in a script with -p. Copilot must be able to run tools without prompts, but it must never run git push.\n\nWhich command should the developer use?",
+  "choices": [
+   "copilot -p \"...\" --allow-tool='shell(git push)' --allow-all-tools",
+   "copilot -p \"...\" --deny-tool='shell(git push)' with no other options",
+   "copilot -p \"...\" --allow-all-tools and a prompt that forbids git push",
+   "copilot -p \"...\" --allow-all-tools --deny-tool='shell(git push)'"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "--allow-all-tools lets Copilot use tools without approval. --deny-tool blocks a specific tool and takes precedence over --allow-all-tools and --allow-tool.",
+  "rationale": [
+   "Incorrect: this explicitly allows git push, which is the one command that must never run.",
+   "Incorrect: git push is blocked, but no tools are allowed, so Copilot still needs approval for other tools and cannot work without prompts.",
+   "Incorrect: a prompt instruction is guidance only. With --allow-all-tools and no deny rule, Copilot can still run git push.",
+   "Correct: --allow-all-tools removes the prompts, and --deny-tool='shell(git push)' blocks git push. The deny rule takes precedence over the allow rules."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli"
+ },
+ {
+  "id": "1.3.1-06",
+  "obj": "1.3.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys wants a guard script to check every tool call that Copilot cloud agent makes in a repository, before the tool runs.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create .github/hooks/guard.json with version 1 and a preToolUse hook that uses the bash field",
+   "Merge the hook file into the default branch",
+   "Assign an issue to Copilot cloud agent",
+   "Use the powershell field for the preToolUse hook command",
+   "Put the hook file in ~/.copilot/hooks on a developer workstation",
+   "Add a permissionRequest hook to approve tool calls"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Repository hooks are JSON files in .github/hooks with version 1. Copilot cloud agent uses the hooks from the default branch and runs only the bash or command field. permissionRequest has no effect in the cloud.",
+  "rationale": [
+   "Step 1: create the hook configuration in .github/hooks with a preToolUse entry, using the bash field that the cloud agent runs.",
+   "Step 2: merge the file into the default branch so the hook configuration is available to Copilot cloud agent.",
+   "Step 3: assign an issue to Copilot. The preToolUse hook now runs before each tool call in the session.",
+   "Incorrect: Copilot cloud agent ignores the powershell field and runs only bash or command, so the hook would not run.",
+   "Incorrect: ~/.copilot/hooks is a user-level location for Copilot CLI on one machine. The cloud agent does not read it.",
+   "Incorrect: permissionRequest has no effect in Copilot cloud agent, so it cannot check tool calls there."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/hooks-reference"
+ },
+ {
+  "id": "1.3.1-07",
+  "obj": "1.3.1",
+  "difficulty": "easy",
+  "type": "dropdown",
+  "stem": "Northwind Traders has a workflow that runs checks on agent pull requests and posts a summary comment on the pull request. The workflow must not be able to push code.\n\nHow should you complete the permissions block? To answer, select the appropriate options in the answer area.\n\n```yaml\npermissions:\n  contents: [[1]]\n  pull-requests: [[2]]\n```",
+  "choices": [],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Least privilege means granting each token only the permissions that the job needs. Reading code needs contents: read, and commenting on a pull request needs pull-requests: write.",
+  "rationale": [],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "read",
+     "write",
+     "none"
+    ],
+    "why": [
+     "Correct: contents: read lets the job check out and read the code without being able to push changes.",
+     "Incorrect: contents: write lets the token push code, which the requirement forbids for this workflow.",
+     "Incorrect: contents: none would stop the job from checking out the code, so the checks could not run."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "read",
+     "write",
+     "none"
+    ],
+    "why": [
+     "Incorrect: pull-requests: read lets the job see the pull request but not post the summary comment that is required.",
+     "Correct: pull-requests: write lets the job post the summary comment, and nothing more than that is granted.",
+     "Incorrect: pull-requests: none blocks access to the pull request, so the summary comment could not be posted."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.3.1-08",
+  "obj": "1.3.1",
+  "difficulty": "easy",
+  "type": "yesno",
+  "stem": "Wide World Importers is reviewing the built-in controls of Copilot cloud agent.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Copilot cloud agent can merge its own pull request after the checks pass.",
+   "The developer who asked Copilot for a pull request can give the approval that the ruleset requires.",
+   "By default, workflows on a Copilot pull request wait until a user with write access approves them.",
+   "In Copilot cloud agent, a preToolUse hook decision of ask is treated as deny."
+  ],
+  "answer": [
+   2,
+   3
+  ],
+  "explanation": "Copilot cannot approve or merge its pull requests, the requester's approval does not count, workflows wait for Approve and run workflows by default, and the cloud agent treats an ask decision as deny because no one can answer.",
+  "rationale": [
+   "No: Copilot cannot approve or merge pull requests. A human must review and merge the work.",
+   "No: the person who asked Copilot to create the pull request cannot approve it in a way that counts toward required approvals.",
+   "Yes: by default, workflows do not run on Copilot pull requests until a user with write access clicks Approve and run workflows.",
+   "Yes: there is no interactive user in the cloud agent session, so an ask decision from a preToolUse hook is treated as deny."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/hooks-reference"
+ },
+ {
+  "id": "1.3.1-09",
+  "obj": "1.3.1",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "You are evaluating changes to the storefront planner agent and the review process.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Adding tools: [\"read\", \"search\"] to planner.agent.md meets the planning requirement for the planner.",
+   "The current prompt line Never edit files; only write a plan. meets the planning requirement for the planner.",
+   "A web-team developer who asked Copilot for a pull request can be the only approver of that pull request."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The planner must be technically unable to modify files. A tools list with only read and search removes the edit ability, while a prompt line is guidance. The requester's approval of a Copilot pull request does not count.",
+  "rationale": [
+   "Yes: with only read and search in the tools list, the planner has no tool to edit files, so it is technically unable to modify them.",
+   "No: the prompt line is guidance. With no tools property, all tools are enabled, so the planner is still able to edit files.",
+   "No: the requester's approval does not count toward required approvals, which also matches the requirement that the requester is not the only approver."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "case": "C-a"
+ },
+ {
+  "id": "1.3.2-01",
+  "obj": "1.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An auditor at Woodgrove Bank asks how commits from Copilot cloud agent identify who is accountable for the work.\n\nHow should you describe the commits?",
+  "choices": [
+   "Copilot authors them, with the requester as co-author",
+   "The requester authors them, and Copilot is not named",
+   "A shared service account authors them without names",
+   "The reviewer authors them when the pull request merges"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Commits from Copilot cloud agent are authored by Copilot and list the developer who assigned the task as a co-author, so the agent's work stays traceable to a person.",
+  "rationale": [
+   "Correct: Copilot is the author and the requester is the co-author, which shows both that an agent wrote the code and who asked for it.",
+   "Incorrect: Copilot is named as the author of its commits. Hiding the agent would make the audit trail less accurate.",
+   "Incorrect: commits are not made by an anonymous service account. They identify Copilot and the person who requested the work.",
+   "Incorrect: the reviewer approves and merges the pull request, but the commits are attributed to Copilot and the requester."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "1.3.2-02",
+  "obj": "1.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Reviewers at Proseware, Inc. complain that agent pull requests say \"all tests pass\" without proof. The team wants evidence that a reviewer can verify later.\n\nWhat should agent pull requests include?",
+  "choices": [
+   "A note from the requester that confirms the tests were successful",
+   "An Evidence section with links to the workflow run and commit SHA",
+   "A statement from the agent that it ran the full test suite locally",
+   "A screenshot of the terminal output pasted into the description"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Evidence should be verifiable in the system of record: links to the exact workflow run, the commit SHA it tested, and any artifacts. A claim from the agent or a person is not evidence.",
+  "rationale": [
+   "Incorrect: a note from the requester is still a claim. It does not link to the run that proves the result.",
+   "Correct: links to the specific run and commit let a reviewer or auditor confirm which code was tested and what the result was.",
+   "Incorrect: an agent statement is a claim, not evidence. Reviewers cannot verify it against the system of record.",
+   "Incorrect: a screenshot cannot be tied to a specific commit or run and can be outdated or edited."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "1.3.2-03",
+  "obj": "1.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A reviewer at Fabrikam, Inc. wants to understand why Copilot cloud agent chose a particular approach in a pull request, including which commands it ran.\n\nWhat should the reviewer check?",
+  "choices": [
+   "The repository audit log in the organization",
+   "The Copilot Memory list for the repository",
+   "The session log of the task in the Agents tab",
+   "The commit messages in the pull request history"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The session log shows the agent's reasoning and the tools it used during the task. You open it from the Agents tab or from the pull request.",
+  "rationale": [
+   "Incorrect: the audit log records administrative events. It does not contain the agent's reasoning during a task.",
+   "Incorrect: Copilot Memory stores facts about the repository. It does not record the steps of one session.",
+   "Correct: the session log shows how Copilot reasoned and which tool calls and commands it ran, which explains its approach.",
+   "Incorrect: commit messages summarize changes but do not show the reasoning or every command that the agent ran."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "1.3.2-04",
+  "obj": "1.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. defines the minimum audit trail for agent work as: the issue, the plan, the pull request with its diff, and the checks that ran. An incident review shows that this trail cannot answer one question about a change.\n\nWhich element should Litware add to the minimum audit trail?",
+  "choices": [
+   "The name of the model that generated each change",
+   "The number of tokens that the agent session used",
+   "The total duration of each agent session in minutes",
+   "The outcome, such as the merge, revert, or escalation"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Traceability means you can reconstruct what was requested, planned, changed, checked, and what happened in the end. Without the outcome, the trail does not show whether a change was merged, reverted, or escalated.",
+  "rationale": [
+   "Incorrect: the model name can be useful context, but it does not show what happened to the change after review.",
+   "Incorrect: token usage is a cost signal. It does not explain the decision or the result of the change.",
+   "Incorrect: duration is an operational metric. It does not tell reviewers whether the change was merged or rolled back.",
+   "Correct: the outcome closes the trail by showing whether the change was merged, reverted, or escalated, which an incident review needs to know."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/5-identify-risks-traceability"
+ },
+ {
+  "id": "1.3.2-05",
+  "obj": "1.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses a postToolUse hook in Copilot cloud agent that writes each tool call to a log file. After the session ends, the log file cannot be found.\n\nWhat should Contoso do to keep the tool call records?",
+  "choices": [
+   "Use an http hook that sends records to an allowed host",
+   "Write the log file to a different folder in the repository",
+   "Increase the timeoutSec value of the command hook",
+   "Move the hook file to ~/.copilot/hooks on the runner"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Copilot cloud agent, the filesystem is ephemeral, so files that hooks write are lost when the session ends. An http hook can send the records to an external service, which must be reachable through the firewall.",
+  "rationale": [
+   "Correct: an http hook sends each record out of the ephemeral environment. The host must be allowed by the firewall so the request is not blocked.",
+   "Incorrect: any folder in the cloud environment is ephemeral. A different path is still lost when the session ends.",
+   "Incorrect: the timeout controls how long the hook can run. The file is still deleted with the environment after the session.",
+   "Incorrect: Copilot cloud agent uses hooks from .github/hooks in the repository. A user-level folder does not change the ephemeral filesystem."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/hooks-reference"
+ },
+ {
+  "id": "1.3.2-06",
+  "obj": "1.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation reviews agent sessions from the Agents tab. Reviewers can see sessions of Copilot cloud agent, but not the sessions that developers ran locally with GitHub Copilot CLI.\n\nWhat should Adatum do so reviewers can see the local sessions?",
+  "choices": [
+   "Move every local task to a new copilot/ branch",
+   "Ask developers to share their local sessions",
+   "Turn on the audit log streaming for the organization",
+   "Add the developers to the CODEOWNERS file of the repository"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Cloud agent sessions are shared with people who have access to the repository, but sessions from local tools are not shared by default. Developers must choose to share them.",
+  "rationale": [
+   "Incorrect: the branch name does not change session visibility. Local sessions stay private until they are shared.",
+   "Correct: local sessions are private by default. Sharing them makes them visible to others, so reviewers can follow the work.",
+   "Incorrect: audit log streaming sends administrative events to another system. It does not publish the content of local sessions.",
+   "Incorrect: CODEOWNERS assigns reviewers to paths. It does not change who can see sessions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "1.3.2-07",
+  "obj": "1.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Northwind Traders wants every agent pull request to keep the test report as a downloadable file that reviewers can use as evidence.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add an actions/upload-artifact@v4 step to the pull request workflow and merge it",
+   "Assign the issue to Copilot cloud agent",
+   "Click Approve and run workflows on the Copilot pull request",
+   "Download the test report artifact from the workflow run",
+   "Ask Copilot to paste the test report into the pull request",
+   "Add the test report to .gitignore in the repository"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Artifacts make evidence durable and linkable. The workflow must upload the report before the agent works, the run must be approved on the Copilot pull request, and reviewers then download the artifact from the run.",
+  "rationale": [
+   "Step 1: add the upload step and merge it, so every pull request run keeps the report as an artifact.",
+   "Step 2: assign the issue to Copilot, which opens a pull request that triggers the workflow.",
+   "Step 3: approve the workflow runs, because workflows on Copilot pull requests wait for approval by default.",
+   "Step 4: download the artifact from the workflow run as evidence that is tied to the tested commit.",
+   "Incorrect: pasted output is a claim from the agent and is not tied to a specific run. Reviewers need verifiable evidence.",
+   "Incorrect: ignoring the report in Git does not store it anywhere. It does not create evidence for reviewers."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "1.3.2-08",
+  "obj": "1.3.2",
+  "difficulty": "easy",
+  "type": "dropdown",
+  "stem": "Tailspin Toys wants its pull request workflow to keep the files in the reports/ folder as evidence for each run.\n\nHow should you complete the workflow step? To answer, select the appropriate options in the answer area.\n\n```yaml\n- uses: actions/[[1]]@v4\n  with:\n    name: test-reports\n    [[2]]: reports/\n```",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The upload-artifact action stores files from a run as an artifact. Its name input names the artifact, and its path input selects the files to upload.",
+  "rationale": [],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "upload-artifact",
+     "download-artifact",
+     "cache"
+    ],
+    "why": [
+     "Correct: upload-artifact stores the files as an artifact of the run, so reviewers can download them as evidence.",
+     "Incorrect: download-artifact retrieves an artifact that an earlier step or job uploaded. It does not store new evidence.",
+     "Incorrect: cache speeds up later runs by reusing dependencies. It is not meant to keep evidence for reviewers."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "path",
+     "files",
+     "artifact"
+    ],
+    "why": [
+     "Correct: path selects the files or folders to upload, so reports/ becomes the content of the artifact.",
+     "Incorrect: files is not the input that upload-artifact uses to select what to upload, so the reports would not be stored.",
+     "Incorrect: artifact is not the input for the files to upload. The artifact is named with the name input instead."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.3.2-09",
+  "obj": "1.3.2",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "An auditor at Relecloud needs to find different kinds of evidence about agent work.\n\nWhich location should the auditor use for each kind of evidence? To answer, drag the appropriate locations to the correct evidence. Each location may be used once, more than once, or not at all.",
+  "choices": [
+   "Session log",
+   "Commit message",
+   "Workflow run artifact",
+   "Audit log",
+   "Copilot Memory"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Each kind of evidence has a home: the session log for reasoning and tool calls, the commit message for the link to the session, workflow artifacts for test output, and the audit log for agent events that administrators review.",
+  "rationale": [
+   "Session log: the session log shows the agent's reasoning and the tool calls it made during the task.",
+   "Commit message: commits from Copilot include a link to the agent session, which connects the code change to its session log.",
+   "Workflow run artifact: test reports uploaded as artifacts stay with the workflow run that tested the commit.",
+   "Audit log: audit log events about agent activity are available to administrators, alongside session logs, for auditing."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations",
+  "targets": [
+   "The reasoning and tool calls of one agent task",
+   "A link from a code change to the agent session",
+   "The test report for a specific commit",
+   "Agent events that administrators review"
+  ],
+  "notes": [
+   "Session log: shows how the agent reasoned and which tools it called, which explains a single task.",
+   "Commit message: commits that Copilot makes link back to the session, which makes each change traceable to its log.",
+   "Workflow run artifact: keeps files such as test reports with the run that produced them, tied to the tested commit.",
+   "Audit log: records events that administrators review for auditing, rather than the detailed steps of individual agent tasks.",
+   "Copilot Memory: stores facts about a repository that Copilot uses in later tasks. It is not evidence of one task, so it is unused."
+  ]
+ },
+ {
+  "id": "1.3.3-01",
+  "obj": "1.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Fourth Coffee watches a running Copilot cloud agent session and sees that Copilot is updating the wrong configuration file. The rest of the task is correct.\n\nWhat should the developer do?",
+  "choices": [
+   "Delete the copilot/ branch while the session is still running",
+   "Send a follow-up prompt below the session log to redirect it",
+   "Stop the session and assign the issue to Copilot a second time",
+   "Wait for the pull request and reject it during the review"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "You can steer a running agent session by typing a follow-up prompt in the prompt box below the session log. Copilot adjusts its work without starting over.",
+  "rationale": [
+   "Incorrect: deleting the branch disrupts the session and loses work. Steering is the supported way to redirect it.",
+   "Correct: a follow-up prompt redirects the running session to the right file and keeps the work that is already correct.",
+   "Incorrect: stopping and reassigning throws away the correct work and starts a new session, which is slower than steering.",
+   "Incorrect: waiting lets the agent finish the wrong change, which wastes time and review effort when it can be corrected now."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "1.3.3-02",
+  "obj": "1.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "The product owner at Litware, Inc. cancels a feature while Copilot cloud agent is still working on it. The team wants the run to end, but it wants to keep the commits that Copilot already pushed for later reference.\n\nWhat should the team do?",
+  "choices": [
+   "Close the issue that was assigned to Copilot",
+   "Remove Copilot from the repository settings",
+   "Click Stop session in the session log viewer",
+   "Delete the copilot/ branch of the session"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Stop session in the session log viewer ends the GitHub Actions run of the session and preserves any commits that were already pushed.",
+  "rationale": [
+   "Incorrect: closing the issue does not reliably end the running session. Stop session is the control for that.",
+   "Incorrect: disabling Copilot for the repository affects every task and is not the targeted way to end one session.",
+   "Correct: Stop session ends the run and keeps the commits that Copilot already pushed, which matches both needs.",
+   "Incorrect: deleting the branch removes the commits that the team wants to keep for reference."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "1.3.3-03",
+  "obj": "1.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "An agent at Adatum Corporation pushes a fix, and the same required check fails. It pushes a second fix, and the check fails again with the same error.\n\nWhat should happen next?",
+  "choices": [
+   "Let the agent keep retrying until the check finally passes",
+   "Remove the required check so the pull request can merge",
+   "Mark the pull request ready so a reviewer can merge it now",
+   "Escalate to a human with the failure, attempts, and evidence"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Agents need a stop condition. When the same check keeps failing, the agent should escalate to a human with what failed, what it tried, the evidence, and a suggested next step.",
+  "rationale": [
+   "Incorrect: unlimited retries waste compute and can hide a deeper problem. A repeated identical failure is a signal to stop.",
+   "Incorrect: removing the check weakens the control that found the problem. The failure must be understood, not bypassed.",
+   "Incorrect: a failing required check still blocks the merge. Asking for review without context does not solve the failure.",
+   "Correct: escalation hands the problem to a person with the context needed to decide, instead of letting the agent loop on the same failure."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "1.3.3-04",
+  "obj": "1.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Copilot cloud agent opened a pull request at Contoso, Ltd. The team wants Copilot to keep watching the pull request and fix failed GitHub Actions workflows and merge conflicts automatically.\n\nWhat should the team do?",
+  "choices": [
+   "Enable Agent Merge with Watch and fix in the merge box",
+   "Turn off Require approval for workflow runs for Copilot",
+   "Add a preToolUse hook that reruns any failed workflows",
+   "Mention @copilot in a comment after every workflow run"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent Merge with Watch and fix lets Copilot watch a pull request and fix failed GitHub Actions workflows or merge conflicts automatically.",
+  "rationale": [
+   "Correct: Watch and fix makes Copilot monitor the pull request and fix failed workflows and merge conflicts without a new request each time.",
+   "Incorrect: turning off workflow approval only lets workflows run without review. It does not make Copilot fix failures.",
+   "Incorrect: a preToolUse hook runs before tool calls inside a session. It does not watch a pull request or resolve conflicts.",
+   "Incorrect: a comment for every run works, but it is manual. The requirement is for Copilot to watch and fix automatically."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "1.3.3-05",
+  "obj": "1.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. has a workflow that labels pull requests after checks complete. The workflow authenticates with a personal access token, and each label change starts the workflow again in an endless loop.\n\nWhat should Proseware do?",
+  "choices": [
+   "Add a longer timeout to the labeling workflow",
+   "Use the GITHUB_TOKEN for the labeling step",
+   "Use a GitHub App token for the labeling step",
+   "Grant the personal access token fewer scopes"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Most actions performed with the GITHUB_TOKEN do not trigger extra workflow runs, which helps prevent loops. Personal access tokens and GitHub App tokens can trigger extra runs.",
+  "rationale": [
+   "Incorrect: a timeout limits each run but does not stop each label change from starting another run.",
+   "Correct: label changes made with the GITHUB_TOKEN do not start new workflow runs, so the loop stops.",
+   "Incorrect: GitHub App tokens can trigger extra workflow runs, just like personal access tokens, so the loop can continue.",
+   "Incorrect: fewer scopes can still allow labeling, and events from the token still trigger new runs."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/agent-tooling-mcp-execution-environments/5-agent-execution-limits-protections"
+ },
+ {
+  "id": "1.3.3-06",
+  "obj": "1.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A reviewer at Tailspin Toys finds that a pull request from Copilot cloud agent is missing input validation. The reviewer wants Copilot to fix it on the same pull request.\n\nWhat should the reviewer do?",
+  "choices": [
+   "Approve the pull request and add a follow-up task",
+   "Edit the agent profile to include input validation",
+   "Mention @copilot in a comment that describes the change",
+   "Close the pull request and open a new issue for it"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "To request changes from Copilot on its pull request, mention @copilot in a comment, or push commits directly to the branch.",
+  "rationale": [
+   "Incorrect: approving a pull request with a known gap lets the missing validation merge. Request the fix first.",
+   "Incorrect: changing an agent profile affects future work. It does not ask Copilot to fix this pull request.",
+   "Correct: mentioning @copilot with the requested change makes Copilot update the same pull request.",
+   "Incorrect: a new issue starts separate work and loses the review context of the current pull request."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "1.3.3-07",
+  "obj": "1.3.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A reviewer at Woodgrove Bank has three comments for Copilot on its pull request. The reviewer wants Copilot to work on all three comments together instead of starting work after each one.\n\nWhich three actions should the reviewer perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Write the first comment that mentions @copilot and click Start a review",
+   "Add the remaining comments to the review",
+   "Submit the review",
+   "Click Add single comment for each of the comments",
+   "Approve the pull request before adding the comments",
+   "Mark the pull request as ready for review"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Comments added with Start a review are batched. Copilot starts work on the whole review when it is submitted, instead of reacting to each comment separately.",
+  "rationale": [
+   "Step 1: write the first comment and click Start a review so the comment is held as part of a pending review.",
+   "Step 2: add the remaining comments to the same pending review.",
+   "Step 3: submit the review. Copilot then works on all the comments in the review together.",
+   "Incorrect: single comments are sent one at a time, so Copilot may start working after each comment.",
+   "Incorrect: approving signals that no changes are needed, which conflicts with requesting three changes.",
+   "Incorrect: changing the draft state does not batch comments. It only signals readiness for review."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "1.3.3-08",
+  "obj": "1.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. finds that oversight of agent work is slowing delivery. Most agent changes are low-risk documentation and test updates, but a few touch workflows and authentication. Fabrikam wants to reduce friction without losing control of high-risk changes.\n\nWhich two actions should Fabrikam take? Each correct answer presents a complete solution.",
+  "choices": [
+   "Require CODEOWNERS review only on high-risk paths",
+   "Allow plan and implementation in one PR for low-risk work",
+   "Require two approvers on every pull request",
+   "Turn off Require approval for workflow runs",
+   "Require a plan-first pull request for every change"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Oversight should scale with risk. Targeted controls for high-risk paths, and lighter planning for low-risk work, keep strict review where it matters without slowing every change.",
+  "rationale": [
+   "Correct: path-based CODEOWNERS adds owner review only where the risk is, such as workflows and authentication, and leaves low-risk changes faster.",
+   "Correct: plan and execution in the same pull request suits low and medium-risk work, which removes a review round where it adds little value.",
+   "Incorrect: two approvers on every pull request adds friction to all work, including the low-risk majority.",
+   "Incorrect: turning off workflow approval removes a control for every Copilot pull request, including risky ones, which loses control.",
+   "Incorrect: plan-first pull requests for every change add a review round to low-risk work, which increases friction."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.3.3-09",
+  "obj": "1.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the review requirement for docs-site without weakening review of workflow files.\n\nWhat should you change?",
+  "choices": [
+   "Add a bypass for the documentation writers to the docs-site ruleset",
+   "Limit platform-team to /.github/workflows/ and assign another owner for the rest",
+   "Remove the required pull request approval from the docs-site ruleset",
+   "Turn off Require review from Code Owners in the docs-site ruleset"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "CODEOWNERS in docs-site makes platform-team own every file. Narrowing that entry to workflow files keeps platform-team review where it is required, while other changes go to another owner.",
+  "rationale": [
+   "Incorrect: a bypass lets changes skip the rules, including workflow changes that need platform-team approval.",
+   "Correct: platform-team still must approve workflow changes, and docs changes go to another owner, so they no longer wait for platform-team.",
+   "Incorrect: removing required approval drops review for all changes, including workflow files, and breaks the rule that the requester is not the only approver.",
+   "Incorrect: turning off code owner review means platform-team no longer has to approve workflow changes, which breaks that requirement."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails",
+  "case": "C-a"
+ }
+]

@@ -1,0 +1,441 @@
+[
+ {
+  "id": "6.1.1-01",
+  "obj": "6.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. classifies agent changes by risk. High-risk changes need a plan that a reviewer approves before any code is written.\n\nWhich change should Fabrikam, Inc. classify as high risk?",
+  "choices": [
+   "A change to the deployment workflow in .github/workflows",
+   "A correction of spelling errors in the README file",
+   "New unit tests for an existing utility module",
+   "A clearer name for a local variable in one function"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Workflow, infrastructure, authentication, and production changes are high risk because they are hard to reverse or affect many systems. Documentation, tests, and small refactors are lower risk and reversible.",
+  "rationale": [
+   "Correct: the Learn module treats changes to workflows, infrastructure, authentication, and production as high risk or hard to reverse, which calls for a plan-first pull request.",
+   "Incorrect: a spelling fix in documentation is low risk and easy to reverse, so it can be planned and done in the same pull request.",
+   "Incorrect: new tests add checks without changing production behavior. They are low risk and do not need a separate plan approval.",
+   "Incorrect: renaming a local variable has a small, local scope and is easy to review and revert, so it is not a high-risk change."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "6.1.1-02",
+  "obj": "6.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a public repository that uses Copilot cloud agent. User1, an outside contributor with read access only, adds a comment that mentions @copilot and asks Copilot to change the release script.\n\nWhat should the maintainers expect?",
+  "choices": [
+   "Copilot never sees the comment because User1 lacks write access.",
+   "Copilot changes the release script and opens a draft pull request.",
+   "Copilot asks a maintainer to approve the request in the session log.",
+   "Copilot applies the request only after the firewall approves it."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Only users with write access can trigger Copilot cloud agent, and comments from users without write access are never shown to it. This removes a whole class of injection risk from outsiders.",
+  "rationale": [
+   "Correct: GitHub Docs state that only users with write access can trigger the agent, and comments from users without write access are never presented to it.",
+   "Incorrect: User1 has read access only, so the comment cannot trigger any work, and no pull request is created.",
+   "Incorrect: Copilot does not ask for approval of requests from people without write access. It never sees these comments at all.",
+   "Incorrect: the firewall controls outbound internet access during a session. It does not decide which comments reach the agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.1-03",
+  "obj": "6.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent adds a configuration file that contains an API key to a pull request at Litware, Inc. The organization does not have a GitHub Advanced Security license.\n\nWhich built-in validation should detect the key?",
+  "choices": [
+   "Secret scanning",
+   "CodeQL",
+   "Copilot code review",
+   "The GitHub Advisory Database check"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent runs built-in validation that does not need a GitHub Advanced Security license. Secret scanning is the part that detects secrets such as API keys.",
+  "rationale": [
+   "Correct: GitHub Docs list secret scanning among the validation that Copilot cloud agent runs without a GitHub Advanced Security license, and it detects secrets such as API keys and tokens.",
+   "Incorrect: CodeQL analyzes code for security vulnerabilities, such as injection flaws. It is not the check that looks for leaked credentials.",
+   "Incorrect: Copilot code review gives a second opinion on the change. Detecting committed secrets is the job of secret scanning.",
+   "Incorrect: the Advisory Database check looks at new dependencies for malware and high or critical vulnerabilities, not at secrets in files."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.1-04",
+  "obj": "6.1.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys wants to right-size human control for agent actions. Each action must get the lightest control that still matches its risk.\n\nWhich control should you use for each action? To answer, drag the appropriate controls to the correct actions. Each control may be used once, more than once, or not at all.",
+  "choices": [
+   "Plan and changes in the same pull request with standard review",
+   "Plan-first pull request with code owner review",
+   "Environment with required reviewers",
+   "Approve and run workflows",
+   "Block the action in every case"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Low-risk, reversible changes get the lightest process. Workflow and authentication changes need an approved plan and code owner review. Production deployments are gated by environments, and CI on agent pushes waits for a human to approve the run.",
+  "rationale": [
+   "A documentation fix is low risk and reversible, so a single pull request that holds the plan and the change, with normal review, keeps delivery fast.",
+   "Changes to authentication code are high risk and hard to reverse, so the plan is approved first and code owners review the change.",
+   "A deploy job that references an environment with required reviewers waits for a named person to approve it, which suits production deployments.",
+   "By default, workflows on Copilot pushes wait until a user with write access clicks Approve and run workflows, so a human decides before CI runs the agent code."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution",
+  "targets": [
+   "The agent fixes a broken link in the documentation.",
+   "The agent changes the token validation logic in the authentication module.",
+   "A workflow job deploys agent-built code to production.",
+   "CI workflows must run on commits that Copilot pushed to its pull request."
+  ],
+  "notes": [
+   "Fast path for low-risk, reversible work. The plan and the change are reviewed together, which avoids an extra round trip.",
+   "Slow path for high-risk or hard-to-reverse work. A reviewer approves the plan before code is written, and code owners review the result.",
+   "A deployment protection rule. The job that references the environment waits until one required reviewer approves it.",
+   "The default gate for workflows on Copilot pushes. A user with write access decides when the agent's code may run in CI.",
+   "Reserved for prohibited actions that no control can make acceptable. None of these actions is prohibited, so blocking them only slows delivery."
+  ]
+ },
+ {
+  "id": "6.1.1-05",
+  "obj": "6.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "The security team at Woodgrove Bank asks why Copilot cloud agent has a firewall that limits its internet access by default.\n\nWhich risk should you identify as the main reason for the firewall?",
+  "choices": [
+   "Exfiltration of code or sensitive data to remote locations",
+   "Merging of pull requests that nobody has reviewed",
+   "Pushes from the agent directly to the default branch",
+   "Use of more AI credits than the budget allows"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Surprising agent behavior or malicious instructions could make the agent send code or secrets to a remote host. The firewall limits where the agent can connect, which reduces that risk.",
+  "rationale": [
+   "Correct: GitHub Docs explain that the agent has access to code and sensitive information and could leak it, accidentally or because of malicious input, so GitHub restricts its internet access to reduce that risk.",
+   "Incorrect: unreviewed merges are prevented by the fact that the agent cannot approve or merge pull requests and by review rules, not by the firewall.",
+   "Incorrect: the agent can only push to its own branch and is subject to rulesets and branch protection. The firewall plays no part in that.",
+   "Incorrect: AI credit use is a cost concern managed through budgets and policies. The firewall is a security control for network access."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.1-06",
+  "obj": "6.1.1",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Relecloud reviews pull requests from Copilot cloud agent. Files in some paths must be classified as security-sensitive and require review by the platform team.\n\nWhich three paths should Relecloud classify as security-sensitive? Each correct answer presents part of the solution.",
+  "choices": [
+   ".github/workflows/",
+   ".github/agents/",
+   "infra/",
+   "docs/",
+   "tests/",
+   "styles/"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Workflow files, agent and MCP configuration, and infrastructure code change what runs, with which permissions, and where. Documentation, tests, and styles are lower risk and reversible.",
+  "rationale": [
+   "Correct: workflow files define what runs in CI with which permissions and secrets. The Learn module's CODEOWNERS example routes .github/workflows/ to the platform team for this reason.",
+   "Correct: agent profiles define tools and MCP servers. GitHub Docs recommend protecting Copilot and MCP configuration with CODEOWNERS and code owner review.",
+   "Correct: infrastructure code changes production resources and is hard to reverse, so the Learn module puts it on the list of high-risk paths for CODEOWNERS.",
+   "Incorrect: documentation is low risk and easy to revert. Normal review is enough, and adding the platform team slows delivery for no gain.",
+   "Incorrect: tests add checks without changing production behavior. They are reviewed normally and do not need a security owner.",
+   "Incorrect: style sheets change presentation only. They are low risk and easy to revert, so normal review is enough."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls"
+ },
+ {
+  "id": "6.1.1-07",
+  "obj": "6.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation wants an automation that runs Copilot when issues are labeled. Compliance requires that every pull request from the automation is attributed to a named person who is accountable for it, and that this person can never approve those pull requests.\n\nWhich type of automation should you create?",
+  "choices": [
+   "A personal automation that User1 creates",
+   "A shared automation that the repository owns",
+   "A shared automation with an additional reviewer",
+   "A personal automation that a GitHub App creates"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Personal automations are attributed to the user who creates them, and that user cannot approve their pull requests. Shared automations are attributed to Copilot and get an extra review instead.",
+  "rationale": [
+   "Correct: GitHub Docs say that actions of a personal automation are attributed to its creator, who cannot approve its pull requests, which meets both compliance requirements.",
+   "Incorrect: actions of a shared automation are attributed to Copilot, not to a named person, so the accountability requirement is not met.",
+   "Incorrect: a shared automation already needs an extra review, but its work is still attributed to Copilot rather than to a named accountable person.",
+   "Incorrect: a personal automation belongs to a user account. A GitHub App is not a person, so it cannot be the accountable owner."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.1-08",
+  "obj": "6.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders has a repository whose workflows use deployment secrets. Developers want CI to run automatically on every push from Copilot cloud agent and ask to turn off Require approval for workflow runs.\n\nWhat should you recommend?",
+  "choices": [
+   "Keep the setting, because unreviewed agent code could gain write access or secrets.",
+   "Turn off the setting, because the agent firewall already blocks all secret access.",
+   "Turn off the setting, because the agent cannot push to the default branch anyway.",
+   "Keep the setting, because the agent cannot run tests in its own environment."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Workflows run with the permissions and secrets available to them. With approval turned off, code that nobody has reviewed runs in those workflows, so the risk outweighs the speed gain here.",
+  "rationale": [
+   "Correct: GitHub Docs warn that if you allow workflows to run automatically, unreviewed code written by Copilot could gain write access to the repository or access to secrets.",
+   "Incorrect: the firewall limits outbound internet access from the agent session. It does not stop a workflow from reading secrets when it runs the agent's code.",
+   "Incorrect: the branch restriction limits where the agent pushes, but workflows can still run its code with secrets on the pull request branch.",
+   "Incorrect: the agent can run tests and linters in its own ephemeral environment. The setting exists because of workflow permissions, not testing."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "6.1.2-01",
+  "obj": "6.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys uses agents for documentation updates. These changes are low risk and easy to reverse. The team wants the fastest delivery that still keeps a human review.\n\nWhich pattern should the team use?",
+  "choices": [
+   "Plan and changes in the same pull request",
+   "A plan-first pull request before any changes",
+   "A production environment with required reviewers",
+   "Direct pushes from the agent to the default branch"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For low-risk, reversible work, a single pull request that holds both the plan and the change gives speed and still keeps the human review.",
+  "rationale": [
+   "Correct: the Learn module recommends plan and execution in the same pull request for low or medium risk, reversible changes where speed matters.",
+   "Incorrect: a separate plan approval adds a round trip that the Learn module reserves for high-risk or hard-to-reverse changes.",
+   "Incorrect: environments gate deployment jobs. Documentation pull requests do not deploy to production, so this adds friction without reducing risk.",
+   "Incorrect: Copilot cloud agent cannot push to the default branch, and removing the pull request removes the human review that the team wants."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "6.1.2-02",
+  "obj": "6.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. evaluates how much autonomy Copilot cloud agent has by default.\n\nWhich action should Fabrikam, Inc. expect the agent to never perform?",
+  "choices": [
+   "Merge its own pull request into the default branch",
+   "Push commits to a branch whose name starts with copilot/",
+   "Open a draft pull request that is linked to the issue",
+   "Run tests and linters in its development environment"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent can work on its own branch and open draft pull requests, but it cannot approve or merge them. A human with the right access always makes the merge decision.",
+  "rationale": [
+   "Correct: GitHub Docs state that Copilot cloud agent opens draft pull requests that a human must review and merge, and that it cannot approve or merge them.",
+   "Incorrect: pushing to a new copilot/ branch is how the agent normally delivers its work for an issue.",
+   "Incorrect: opening a draft pull request linked to the issue is the normal output of a cloud agent task.",
+   "Incorrect: the agent runs tests and linters in its ephemeral environment to validate its work before it pushes."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.2-03",
+  "obj": "6.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. adds a planning agent to its workflow. The planning agent must never change files in the repository.\n\nWhat should you put in the profile of the planning agent?",
+  "choices": [
+   "A tools list that contains only read and search",
+   "An instruction in the prompt not to edit files",
+   "A model property that selects a smaller model",
+   "A target property that is set to github-copilot"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Instructions are guidance, while a tool allowlist is enforcement. A planning agent with only read and search tools cannot edit files, whatever its prompt says.",
+  "rationale": [
+   "Correct: the Learn module recommends read-only tools for planning and review agents and treats tool allowlists as enforcement, so read and search alone keep the agent from editing files.",
+   "Incorrect: the Learn module treats instructions not to edit as guidance that an agent might ignore. They do not enforce anything.",
+   "Incorrect: a smaller model changes cost and quality. It still has the same tools, so the agent could still edit files.",
+   "Incorrect: target chooses where the agent is available. It does not limit which tools the agent can use there."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "6.1.2-04",
+  "obj": "6.1.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "At Litware, Inc., agents prepare releases, and a workflow named deploy.yml has a job that deploys to production. A person other than the one who starts a deployment must approve it, and the job must never run without this approval, not even once.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the repository settings, click Environments, click New environment, enter production, and click Configure environment.",
+   "Select Required reviewers, add the release team, select Prevent self-review, and click Save protection rules.",
+   "Add environment: production to the deploy job in deploy.yml and merge the change through a pull request.",
+   "Select Wait timer, enter 30 minutes, and click Save protection rules.",
+   "Turn off Require approval for workflow runs in the Copilot cloud agent settings.",
+   "Store the deployment credentials as repository secrets instead of environment secrets."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The environment and its protection rules must exist before any job uses it, otherwise a run could deploy without approval. Required reviewers and prevent self-review give the independent approval.",
+  "rationale": [
+   "Step 1: you create the production environment first, because protection rules are configured on an environment.",
+   "Step 2: required reviewers make the job wait for approval, and Prevent self-review stops the person who started the run from approving it.",
+   "Step 3: only after the rules exist do you make the deploy job reference the environment, so the first run is already gated.",
+   "Incorrect: a wait timer only delays the job. Nobody approves it, so it does not provide the required human decision.",
+   "Incorrect: this setting is about workflows on Copilot pushes, and turning it off reduces control. It does not gate production deployments.",
+   "Incorrect: repository secrets are available to jobs without environment approval. Environment secrets stay locked until the reviewers approve."
+  ],
+  "ref": "https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments"
+ },
+ {
+  "id": "6.1.2-05",
+  "obj": "6.1.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Adatum Corporation reviews the default limits on the autonomy of Copilot cloud agent. The repository has a ruleset that requires one approving review on the default branch.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Copilot cloud agent can push directly to the default branch when the ruleset is disabled.",
+   "Commits that Copilot cloud agent makes list the user who requested the work as a co-author.",
+   "A pull request under the Copilot app identity needs one more approval because the ruleset requires a review.",
+   "The GITHUB_TOKEN default permissions policy restricts the token of the Copilot cloud agent session."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "The agent always pushes to one branch and cannot run git push directly. Its commits credit the requester. An extra approval applies to pull requests under its app identity, and the GITHUB_TOKEN policy does not change its session token.",
+  "rationale": [
+   "No: the agent can only push to a single branch, either the existing pull request branch or a new copilot/ branch, and it cannot run git push directly.",
+   "Yes: GitHub Docs say that commits are authored by Copilot with the user who requested the work as co-author, which keeps a named person accountable.",
+   "Yes: when a pull request is under the Copilot app identity and the repository requires at least one approval, one additional approval is required. This is on by default for rulesets.",
+   "No: the GitHub Docs build-guardrails tutorial states that the GITHUB_TOKEN default permissions policy does not affect the token of the Copilot session, although it applies to copilot-setup-steps.yml."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.2-06",
+  "obj": "6.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud creates an automation that runs Copilot when an issue is opened. The automation must add labels to the issue that triggered it and must not change any other issue or pull request.\n\nWhat should you configure?",
+  "choices": [
+   "Set what configured tools can change to Only this issue.",
+   "Set what configured tools can change to Anything in this repository.",
+   "Make the automation shared so that its pull requests need an extra review.",
+   "Allow events from users without write access to trigger the automation."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Automations let you choose which tools they can use and how far those tools reach. Limiting the reach to the triggering issue gives the automation exactly the autonomy it needs.",
+  "rationale": [
+   "Correct: GitHub Docs describe the option Only this issue for what configured tools can change, which keeps the automation's changes on the issue that triggered it.",
+   "Incorrect: Anything in this repository lets the tools change other issues and pull requests, which is more autonomy than labeling one issue needs.",
+   "Incorrect: a shared automation adds review for pull requests, but it does not limit which issues the tools can change, and this automation creates no pull requests.",
+   "Incorrect: events from untrusted users are ignored by default for good reason. Accepting them widens who can trigger the automation and does not limit its reach."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "6.1.2-07",
+  "obj": "6.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank must run Copilot cloud agent sessions on self-hosted runners on its own network. The security team wants to reduce the risk that one session affects another.\n\nWhat should you configure?",
+  "choices": [
+   "Ephemeral self-hosted runners that are restricted to a runner label",
+   "Persistent self-hosted runners that are shared by all repositories",
+   "Self-hosted runners with Require approval for workflow runs turned off",
+   "Self-hosted runners that store Agents secrets on the local disk"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "GitHub-hosted runners start each job on a fresh VM. When self-hosted runners are required, ephemeral runners give the same clean start, and organization owners can restrict agent sessions to runners with a specific label.",
+  "rationale": [
+   "Correct: GitHub Docs recommend ephemeral runners if you use self-hosted runners for Copilot, and organization owners can restrict the runners that agents use to a label.",
+   "Incorrect: persistent runners keep files and state between jobs, so one session can leave data or changes that affect the next session.",
+   "Incorrect: turning off workflow approval lets unreviewed agent code run automatically, which adds risk instead of isolating sessions.",
+   "Incorrect: secrets on a runner's disk can be read by later jobs on that runner. Agents secrets are provided to sessions by GitHub, not stored locally."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/build-guardrails"
+ },
+ {
+  "id": "6.1.2-08",
+  "obj": "6.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys builds an agent that can call a tool that deletes cloud resources. The deletions cannot be undone. The agent must still be able to perform cleanup tasks, and the design must follow Responsible AI guidance for high-risk actions.\n\nHow should you configure the agent?",
+  "choices": [
+   "Disclose each deletion and require human confirmation before every call.",
+   "Allow every deletion without approval and log each call for later review.",
+   "Require human confirmation only for the first deletion in each session.",
+   "Remove the tool so that the agent can never delete cloud resources."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Irreversible actions need the most human control: the agent must disclose what it is about to do and get explicit confirmation each time. Logging alone comes too late, and removing the tool breaks the requirement.",
+  "rationale": [
+   "Correct: Learn guidance says high-risk actions need human-in-the-loop confirmation, and irreversible actions need disclosure plus confirmation, which keeps a human decision on each deletion.",
+   "Incorrect: logs help with audits after the fact, but an irreversible deletion cannot be undone once a reviewer finds the problem.",
+   "Incorrect: later deletions in the same session can target other resources, so one confirmation does not cover the risk of each irreversible call.",
+   "Incorrect: prohibited actions are never allowed, but the agent must still perform cleanup, so removing the tool fails the requirement."
+  ],
+  "ref": "https://learn.microsoft.com/azure/foundry/concepts/ai-red-teaming-agent"
+ },
+ {
+  "id": "6.1.2-09",
+  "obj": "6.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "You need to assign the autonomy level for agent changes to the deploy.yml workflow file, in line with the Fabrikam, Inc. requirements and Incident 3.\n\nWhat should you do?",
+  "choices": [
+   "Use a plan-first pull request and require code owner review by the platform team.",
+   "Let implementer plan and change the file in one pull request with standard review.",
+   "Turn off Require approval for workflow runs so CI validates every workflow change.",
+   "Add an instruction to the implementer profile that it must not edit workflow files."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Workflow changes are high risk. The plan is approved before code is written, and CODEOWNERS with required code owner review makes sure the platform team sees every change, which Incident 3 showed was missing.",
+  "rationale": [
+   "Correct: a plan-first pull request meets the requirement that a reviewer approves the plan first, and code owner review for .github/workflows ensures that the platform team reviews the change.",
+   "Incorrect: a single pull request with standard review is the low-risk pattern for documentation and tests. It is how Incident 3 happened.",
+   "Incorrect: turning off approval lets unreviewed agent code run in workflows with their permissions and secrets, which increases risk.",
+   "Incorrect: an instruction is guidance that the agent might not follow, and it does not make the platform team review changes from humans."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls",
+  "case": "C-f"
+ }
+]

@@ -1,0 +1,570 @@
+[
+ {
+  "id": "3.1.1-01",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Litware, Inc., Copilot cloud agent learns during a session that a repository generates its API client from an OpenAPI file. The team wants Copilot code review to use the same knowledge later when it reviews pull requests in that repository.\n\nWhich memory mechanism should the team rely on?",
+  "choices": [
+   "A repository-level fact in Copilot Memory",
+   "A user-level preference in Copilot Memory",
+   "The context window of the current session",
+   "The plan.md file in the session folder"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Repository-level facts are shared with collaborators and across Copilot surfaces in the same repository. A fact that the cloud agent learns can be used later by Copilot code review.",
+  "rationale": [
+   "Correct: repository-level facts apply to the repository and are shared across surfaces, so a fact learned by the cloud agent can be used by Copilot code review in the same repository.",
+   "Incorrect: a user-level preference follows one user, and Copilot code review does not apply user-level preferences, so it would not use the knowledge.",
+   "Incorrect: the context window is short-term memory that exists only during one session. The knowledge is gone when the session ends.",
+   "Incorrect: plan.md is a local file of one Copilot CLI session. Copilot code review on GitHub does not read it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.1-02",
+  "obj": "3.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Fabrikam, Inc. works in many repositories. User1 wants Copilot to run the relevant tests and summarize the results before it proposes a commit, in every project that User1 works in.\n\nWhich type of memory should User1 ask Copilot to create?",
+  "choices": [
+   "A user-level preference",
+   "A repository-level fact",
+   "An organization custom instruction",
+   "A session checkpoint"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "User-level preferences follow a user across repositories and describe how that user likes to work. Repository-level facts apply only to one repository.",
+  "rationale": [
+   "Correct: a user-level preference follows User1 across repositories and is created only by User1, which matches a personal workflow for every project.",
+   "Incorrect: a repository-level fact applies only to the repository where it was created and is shared with every collaborator, so it is not a personal cross-project preference.",
+   "Incorrect: organization custom instructions are set by owners and apply to everyone in the organization. They are not a personal preference of one developer.",
+   "Incorrect: a checkpoint is a compaction summary inside one Copilot CLI session. It does not carry a preference into other projects."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory/create-memories"
+ },
+ {
+  "id": "3.1.1-03",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Copilot cloud agent in 40 repositories. Copilot learned a repository-level fact in Repo1 about the logging library that all the company services use. The team expects Copilot cloud agent to use the same knowledge in the other 39 repositories, but it does not.\n\nWhat should the team use to share this knowledge with Copilot across all the repositories?",
+  "choices": [
+   "Organization custom instructions",
+   "A longer retention period for repository-level facts",
+   "Repository access set to All repositories",
+   "A user-level preference for each developer"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot Memory is not pooled across the repositories of an organization, so a repository-level fact stays in Repo1. Organization custom instructions apply to all repositories in the organization.",
+  "rationale": [
+   "Correct: organization custom instructions apply across the repositories of the organization, which suits knowledge that every repository needs. Repository-level instructions still take priority where they exist.",
+   "Incorrect: retention controls how long a fact lives. It does not share a fact from Repo1 with other repositories, because memory is not pooled.",
+   "Incorrect: Repository access controls which repositories may store and use facts. Each repository still learns its own facts; facts are not copied between them.",
+   "Incorrect: user-level preferences describe how one person likes to work, and administrators cannot create them for users. They are the wrong place for a technical fact."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "3.1.1-04",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User2 at Tailspin Toys wants to ask Copilot CLI which tasks User2 worked on last week and which files were changed in those tasks.\n\nWhich source should Copilot use to answer the question?",
+  "choices": [
+   "The session history, queried with /chronicle",
+   "The repository-level facts in Copilot Memory",
+   "The context window of the current session",
+   "The custom instructions file of the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Questions about previous work are answered from session data, which records prompts, tools, and file changes. The /chronicle command queries this session store.",
+  "rationale": [
+   "Correct: session history is an external store of past sessions. Copilot can answer natural-language questions about earlier work from it, for example with /chronicle.",
+   "Incorrect: repository-level facts are short conventions about a codebase. They do not record which tasks a user worked on or which files changed.",
+   "Incorrect: the context window holds only the current session. Work from last week is not in it unless a session was resumed.",
+   "Incorrect: custom instructions tell Copilot how to work in a repository. They contain no record of past sessions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/session-data"
+ },
+ {
+  "id": "3.1.1-05",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adventure Works forks Repo1, which has many repository-level facts, into a new repository named Repo2. The team expects Copilot to follow a mandatory coding rule that it learned in Repo1 when it works in Repo2.\n\nWhat should the team do?",
+  "choices": [
+   "Add the rule to the custom instructions file in Repo2.",
+   "Wait for Copilot Memory to copy the facts from Repo1.",
+   "Raise the retention period of facts in Repo1 to 180 days.",
+   "Ask Copilot in Repo1 to upvote the fact before the fork."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Forking does not copy memories, and memories are applied by judgment anyway. A mandatory rule belongs in custom instructions, which are loaded for every session in the repository.",
+  "rationale": [
+   "Correct: memories are not copied to forks, and Copilot Memory does not guarantee consistent use. Custom instructions in Repo2 make the rule available to every session there.",
+   "Incorrect: forking does not copy memories, and memory is not pooled across repositories, so Repo2 starts without the facts of Repo1.",
+   "Incorrect: retention controls how long facts live in Repo1. It has no effect on whether Repo2 receives them.",
+   "Incorrect: Copilot votes on memories automatically, and an upvote only extends the life of a fact in Repo1. It does not transfer the fact to Repo2."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.1-06",
+  "obj": "3.1.1",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Relecloud uses Copilot cloud agent, Copilot CLI, and Copilot Memory. You must choose where each piece of information should be kept.\n\nWhich mechanism should you use for each piece of information? To answer, drag the appropriate mechanisms to the correct information. Each mechanism may be used once, more than once, or not at all.",
+  "choices": [
+   "Repository custom instructions",
+   "A repository-level fact",
+   "A user-level preference",
+   "The plan.md file of the session",
+   "A comment on the issue after assignment"
+  ],
+  "targets": [
+   "Info1: a mandatory security review rule that every agent session in the repository must follow",
+   "Info2: a naming convention that Copilot found in the code while it fixed a bug",
+   "Info3: the wish of User1 for the smallest possible change in every project",
+   "Info4: the checklist of steps for the migration that User1 runs today in Copilot CLI"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Rules that must be followed go in custom instructions. Learned code conventions are repository-level facts, personal habits are user-level preferences, and task state for one session belongs in the session plan.",
+  "rationale": [
+   "Info1: a mandatory rule must be applied consistently, and memories are applied by judgment. Custom instructions are loaded for every session in the repository.",
+   "Info2: a convention discovered in the code, with a citation to that code, is what a repository-level fact is for, and collaborators share it.",
+   "Info3: a personal way of working that follows User1 across repositories is a user-level preference.",
+   "Info4: a checklist for one task is short-lived state. Copilot is told not to store task-specific instructions as memories, and plan.md keeps it for the session."
+  ],
+  "notes": [
+   "Instructions that are loaded for every session in the repository. Use them for rules that must be followed consistently.",
+   "A memory about the codebase that is shared with collaborators and checked against its citations. Use it for learned conventions.",
+   "A memory that follows one user across repositories. Use it for the personal working style of that user.",
+   "A checkbox plan written in the session folder in plan mode. Use it to track the steps of the current task.",
+   "Copilot does not see issue comments added after the issue was assigned to it, so this does not reach the agent reliably."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.1-07",
+  "obj": "3.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the memory requirement for database migration reviews.\n\nWhat should you do?",
+  "choices": [
+   "Add the review rule to the .github/copilot-instructions.md file in Repo1.",
+   "Ask Copilot in Repo1 to store the review rule as a repository-level fact.",
+   "Ask each developer to store the review rule as a user-level preference.",
+   "Set the retention period for repository-level facts to 180 days."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The rule must be applied consistently by all agents. Memories are used at the judgment of the model, so a rule that must always apply belongs in custom instructions.",
+  "rationale": [
+   "Correct: repository custom instructions are loaded for every Copilot session in Repo1, which is the documented place for important rules such as mandatory reviews.",
+   "Incorrect: Copilot decides whether to store and use a memory, so a repository-level fact does not guarantee that every agent applies the rule consistently.",
+   "Incorrect: user-level preferences depend on each developer, and Copilot code review does not apply them, so the rule would not be applied consistently.",
+   "Incorrect: a longer retention keeps facts longer, but it does not make Copilot use a fact every time. The rule still needs custom instructions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory",
+  "case": "C-c"
+ },
+ {
+  "id": "3.1.2-01",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User3 at Proseware, Inc. asks Copilot CLI to remember to use a specific formatter. From the request, it is unclear whether the instruction applies to User3 only or to every collaborator in the repository.\n\nWhat should User3 expect Copilot to do?",
+  "choices": [
+   "Ask User3 which scope the memory should have.",
+   "Store the memory as a repository-level fact.",
+   "Store the memory as a user-level preference.",
+   "Store the memory in both scopes at the same time."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot chooses the scope of a memory based on who it applies to. When the scope is ambiguous, Copilot asks instead of guessing.",
+  "rationale": [
+   "Correct: Copilot picks between a repository-level fact and a user-level preference based on who the memory applies to, and asks when that is ambiguous.",
+   "Incorrect: storing a personal habit as a repository fact would share it with every collaborator. Copilot does not choose that scope by default when it is unclear.",
+   "Incorrect: storing a repository rule as a personal preference would hide it from collaborators. Copilot asks rather than defaulting to this scope.",
+   "Incorrect: Copilot stores a memory in one scope. Duplicating it in both scopes would blur who the memory applies to."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.2-02",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User1 at Northwind Traders runs Copilot CLI with several subagents. A subagent discovers a useful fact about the repository and tries to store it as a memory.\n\nWhat should User1 expect?",
+  "choices": [
+   "The subagent can read memories but cannot store them; only the root agent can store.",
+   "The subagent stores the memory, and the root agent approves it at the end of the run.",
+   "The subagent stores the memory as a user-level preference for User1 only.",
+   "The subagent stores the memory only if User1 started Copilot CLI with --enable-memory."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In Copilot CLI, only the root agent can store or vote on memories. Subagents can use relevant memories, which keeps the memory store controlled by one agent.",
+  "rationale": [
+   "Correct: subagents can read relevant memories, but only the root agent can store or vote on memories, so the subagent cannot change the memory store.",
+   "Incorrect: there is no deferred approval of memories written by subagents. Subagents cannot write to the memory store at all.",
+   "Incorrect: subagents cannot store memories in either scope. The limitation is about which agent writes, not about the type of memory.",
+   "Incorrect: --enable-memory turns on memory for prompt mode. It does not let subagents store memories."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory/create-memories"
+ },
+ {
+  "id": "3.1.2-03",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank uses Copilot CLI with an MCP server whose tools return very large JSON documents. A developer sets COPILOT_LARGE_OUTPUT_THRESHOLD_BYTES to a much larger value so that the model sees complete outputs.\n\nWhat should you expect from this change?",
+  "choices": [
+   "Less context is left for the conversation and for later tool calls.",
+   "The outputs are compacted into a summary before the model sees them.",
+   "The setting applies only to built-in tools and not to MCP server tools.",
+   "The outputs are stored as repository-level facts for later sessions."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, tool output larger than 20 KiB is saved to a file, and the model receives the path and a preview. Raising the threshold puts more output in the context window, which leaves less room for other work.",
+  "rationale": [
+   "Correct: GitHub warns that increasing the limit leaves less context available for the conversation and subsequent tool calls, because large outputs go directly into the context window.",
+   "Incorrect: the threshold decides whether output is saved to a file with a preview. It does not summarize output; compaction is a separate process.",
+   "Incorrect: the large output handling applies to all tools, including tools provided by MCP servers.",
+   "Incorrect: tool output is context for the current session. It is not stored in Copilot Memory."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.1.2-04",
+  "obj": "3.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User2 at Contoso, Ltd. finished a long Copilot CLI task on a payment service. User2 now wants Copilot to work on an unrelated documentation task, and the earlier context is not needed.\n\nWhat should User2 do?",
+  "choices": [
+   "Run /new to start a new conversation for the documentation task.",
+   "Run /compact to summarize the payment work before the new task.",
+   "Run /context to view the token usage of the payment work.",
+   "Run /session checkpoints to list the earlier work."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Between unrelated tasks, a clean context window keeps Copilot focused and leaves more space for the new work. /new or /clear starts a new conversation.",
+  "rationale": [
+   "Correct: GitHub recommends /clear or /new between unrelated tasks, because the old context is not needed and a clean window leaves more room for the new task.",
+   "Incorrect: /compact keeps a summary of the payment work in the context. It is useful when the next phase still depends on earlier work.",
+   "Incorrect: /context shows how the context window is used. It reports the problem but does not remove the unrelated history.",
+   "Incorrect: /session checkpoints lists compaction summaries. It does not change what is in the context window."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "3.1.2-05",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Tailspin Toys uses Copilot Memory with Copilot cloud agent. The team reviews which information Copilot will keep as memories.\n\nWhich two items should the team expect Copilot to avoid storing as memories? Each correct answer presents part of the solution. Choose two.",
+  "choices": [
+   "A configuration line that contains a detected secret",
+   "An instruction that applies only to the current task",
+   "A code convention with a citation to the file that uses it",
+   "A preference for a test summary before each commit",
+   "A fact learned from a pull request closed without merging"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Memories with detected secrets are rejected, and Copilot is instructed not to store short-lived or task-specific instructions. Conventions, preferences, and facts from closed pull requests can be stored.",
+  "rationale": [
+   "Correct: a memory that contains a detected secret is rejected, which keeps credentials out of the memory store.",
+   "Correct: Copilot is instructed not to store short-lived or task-specific instructions, because they are not useful in later work.",
+   "Incorrect: a code convention with a citation is a typical repository-level fact. Copilot checks the citation against the current branch before it uses the fact.",
+   "Incorrect: a working habit such as a test summary before commits is a typical user-level preference.",
+   "Incorrect: facts can be captured from pull requests that were closed without merging, so this item can be stored."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.2-06",
+  "obj": "3.1.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Relecloud explains the reach of Copilot Memory to its developers.\n\nHow should you complete the statements? To answer, select the appropriate options in the answer area.\n\nRepository-level facts are used [[1]].\n\nUser-level preferences are not applied by [[2]].",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "only in the repository where they were created",
+     "in every repository of the organization",
+     "in the repository and in its forks"
+    ],
+    "why": [
+     "Correct: repository-level facts apply only to the repository where they were created. Memory is not pooled across the repositories of an organization.",
+     "Incorrect: memory is not pooled across an organization. Knowledge that every repository needs belongs in organization custom instructions.",
+     "Incorrect: forking a repository does not copy its memories, so the fork starts without the facts of the original repository."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "Copilot code review",
+     "Copilot cloud agent",
+     "Copilot CLI"
+    ],
+    "why": [
+     "Correct: Copilot code review and Agentic Autofix do not apply user-level preferences, so reviews are not shaped by the personal preferences of one user.",
+     "Incorrect: Copilot cloud agent is one of the surfaces that can use memories, including the user-level preferences of the user who started the work.",
+     "Incorrect: Copilot CLI can use user-level preferences, and in interactive sessions it can ask the user to approve storing them."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Repository-level facts stay in their own repository and are not copied to forks. Copilot code review and Agentic Autofix do not apply user-level preferences.",
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.2-07",
+  "obj": "3.1.2",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "You need to meet the memory requirements for Repo3 and for personal working preferences.\n\nWhich actions should you take? To answer, select the appropriate options in the answer area.\n\nFor Repo3: [[1]]\n\nFor personal working preferences: [[2]]",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "A repository administrator turns off Copilot Memory for Repo3.",
+     "An organization owner disables the policy for user-level preferences.",
+     "A user with write access deletes the existing facts for Repo3."
+    ],
+    "why": [
+     "Correct: a repository administrator can turn off Copilot Memory for a single repository, which stops facts from being stored or used in Repo3 while other repositories keep them.",
+     "Incorrect: user-level preferences are controlled separately from repository-level facts. Disabling preferences leaves facts for Repo3 enabled.",
+     "Incorrect: deleting facts removes the current ones, but Copilot can store new facts the next time it works in Repo3."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "An organization owner enables the policy for user-level preferences.",
+     "No action is needed, because user-level preferences are on by default.",
+     "An organization owner sets Repository access to All repositories."
+    ],
+    "why": [
+     "Correct: for Copilot Business and Copilot Enterprise, user-level preferences are off until a policy enables them, and nobody has configured that policy.",
+     "Incorrect: preferences are on by default for individual plans such as Copilot Pro, but not for Copilot Business, which Proseware uses.",
+     "Incorrect: Repository access controls repository-level facts. It is independent of the policy for user-level preferences."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "Repository-level facts can be turned off for one repository by its administrator. On Copilot Business, user-level preferences stay off until an owner enables the policy.",
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory/manage-as-administrator",
+  "case": "C-c"
+ },
+ {
+  "id": "3.1.3-01",
+  "obj": "3.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Litware, Inc., Copilot keeps applying an outdated repository-level fact about a deprecated build script. User1 has write access to the repository and must stop Copilot from using this fact.\n\nWhat should User1 do?",
+  "choices": [
+   "Delete the fact in the Copilot Memory settings of the repository.",
+   "Edit the text of the fact in the Copilot Memory settings of the repository.",
+   "Downvote the fact on the settings page so that Copilot hides it.",
+   "Wait for the fact to expire at the end of its retention period."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Users cannot edit memories in the settings, and Copilot itself does the voting. To make sure a memory is no longer used, you delete it explicitly.",
+  "rationale": [
+   "Correct: GitHub states that to make sure a memory is not used, you delete it explicitly. Users with write access can delete repository-level facts in the repository settings.",
+   "Incorrect: you cannot create or edit an individual memory in the settings on GitHub.com. You can only view and delete memories there.",
+   "Incorrect: Copilot upvotes and downvotes memories automatically based on usefulness. Users do not vote on memories in the settings.",
+   "Incorrect: an outdated fact may still be upvoted and stay alive, and it keeps influencing Copilot until it expires. Deletion takes effect immediately."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.3-02",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. configures the retention period for repository-level facts. The enterprise owner sets 30 days, and an organization owner sets 60 days for the organization.\n\nWhat retention period should you expect for repository-level facts in that organization?",
+  "choices": [
+   "30 days, because the lower value applies",
+   "60 days, because the organization value applies",
+   "90 days, because the default value applies",
+   "45 days, because the two values are averaged"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When the organization and enterprise retention settings differ, the lower value applies. This lets an enterprise enforce a shorter maximum retention.",
+  "rationale": [
+   "Correct: if organization and enterprise values differ, the lower value applies, so facts in that organization expire after 30 days.",
+   "Incorrect: an organization cannot extend retention beyond a lower value set at the enterprise level. The more restrictive value wins.",
+   "Incorrect: 90 days is the default when nothing is configured. Here both levels set a value, so the default no longer applies.",
+   "Incorrect: GitHub does not combine the settings arithmetically. The lower of the two configured values applies."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.3-03",
+  "obj": "3.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank lowers the retention period for repository-level facts from 90 days to 30 days. Many facts in Repo1 are 60 days old.\n\nWhat should you expect for the existing facts?",
+  "choices": [
+   "They adopt the new period the next time Copilot reinforces them.",
+   "They are deleted at once, because they are older than 30 days.",
+   "They are re-dated, and all of them expire 30 days after the change.",
+   "They keep the 90-day period, and only new facts use 30 days."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Changing the retention setting does not re-date existing facts. Each existing fact adopts the new period at its next reinforcement, when Copilot upvotes it.",
+  "rationale": [
+   "Correct: GitHub documents that existing facts are not re-dated when the setting changes. They adopt the new period at their next reinforcement.",
+   "Incorrect: the change does not trigger an immediate cleanup. To remove a fact right away, you delete it explicitly.",
+   "Incorrect: existing facts are not re-dated by the change. Their expiry changes only when Copilot reinforces them.",
+   "Incorrect: existing facts do not keep the 90-day period permanently. Each one adopts the 30-day period when Copilot next reinforces it with an upvote."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.3-04",
+  "obj": "3.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Adventure Works, Copilot retrieves a repository-level fact in many sessions over three months, but it never upvotes the fact. The repository uses the default retention settings.\n\nWhat should you expect for this fact?",
+  "choices": [
+   "It expires 90 days after it was created, because retrieval does not extend it.",
+   "It stays active, because each retrieval resets the 90-day retention period.",
+   "It expires after 7 days, because facts that are not upvoted use the minimum.",
+   "It stays active until a user with write access deletes it from the settings."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The retention period starts at creation and is reset only when Copilot upvotes the memory. Simply retrieving a memory does not extend it.",
+  "rationale": [
+   "Correct: retrieval alone does not reset the period. With no upvote, the fact expires 90 days after creation under the default setting.",
+   "Incorrect: GitHub states that simply retrieving a memory does not extend its retention period. Only an upvote by Copilot resets it.",
+   "Incorrect: 7 days is the lowest value an owner can configure. Facts that are not upvoted use the configured period, 90 days by default.",
+   "Incorrect: memories expire automatically. Deletion is needed only to remove a memory before it expires."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory/manage-as-administrator"
+ },
+ {
+  "id": "3.1.3-05",
+  "obj": "3.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User2 at Tailspin Toys finished the design phase of a feature in a long Copilot CLI session and is about to start implementation. User2 wants to free up context space now, while keeping the essentials of the design discussion.\n\nWhat should User2 do?",
+  "choices": [
+   "Run /compact before the implementation phase starts.",
+   "Run /clear before the implementation phase starts.",
+   "Run /context before the implementation phase starts.",
+   "Run /exit and start a new session for implementation."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Manual compaction replaces the history with a summary that keeps the goals, decisions, and next steps. It is useful before a new phase of work.",
+  "rationale": [
+   "Correct: /compact summarizes the conversation and frees most of the context window, and GitHub suggests it when you are about to start a new phase of work.",
+   "Incorrect: /clear starts a new conversation and drops the design discussion entirely, so the essentials are lost.",
+   "Incorrect: /context shows token usage. It helps you decide to compact, but it does not free any context.",
+   "Incorrect: a new session starts without the design discussion. /exit saves the old session, but the new one does not include its context."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/context-management"
+ },
+ {
+  "id": "3.1.3-06",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Contoso, Ltd. reviews the lifecycle rules of Copilot Memory.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "An organization owner can set the retention of user-level preferences to 180 days.",
+   "A memory that is downvoted past a threshold is no longer used.",
+   "Turning off user-level preferences also turns off repository-level facts.",
+   "A memory that is hidden from use can remain stored until it expires."
+  ],
+  "answer": [
+   1,
+   3
+  ],
+  "explanation": "Retention can be configured only for repository-level facts. Downvoted memories stop being used and hidden ones can stay stored until they expire, and the two memory types are controlled independently.",
+  "rationale": [
+   "No: owners can configure a period of 7 to 180 days for repository-level facts only. User-level preferences always use the default period.",
+   "Yes: when Copilot downvotes a memory past a threshold, the memory is no longer used and is deleted after a period of disuse.",
+   "No: the two types are controlled separately. Turning off one memory type does not turn off the other.",
+   "Yes: hidden memories can remain stored until they expire, which is why you delete a memory explicitly when it must not be used."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "3.1.3-07",
+  "obj": "3.1.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User3 at Proseware, Inc. uses Copilot CLI interactively on a workstation. Before a customer demonstration, User3 must check the local memory setting, prevent Copilot CLI from using or storing any memories on the workstation, confirm the change, and restore the setting after the demonstration.\n\nWhich four actions should User3 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run /memory show to check the current local setting.",
+   "Run /memory off to disable both memory types on the workstation.",
+   "Run /memory show to confirm that memory is now disabled.",
+   "Run /memory on after the demonstration to clear the local setting.",
+   "Start Copilot CLI with --enable-memory before the demonstration.",
+   "Delete the repository-level facts in the settings of the repository."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "In an interactive Copilot CLI session, /memory off disables both memory types on that machine, /memory show reports the local setting, and /memory on clears the setting afterwards.",
+  "rationale": [
+   "Step 1: /memory show reports the local memory setting, so User3 knows the starting state.",
+   "Step 2: /memory off disables both repository-level facts and user-level preferences for Copilot CLI on this machine.",
+   "Step 3: running /memory show again confirms that the local setting is now off before the demonstration starts.",
+   "Step 4: /memory on clears the local setting, so memory behaves as configured by the account and policies again.",
+   "Incorrect: --enable-memory turns memory on for prompt mode. It is the opposite of what User3 needs before the demonstration.",
+   "Incorrect: deleting facts removes them for every collaborator and does not stop Copilot from storing new ones. A local setting is the right scope."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ }
+]

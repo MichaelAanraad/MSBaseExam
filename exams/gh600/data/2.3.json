@@ -1,0 +1,978 @@
+[
+ {
+  "id": "2.3.1-01",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Contoso, Ltd. starts a Copilot session from the chat interface on the GitHub website to fix a small bug in a Node.js repository. The repository has no setup steps, custom runners, or Windows requirements.\n\nWhich environment should the developer use for the session?",
+  "choices": [
+   "Cloud, which runs the session in a cloud sandbox",
+   "Actions, which runs the session on a GitHub runner",
+   "A custom environment registered from a Linux machine",
+   "The local machine of the developer by using Copilot CLI"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Where you can choose between Cloud and Actions, Cloud is the default. GitHub recommends Actions only when the repository depends on customizations that work only on GitHub Actions.",
+  "rationale": [
+   "Correct: Cloud is the default environment, and the repository has no customizations that require GitHub Actions.",
+   "Incorrect: Actions is for repositories that need setup steps, larger or self-hosted runners, or a Windows development environment.",
+   "Incorrect: a custom environment is for teams that need more customization and want to manage the host, its tools, and its lifecycle themselves.",
+   "Incorrect: a local CLI session uses the resources of the developer machine. The developer started the task from GitHub and needs no local files."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes"
+ },
+ {
+  "id": "2.3.1-02",
+  "obj": "2.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Fabrikam, Inc. uses Copilot CLI. The developer wants an interactive session in which the commands that Copilot runs execute in a GitHub-hosted environment instead of on the laptop.\n\nWhich command should the developer run?",
+  "choices": [
+   "copilot --cloud",
+   "copilot -p \"fix the bug\" --cloud",
+   "copilot --allow-all",
+   "copilot --share-gist"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The --cloud option launches an interactive Copilot CLI session inside a cloud sandbox, so commands run there instead of on the local machine. It works only for interactive sessions.",
+  "rationale": [
+   "Correct: copilot --cloud starts an interactive session in a cloud sandbox, and the option applies only to that session.",
+   "Incorrect: --cloud can only be used for interactive sessions, so it cannot be combined with the -p option.",
+   "Incorrect: --allow-all grants all tool, path, and URL permissions. The session still runs on the local machine.",
+   "Incorrect: --share-gist shares the session transcript as a gist. It does not change where the session runs."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes"
+ },
+ {
+  "id": "2.3.1-03",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Northwind Traders delegates several tasks to Copilot. Each task has different needs for the execution context.\n\nWhich environment should you use for each task? To answer, drag the appropriate environments to the correct tasks. Each environment may be used once, more than once, or not at all.",
+  "choices": [
+   "Cloud",
+   "Actions",
+   "Local machine with Copilot CLI",
+   "Custom environment"
+  ],
+  "answer": [
+   1,
+   0,
+   2,
+   1
+  ],
+  "explanation": "Cloud is the default and supports continuing sessions from any client. Actions is required for setup steps, larger or self-hosted runners, and Windows. Local sessions run on the machine of the developer, where Copilot can work with local files.",
+  "rationale": [
+   "Setup steps, including steps that sign in to cloud providers with OIDC, run only on GitHub Actions, so the task needs the Actions environment.",
+   "The repository needs no Actions-only customizations, so the default Cloud environment fits. A cloud sandbox runs on GitHub-hosted infrastructure, so the developer can pick up the session on any client, including GitHub Mobile.",
+   "Only a session that runs on the developer machine can work with files that exist only on that machine. Cloud sessions cannot read local files.",
+   "A Windows development environment is an Actions-only customization that you configure with runs-on in copilot-setup-steps.yml."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes",
+  "targets": [
+   "Sign in to Azure with OIDC in a setup step before the agent starts",
+   "Start a session from VS Code for a repository without customizations, and continue it later from GitHub Mobile",
+   "Work with files that exist only on the laptop of the developer",
+   "Build a project that uses a Windows-based toolchain"
+  ],
+  "notes": [
+   "Runs the session in a GitHub-hosted Linux sandbox. It is the default and supports continuing sessions from any client.",
+   "Runs the session in a GitHub Actions job. It is required for setup steps, larger or self-hosted runners, and Windows.",
+   "Runs the session on the machine of the developer, where commands can reach local files.",
+   "A Linux machine or codespace that you register and manage yourself. It does not provide a Windows environment."
+  ]
+ },
+ {
+  "id": "2.3.1-04",
+  "obj": "2.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "During a Copilot session in a cloud sandbox at Tailspin Toys, the agent reports that a package host is blocked by the firewall. A repository administrator adds the host to the custom allowlist.\n\nWhat should you do next so that Copilot can reach the host?",
+  "choices": [
+   "Start a new session",
+   "Mention @copilot to retry",
+   "Rerun the setup steps",
+   "Restart the open session"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Network access from a cloud sandbox follows the Copilot firewall settings. Allowlist changes do not apply to sessions that are already running, so you add the host and then start a new session.",
+  "rationale": [
+   "Correct: a new session picks up the updated allowlist. The documentation says to add the host and then start a new session.",
+   "Incorrect: a comment continues work in the same running session, and allowlist changes do not apply to sessions that are already running.",
+   "Incorrect: setup steps run only on GitHub Actions, and they do not change the firewall rules of the session.",
+   "Incorrect: resuming a stopped session restores its saved state. Allowlist changes apply only to sessions that start after the change."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes"
+ },
+ {
+  "id": "2.3.1-05",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has a copilot-setup-steps.yml file on the default branch that installs private dependencies. A developer delegates a task to Copilot and keeps the default environment. The session starts, but the dependencies are missing.\n\nWhat should the developer do?",
+  "choices": [
+   "Start a new session and select Actions as the environment",
+   "Switch the running session to Actions in the session settings",
+   "Mention @copilot and ask it to run the setup steps workflow",
+   "Add a dotfiles repository with a .copilot directory to the account"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Cloud is the default environment, and setup steps apply only to sessions that run on Actions. The environment is chosen when the session starts and cannot be changed afterward.",
+  "rationale": [
+   "Correct: setup steps run only on GitHub Actions, and the environment cannot be changed for a running session, so a new session on Actions is needed.",
+   "Incorrect: you choose the environment when the session starts, and you cannot change it afterward. To use a different environment, start a new session.",
+   "Incorrect: in a cloud sandbox, the copilot-setup-steps job does not run before the agent starts, and asking the agent does not change the environment.",
+   "Incorrect: dotfiles bring personal instructions, skills, and custom agents to cloud sandboxes. They are copied without running installation scripts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes"
+ },
+ {
+  "id": "2.3.1-06",
+  "obj": "2.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud must meet the build and test requirements for billing-api.\n\nWhat should you configure?",
+  "choices": [
+   "The Actions environment, with a copilot-setup-steps.yml job that restores dependencies on a Windows larger runner",
+   "The Cloud environment, with a copilot-setup-steps.yml job that restores dependencies on a Windows larger runner",
+   "The Cloud environment, with a dotfiles repository that restores the dependencies when the sandbox is created",
+   "A custom environment registered from a Windows machine that the team manages and keeps updated"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Windows development environments, larger runners, and setup steps are customizations that work only when Copilot runs on GitHub Actions. You set runs-on to the Windows runner label and restore dependencies in the setup steps.",
+  "rationale": [
+   "Correct: the Actions environment runs copilot-setup-steps.yml, which restores the dependencies before the agent starts, and runs-on selects the Windows runner.",
+   "Incorrect: setup steps and Windows runners apply only to sessions on GitHub Actions. They do not apply to sessions in a cloud sandbox.",
+   "Incorrect: cloud sandboxes are Linux, and dotfiles are copied without running installation scripts, so they cannot restore dependencies.",
+   "Incorrect: a custom environment is a Linux machine or codespace that you register, so it does not meet the Windows requirement."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment",
+  "case": "C-b"
+ },
+ {
+  "id": "2.3.2-01",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses Copilot Business. Copilot cloud agent must be available only in the repositories of the payments team. You are an organization owner.\n\nWhich setting should you configure?",
+  "choices": [
+   "Repository access on the Copilot > Cloud page of the organization settings",
+   "Allow repository custom rules on the Copilot > Internet access settings page",
+   "A branch ruleset that targets the default branch of every other repository",
+   "The Copilot in the cloud policy on the Copilot policies page of the organization"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, the cloud agent is available in all repositories of an organization where Copilot in the cloud is enabled. The Repository access control lets organization owners choose the repositories that allow the agent.",
+  "rationale": [
+   "Correct: Repository access with Selected repositories limits the cloud agent to the repositories that you choose.",
+   "Incorrect: this setting controls whether repository administrators can add firewall allowlist entries. It does not control where the agent runs.",
+   "Incorrect: rulesets protect branches. They do not stop users from delegating tasks to Copilot cloud agent in a repository.",
+   "Incorrect: the policy turns Copilot in the cloud on or off for members. It does not choose the repositories where the agent is available."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-copilot-in-the-cloud"
+ },
+ {
+  "id": "2.3.2-02",
+  "obj": "2.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation creates a custom agent named schema-reviewer for Copilot cloud agent. The agent must be available only in the repository named data-models.\n\nWhich location should you use for the agent profile?",
+  "choices": [
+   ".github/agents/schema-reviewer.agent.md in data-models",
+   "agents/schema-reviewer.agent.md in .github-private",
+   ".github/copilot/settings.json in data-models",
+   ".github/workflows/copilot-setup-steps.yml in data-models"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Repository-level agent profiles are stored in the .github/agents directory of the repository. Profiles in the root agents directory of a .github or .github-private repository are available across the organization or enterprise.",
+  "rationale": [
+   "Correct: a profile in .github/agents of data-models is a repository-level agent, so it is available only in that repository.",
+   "Incorrect: a profile in the root agents directory of .github-private is an organization-level agent, which is available in all repositories.",
+   "Incorrect: .github/copilot/settings.json configures plugins and marketplaces for Copilot in the cloud. It does not define custom agents.",
+   "Incorrect: copilot-setup-steps.yml prepares the Actions environment before the agent starts. It cannot define an agent profile."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents"
+ },
+ {
+  "id": "2.3.2-03",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys currently allows Copilot cloud agent in all repositories. The organization must allow the agent only in the web and api repositories. You are an organization owner.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Click Copilot, and then click Cloud in the sidebar.",
+   "In the Select repositories dialog, select web and api, and then click Select.",
+   "Open the Settings page of the organization.",
+   "In the Repository access control, choose Selected repositories.",
+   "Click Copilot, and then click Internet access in the sidebar.",
+   "Set the Copilot in the cloud policy to Disabled."
+  ],
+  "answer": [
+   2,
+   0,
+   3,
+   1
+  ],
+  "explanation": "Organization owners control where the agent is available on the Copilot > Cloud page of the organization settings. Choosing Selected repositories opens a dialog in which you pick the repositories that allow the agent.",
+  "rationale": [
+   "Step 2: the Cloud page under Copilot in the organization settings contains the Repository access control.",
+   "Step 4: the Select repositories dialog lists the repositories, and clicking Select saves the choice.",
+   "Step 1: the repository access setting is an organization setting, so you start on the Settings page of the organization.",
+   "Step 3: Selected repositories limits the agent to the repositories that you choose instead of all repositories.",
+   "Incorrect: the Internet access page configures the firewall. It does not control which repositories allow the agent.",
+   "Incorrect: disabling the policy turns off Copilot in the cloud for members everywhere, including web and api."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-copilot-in-the-cloud"
+ },
+ {
+  "id": "2.3.2-04",
+  "obj": "2.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys adds an MCP server for a ticketing system to the repository MCP configuration of a single repository. Every user with write access to the repository will be able to use the server through Copilot cloud agent.\n\nWhich credential should you use for the server?",
+  "choices": [
+   "A token of a service account stored as an Agents secret in the repository",
+   "A personal token of the administrator stored as an Agents secret",
+   "A personal token that each user adds as a personal secret",
+   "A token of a service account that is written into the JSON configuration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A repository-level MCP configuration is available to anyone with write access, so GitHub recommends credentials of a service account. Repository configurations cannot reference personal secrets.",
+  "rationale": [
+   "Correct: a service account token limits what the server can do to what the repository needs, and the Agents secret keeps it out of the configuration.",
+   "Incorrect: every user with write access would act with the personal access of the administrator, which grants more than the repository needs.",
+   "Incorrect: repository MCP configurations cannot reference personal secrets, so the server would not receive the token.",
+   "Incorrect: writing a secret directly into the configuration exposes it. Reference an Agents secret with a COPILOT_MCP_ name instead."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/customizations/mcp"
+ },
+ {
+  "id": "2.3.2-05",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. has an organization-level custom agent named reviewer in the .github-private repository. The finance-api repository also contains a repository-level agent profile named reviewer with different instructions.\n\nWhich agent should you expect Copilot to use when a user selects reviewer in finance-api?",
+  "choices": [
+   "The repository-level agent in finance-api",
+   "The organization-level agent in .github-private",
+   "A merged agent that combines both profiles",
+   "The agent whose profile was committed last"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "In a naming conflict, the lowest level configuration overrides higher levels. A repository-level agent takes precedence over an organization-level agent, which takes precedence over an enterprise-level agent.",
+  "rationale": [
+   "Correct: the repository-level profile is the lowest level, so it overrides the organization-level agent with the same name in finance-api.",
+   "Incorrect: the organization-level agent is used only in repositories that do not define an agent with the same name.",
+   "Incorrect: profiles with the same name are not merged. One configuration overrides the other.",
+   "Incorrect: commit time does not resolve naming conflicts. The level of the configuration determines which agent wins."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.3.2-06",
+  "obj": "2.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. stores an Agents secret named COPILOT_MCP_API_KEY at the organization level. The inventory repository needs a different key for the same MCP server, and all other repositories must keep the organization value. The solution must minimize administrative effort.\n\nWhat should you do?",
+  "choices": [
+   "Create a repository-level Agents secret named COPILOT_MCP_API_KEY in inventory",
+   "Create a repository-level Actions secret named COPILOT_MCP_API_KEY in inventory",
+   "Rename the organization secret, and create one secret for each repository",
+   "Create a repository-level Agents variable named COPILOT_MCP_API_KEY in inventory"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agents secrets can be defined at the organization or repository level. When the same name exists at more than one level, the lowest level wins, so a repository secret overrides the organization secret for that repository only.",
+  "rationale": [
+   "Correct: the repository-level secret overrides the organization-level secret for inventory, and all other repositories keep the organization value.",
+   "Incorrect: Actions secrets are used by GitHub Actions workflows. Copilot cloud agent reads Agents secrets.",
+   "Incorrect: this could work, but it adds a secret for every repository, which does not minimize administrative effort. A single repository-level override meets the requirement.",
+   "Incorrect: variables are not encrypted and are not available when Copilot runs in a cloud sandbox. Use a secret for keys."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
+ },
+ {
+  "id": "2.3.3-01",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. wants to run Copilot in its GitHub Actions workflows to automate routine repository tasks. The company wants the approach that GitHub recommends for most automation use cases.\n\nWhich approach should you use?",
+  "choices": [
+   "GitHub Agentic Workflows",
+   "copilot -p in a workflow step",
+   "A copilot-setup-steps.yml file",
+   "A scheduled Copilot code review"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "GitHub recommends GitHub Agentic Workflows for most automation use cases. Agentic workflows use GITHUB_TOKEN authentication by default and include additional guardrails for automated environments.",
+  "rationale": [
+   "Correct: GitHub Agentic Workflows is the recommended approach, with GITHUB_TOKEN authentication and guardrails suited for automation.",
+   "Incorrect: invoking Copilot CLI directly is supported, but it gives the CLI broad access to the workflow environment and is not the recommended default.",
+   "Incorrect: copilot-setup-steps.yml prepares the environment for Copilot cloud agent. It does not invoke Copilot from your own workflows.",
+   "Incorrect: Copilot code review reviews pull requests. It does not automate general repository tasks in workflows."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli-in-actions"
+ },
+ {
+  "id": "2.3.3-02",
+  "obj": "2.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders runs the following step in a GitHub Actions workflow:\n\ncopilot -p \"Write a summary of today's commits to summary.md\" --allow-tool='shell(git:*)' --no-ask-user\n\nThe job succeeds, but summary.md is never created. The log shows that a file write was denied.\n\nWhat should you add to the command?",
+  "choices": [
+   "--allow-tool=write",
+   "--allow-url=github.com",
+   "--add-dir=.",
+   "--share=summary.md"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Non-interactive runs cannot show approval prompts, so any action that is not pre-approved is denied automatically. The GitHub Docs example pre-approves writes with --allow-tool=write.",
+  "rationale": [
+   "Correct: --allow-tool=write pre-approves file writes, so Copilot can create summary.md without an approval prompt.",
+   "Incorrect: --allow-url pre-approves access to a URL or domain. The denied action is a file write, not a network request.",
+   "Incorrect: --add-dir adds a directory to the allowed paths, but writing still needs the write tool permission.",
+   "Incorrect: --share writes the session transcript to a file. It does not grant permission to write summary.md."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/automate-copilot-cli/automate-with-actions"
+ },
+ {
+  "id": "2.3.3-03",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Tailspin Toys invokes Copilot CLI directly in a workflow in an organization-owned repository. The workflow must authenticate without a personal access token or any stored secrets.\n\nHow should you complete the workflow? To answer, select the appropriate options in the answer area.\n\n```yaml\npermissions:\n  contents: read\n  [[1]]\njobs:\n  copilot:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v6\n      - run: npm install -g @github/copilot\n      - run: copilot -p \"Summarize the latest commit\" -s --allow-tool='shell(git show:*)'\n        env:\n          [[2]]\n```",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "With the GITHUB_TOKEN approach, the workflow grants copilot-requests: write so it can make Copilot requests, and passes the token as GITHUB_TOKEN: ${{ github.token }}. No additional secrets are needed.",
+  "rationale": [],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli-in-actions",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "copilot-requests: write",
+     "id-token: write",
+     "pull-requests: write"
+    ],
+    "why": [
+     "Correct: the copilot-requests: write permission is required for the workflow to make Copilot requests with GITHUB_TOKEN.",
+     "Incorrect: id-token: write lets a workflow request an OIDC token, for example to sign in to Azure. It does not allow Copilot requests.",
+     "Incorrect: pull-requests: write lets the token change pull requests. It does not allow the workflow to make Copilot requests."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "GITHUB_TOKEN: ${{ github.token }}",
+     "COPILOT_GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}",
+     "COPILOT_MCP_TOKEN: ${{ github.token }}"
+    ],
+    "why": [
+     "Correct: the GITHUB_TOKEN provided by GitHub Actions handles authentication automatically, so no PAT or stored secret is needed.",
+     "Incorrect: this is the PAT approach, which needs a stored secret. The requirement rules out personal access tokens and stored secrets.",
+     "Incorrect: COPILOT_MCP_ names are used for Agents secrets that MCP servers receive. The CLI does not read this variable to authenticate."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.3.3-04",
+  "obj": "2.3.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. wants a workflow that runs Copilot CLI every evening to summarize the changes of the day. The workflow must authenticate with a fine-grained personal access token. The workflow file already has the schedule trigger, a checkout step, and a step that installs the CLI by running npm install -g @github/copilot.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a fine-grained personal access token that has the Copilot Requests permission.",
+   "Add a step that runs copilot -p with the token passed in the COPILOT_GITHUB_TOKEN environment variable.",
+   "Store the token as an Actions repository secret.",
+   "Store the token as an Agents secret named COPILOT_MCP_GITHUB_TOKEN.",
+   "Add the CLI installation to a copilot-setup-steps.yml file."
+  ],
+  "answer": [
+   0,
+   2,
+   1
+  ],
+  "explanation": "With the PAT option, you create a fine-grained PAT with the Copilot Requests permission, store it as an Actions secret, and then pass the secret to the run step as COPILOT_GITHUB_TOKEN. The run step comes after the installation step that already exists.",
+  "rationale": [
+   "Step 1: the token must exist and have the Copilot Requests permission before you can store it.",
+   "Step 3: the run step reads the stored secret into the COPILOT_GITHUB_TOKEN environment variable and runs the prompt in programmatic mode.",
+   "Step 2: the workflow can read the token only from a secret, such as PERSONAL_ACCESS_TOKEN, so you store the token before the step references it.",
+   "Incorrect: Agents secrets are for Copilot cloud agent and its MCP servers. A normal workflow step reads Actions secrets.",
+   "Incorrect: copilot-setup-steps.yml prepares the environment for Copilot cloud agent. It is not part of your own workflow."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/automate-copilot-cli/automate-with-actions"
+ },
+ {
+  "id": "2.3.3-05",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation runs Copilot CLI in a workflow with GITHUB_TOKEN authentication. The workflow grants copilot-requests: write and passes GITHUB_TOKEN to the step, and the latest CLI is installed. Copilot requests from the workflow are still rejected.\n\nWhat should you check?",
+  "choices": [
+   "The Allow use of Copilot CLI billed to the organization policy",
+   "The Copilot in the cloud policy on the Copilot policies page",
+   "The Require approval for workflow runs setting of the agent",
+   "The MCP servers in Copilot policy on the Copilot policies page"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For workflows to use Copilot CLI with GITHUB_TOKEN, the organization policy Allow use of Copilot CLI billed to the organization under Copilot CLI must be enabled. It is enabled by default when Copilot CLI is turned on, but an owner can change it.",
+  "rationale": [
+   "Correct: this Copilot CLI policy must be enabled for workflows in the organization to use Copilot CLI with GITHUB_TOKEN.",
+   "Incorrect: the Copilot in the cloud policy controls the chat interface, delegation to Copilot, and cloud sandbox sessions, not CLI billing for workflows.",
+   "Incorrect: this setting controls whether workflows run automatically when Copilot cloud agent pushes. It does not affect CLI authentication.",
+   "Incorrect: this policy controls MCP server use. The workflow does not depend on MCP servers to make Copilot requests."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli-in-actions"
+ },
+ {
+  "id": "2.3.3-06",
+  "obj": "2.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. passes a deployment key to a Copilot CLI step in a workflow by using an environment variable named DEPLOY_KEY. The value must be redacted from the output of the CLI, in the same way as the tokens that the CLI redacts by default.\n\nWhich option should you add to the copilot command?",
+  "choices": [
+   "--secret-env-vars=DEPLOY_KEY",
+   "--deny-tool='shell(env)'",
+   "--excluded-tools=DEPLOY_KEY",
+   "--output-format=json"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The --secret-env-vars option names environment variables whose values are redacted from output. GITHUB_TOKEN and COPILOT_GITHUB_TOKEN are redacted by default.",
+  "rationale": [
+   "Correct: --secret-env-vars adds DEPLOY_KEY to the variables whose values the CLI redacts, alongside the tokens that are redacted by default.",
+   "Incorrect: denying one shell command reduces one way to read the value, but it does not redact the value if it appears in the output.",
+   "Incorrect: --excluded-tools removes tools from the model. It takes tool names, not environment variables, and it does not redact anything.",
+   "Incorrect: --output-format=json changes the output to JSONL. It does not hide secret values."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference"
+ },
+ {
+  "id": "2.3.4-01",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank assigns an issue to Copilot cloud agent on GitHub. The fix must be based on the release/2.0 branch, and the pull request must target that branch instead of the default branch.\n\nWhat should you do when you assign the issue?",
+  "choices": [
+   "Select release/2.0 as the base branch in the assignment options",
+   "Change the default branch of the repository to release/2.0",
+   "Name release/2.0 in a checkout step of copilot-setup-steps.yml",
+   "Add a comment that asks Copilot to rebase the default branch"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When you assign an issue to Copilot, you can change the base branch. Copilot creates a new branch from the base branch, and its pull request targets that branch. Without a choice, the default branch is used.",
+  "rationale": [
+   "Correct: the base branch option makes Copilot branch from release/2.0 and open the pull request against release/2.0.",
+   "Incorrect: changing the default branch affects every user and workflow in the repository. The base branch option scopes a single task.",
+   "Incorrect: setup steps prepare the environment before Copilot starts. They do not set the base branch of the task or the branch that the pull request targets.",
+   "Incorrect: a comment after assignment does not change the base branch. Choose the base branch when you assign the issue."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/use-cloud-agent-on-github"
+ },
+ {
+  "id": "2.3.4-02",
+  "obj": "2.3.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Litware, Inc. starts Copilot cloud agent tasks from a terminal by using GitHub CLI. A task must use the hotfix branch as its base branch.\n\nWhich command should the developer run?",
+  "choices": [
+   "gh agent-task create \"Fix the timeout\" --base hotfix",
+   "gh agent-task view --base hotfix \"Fix the timeout\"",
+   "gh agent-task list --base hotfix",
+   "copilot -p \"Fix the timeout\" --add-dir=hotfix"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "gh agent-task create starts a Copilot cloud agent task from GitHub CLI, and --base sets the base branch. The view and list commands inspect existing tasks.",
+  "rationale": [
+   "Correct: gh agent-task create starts a new task, and --base makes Copilot use the hotfix branch as the base branch.",
+   "Incorrect: gh agent-task view shows an existing task and its logs. It cannot start a new task.",
+   "Incorrect: gh agent-task list lists recent tasks. It does not create a task.",
+   "Incorrect: this runs Copilot CLI locally, and --add-dir adds a directory to the allowed paths. It does not create a cloud agent task."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/use-cloud-agent-from-cli"
+ },
+ {
+  "id": "2.3.4-03",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A reviewer at Contoso, Ltd. asks for changes to a pull request that Copilot cloud agent created. The changes must be added to the same pull request instead of a new one.\n\nWhat should the reviewer do?",
+  "choices": [
+   "Mention @copilot in a comment on the pull request",
+   "Assign a new issue that describes the changes to Copilot",
+   "Start a new task that uses the same base branch",
+   "Close the pull request and reassign the original issue"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When Copilot is triggered by a mention of @copilot on an existing pull request, it has write access to the branch of that pull request. In other cases, Copilot creates a new copilot/ branch.",
+  "rationale": [
+   "Correct: mentioning @copilot on the pull request lets Copilot push to the pull request branch, so the changes are added to the same pull request.",
+   "Incorrect: a new issue starts a new task, which creates a new copilot/ branch and a new pull request.",
+   "Incorrect: a new task also creates a new copilot/ branch, even when it uses the same base branch.",
+   "Incorrect: reassigning the issue starts a new task, which creates a new copilot/ branch and a new pull request instead of updating the existing one."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.3.4-04",
+  "obj": "2.3.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys changes the profile of a repository-level custom agent on a branch named agent-v2 to test new instructions. The default branch still has the old profile.\n\nWhich action should you take so that the test uses the new profile without changing the default branch?",
+  "choices": [
+   "Assign a task to the custom agent and select agent-v2 as the branch",
+   "Merge agent-v2 into the default branch and roll back after the test",
+   "Copy the profile into the .github-private repository under agents",
+   "Rename the profile on agent-v2 so that its name differs"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom agent versions are based on the commit SHAs of the profile. When you assign a task, the agent is instantiated from the latest version of the profile for that repository and branch.",
+  "rationale": [
+   "Correct: the agent uses the latest version of the profile on the selected branch, so a task on agent-v2 tests the new instructions.",
+   "Incorrect: merging changes the default branch for everyone during the test, which the requirement rules out.",
+   "Incorrect: this creates an organization-level agent, and the repository-level agent with the same name still wins in the repository.",
+   "Incorrect: renaming creates a different agent, and it still exists only on agent-v2. Branch selection is what scopes the version."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.3.4-05",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Fabrikam, Inc. assigns a new issue to Copilot cloud agent. The default branch has a ruleset with required status checks.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Copilot creates a new copilot/ branch for the task and can push only to that branch.",
+   "Copilot can run git push to any branch that the assigning user can write to.",
+   "The ruleset and required checks of the repository apply to the work of Copilot.",
+   "Copilot can mark its draft pull request as Ready for review after the checks pass."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "For a new task, Copilot gets a new copilot/ branch and can push only to it. It performs only simple push operations, is subject to branch protections and required checks, and cannot mark its pull requests ready for review.",
+  "rationale": [
+   "Yes: when Copilot is not triggered on an existing pull request, a new copilot/ branch is created, and the agent can only push to that branch.",
+   "No: Copilot can only perform simple push operations to its single branch. It cannot directly run git push or other Git commands.",
+   "Yes: the agent is subject to any branch protections and required checks for the working repository.",
+   "No: draft pull requests from Copilot must be reviewed by a human. Copilot cannot mark its pull requests as Ready for review."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.3.4-06",
+  "obj": "2.3.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation assigns a task to a custom agent named api-docs. The agent opens a pull request. Later, a maintainer merges a new version of the api-docs profile into the default branch. A reviewer then mentions @copilot on the pull request to request a change.\n\nWhich version of the profile should you expect Copilot to use for the change?",
+  "choices": [
+   "The version that was used when the pull request was created",
+   "The latest version of the profile on the default branch",
+   "The latest version of the profile on the pull request branch",
+   "No custom agent, because the default Copilot agent is used"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a custom agent creates a pull request, interactions within the pull request use the same version of the custom agent for consistency. Mentioning @copilot on a pull request created by a custom agent continues with that agent.",
+  "rationale": [
+   "Correct: interactions within the pull request use the same version of the custom agent that created it, so the new default branch version is not used.",
+   "Incorrect: a new task would use the latest profile on its branch, but follow-up work in an existing pull request keeps the original version.",
+   "Incorrect: the profile version is tied to the agent that created the pull request, not to the latest commit on the pull request branch.",
+   "Incorrect: Copilot continues with the custom agent that created the pull request rather than switching to the default agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.3.5-01",
+  "obj": "2.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent pushes changes to a pull request at Wingtip Toys. The CI workflows of the repository do not start. The repository uses the default Copilot cloud agent settings.\n\nWhat should a user with write access do after reviewing the changes?",
+  "choices": [
+   "Click Approve and run workflows in the merge box",
+   "Mark the pull request as Ready for review",
+   "Mention @copilot and ask it to run the workflows",
+   "Rerun the copilot-setup-steps workflow"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, workflows are not triggered on Copilot pull requests until a user with write access reviews the code and clicks Approve and run workflows. This prevents unreviewed code from running in privileged workflows.",
+  "rationale": [
+   "Correct: Approve and run workflows in the merge box starts the workflows after a user with write access reviews the changes.",
+   "Incorrect: marking the pull request ready for review does not approve the pending workflow runs.",
+   "Incorrect: Copilot cannot approve its own workflow runs. A user with write access must approve them.",
+   "Incorrect: the setup steps workflow prepares the agent environment. It does not run the CI workflows on the pull request."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "2.3.5-02",
+  "obj": "2.3.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A contractor at Northwind Traders has a Copilot license and read access to a repository. Copilot cloud agent is enabled for the repository. When the contractor mentions @copilot in an issue comment, nothing happens.\n\nWhat should you do so that the contractor can delegate work to Copilot in the repository?",
+  "choices": [
+   "Grant the contractor write access to the repository",
+   "Assign the contractor a second Copilot license",
+   "Add the contractor as an organization billing manager",
+   "Turn on the firewall for the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Only users with write access to the repository can trigger Copilot cloud agent, and comments from users without write access are never presented to the agent. Users need Copilot access and write permission.",
+  "rationale": [
+   "Correct: with write access and Copilot access, the contractor can delegate work, and the comments are presented to the agent.",
+   "Incorrect: the contractor already has Copilot access. The missing requirement is write permission for the repository.",
+   "Incorrect: billing managers manage billing settings. The role does not grant write access to repositories.",
+   "Incorrect: the firewall controls network access during sessions. It does not decide who can trigger the agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.3.5-03",
+  "obj": "2.3.5",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A developer at Contoso, Ltd. wants Copilot cloud agent to implement a feature from an issue and then deliver the change through the normal review process. The repository requires one approval before merging.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Ask a different user with write access to approve the pull request, and then merge it.",
+   "Assign the issue to Copilot.",
+   "Review the changes in the draft pull request, and click Approve and run workflows.",
+   "Follow the session logs to monitor the work of Copilot.",
+   "Ask Copilot to approve and merge its own pull request.",
+   "Approve the pull request yourself because you assigned the issue."
+  ],
+  "answer": [
+   1,
+   3,
+   2,
+   0
+  ],
+  "explanation": "Copilot works on its own branch and opens a draft pull request. Humans review the changes, approve the workflow runs, and approve and merge the pull request, and the user who asked for the pull request cannot approve it.",
+  "rationale": [
+   "Step 4: the user who asked Copilot to create the pull request cannot approve it, so another user with write access provides the required approval.",
+   "Step 1: assigning the issue starts the task. Copilot creates a copilot/ branch and a draft pull request.",
+   "Step 3: workflows do not run until a user with write access reviews the code and approves the workflow runs.",
+   "Step 2: the session logs show what Copilot does while it works on the task.",
+   "Incorrect: Copilot cannot approve or merge a pull request. Draft pull requests must be reviewed and merged by a human.",
+   "Incorrect: the user who asked Copilot to create the pull request is prevented from approving it, which keeps the required approvals rule effective."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.3.5-04",
+  "obj": "2.3.5",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Tailspin Toys evaluates which actions Copilot cloud agent can perform on its own after a user assigns an issue to it.\n\nWhich three actions should you expect Copilot cloud agent to perform without human intervention? Each correct answer presents a complete solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "Create a copilot/ branch for the task",
+   "Push commits to its copilot/ branch",
+   "Open a draft pull request",
+   "Mark the pull request as Ready for review",
+   "Approve the pull request",
+   "Merge the pull request"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Copilot cloud agent works on a new copilot/ branch, pushes to that branch, and opens a draft pull request. It cannot mark its pull requests ready for review and cannot approve or merge them.",
+  "rationale": [
+   "Correct: for a task from an issue, a new copilot/ branch is created for Copilot, and the agent can only push to that branch.",
+   "Correct: Copilot can perform simple push operations to its own branch while it works on the task.",
+   "Correct: Copilot opens a draft pull request with its changes, which a human must review.",
+   "Incorrect: Copilot cannot mark its pull requests as Ready for review. A human does this after reviewing the changes.",
+   "Incorrect: Copilot cannot approve a pull request, which keeps human review in place.",
+   "Incorrect: Copilot cannot merge a pull request. Draft pull requests from Copilot must be reviewed and merged by a human."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.3.5-05",
+  "obj": "2.3.5",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank wants CI workflows to run automatically when Copilot cloud agent pushes to its pull requests in a repository. You are a repository administrator.\n\nWhat should you change?",
+  "choices": [
+   "Disable Require approval for workflow runs in the Policies section",
+   "Disable the validation tools in the Validation tools section",
+   "Add the workflow files to the copilot-setup-steps.yml file",
+   "Disable the firewall in the Internet access settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, workflows do not run automatically when Copilot pushes. A repository administrator can disable Require approval for workflow runs in the Policies section of the Copilot cloud agent settings page.",
+  "rationale": [
+   "Correct: disabling Require approval for workflow runs lets workflows start without the Approve and run workflows button.",
+   "Incorrect: validation tools are the security and code review checks that Copilot runs on its own code. They do not gate workflow runs.",
+   "Incorrect: setup steps run before Copilot starts work. They do not change how workflows are triggered on pull requests.",
+   "Incorrect: the firewall controls internet access for the agent. It has no effect on workflow approval."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "2.3.5-06",
+  "obj": "2.3.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. considers disabling Require approval for workflow runs for Copilot cloud agent in a repository that deploys to production from GitHub Actions.\n\nWhich risk should you evaluate before you make the change?",
+  "choices": [
+   "Unreviewed code from Copilot could gain write access or reach Actions secrets",
+   "Copilot could merge its own pull requests into the protected default branch",
+   "Copilot could start sessions in repositories that are not in Repository access",
+   "Copilot could turn off the firewall that restricts its access to the internet"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Workflows can be privileged and have access to secrets. Allowing workflows to run without approval may allow unreviewed code written by Copilot to gain write access to the repository or access GitHub Actions secrets.",
+  "rationale": [
+   "Correct: the documented warning is that unreviewed code could gain write access to the repository or access Actions secrets through workflows.",
+   "Incorrect: Copilot cannot approve or merge pull requests, whatever the workflow approval setting is.",
+   "Incorrect: workflow approval does not change which repositories allow the agent. Repository access is an organization setting.",
+   "Incorrect: firewall settings are managed by administrators on the Internet access page. The workflow setting does not give Copilot control over them."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "2.3.5-07",
+  "obj": "2.3.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation uses a third-party code security scanner on all pull requests. The built-in CodeQL check of Copilot cloud agent conflicts with the scanner and slows sessions. The company does not have GitHub Advanced Security licenses.\n\nWhat should a repository administrator do?",
+  "choices": [
+   "Turn off the CodeQL tool in the Validation tools section of the Cloud agent settings",
+   "Assign GitHub Advanced Security licenses so that the CodeQL check can be configured",
+   "Add a step to copilot-setup-steps.yml that skips CodeQL before Copilot starts working",
+   "Disable Require approval for workflow runs so that the scanner runs before CodeQL"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent runs CodeQL, advisory checks, secret scanning, and Copilot code review on its own code by default. A repository administrator can turn these validation tools off, for example to avoid conflicts with other security products. The checks do not require GitHub Advanced Security licenses.",
+  "rationale": [
+   "Correct: the Validation tools section lets a repository administrator turn off individual tools, such as CodeQL, to avoid conflicts with other products.",
+   "Incorrect: the built-in security validation does not require GitHub Secret Protection, GitHub Code Security, or GitHub Advanced Security licenses.",
+   "Incorrect: setup steps prepare the development environment. The validation tools are controlled by a repository setting.",
+   "Incorrect: workflow approval controls whether CI runs automatically. It does not affect the validation that Copilot performs during the session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "2.3.6-01",
+  "obj": "2.3.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses a copilot-setup-steps.yml file to install a large toolchain before Copilot cloud agent starts. The setup must have as much time as possible before the job times out.\n\nWhich timeout-minutes value should you set for the copilot-setup-steps job?",
+  "choices": [
+   "59",
+   "60",
+   "120",
+   "360"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The copilot-setup-steps job accepts only a few settings, including timeout-minutes with a maximum value of 59.",
+  "rationale": [
+   "Correct: 59 is the maximum value that timeout-minutes accepts for the copilot-setup-steps job.",
+   "Incorrect: 60 is above the documented maximum of 59 for the copilot-setup-steps job.",
+   "Incorrect: 120 exceeds the maximum of 59. Larger runners or caching are better ways to speed up a long setup.",
+   "Incorrect: 360 is far above the documented maximum, and the copilot-setup-steps job accepts no value above 59 minutes."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment"
+ },
+ {
+  "id": "2.3.6-02",
+  "obj": "2.3.6",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. sets runs-on in copilot-setup-steps.yml to the name of an ARC-managed scale set of ephemeral self-hosted runners. After the change, use of Copilot cloud agent in the repository is blocked.\n\nWhat should you do?",
+  "choices": [
+   "Disable the integrated firewall of Copilot cloud agent for the repository",
+   "Enable the recommended allowlist of the firewall for the repository",
+   "Change runs-on to a macOS runner label in the same runner scale set",
+   "Increase timeout-minutes of the copilot-setup-steps job to the maximum"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The integrated firewall is not compatible with self-hosted runners. Unless it is disabled in the repository settings, use of Copilot cloud agent is blocked, so you implement network controls on the runners instead.",
+  "rationale": [
+   "Correct: you must disable the integrated firewall for self-hosted runners and configure network security controls for the runners yourself.",
+   "Incorrect: the recommended allowlist is part of the integrated firewall, which is not compatible with self-hosted runners.",
+   "Incorrect: Copilot cloud agent supports only Ubuntu x64 and Windows 64-bit runners. macOS runners are not supported.",
+   "Incorrect: the block is caused by the firewall incompatibility, not by the time that the setup takes."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment"
+ },
+ {
+  "id": "2.3.6-03",
+  "obj": "2.3.6",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Wingtip Toys wants Copilot cloud agent to read work items by using the Azure DevOps MCP server. The agent must authenticate to Azure by using OpenID Connect (OIDC) instead of a stored client secret. Sessions run on GitHub Actions. Every change must work as soon as it is saved: a setup step must never reference a secret that does not exist yet, and the MCP server must never be configured before the setup steps sign in to Azure.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Configure the Azure DevOps MCP server as an ado object in the repository MCP configuration.",
+   "Configure OIDC in a Microsoft Entra application that trusts GitHub, and give the application identity access to the Azure DevOps organization and projects.",
+   "Add AZURE_CLIENT_ID and AZURE_TENANT_ID as Agents secrets.",
+   "Add an azure/login step to the copilot-setup-steps job, with id-token: write permission.",
+   "Store a client secret of the application as an Agents secret named COPILOT_MCP_AZURE_SECRET.",
+   "Select Cloud as the environment so that the azure/login step runs in the sandbox."
+  ],
+  "answer": [
+   1,
+   2,
+   3,
+   0
+  ],
+  "explanation": "The Entra application with OIDC and Azure DevOps access must exist first, because it provides the client ID. The client and tenant IDs are stored as Agents secrets before the azure/login step references them, and the ado server is added last because it uses the Azure CLI sign-in. Setup steps run only on GitHub Actions.",
+  "rationale": [
+   "Step 4: the ado server runs npx @azure-devops/mcp with the azcli authentication option, so it depends on the azure/login step.",
+   "Step 1: the Entra application must trust GitHub for OIDC, and its identity needs access to the Azure DevOps organization and projects. It also provides the client ID.",
+   "Step 2: the client ID and tenant ID of the application are stored as Agents secrets at the organization or repository level.",
+   "Step 3: the azure/login step reads the client ID and tenant ID from the secrets and signs in before Copilot starts. The id-token: write permission lets the job request an OIDC token.",
+   "Incorrect: with OIDC, no client secret is stored. The login uses the client ID, the tenant ID, and a token that GitHub issues.",
+   "Incorrect: setup steps, including OIDC sign-in steps, apply only to sessions that run on GitHub Actions, not in a cloud sandbox."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.3.6-04",
+  "obj": "2.3.6",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Northwind Traders runs Copilot cloud agent on GitHub Actions in several repositories. Each repository has a different environment constraint.\n\nWhich configuration should you use for each constraint? To answer, drag the appropriate configurations to the correct constraints. Each configuration may be used once, more than once, or not at all.",
+  "choices": [
+   "Set runs-on to a Windows runner label",
+   "Add actions/checkout with lfs: true",
+   "Add the host to the custom allowlist",
+   "Set https_proxy as an Agents variable",
+   "Disable the recommended allowlist",
+   "Add a dotfiles repository"
+  ],
+  "answer": [
+   1,
+   2,
+   3,
+   0
+  ],
+  "explanation": "Each constraint has a documented fix: Git LFS needs a checkout step with lfs set to true, blocked hosts are added to the custom allowlist, a proxy is configured with environment variables, and Windows toolchains need a Windows runner.",
+  "rationale": [
+   "Git LFS objects are fetched only when a checkout step in the copilot-setup-steps job sets the lfs option to true.",
+   "The firewall blocks hosts that are not allowed. Adding the host or URL to the custom allowlist allows the traffic.",
+   "Proxy settings such as https_proxy can be set as Agents variables or secrets, or directly on the runner.",
+   "A Windows toolchain needs a Windows development environment, which you select by setting runs-on to a Windows runner label."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment",
+  "targets": [
+   "The repository stores large design files in Git LFS",
+   "The agent cannot download packages from packages.northwind.corp",
+   "Self-hosted runners reach the internet only through a corporate proxy",
+   "The project builds only with a Windows-based toolchain"
+  ],
+  "notes": [
+   "Selects a Windows larger or self-hosted runner, because the default environment is Ubuntu Linux.",
+   "Installs Git LFS and fetches LFS objects in the copilot-setup-steps job.",
+   "Allows traffic to a domain and its subdomains, or to a URL and its descendant paths.",
+   "Routes HTTPS traffic of the agent through a proxy server, which is useful on self-hosted runners.",
+   "Removes the package registries that the firewall allows by default, which makes downloads fail more often.",
+   "Copies personal instructions, skills, and custom agents into cloud sandboxes. It does not apply to sessions on Actions."
+  ]
+ },
+ {
+  "id": "2.3.6-05",
+  "obj": "2.3.6",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Relecloud plans the environment for billing-api sessions.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The integrated firewall of Copilot cloud agent can restrict outbound traffic from the Windows sessions.",
+   "Larger runners with Azure private networking let you implement your own network controls for the Windows sessions.",
+   "If the dependency restore step fails, Copilot skips the remaining setup steps and starts working anyway.",
+   "You can set timeout-minutes to 90 so that the first dependency restore can finish."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "The integrated firewall is not compatible with Windows, so GitHub recommends self-hosted runners or larger runners with Azure private networking. A failed setup step skips the remaining steps, and timeout-minutes is limited to 59.",
+  "rationale": [
+   "No: the integrated firewall is not compatible with Windows, so it cannot restrict traffic from Windows sessions.",
+   "Yes: GitHub recommends larger GitHub-hosted runners with Azure private networking, or self-hosted runners, so that you can implement your own network controls.",
+   "Yes: when a setup step returns a non-zero exit code, Copilot skips the remaining setup steps and begins working with the current environment.",
+   "No: the maximum value of timeout-minutes for the copilot-setup-steps job is 59, so 90 is not allowed."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/customize-the-agent-environment",
+  "case": "C-b"
+ },
+ {
+  "id": "2.3.6-06",
+  "obj": "2.3.6",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys uses the default firewall for Copilot cloud agent. A security review finds that a copilot-setup-steps.yml step and a configured MCP server both connect to a host that is not on any allowlist, and no firewall warning appears.\n\nWhich explanation should you give?",
+  "choices": [
+   "The firewall applies only to processes that the agent starts with its Bash tool",
+   "The recommended allowlist includes every host that setup steps or servers use",
+   "Firewall warnings appear only in the session logs of runs that fail to finish",
+   "The organization firewall is set to Let repositories decide, so it is disabled"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The firewall applies only to processes started by the agent through its Bash tool. It does not apply directly to MCP server processes or to processes started in Copilot setup steps, so it is not a comprehensive security solution.",
+  "rationale": [
+   "Correct: setup steps and MCP server processes are outside the scope of the firewall, so their requests are not blocked and do not raise warnings.",
+   "Incorrect: the recommended allowlist covers package registries, container registries, and similar hosts. It does not allow arbitrary hosts.",
+   "Incorrect: when the firewall blocks a request, a warning is added to the pull request body or a comment, not only to failed runs.",
+   "Incorrect: Let repositories decide is the default, and it lets each repository control the firewall. It does not disable the firewall."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall"
+ }
+]

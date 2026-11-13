@@ -1,0 +1,495 @@
+[
+ {
+  "id": "2.1.1-01",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. creates a custom agent for Copilot cloud agent that updates Markdown documentation. The agent must read files in the repository and change existing files. It must not run shell commands.\n\nWhich tools list should you add to the agent profile?",
+  "choices": [
+   "tools: [\"read\", \"edit\"]",
+   "tools: [\"read\", \"execute\"]",
+   "tools: [\"search\", \"web\"]",
+   "tools: [\"execute\", \"edit\"]"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The read alias lets the agent view file contents and the edit alias lets it change files. Leaving out execute keeps the agent from running shell commands.",
+  "rationale": [
+   "Correct: read covers viewing files and edit covers Edit, MultiEdit and Write, which is all the documentation agent needs. No shell alias is listed, so shell commands stay unavailable.",
+   "Incorrect: execute is the alias for the shell tools (shell, Bash, powershell), which the requirement forbids. It also gives no way to change files without the edit alias.",
+   "Incorrect: search finds files and text but cannot change them, and web is not applicable to Copilot cloud agent. Use search when the agent only has to locate content.",
+   "Incorrect: edit can change files, but execute adds shell access that the agent must not have. Use execute only when the agent must run builds, tests or scripts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.1-02",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Tailspin Toys writes agent profiles for Copilot cloud agent. Each profile must list only the tool aliases that the agent needs for its main task.\n\nWhich tool alias should you add for each task? To answer, drag the appropriate aliases to the correct tasks. Each alias may be used once, more than once, or not at all.",
+  "choices": [
+   "execute",
+   "read",
+   "edit",
+   "search",
+   "agent",
+   "web"
+  ],
+  "answer": [
+   3,
+   0,
+   4,
+   2
+  ],
+  "explanation": "Aliases group related tools: search for Grep and Glob, execute for shell tools, agent for invoking another custom agent, and edit for changing files. The web alias is not applicable in Copilot cloud agent, and read only views files.",
+  "rationale": [
+   "Finding every reference to a name across the codebase is a Grep or Glob job, and both tools are grouped under the search alias.",
+   "Running npm test means starting a shell process, which requires the execute alias (shell, Bash, powershell).",
+   "Handing a subtask to another custom agent uses the agent alias, which maps to custom-agent and Task and invokes another custom agent.",
+   "Changing an existing source file needs Edit or Write, and both are grouped under the edit alias."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "targets": [
+   "Find every file that references a deprecated function name",
+   "Run the unit test suite by using npm test",
+   "Hand off a security review subtask to another custom agent",
+   "Apply a fix to an existing source file"
+  ],
+  "notes": [
+   "Maps to shell tools such as shell, Bash and powershell. Use it when the agent must run commands such as builds, tests or scripts.",
+   "Maps to Read and NotebookRead. Use it when the agent must view file contents, but it does not search across files or change them.",
+   "Maps to Edit, MultiEdit, Write and NotebookEdit. Use it when the agent must create or change files in the repository.",
+   "Maps to Grep and Glob. Use it when the agent must locate files or text patterns across the repository.",
+   "Maps to custom-agent and Task. Use it when the agent must invoke another custom agent to handle part of the work.",
+   "Maps to WebSearch and WebFetch. It is not applicable to Copilot cloud agent, so it does not help profiles that run on GitHub."
+  ]
+ },
+ {
+  "id": "2.1.1-03",
+  "obj": "2.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants Copilot cloud agent to look up production exceptions that are recorded in Sentry while it fixes bugs in a repository. The agent currently has only the default tools.\n\nWhich tool should you identify as required?",
+  "choices": [
+   "An MCP server that exposes Sentry tools to the agent",
+   "The web tool alias added to the agent profile",
+   "The default GitHub MCP server with all of its tools",
+   "The todo tool alias added to the agent profile"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "External systems such as Sentry are reached through an MCP server that exposes tools for that system. The default GitHub and Playwright servers do not cover Sentry, and the web and todo aliases are not applicable in Copilot cloud agent.",
+  "rationale": [
+   "Correct: an MCP server such as the Sentry MCP server gives the agent authenticated tools for reading exceptions. You add it in the repository MCP configuration or in a custom agent profile.",
+   "Incorrect: the web alias (WebSearch, WebFetch) is not applicable to Copilot cloud agent, and it would not authenticate to Sentry anyway. Use it for agents that run in VS Code.",
+   "Incorrect: the default GitHub MCP server reads repository data such as issues and pull requests. It has no tools for Sentry, so enabling more of its tools does not help.",
+   "Incorrect: the todo alias maps to TodoWrite for task lists and is not applicable to Copilot cloud agent. It cannot reach any external service."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/customizations/mcp"
+ },
+ {
+  "id": "2.1.1-04",
+  "obj": "2.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys asks Copilot cloud agent to change the layout of a web app. The agent must start the app inside its own environment and capture screenshots of the changed pages to verify the result.\n\nWhich tool should the agent use?",
+  "choices": [
+   "The Playwright MCP server that is configured by default",
+   "The web tool alias that fetches pages from the internet",
+   "The GitHub MCP server with the read-only toolsets",
+   "The todo tool alias that tracks the verification steps"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent starts with the Playwright MCP server, which can read, interact with and take screenshots of web pages. By default it can only reach localhost or 127.0.0.1, which matches an app that runs inside the agent environment.",
+  "rationale": [
+   "Correct: the Playwright MCP server is configured by default and can take screenshots of pages that the agent serves on localhost in its own environment.",
+   "Incorrect: the web alias is not applicable to Copilot cloud agent, and fetching page content is not the same as rendering pages and taking screenshots.",
+   "Incorrect: the GitHub MCP server reads repository data such as issues and pull requests. It cannot open a running web app or capture what the pages look like.",
+   "Incorrect: the todo alias is not applicable to Copilot cloud agent and only tracks a task list. It cannot open or render any web page."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/customizations/mcp"
+ },
+ {
+  "id": "2.1.1-05",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. has the following custom agent profile:\n\n```yaml\n---\nname: api-researcher\ndescription: Researches public API documentation and updates client code\ntarget: github-copilot\ntools: [\"read\", \"edit\", \"web\", \"todo\"]\n---\n```\n\nWhen the agent runs in Copilot cloud agent, it cannot fetch public documentation pages.\n\nWhat should you identify as the cause?",
+  "choices": [
+   "The web alias is not applicable to Copilot cloud agent.",
+   "Tool aliases are case sensitive, so web must be WebFetch.",
+   "The target property blocks all network access for agents.",
+   "The edit alias removes network tools from the agent tools."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The web alias (WebSearch, WebFetch) and the todo alias are listed as not applicable to Copilot cloud agent. Aliases are case insensitive, and target only selects where the agent is available.",
+  "rationale": [
+   "Correct: the reference lists web as not applicable for Copilot cloud agent, so the alias adds no fetch tool when the profile runs on GitHub. It is useful for the same profile in VS Code.",
+   "Incorrect: tool names and aliases are case insensitive, and WebFetch is just another name that maps to the same web alias, which is still not applicable in the cloud.",
+   "Incorrect: target: github-copilot only makes the agent available in Copilot cloud agent instead of also in VS Code. It does not change network access.",
+   "Incorrect: aliases only add tools to the allowed list. Listing edit allows file changes and does not remove any other tool from the agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.1-06",
+  "obj": "2.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation has a custom agent that runs in Copilot cloud agent. The agent works in a repository named portal and must also read pull requests in other repositories of the organization. The agent currently uses only the GitHub MCP server that is configured by default.\n\nWhich tool configuration should you identify as required?",
+  "choices": [
+   "A GitHub MCP server that authenticates with a PAT or a GitHub App",
+   "The github/* entry in the tools property of the agent profile",
+   "The search alias, so that the agent can search the organization",
+   "The agent alias, so that the agent can call a custom agent in each repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The default GitHub MCP server uses a specially scoped token with read-only access to the current repository only. Access outside that repository requires a GitHub MCP server configured with broader credentials, such as a fine-grained PAT or a GitHub App.",
+  "rationale": [
+   "Correct: configuring the GitHub MCP server with a PAT or GitHub App credentials, stored as Agents secrets with the COPILOT_MCP_ prefix, gives the agent access beyond the source repository.",
+   "Incorrect: github/* enables all tools of the default server, but the token behind it is still scoped to the source repository, so other repositories stay unreachable.",
+   "Incorrect: the search alias maps to Grep and Glob, which search files in the checked-out repository. It does not reach pull requests in other repositories.",
+   "Incorrect: the agent alias invokes another custom agent in the same session. It does not change the token scope of the GitHub MCP server."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.1.2-01",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders creates a custom agent that only writes review comments in its replies. The agent must have no access to any tools.\n\nWhich setting should you add to the agent profile?",
+  "choices": [
+   "tools: []",
+   "tools: [\"*\"]",
+   "user-invocable: false",
+   "disable-model-invocation: true"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "An empty tools list disables all tools for the custom agent. Omitting the property or using an asterisk enables all available tools.",
+  "rationale": [
+   "Correct: the reference states that tools: [] disables all tools, which is exactly what an agent that only replies with text needs.",
+   "Incorrect: an asterisk enables all available tools, which is the same as omitting the property. Use it when the agent must have full tool access.",
+   "Incorrect: user-invocable: false hides the agent from users so it can only be used programmatically. It does not change which tools the agent can call.",
+   "Incorrect: disable-model-invocation: true stops Copilot from selecting the agent automatically. It controls invocation, not tool access."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.2-02",
+  "obj": "2.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud adds an MCP server named sentry to the mcp-servers property of a custom agent profile. The agent must be able to use every tool from this server and the read alias.\n\nWhich tools value should you configure?",
+  "choices": [
+   "[\"read\", \"sentry/*\"]",
+   "[\"read\", \"mcp/sentry\"]",
+   "[\"read\", \"sentry.*\"]",
+   "[\"read\", \"*/sentry\"]"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "MCP tools are referenced as server-name/tool-name, and server-name/* includes all tools from that server. Unrecognized entries are ignored, so a wrong pattern silently gives the agent no MCP tools.",
+  "rationale": [
+   "Correct: sentry/* includes all tools from the sentry MCP server, and read adds the file viewing tools. This is the documented server/* syntax.",
+   "Incorrect: the syntax puts the server name first and the tool name second. mcp/sentry would point to a tool named sentry on a server named mcp.",
+   "Incorrect: the separator between a server name and a tool name is a slash, not a dot. Dotted names are used in the VS Code extension prefix, such as azure.some-extension/some-tool.",
+   "Incorrect: */sentry reverses the pattern and would refer to a tool named sentry on any server. Use server-name/* to include every tool of one server."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.2-03",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Woodgrove Bank creates a custom agent that drafts release notes. The agent must run only in Copilot cloud agent on GitHub, not in VS Code. Users must select the agent manually, and Copilot must never pick it automatically for a task.\n\nHow should you complete the agent profile? To answer, select the appropriate options in the answer area.\n\n```yaml\n---\nname: release-notes\ndescription: Drafts release notes from merged pull requests\n[[1]]\n[[2]]\n---\n```",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "The target property limits the environment where the agent is available, and disable-model-invocation: true requires users to select the agent manually. The infer property is retired, and user-invocable: false would hide the agent from users.",
+  "rationale": [],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "target: github-copilot",
+     "target: vscode",
+     "model: github-copilot"
+    ],
+    "why": [
+     "Correct: target: github-copilot makes the agent available only in Copilot cloud agent. Without the property, the agent is available in both environments.",
+     "Incorrect: target: vscode does the opposite and limits the agent to VS Code. Use it for agents that rely on IDE-only tools.",
+     "Incorrect: model selects the AI model for the agent, and github-copilot is not a model name. It does not control where the agent is available."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "disable-model-invocation: true",
+     "user-invocable: false",
+     "infer: true"
+    ],
+    "why": [
+     "Correct: disable-model-invocation: true prevents Copilot from choosing the agent automatically, so users must select it. It is the replacement for infer: false.",
+     "Incorrect: user-invocable: false removes the agent from the user picker, so it can only be used programmatically. Users then cannot select it manually.",
+     "Incorrect: infer is retired, and infer: true would have allowed automatic selection, which is the opposite of the requirement."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.1.2-04",
+  "obj": "2.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. defines an MCP server named tracker in a custom agent profile. The server exposes the tools search_issues, create_issue, and delete_issue. The agent must be able to call only search_issues from this server.\n\nWhich entry should you add to the tools property?",
+  "choices": [
+   "tracker/search_issues",
+   "tracker.search_issues",
+   "tracker:search_issues",
+   "search_issues@tracker"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A specific MCP tool is referenced as server-name/tool-name. Entries that the agent does not recognize are ignored, so a wrong separator leaves the agent without the tool.",
+  "rationale": [
+   "Correct: tracker/search_issues uses the documented server-name/tool-name format, so only that tool from the tracker server becomes available.",
+   "Incorrect: a dot is not the separator for MCP tools. The name is not recognized and is ignored, so the agent would have no tracker tool at all.",
+   "Incorrect: a colon is not the documented separator. The CLI uses a different Kind(argument) pattern for permissions, but agent profiles use server-name/tool-name.",
+   "Incorrect: this reverses the order and uses an unsupported separator. The server name comes first, followed by a slash and the tool name."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.2-05",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys has a custom agent profile that defines an MCP server named docs. The repository MCP settings for Copilot cloud agent also define a server named docs with different arguments. Both configurations are valid.\n\nWhich configuration should you expect Copilot cloud agent to use for the docs server when the custom agent runs?",
+  "choices": [
+   "The configuration in the repository settings",
+   "The configuration in the custom agent profile",
+   "The configuration of the default MCP servers",
+   "Both configurations, as two separate servers"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent processes out-of-the-box MCP servers first, then the custom agent configuration, and then the repository settings. Later configurations override earlier ones, so the repository definition of docs wins.",
+  "rationale": [
+   "Correct: repository settings are processed last, so they override the docs server that the custom agent profile defines.",
+   "Incorrect: the agent profile is processed before the repository settings. Its definition is used only when the repository settings do not define a server with the same name.",
+   "Incorrect: the default servers are GitHub and Playwright, which are processed first. They do not include a server named docs.",
+   "Incorrect: servers are identified by name, so a later definition with the same name overrides the earlier one instead of adding a second server."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.1.2-06",
+  "obj": "2.1.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. wants an organization-level custom agent named triage that is available in all repositories of the organization. You are an organization owner. The organization has a .github-private repository.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Select the .github-private repository from the repository dropdown on the agents tab.",
+   "Click Create an agent to open the template agent profile.",
+   "Delete the .github/ portion of the file path so that the profile is in the root agents directory.",
+   "Configure the name, description, and tools, and then merge the file into the default branch.",
+   "Keep the profile in the .github/agents directory of the .github-private repository.",
+   "Add the profile to the MCP configuration in the repository settings."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Organization-level agents live in the root agents directory of the .github or .github-private repository. You open the template from the agents tab, move it out of .github/, configure it, and merge it into the default branch.",
+  "rationale": [
+   "Step 1: on the agents tab, you select the repository where the profile is created, which for an organization-level agent is .github or .github-private.",
+   "Step 2: Create an agent opens a template profile named my-agent.agent.md in the .github/agents directory of the selected repository.",
+   "Step 3: for organization-level agents, you delete the .github/ portion of the path so that the template is in the root agents directory.",
+   "Step 4: you set the frontmatter and prompt, then commit and merge into the default branch so that the agent appears in the agent dropdown.",
+   "Incorrect: .github/agents is the location for repository-level agents. Organization-level agents must be in the root agents directory.",
+   "Incorrect: the repository MCP configuration defines MCP servers, not agent profiles. Agent profiles are Markdown files with YAML frontmatter."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents"
+ },
+ {
+  "id": "2.1.3-01",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. adds a third-party MCP server to the repository MCP configuration for Copilot cloud agent. The server exposes both read and write tools. Copilot must use only the tools it needs, and the risk of unwanted changes must be minimized.\n\nWhat should you configure in the tools key of the server?",
+  "choices": [
+   "A list of the specific read-only tools that the agent needs",
+   "An asterisk so that the agent can choose any tool it needs",
+   "An empty list so that the agent asks before each tool call",
+   "The name of the server so that all of its tools are included"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent uses configured MCP tools autonomously and does not ask for approval. GitHub strongly recommends allowlisting specific read-only tools in the tools key.",
+  "rationale": [
+   "Correct: listing only the read-only tools that the task needs limits what the agent can do without approval, which is the documented recommendation.",
+   "Incorrect: an asterisk enables every tool, including write tools, and the agent calls them without asking first. Use it only for fully trusted servers.",
+   "Incorrect: the cloud agent never asks for approval before calling MCP tools, so an empty list does not add a prompt. It only leaves the server without tools.",
+   "Incorrect: the tools key expects tool names or an asterisk, and the goal is to limit tools rather than include all of them."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.1.3-02",
+  "obj": "2.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud runs Copilot CLI in a script by using copilot -p. The task must create a report file and run npm commands. Copilot must receive only the permissions that the task needs.\n\nWhich option should you add to the command?",
+  "choices": [
+   "--allow-tool='write, shell(npm:*)'",
+   "--allow-all-tools",
+   "--allow-all-urls",
+   "--add-dir=./reports"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "GitHub recommends giving minimal permissions with --allow-tool and --allow-url. Overly permissive options such as --allow-all should be avoided unless you work in a sandbox environment.",
+  "rationale": [
+   "Correct: write allows file creation and shell(npm:*) allows only npm commands, so the task runs without approval prompts and without broader access.",
+   "Incorrect: --allow-all-tools allows every tool to run without permission, which grants more access than the task needs.",
+   "Incorrect: --allow-all-urls grants access to every URL and does not grant the write or shell permissions that the task needs.",
+   "Incorrect: --add-dir adds a directory to the allowed paths list, but it does not grant permission to run tools such as write or shell."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/automate-copilot-cli/run-cli-programmatically"
+ },
+ {
+  "id": "2.1.3-03",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys runs Copilot CLI in a GitHub Actions workflow by using copilot -p. The agent must be able to run any git command except git push. The run must not stop to request approval, and Copilot must not receive more permissions than required.\n\nSolution: You add --allow-tool='shell(git:*)' --deny-tool='shell(git push)' to the command.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "shell(git:*) pre-approves all git commands, and the deny rule removes git push. Deny rules always take precedence over allow rules.",
+  "rationale": [
+   "Correct: the allow rule approves every git command without a prompt, and the deny rule blocks git push because deny rules take precedence over allow rules.",
+   "Incorrect: the solution does meet the goal. No would be right if the deny rule were missing, because shell(git:*) on its own also matches git push."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference",
+  "series": "S-b"
+ },
+ {
+  "id": "2.1.3-04",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys runs Copilot CLI in a GitHub Actions workflow by using copilot -p. The agent must be able to run any git command except git push. The run must not stop to request approval, and Copilot must not receive more permissions than required.\n\nSolution: You add --allow-all-tools to the command.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "--allow-all-tools allows every tool without explicit permission, including git push and unrelated tools. It removes prompts but grants far more than the task needs.",
+  "rationale": [
+   "Incorrect: --allow-all-tools approves every tool, so git push is allowed and the agent receives permissions that the task does not need.",
+   "Correct: the solution does not meet the goal. Use --allow-all-tools only in a sandbox where broad permissions are acceptable, and use specific allow and deny rules here."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference",
+  "series": "S-b"
+ },
+ {
+  "id": "2.1.3-05",
+  "obj": "2.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Wingtip Toys runs Copilot CLI in a GitHub Actions workflow by using copilot -p. The agent must be able to run any git command except git push. The run must not stop to request approval, and Copilot must not receive more permissions than required.\n\nSolution: You add --allow-tool='shell(git:*)' to the command.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "shell(git:*) matches every command whose stem is git, including git push. Without a deny rule for git push, the agent can still push.",
+  "rationale": [
+   "Incorrect: the :* suffix matches git followed by any arguments, so git push is also approved. The requirement to exclude git push is not met.",
+   "Correct: the solution does not meet the goal. You must also add --deny-tool='shell(git push)', because deny rules take precedence over allow rules."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference",
+  "series": "S-b"
+ },
+ {
+  "id": "2.1.3-06",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Adatum Corporation configures tool permissions for Copilot CLI runs in automation scripts. The scripts use an MCP server named Tickets.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "Deny rules take precedence over allow rules, even when --allow-all is set.",
+   "The pattern shell(git:*) also matches a command named gitea.",
+   "--allow-tool='Tickets' allows all tools from the Tickets MCP server.",
+   "In a copilot -p run, a tool that is not pre-approved waits for approval in the log."
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Deny rules always win, even with --allow-all. The :* suffix matches the command stem followed by a space, a server name without arguments matches all of its tools, and non-interactive runs deny anything not pre-approved.",
+  "rationale": [
+   "Yes: the reference states that deny rules always take precedence over allow rules, even when --allow-all is set, so a deny rule is a reliable guard.",
+   "No: the :* suffix matches the command stem followed by a space, which prevents partial matches. shell(git:*) matches git push but not gitea.",
+   "Yes: a permission pattern of SERVER-NAME without an argument matches all tools of that MCP server, while Tickets(tool) would match one tool.",
+   "No: non-interactive runs cannot show an approval prompt, so any action that is not pre-approved is denied automatically instead of waiting."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "2.1.3-07",
+  "obj": "2.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders runs Copilot CLI with copilot -p in a locked-down workflow. The model must not even see any tool except the read and search tools that you name, so that it cannot plan steps around other tools.\n\nWhich option should you use?",
+  "choices": [
+   "--available-tools",
+   "--allow-tool",
+   "--excluded-tools",
+   "--deny-url"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "--available-tools restricts the model to only the listed tools and makes all other tools unavailable. --allow-tool only pre-approves tools, and --excluded-tools removes only the tools you list.",
+  "rationale": [
+   "Correct: --available-tools makes every tool that is not listed unavailable to the model, which is the tightest way to scope an automated run.",
+   "Incorrect: --allow-tool grants permission for the listed tools, but the other tools are still visible to the model and are only denied when called.",
+   "Incorrect: --excluded-tools removes the tools you list and keeps everything else. You would have to know and list every other tool.",
+   "Incorrect: --deny-url blocks access to a URL or domain. It does not restrict which tools the model can see."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-programmatic-reference"
+ }
+]

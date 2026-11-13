@@ -1,0 +1,884 @@
+[
+ {
+  "id": "1.2.1-01",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. asks an agent to change the GitHub Actions workflows and the Terraform files that manage its production network. These changes are hard to reverse.\n\nHow should Fabrikam separate planning from execution for this work?",
+  "choices": [
+   "Let the agent implement first and write the plan after the checks pass",
+   "Skip the plan because the Terraform files already describe the end state",
+   "Use a plan-first PR that contains only the plan, then implement after approval",
+   "Put the plan and the implementation in the same pull request to save time"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A plan-first pull request contains only the plan; reviewers approve it, and implementation follows. Use it for high-risk or hard-to-reverse work such as workflows, infrastructure, authentication, or production changes.",
+  "rationale": [
+   "Incorrect: writing the plan after implementation turns it into documentation. Reviewers could no longer stop a bad approach before it was built.",
+   "Incorrect: declarative files describe the target state, not the reasoning, scope, risks, or rollback path that reviewers need to approve the change.",
+   "Correct: workflow and production infrastructure changes are high risk and hard to reverse, which is the case for a plan-first pull request that is approved before any change is made.",
+   "Incorrect: plan and execution in one pull request suits low and medium-risk work when speed matters. Here the risk is high, so the plan must be approved first."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.2.1-02",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An agent at Litware, Inc. fixes typos and broken links in the product documentation. The changes are low risk and the team wants them delivered quickly while reviewers still see the plan.\n\nHow should Litware handle planning for this work?",
+  "choices": [
+   "Open a plan-only PR and wait for approval before any change",
+   "Require a separate design review meeting for every agent fix",
+   "Remove the plan because documentation changes are always safe",
+   "Include the plan in the PR description and implement it in the same PR"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "For low or medium-risk work where speed matters, the plan and the execution can live in the same pull request. The plan is still visible in the description, so reviewers can check the changes against it.",
+  "rationale": [
+   "Incorrect: a plan-first pull request is meant for high-risk, hard-to-reverse work. For typo fixes it adds a review round without reducing meaningful risk.",
+   "Incorrect: a meeting for every small fix slows delivery and is outside the GitHub record. Reviewers can read the plan in the pull request instead.",
+   "Incorrect: low risk is not no risk. Without a plan, reviewers have nothing to compare the changes against, which is the planless execution anti-pattern.",
+   "Correct: a plan in the pull request description plus the implementation in the same pull request keeps the plan reviewable without adding a second review round for low-risk fixes."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.2.1-03",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys has two custom agents in .github/agents: a planner and an implementer. The planner profile defines handoffs that should move the work to the implementer after the plan is approved. When the team uses the agents with Copilot cloud agent on GitHub.com, no handoff occurs.\n\nWhat should the team do?",
+  "choices": [
+   "Start a separate task with the implementer after the plan is approved",
+   "Add an argument-hint property to the planner agent profile",
+   "Set infer: true in the profile of the implementation agent",
+   "Set user-invocable: false in the planner agent profile"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The handoffs and argument-hint properties are ignored on GitHub.com, and infer is retired. On GitHub.com, the explicit handoff is a person starting a new task with the implementation agent after approving the plan.",
+  "rationale": [
+   "Correct: because handoffs is ignored on GitHub.com, the handoff must be explicit: after approval, a person starts a task and selects the implementation agent.",
+   "Incorrect: argument-hint is also ignored on GitHub.com, and it only provides input guidance. It cannot pass work from one agent to another.",
+   "Incorrect: infer is a retired property. It does not start an agent or move work between agents.",
+   "Incorrect: user-invocable: false makes the planner available only programmatically. It hides the planner from users and does not create a handoff."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "1.2.1-04",
+  "obj": "1.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Relecloud uses GitHub Copilot CLI in interactive mode. For a complex refactoring, the developer wants Copilot to ask clarifying questions and build an implementation plan before it writes any code.\n\nWhat should the developer do?",
+  "choices": [
+   "Run the /sandbox enable slash command",
+   "Press Shift+Tab to switch to plan mode",
+   "Start the CLI with --allow-all-tools",
+   "Run the /compact slash command first"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Copilot CLI has a plan mode next to the default mode. In plan mode, Copilot analyzes the request, asks clarifying questions, and builds a plan before writing code. Shift+Tab cycles between modes.",
+  "rationale": [
+   "Incorrect: /sandbox enable restricts filesystem, network, and system access for commands. It limits what actions can do but does not add a planning step.",
+   "Correct: Shift+Tab cycles into plan mode, where Copilot asks clarifying questions and builds a structured plan before any code is written.",
+   "Incorrect: --allow-all-tools removes approval prompts so Copilot can act without asking. That increases autonomy instead of pausing for a plan.",
+   "Incorrect: /compact compresses the conversation history to free context space. It does not change whether Copilot plans before acting."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli"
+ },
+ {
+  "id": "1.2.1-05",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A developer at Contoso, Ltd. starts a task from the Agents tab on GitHub.com, agrees on a plan with Copilot, and then prompts \"Implement the plan we agreed upon.\" The session finishes, but no pull request exists.\n\nWhat should the developer do next?",
+  "choices": [
+   "Assign the original issue to Copilot again",
+   "Approve the workflow runs in the merge box",
+   "Review the diff, then click Create pull request",
+   "Wait for the session to reach its time limit"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Research and planning sessions on GitHub.com do not create pull requests automatically. After the changes are made on a copilot/ branch, you review the diff and click Create pull request when you are satisfied.",
+  "rationale": [
+   "Incorrect: assigning the issue starts a new task that opens its own pull request, discarding the agreed plan and the reviewed iteration.",
+   "Incorrect: workflow approval appears in the merge box of an existing pull request. There is no pull request yet, so there is nothing to approve.",
+   "Correct: the session keeps the work on a branch so you can review the diff and iterate. Clicking Create pull request moves the reviewed work into a pull request.",
+   "Incorrect: the session has already finished. Waiting does not create a pull request, because these sessions do not create one automatically."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/research-plan-iterate"
+ },
+ {
+  "id": "1.2.1-06",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank has an implementer custom agent. A person must select it manually after a plan is approved. The model must never choose the implementer on its own, but users must still see it in the agent list.\n\nHow should you configure the implementer agent profile?",
+  "choices": [
+   "Set user-invocable: false in the profile",
+   "Set target: vscode in the profile",
+   "Set tools: [] in the agent profile",
+   "Set disable-model-invocation: true"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "disable-model-invocation: true means the agent can only be selected manually, not invoked automatically by the model. user-invocable: false does the opposite: it hides the agent from users and allows only programmatic use.",
+  "rationale": [
+   "Incorrect: user-invocable: false hides the agent from users and leaves it available only programmatically, which is the opposite of the requirement.",
+   "Incorrect: target: vscode limits the environment where the agent is available. It does not stop the model from choosing the agent there.",
+   "Incorrect: an empty tools list disables all tools, so the implementer could no longer change any code once it was selected.",
+   "Correct: disable-model-invocation: true stops the model from invoking the agent automatically while users can still select it, which gives a manual gate between planning and execution."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "1.2.1-07",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A developer at Adatum Corporation wants Copilot cloud agent on GitHub.com to agree on an approach before it changes code, and to open a pull request only after the developer has reviewed the changes.\n\nWhich five actions should the developer perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Start a task in the Agents tab and ask Copilot to create a plan",
+   "Review the plan and iterate with Copilot until it matches your intent",
+   "Prompt Copilot to implement the plan that you agreed on",
+   "Click Diff to review the changes on the copilot/ branch",
+   "Click Create pull request",
+   "Assign the issue to Copilot so it opens a pull request right away",
+   "Mark the pull request as ready for review from the session"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "explanation": "Research, plan, and iterate keeps planning separate from execution: agree on a plan, implement it on a branch, review the diff, and only then create the pull request. Sessions do not create pull requests automatically.",
+  "rationale": [
+   "Step 1: start the task and ask for a plan, so Copilot proposes an approach before it changes anything.",
+   "Step 2: review the plan and iterate until it matches your intent. This is the checkpoint between planning and execution.",
+   "Step 3: ask Copilot to implement the agreed plan. The changes are made on a copilot/ branch, not in a pull request yet.",
+   "Step 4: click Diff to review the changes, and continue the conversation if refinements are needed.",
+   "Step 5: when you are satisfied, click Create pull request so the reviewed work enters normal pull request review.",
+   "Incorrect: assigning the issue makes the agent work and open a pull request without the agreed plan, which skips the planning checkpoint.",
+   "Incorrect: there is no pull request during the session, and the agent opens draft pull requests that it cannot mark ready for review itself."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/research-plan-iterate"
+ },
+ {
+  "id": "1.2.1-08",
+  "obj": "1.2.1",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Northwind Traders is designing how its agents separate planning from execution.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "A plan-first pull request is suited to changes to workflows, infrastructure, or authentication.",
+   "A research and planning session on GitHub.com creates a pull request automatically when the plan is done.",
+   "Telling a planning agent not to edit files enforces read-only behavior as strongly as a tool allowlist.",
+   "A plan mode that pauses before changes is one way to enforce planning before execution."
+  ],
+  "answer": [
+   0,
+   3
+  ],
+  "explanation": "Plan-first pull requests fit high-risk work, sessions do not create pull requests automatically, instructions are guidance while allowlists are enforcement, and a plan mode that pauses before changes is an enforcement mechanism.",
+  "rationale": [
+   "Yes: plan-first pull requests are recommended for high-risk or hard-to-reverse work, which includes workflows, infrastructure, and authentication.",
+   "No: sessions do not create pull requests automatically. You create one when you are ready, or ask for it explicitly in the prompt.",
+   "No: an instruction is guidance that the model may not follow. A tool allowlist with read-only tools removes the ability to edit, which is enforcement.",
+   "Yes: a plan mode that pauses before any change is listed with read-only planning agents, explicit handoffs, and tool gating as enforcement mechanisms."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.2.1-09",
+  "obj": "1.2.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Contoso, Ltd. creates a planning custom agent. The agent must be able to read and search the code but must not change files. It must be available only for Copilot cloud agent on GitHub.com, not in the IDE.\n\nHow should you complete the agent profile? To answer, select the appropriate options in the answer area.\n\n```markdown\n---\nname: payments-planner\ndescription: Writes implementation plans for review\ntools: [[1]]\ntarget: [[2]]\n---\nProduce a plan with scope, steps, success criteria, and risks.\n```",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "A tools list enables only the listed tools, so read and search give research without editing. The target property limits where the agent is available; github-copilot means the agent is used on GitHub.com and not in VS Code.",
+  "rationale": [],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[\"read\", \"search\"]",
+     "[\"*\"]",
+     "[]",
+     "[\"read\", \"search\", \"edit\"]"
+    ],
+    "why": [
+     "Correct: listing only read and search enables those tools and nothing else, so the planner can study the code but has no tool to change files.",
+     "Incorrect: [\"*\"] enables all tools, the same as omitting the property, so the planner could edit files and run commands.",
+     "Incorrect: an empty list disables all tools, so the planner could not even read the code that it must plan for.",
+     "Incorrect: the edit alias lets the agent change files, which breaks the read-only requirement for the planner."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "github-copilot",
+     "vscode"
+    ],
+    "why": [
+     "Correct: github-copilot limits the agent to Copilot on GitHub.com. Without a target, the agent is available in both environments.",
+     "Incorrect: vscode makes the agent available only in the IDE, which is the opposite of the requirement."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "1.2.2-01",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fourth Coffee wants reviewers of agent pull requests to see the plan that the agent followed, without leaving GitHub.\n\nWhich location should the agent use to record its plan?",
+  "choices": [
+   "In a private message to the requester",
+   "In the agent session memory only",
+   "In a comment inside the changed code",
+   "In the pull request description"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The plan belongs in the pull request description so it is reviewable next to the diff and stays in the GitHub system of record.",
+  "rationale": [
+   "Incorrect: a private message is outside the pull request, so other reviewers and later auditors cannot see the plan the agent followed.",
+   "Incorrect: session memory is not where reviewers approve changes. The plan must be visible in the pull request that is reviewed and merged.",
+   "Incorrect: code comments mix the plan with the implementation and are easy to miss. Reviewers expect the plan in the pull request description.",
+   "Correct: the pull request description keeps the plan next to the diff, where reviewers approve the work and where it stays part of the audit trail."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.2.2-02",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wide World Importers wants every pull request in a repository, including pull requests opened by agents, to start with the same Goal, Scope, Plan, and Evidence sections.\n\nWhich file should Wide World Importers create?",
+  "choices": [
+   ".github/pull_request_template.md",
+   ".github/copilot-instructions.md",
+   ".github/agents/plan.agent.md",
+   ".github/workflows/plan.yml"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A pull request template standardizes the structure of every pull request description, so plans, evidence, and risk notes appear in the same place for human and agent work.",
+  "rationale": [
+   "Correct: a pull request template gives every pull request the same sections, so reviewers find the plan and evidence in a consistent place.",
+   "Incorrect: repository custom instructions guide how Copilot works, but they do not create a standard structure for every pull request description.",
+   "Incorrect: an agent profile defines a custom agent. It does not apply a structure to pull requests that people or other agents open.",
+   "Incorrect: a workflow can check a pull request description, but it does not provide the sections that authors fill in when they open the pull request."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls"
+ },
+ {
+  "id": "1.2.2-03",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A pull request template at Proseware, Inc. has Goal, Scope, Plan, Evidence, and Review checklist sections. Reviewers say that for risky agent changes they cannot tell how a bad change would be undone or who would take over.\n\nWhich section should Proseware add to the template?",
+  "choices": [
+   "Reviewer name checklist",
+   "Rollback or escalation plan",
+   "A second Scope section",
+   "Expanded Goal section"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A plan template includes the rollback or escalation plan, which states how a change is reverted and when a human takes over. Reviewers need it to judge whether a risky change is safe to merge.",
+  "rationale": [
+   "Incorrect: a list of reviewer names says who approves, not how a bad change is reverted or which human takes over afterward.",
+   "Correct: a rollback or escalation plan states how the change would be undone and who takes over, which is exactly what the reviewers are missing.",
+   "Incorrect: Scope lists the files and areas that may change. It does not describe how to reverse a change or when to escalate.",
+   "Incorrect: Goal states what the change should achieve. Expanding it does not tell reviewers how a failed change would be undone."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls"
+ },
+ {
+  "id": "1.2.2-04",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. wants one implementation-planner custom agent to be available in every repository in its organization, without copying the profile into each repository.\n\nWhich location should Contoso use to store the agent profile?",
+  "choices": [
+   "In the ~/.copilot/agents folder on each developer workstation",
+   "In the .github/copilot-instructions.md file of each repository",
+   "In the /agents folder of the organization .github-private repository",
+   "In the .github/agents folder of every repository in the organization"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Organization-level custom agents are stored in the /agents folder of the organization's .github or .github-private repository, which makes them available across the organization's repositories.",
+  "rationale": [
+   "Incorrect: ~/.copilot/agents holds user-level agents for Copilot CLI on one machine. It does not make the agent available to Copilot on GitHub.com.",
+   "Incorrect: repository custom instructions guide Copilot in one repository. They do not define a selectable custom agent.",
+   "Correct: an agent profile in /agents of the organization .github-private repository is shared with all repositories in the organization from one place.",
+   "Incorrect: .github/agents works per repository, so this requires copying and maintaining the same profile in every repository."
+  ],
+  "ref": "https://docs.github.com/copilot/how-tos/administer-copilot/manage-for-organization/prepare-for-custom-agents"
+ },
+ {
+  "id": "1.2.2-05",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "An engineer at Litware, Inc. writes a detailed planner agent profile with long examples of good plans. The prompt body below the YAML frontmatter is now about 45,000 characters.\n\nWhat should the engineer do?",
+  "choices": [
+   "Move the examples into the description property",
+   "Split the body across two tools entries",
+   "Set target: github-copilot to raise the limit",
+   "Reduce the prompt body to at most 30,000 characters"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The Markdown content below the frontmatter defines the agent behavior and can be at most 30,000 characters, so a 45,000-character prompt must be shortened.",
+  "rationale": [
+   "Incorrect: the description explains the agent's purpose and capabilities. It is not a place to store long example plans.",
+   "Incorrect: the tools property lists tool names or aliases. It cannot hold prompt text.",
+   "Incorrect: target only chooses the environment where the agent is available. It does not change the size limit of the prompt.",
+   "Correct: the prompt body of an agent profile has a maximum of 30,000 characters, so the engineer must shorten the examples or the instructions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "1.2.2-06",
+  "obj": "1.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. defines an implementation-planner agent in its organization .github-private repository. One repository still uses an old profile with the same name in .github/agents, and planners in that repository produce outdated plans. Users must keep selecting the agent by its current name.\n\nWhat should you do?",
+  "choices": [
+   "Remove or rename the repository-level profile",
+   "Rename the organization-level profile file",
+   "Add target: github-copilot to the organization profile",
+   "Set user-invocable: false in the organization profile"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When agents share a name, the lowest level wins: a repository-level agent overrides an organization-level or enterprise-level agent with the same name.",
+  "rationale": [
+   "Correct: the repository-level agent overrides the organization agent with the same name, so removing or renaming the old repository profile lets the organization profile apply.",
+   "Incorrect: renaming the organization profile forces users to select the agent by a new name, which breaks the requirement to keep the current name.",
+   "Incorrect: target controls where an agent is available. It does not change which profile wins when two agents share a name.",
+   "Incorrect: user-invocable: false hides the organization agent from users, which makes the outdated repository agent the only choice."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "1.2.2-07",
+  "obj": "1.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A developer at Tailspin Toys wants to add an implementation-planner custom agent to a repository and then use it with Copilot cloud agent on GitHub.com.\n\nWhich six actions should the developer perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Open the Agents tab on GitHub.com",
+   "Select the repository and the branch for the agent profile",
+   "Click Create a custom agent",
+   "Rename the profile to implementation-planner.agent.md and edit it",
+   "Commit the profile and merge it into the default branch",
+   "Select the agent in the dropdown and enter a task",
+   "Paste the planner prompt into .github/copilot-instructions.md",
+   "Turn off validation tools in the cloud agent settings"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "explanation": "Custom agents are created from the Agents tab, which opens a template in .github/agents. After the profile is renamed, edited, and merged into the default branch, the agent appears in the agent dropdown.",
+  "rationale": [
+   "Step 1: open the Agents tab on GitHub.com, where you can start tasks and create custom agents.",
+   "Step 2: select the repository and the branch where the profile will be created.",
+   "Step 3: click Create a custom agent, which opens a template file named my-agent.agent.md in .github/agents.",
+   "Step 4: rename the file to implementation-planner.agent.md and add the planner prompt and configuration.",
+   "Step 5: commit and merge the profile into the default branch so it becomes available to Copilot cloud agent.",
+   "Step 6: select the implementation-planner agent in the dropdown of the prompt box and enter the planning task.",
+   "Incorrect: repository custom instructions guide every Copilot task. They do not create a selectable custom agent.",
+   "Incorrect: validation tools review the agent's code for quality and security. Turning them off is not needed to create a custom agent."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/customization-library/custom-agents/implementation-planner"
+ },
+ {
+  "id": "1.2.2-08",
+  "obj": "1.2.2",
+  "difficulty": "easy",
+  "type": "dragdrop",
+  "stem": "Northwind Traders uses the implementation-planner custom agent from the GitHub Docs customization library. Reviewers want to know which section of a generated plan contains which information.\n\nWhich plan section should contain each item? To answer, drag the appropriate sections to the correct items. Each section may be used once, more than once, or not at all.",
+  "choices": [
+   "Overview",
+   "Technical Approach",
+   "Implementation Plan",
+   "Considerations",
+   "Not Included"
+  ],
+  "answer": [
+   0,
+   2,
+   3,
+   4
+  ],
+  "explanation": "The implementation-planner template organizes a plan into an overview with success criteria, a technical approach, phased implementation steps with estimates, considerations, and an explicit list of work that is not included.",
+  "rationale": [
+   "Overview: the overview states what is being built and the success criteria, so reviewers know when the work is done.",
+   "Implementation Plan: the implementation plan breaks work into phases with tasks, Small, Medium, or Large estimates, and dependencies.",
+   "Considerations: considerations list assumptions, constraints, and risks so reviewers can judge whether the plan is safe.",
+   "Not Included: the not included section lists deliberately excluded work, which keeps the scope clear for reviewers and the agent."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/customization-library/custom-agents/implementation-planner",
+  "targets": [
+   "Success criteria for the work",
+   "Phases with tasks, size estimates, and dependencies",
+   "Assumptions, constraints, and risks",
+   "Work that is deliberately out of scope"
+  ],
+  "notes": [
+   "Overview: describes what is being built and why, and includes the success criteria that define when the work is complete.",
+   "Technical Approach: describes architecture decisions and technologies. None of the listed items belongs here, so this value is unused.",
+   "Implementation Plan: holds phased tasks with Small, Medium, or Large estimates and dependencies between tasks.",
+   "Considerations: holds assumptions, constraints, and risks so reviewers can see what could go wrong before approving the plan.",
+   "Not Included: lists work that is deliberately excluded so the scope stays clear and the agent does not drift into it."
+  ]
+ },
+ {
+  "id": "1.2.3-01",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A reviewer at Relecloud receives an agent pull request with a plan in the description. The checks pass.\n\nWhat should the reviewer verify next to confirm that the agent stayed within the approved plan?",
+  "choices": [
+   "The changed files match the files and areas named in the plan",
+   "The pull request was opened within the expected time window",
+   "The agent session used the most recent model that is available",
+   "The pull request contains fewer commits than the plan has steps"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Reviewers check agent work like any contribution: does the change address the intent, stay within the agreed scope, and come with evidence. Comparing the diff with the plan reveals scope creep.",
+  "rationale": [
+   "Correct: comparing the changed files with the plan shows whether the agent stayed in scope. Files that the plan never named are a signal to request changes.",
+   "Incorrect: how fast the pull request arrived says nothing about whether the changes match the approved plan.",
+   "Incorrect: the model that was used does not show whether the changes stay within the plan. Reviewers judge the output, not the model.",
+   "Incorrect: the number of commits is not a measure of scope. A single commit can still change files that the plan never mentioned."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "1.2.3-02",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation uses plan-first pull requests. An agent's plan for an issue about a login page bug proposes changes to the login page and to two files in the infra/ folder. The issue names only the login page.\n\nWhat should the reviewer do with the plan?",
+  "choices": [
+   "Close the plan and let the agent implement the issue without a plan",
+   "Request changes so the plan stays within the files named in the issue",
+   "Approve the plan and check the infra/ files after the implementation",
+   "Approve the plan because the agent explained why it needs the files"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The plan is the checkpoint where reviewers catch scope problems before any code exists. A plan that reaches beyond the issue should be corrected before it is approved.",
+  "rationale": [
+   "Incorrect: removing the plan removes the checkpoint that caught the problem. This is the planless execution anti-pattern.",
+   "Correct: the plan reaches beyond the scope of the issue, so the reviewer requests changes before approval. This is cheaper than finding the problem in code.",
+   "Incorrect: approving an out-of-scope plan lets the agent build it. Reviewing infrastructure changes later wastes the value of the plan checkpoint.",
+   "Incorrect: an agent's explanation is not authorization. Scope comes from the issue, and changes outside it need a human decision first."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution"
+ },
+ {
+  "id": "1.2.3-03",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A developer at Woodgrove Bank is iterating on a plan with Copilot in the Agents tab. The plan is correct, except for one step that refactors an unrelated logging module that the developer did not request.\n\nWhat should the developer do before Copilot implements the plan?",
+  "choices": [
+   "Click Create pull request so reviewers can remove the step",
+   "Stop the session and assign the issue to Copilot instead",
+   "Send a follow-up prompt that removes the refactoring step",
+   "Ask Copilot to implement the plan and revert that step later"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "In a research and planning session, you review the plan and iterate with follow-up prompts until it matches your intent. Only then do you ask Copilot to implement the plan.",
+  "rationale": [
+   "Incorrect: there are no changes yet, so there is nothing for reviewers to review. The plan must be fixed during the session.",
+   "Incorrect: assigning the issue skips the agreed plan entirely, so the agent might still include unrequested work.",
+   "Correct: iterating on the plan with a follow-up prompt removes the unwanted step before any code is written, which is the purpose of reviewing the plan.",
+   "Incorrect: implementing and then reverting the step creates extra work and review noise. The plan should be corrected before implementation."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/research-plan-iterate"
+ },
+ {
+  "id": "1.2.3-04",
+  "obj": "1.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A team lead at Proseware, Inc. asks how reviewers should treat pull requests that Copilot cloud agent opens, compared with pull requests from human developers.\n\nWhich approach should the team lead recommend?",
+  "choices": [
+   "Approve agent pull requests faster because agents make fewer errors",
+   "Review only the tests in agent pull requests and skip the code",
+   "Reject agent pull requests unless a human rewrites the changes",
+   "Review agent pull requests to the same standard as human work"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The contributor model treats an agent like a contributor: its work is reviewed with the same standards, the same checks, and the same accountability as human contributions.",
+  "rationale": [
+   "Incorrect: lowering the bar for agents is blind trust. Agent output can contain errors, so it needs the same review as any contribution.",
+   "Incorrect: tests are only one signal. Reviewers must also check intent, scope, and quality of the code itself.",
+   "Incorrect: rejecting agent work by default is excessive suspicion. It removes the value of the agent without improving the review standard.",
+   "Correct: agent pull requests get the same standards and checks as human contributions. A human reviewer stays accountable for what is merged."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "1.2.3-05",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Fabrikam, Inc., a developer assigns an issue to Copilot cloud agent and then approves the resulting pull request. The branch ruleset requires one approval, but the pull request still cannot be merged.\n\nWhat should the developer do?",
+  "choices": [
+   "Ask another person with write access to review and approve",
+   "Approve the pull request again after the workflows finish",
+   "Ask Copilot to approve its own pull request in a comment",
+   "Add a bypass for the developer to the branch ruleset"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The person who asked Copilot to create a pull request cannot approve it in a way that counts toward required approvals. This keeps an independent reviewer in the loop.",
+  "rationale": [
+   "Correct: the requester's approval does not count toward required approvals, so another reviewer with write access must approve before the pull request can merge.",
+   "Incorrect: a repeated approval by the requester still does not count toward the required approvals, whatever the state of the workflows.",
+   "Incorrect: Copilot cannot approve or merge pull requests. Asking it in a comment makes it work on the code, not approve it.",
+   "Incorrect: a bypass removes the independent review that the rule enforces, which defeats the purpose of requiring an approval."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "1.2.3-06",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. wants every agent pull request to contain a plan, and wants GitHub to block merging when the plan is missing.\n\nWhich three actions should Contoso perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create .github/pull_request_template.md with a Plan section",
+   "Add a workflow that fails when the pull request body has no plan",
+   "Make the workflow a required status check in a branch ruleset",
+   "Paste the plan structure into .github/copilot-instructions.md",
+   "Enable push protection for the repository"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Standardize first, then check, then enforce: the template creates the Plan section, a check verifies it, and a ruleset makes that check a required gate before merge.",
+  "rationale": [
+   "Step 1: create the pull request template so every pull request starts with a Plan section to fill in.",
+   "Step 2: add a workflow that inspects the pull request body and fails when the plan is missing.",
+   "Step 3: make that workflow a required status check in a ruleset so a pull request without a plan cannot merge.",
+   "Incorrect: custom instructions guide Copilot but do not block a merge. They are guidance, not an enforced control.",
+   "Incorrect: push protection blocks secrets in pushes. It does not check pull request descriptions for a plan."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/5-pull-request-governance-controls"
+ },
+ {
+  "id": "1.2.3-07",
+  "obj": "1.2.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Litware, Inc. is writing a short rubric for reviewers of agent pull requests, based on the contributor model.\n\nWhich three questions should the rubric include? Each correct answer presents part of the solution.",
+  "choices": [
+   "Does the change address the intent of the issue?",
+   "Are tests and checks linked as evidence?",
+   "Can the change be reverted if it fails?",
+   "Was the change written by a person?",
+   "Did the agent finish in under ten minutes?",
+   "Does the pull request have fewer than three commits?"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A contributor rubric checks intent, evidence, and a fallback path. Authorship, speed, and commit count do not show whether a change is correct or safe to merge.",
+  "rationale": [
+   "Correct: intent asks whether the change solves the problem in the issue, which is the first check for any contribution.",
+   "Correct: evidence such as linked tests and checks shows that the change was validated, instead of trusting the author's claim.",
+   "Correct: a fallback, such as a clean revert, shows that a failed change can be undone safely.",
+   "Incorrect: the contributor model judges the work, not who wrote it. Human and agent work get the same review.",
+   "Incorrect: duration says nothing about quality. A fast or slow session can produce a correct or incorrect change.",
+   "Incorrect: commit count is not a quality measure. Reviewers judge the content and evidence, not the number of commits."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "1.2.3-08",
+  "obj": "1.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "The security-team plans to let the agent work on a token-refresh issue in payments-api.\n\nHow should the team handle the plan for this issue to meet the planning requirements?",
+  "choices": [
+   "Have the agent put the plan and the code in the same PR",
+   "Rely on Copilot code review to check the plan after coding",
+   "Let the agent validate its own plan before it writes code",
+   "Have security-team approve a plan-only PR before any code"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "payments-api handles authentication, and the requirement says plans must be approved by security-team before any code is written. That is a plan-first pull request.",
+  "rationale": [
+   "Incorrect: plan and code in one pull request means code is written before the plan is approved, which breaks the requirement.",
+   "Incorrect: Copilot code review runs on code that already exists. The plan must be approved by people before coding starts.",
+   "Incorrect: self-validation is not independent approval. The requirement names security-team as the approver.",
+   "Correct: a plan-first pull request contains only the plan, so security-team can approve it before any code exists, which is what the requirement asks."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/4-plan-reason-execution",
+  "case": "C-a"
+ },
+ {
+  "id": "1.2.4-01",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Copilot cloud agent opens a pull request in a Fourth Coffee repository. The CI workflows for the pull request do not start, and the merge box shows that workflows are waiting.\n\nWhat should a developer with write access do to let the checks run?",
+  "choices": [
+   "Mark the pull request as ready for review to trigger the checks",
+   "Review the changes, then click Approve and run workflows",
+   "Push an empty commit to the copilot/ branch of the pull request",
+   "Ask Copilot in a comment to run the workflows on its own branch"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "By default, GitHub Actions workflows do not run automatically on pull requests from Copilot. A user with write access reviews the changes and clicks Approve and run workflows in the merge box.",
+  "rationale": [
+   "Incorrect: changing the draft state does not approve the workflow runs. The merge box still waits for Approve and run workflows.",
+   "Correct: a person with write access reviews the changes and then clicks Approve and run workflows, which is the human gate before agent code runs in CI.",
+   "Incorrect: an extra commit does not remove the approval requirement. The workflows still wait for a person to approve them.",
+   "Incorrect: Copilot cannot approve its own workflow runs. The approval is a human control over code that the agent wrote."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "1.2.4-02",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "A manager at Relecloud worries that Copilot cloud agent could ship code to the main branch without a person seeing it.\n\nWhich built-in behavior should you describe to address this concern?",
+  "choices": [
+   "Copilot pushes to main only after it has validated its own changes",
+   "Copilot asks the requester to confirm each commit before pushing",
+   "Copilot opens draft pull requests that it cannot approve or merge",
+   "Copilot merges only when every required status check has passed"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Copilot cloud agent pushes only to its own copilot/ branches and opens pull requests that it cannot mark ready, approve, or merge. A human must review and merge the work.",
+  "rationale": [
+   "Incorrect: Copilot cannot push to main or the default branch. It pushes only to branches that it creates, which start with copilot/.",
+   "Incorrect: Copilot works autonomously in its session and does not ask the requester to confirm each commit. The control is the pull request review.",
+   "Correct: Copilot cannot approve or merge its own pull request, so every change reaches main only after a human review and merge.",
+   "Incorrect: Copilot never merges, even when checks pass. Passing checks are evidence for the human reviewer, not a merge trigger for the agent."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "1.2.4-03",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Contoso, Ltd., agent pull requests are reviewed and merged normally. A workflow then deploys the main branch to production. Contoso needs a named release manager to approve each production deployment before the deploy job runs.\n\nWhat should Contoso configure?",
+  "choices": [
+   "A CODEOWNERS entry for the release manager on the workflow files",
+   "The Require approval for workflow runs setting for Copilot",
+   "A required status check that runs before the pull request merges",
+   "A production environment with required reviewers, used by the deploy job"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Environments are control points for deployment. Required reviewers on an environment pause any job that references it until an approved person allows it to continue.",
+  "rationale": [
+   "Incorrect: CODEOWNERS adds reviewers to pull requests that change those files. It does not pause a deployment after the merge.",
+   "Incorrect: this setting gates workflows on Copilot pull requests before merge. It does not control deployments of the main branch.",
+   "Incorrect: a required status check gates the merge, not the later deployment. The release manager would not approve each deployment.",
+   "Correct: a job that references an environment with required reviewers waits until the release manager approves, which gates each production deployment."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/4-describe-github-system-record-control-plane"
+ },
+ {
+  "id": "1.2.4-04",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Developers at Tailspin Toys find it slow to click Approve and run workflows on every Copilot pull request. One developer proposes turning off the Require approval for workflow runs setting for Copilot cloud agent.\n\nWhat should you recommend?",
+  "choices": [
+   "Keep the setting and inspect .github/workflows changes before approving",
+   "Turn off the setting because Copilot cannot change workflow files",
+   "Turn off the setting and rely on the agent firewall for protection",
+   "Keep the setting and let Copilot approve the runs for its own changes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Turning off workflow approval lets workflows run on Copilot pull requests without review. GitHub warns this can let unreviewed code gain write access or access to secrets, especially through changed workflow files.",
+  "rationale": [
+   "Correct: the approval is a human gate before agent code runs with repository permissions and secrets. Reviewers should check workflow changes before approving.",
+   "Incorrect: Copilot can change workflow files in its pull requests. That is why the approval step and a review of workflow changes matter.",
+   "Incorrect: the firewall restricts the agent's internet access during its session. It does not protect secrets in workflows that run after approval.",
+   "Incorrect: Copilot cannot approve workflow runs for its own pull requests. The approval must come from a person with write access."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings"
+ },
+ {
+  "id": "1.2.4-05",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank wants to make sure that no change, from a person or from Copilot cloud agent, reaches the default branch without an approved pull request.\n\nWhat should Woodgrove Bank configure?",
+  "choices": [
+   "A setting that limits Copilot to pushing to branches named copilot/",
+   "A ruleset on the default branch that requires a PR with approvals",
+   "Repository custom instructions that tell Copilot to use pull requests",
+   "A custom agent profile that excludes the edit tool from the agent"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Rulesets and branch protection enforce how changes enter a branch. A rule that requires a pull request with approvals applies to every contributor, whatever its origin.",
+  "rationale": [
+   "Incorrect: Copilot already pushes only to copilot/ branches by design. That does not stop people from pushing to the default branch.",
+   "Correct: a ruleset that requires a pull request with approvals enforces review for every change to the default branch, from people and from agents.",
+   "Incorrect: custom instructions are guidance for Copilot only. They do not enforce anything for people and can be ignored by the model.",
+   "Incorrect: removing the edit tool stops one agent from changing code at all. It does not require pull requests from people."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
+ },
+ {
+  "id": "1.2.4-06",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Proseware, Inc. wants the platform-team to review every pull request that changes files in .github/workflows, including pull requests from Copilot cloud agent. The ruleset rule that requires code owner review must be turned on only after the CODEOWNERS file on the default branch names the platform-team.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add /.github/workflows/ @proseware/platform-team to CODEOWNERS",
+   "Merge the CODEOWNERS change into the default branch",
+   "Turn on Require review from Code Owners in the default branch ruleset",
+   "Add an instruction about workflow files to copilot-instructions.md",
+   "Turn off Require approval for workflow runs for Copilot"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "CODEOWNERS identifies the owners of a path, and the file takes effect from the default branch. A ruleset that requires code owner review then makes the owners' approval mandatory before merge.",
+  "rationale": [
+   "Step 1: add a CODEOWNERS entry that assigns the workflows folder to the platform-team.",
+   "Step 2: merge the change so the CODEOWNERS file on the default branch names the platform-team as owners.",
+   "Step 3: require review from code owners in the ruleset so pull requests that change workflows cannot merge without platform-team approval.",
+   "Incorrect: an instruction is guidance for Copilot. It does not require platform-team review, and it does not apply to people.",
+   "Incorrect: turning off workflow approval removes a control. It does nothing to require review by the platform-team."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails"
+ },
+ {
+  "id": "1.2.4-07",
+  "obj": "1.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders uses Copilot cloud agent in a repository named web-app. Pull requests from the agent sometimes change files in .github/workflows. Pull requests that change workflow files must not merge without approval from the platform-team. Pull requests that change other files must not need platform-team review.\n\nSolution: You add /.github/workflows/ @northwind/platform-team to CODEOWNERS on the default branch, and you turn on Require review from Code Owners in the branch ruleset.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "To require approval from a specific team only for certain paths, combine a CODEOWNERS entry for those paths with a rule that requires review from code owners. Guidance and blanket approval counts do not target the platform-team.",
+  "rationale": [
+   "Correct: the platform-team becomes the required reviewer only for pull requests that change workflow files, and other pull requests are not affected.",
+   "Incorrect: the solution does meet the goal. A path-based CODEOWNERS entry plus required code owner review targets exactly the workflow files."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails",
+  "series": "S-a"
+ },
+ {
+  "id": "1.2.4-08",
+  "obj": "1.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders uses Copilot cloud agent in a repository named web-app. Pull requests from the agent sometimes change files in .github/workflows. Pull requests that change workflow files must not merge without approval from the platform-team. Pull requests that change other files must not need platform-team review.\n\nSolution: You add an instruction to .github/copilot-instructions.md that tells Copilot not to change files in .github/workflows.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "To require approval from a specific team only for certain paths, combine a CODEOWNERS entry for those paths with a rule that requires review from code owners. Guidance and blanket approval counts do not target the platform-team.",
+  "rationale": [
+   "Incorrect: an instruction is guidance. Copilot may still change a workflow file, and nothing would stop the pull request from merging without platform-team approval.",
+   "Correct: the solution does not meet the goal because instructions do not enforce review. CODEOWNERS with required code owner review would."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails",
+  "series": "S-a"
+ },
+ {
+  "id": "1.2.4-09",
+  "obj": "1.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders uses Copilot cloud agent in a repository named web-app. Pull requests from the agent sometimes change files in .github/workflows. Pull requests that change workflow files must not merge without approval from the platform-team. Pull requests that change other files must not need platform-team review.\n\nSolution: You change the branch ruleset to require two approvals on every pull request.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "To require approval from a specific team only for certain paths, combine a CODEOWNERS entry for those paths with a rule that requires review from code owners. Guidance and blanket approval counts do not target the platform-team.",
+  "rationale": [
+   "Incorrect: two approvals from any reviewers do not have to include the platform-team, and every pull request is slowed down, including those without workflow changes.",
+   "Correct: the solution does not meet the goal because it neither requires the platform-team for workflow files nor leaves other pull requests unaffected."
+  ],
+  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails",
+  "series": "S-a"
+ }
+]

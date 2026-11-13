@@ -1,0 +1,1052 @@
+[
+ {
+  "id": "4.1.1-01",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "User2 writes an issue that asks the Copilot cloud agent to add a CSV export button to the orders page. User2 must place each statement in the correct section of the issue template so that the agent knows what to build, when it is done, and where it may work.\n\nHow should User2 complete the issue? To answer, select the appropriate options in the answer area.\n\n- \"Unit tests cover the new export function.\" goes in [[1]].\n- \"Change only files under src/web/orders/.\" goes in [[2]].\n- \"Users cannot download their order history.\" goes in [[3]].",
+  "answer": [
+   1,
+   2,
+   0
+  ],
+  "explanation": "A well-scoped issue acts as the prompt for the cloud agent. It needs a clear problem description, complete acceptance criteria such as whether unit tests are needed, and directions about which files to change.",
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results",
+  "case": "C-d",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "Problem",
+     "Acceptance criteria",
+     "Files in scope"
+    ],
+    "why": [
+     "Incorrect: the Problem section describes what is wrong for users. A testing requirement is a completion condition, not a problem statement.",
+     "Correct: whether unit tests are required is part of complete acceptance criteria, which tell the agent when the work is done.",
+     "Incorrect: Files in scope directs the agent to where it may change code. A test requirement says how the result is judged, not where to work."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "Problem",
+     "Acceptance criteria",
+     "Files in scope"
+    ],
+    "why": [
+     "Incorrect: a path restriction is not a description of the problem. Keeping it in Problem hides an operational constraint inside the narrative.",
+     "Incorrect: acceptance criteria state outcomes. A list of allowed paths is better stated as direction about which files to change.",
+     "Correct: the documentation recommends giving directions about which files to change, which is an operational constraint on the agent's scope."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "Problem",
+     "Acceptance criteria",
+     "Files in scope"
+    ],
+    "why": [
+     "Correct: a clear description of the problem from the user's point of view tells the agent what needs to be solved.",
+     "Incorrect: this statement describes the current failure, not a verifiable condition for completion. Acceptance criteria describe the outcome to verify.",
+     "Incorrect: the statement says nothing about which files may change, so it does not belong in Files in scope."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "4.1.1-02",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. wants developers to get an implementation plan with success criteria, risks, and out-of-scope items before any feature work starts. You decide to use the implementation planner custom agent from the GitHub Docs customization library in the repository.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create the file .github/agents/implementation-planner.agent.md.",
+   "Add frontmatter with the name, description, and tools of the agent, followed by its instructions.",
+   "Commit the file and merge it to the default branch.",
+   "On the agents tab, select the implementation-planner agent and describe the feature.",
+   "Save the profile as .github/instructions/implementation-planner.instructions.md.",
+   "Assign the feature issue to Copilot before the profile is merged."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A custom agent is a .agent.md profile in .github/agents with frontmatter that names it and limits its tools. It becomes selectable after it is merged to the default branch, and its instructions define the expected plan structure.",
+  "rationale": [
+   "Step 1: custom agent profiles are stored in the .github/agents directory with a .agent.md extension.",
+   "Step 2: the frontmatter sets name, description, and tools such as read, search, and edit, and the body defines the plan structure that the agent must produce.",
+   "Step 3: the tutorial says to commit the file and merge it into the default branch so that the agent is available in the repository.",
+   "Step 4: once merged, you select the agent on the agents tab and give it the feature to plan.",
+   "Incorrect: .instructions.md files are path-specific custom instructions, not custom agent profiles, so the planner would not be selectable as an agent.",
+   "Incorrect: assigning work before the profile is on the default branch means the planner is not available, so the default agent would start coding without a plan."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents/implementation-planner"
+ },
+ {
+  "id": "4.1.1-03",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. creates a custom agent that writes implementation plans. The agent must be able to read and search the code and write a plan document, and it must not have other tools.\n\nWhich tools value should you use in the agent profile?",
+  "choices": [
+   "[\"read\", \"search\"]",
+   "[\"read\", \"search\", \"edit\"]",
+   "[\"edit\"]",
+   "[\"search\", \"edit\"]"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The tools list in a custom agent profile is a capability boundary. The implementation planner example uses read, search, and edit so that the agent can study the code and write the plan, with nothing more.",
+  "rationale": [
+   "Incorrect: without edit, the agent can study the code but cannot write the plan document that is the expected output.",
+   "Correct: read and search let the agent study the codebase, and edit lets it write the plan document. This matches the implementation planner example.",
+   "Incorrect: edit alone lets the agent write files but not read or search the code, so its plan would not be grounded in the codebase.",
+   "Incorrect: without read, the agent cannot open the files that search finds, so it cannot analyze the code that the plan depends on."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents/implementation-planner"
+ },
+ {
+  "id": "4.1.1-04",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank defines agent tasks by using a task contract. For a vulnerability fix, the contract must state that required checks pass, the vulnerable version is replaced, and no unexpected files change.\n\nWhich part of the task contract should contain these statements?",
+  "choices": [
+   "Inputs",
+   "Outputs",
+   "Success criteria",
+   "Operational constraints"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A task contract defines inputs (what the agent needs), outputs (what it produces), and success criteria (how results are evaluated). Vague success criteria let an agent finish work that looks plausible but misses the goal.",
+  "rationale": [
+   "Incorrect: inputs describe what the agent receives, such as the alert, the repository scope, and constraints. They do not describe how the result is judged.",
+   "Incorrect: outputs describe what the agent produces, such as the plan, the bounded changeset, and evidence links. They are the things being evaluated.",
+   "Correct: success criteria state how results are evaluated, such as passing checks, a resolved security signal, and a scope that matches intent.",
+   "Incorrect: constraints such as no workflow changes and no direct pushes are part of the inputs. They limit how the agent works, not how the outcome is judged."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/3-inputs-outputs-success-criteria"
+ },
+ {
+  "id": "4.1.1-05",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys allows the Copilot cloud agent to change application code. Any change to files under .github/workflows/ must be approved by the platform team before it can merge, even when the agent makes the change.\n\nWhat should you use to enforce this constraint?",
+  "choices": [
+   "A sentence in the issue that asks the agent to avoid workflow files",
+   "A repository fact in Copilot Memory that lists the platform team",
+   "CODEOWNERS for .github/workflows/ with required code owner review",
+   "A read-only GITHUB_TOKEN for every workflow in the repository"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Operational constraints must be enforced by the system rather than assumed from the agent. High-risk paths such as .github/workflows/ are protected with CODEOWNERS, multiple reviews, and stricter rulesets so that the right owners must approve.",
+  "rationale": [
+   "Incorrect: an instruction in the issue tells the agent what is expected, but nothing blocks the merge if the agent or another contributor ignores it.",
+   "Incorrect: memories inform Copilot and are applied by judgment. A fact cannot require an approval from the platform team before merging.",
+   "Correct: assigning the path to the platform team in CODEOWNERS and requiring code owner review blocks merging until that team approves, regardless of who made the change.",
+   "Incorrect: a read-only token limits what workflows can write, but it does not require platform team approval and would break workflows that need write access."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/6-reliable-workflows"
+ },
+ {
+  "id": "4.1.1-06",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. wants the Copilot cloud agent to prepare changes to production deployment settings. The agent must not be able to run a production deployment on its own, and a human must approve each deployment.\n\nHow should you design the task constraints?",
+  "choices": [
+   "Let the agent prepare the change and protect the deploy job with an environment that has required reviewers",
+   "Let the agent merge the change by using automerge after all required checks pass",
+   "Let the agent run the deploy job when CODEOWNERS for infra/ have reviewed the plan",
+   "Give the agent the production secrets so that it can run and verify the deployment by itself"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Autonomy should match the risk of the task. For critical actions such as production deployments, the agent prepares the change and an environment with required reviewers pauses the deploy job until a human approves.",
+  "rationale": [
+   "Correct: a job that targets an environment with required reviewers pauses until approval, so the agent can prepare changes but cannot execute the production deployment by itself.",
+   "Incorrect: automerge after checks is suitable for low-risk work such as documentation. It removes the human approval that a critical deployment needs.",
+   "Incorrect: CODEOWNERS review controls merging of files, not the execution of a deployment job, and it would still let the agent run the deployment.",
+   "Incorrect: handing production secrets to the agent widens its access and breaks least privilege. Secrets should stay behind protected boundaries such as environments."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/6-reliable-workflows"
+ },
+ {
+  "id": "4.1.1-07",
+  "obj": "4.1.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders uses the implementation planner custom agent. Reviewers complain that plans do not make clear which related work the team deliberately leaves for later.\n\nWhich section of the plan should state this work?",
+  "choices": [
+   "Overview",
+   "Technical Approach",
+   "Considerations",
+   "Not Included"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "The implementation planner produces a plan with an overview and success criteria, a technical approach, phased tasks, considerations, and a Not Included section. Stating what is out of scope keeps the agent and reviewers aligned on the expected outcome.",
+  "rationale": [
+   "Incorrect: the Overview summarizes the feature and its success criteria, which describe what done looks like rather than what is excluded.",
+   "Incorrect: the Technical Approach explains how the work will be built. Listing excluded work there mixes design with scope decisions.",
+   "Incorrect: Considerations lists assumptions, constraints, and risks. Deliberately excluded work is a scope boundary, not a risk.",
+   "Correct: the Not Included section states what is out of scope, so reviewers and implementers know which work is intentionally deferred."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/customization-library/custom-agents/implementation-planner"
+ },
+ {
+  "id": "4.1.1-08",
+  "obj": "4.1.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation reviews plans that an agent writes in pull request descriptions. Each plan already lists the scope and the success criteria.\n\nWhich other element should you require so that the plan is easier to review for higher-risk changes?",
+  "choices": [
+   "A rollback or escalation path",
+   "The model temperature used for the task",
+   "A list of every file in the repository",
+   "The agent's confidence score for the plan"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Plans become more reviewable when they include scope, success criteria, and a rollback or escalation path. Together, these state what will change, how success is judged, and what happens if it fails.",
+  "rationale": [
+   "Correct: a rollback or escalation path tells reviewers how a failed or risky change will be undone or handed off, which completes scope and success criteria.",
+   "Incorrect: model settings do not tell a reviewer what will change or how to recover. They are not part of a reviewable plan.",
+   "Incorrect: listing every file hides the real scope. A plan should name the files that will change, not the whole repository.",
+   "Incorrect: evaluation must be grounded in system signals, not in the agent's confidence, so a self-reported score adds no reviewable evidence."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/3-explain-agent-lifecycle-plan-act-evaluate"
+ },
+ {
+  "id": "4.1.1-09",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud wants to delegate one of these tasks to the Copilot cloud agent:\n\n- Task1: respond to a production incident in the payment service\n- Task2: redesign the data model while requirements are still being discussed\n- Task3: add unit tests for the invoice module, with acceptance criteria and target files listed in the issue\n- Task4: change how the login service stores personal data\n\nWhich task should you assign to the cloud agent?",
+  "choices": [
+   "Task1",
+   "Task2",
+   "Task3",
+   "Task4"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The cloud agent works best on well-scoped tasks with a clear problem, complete acceptance criteria, and directions on which files to change. Sensitive, ambiguous, broad, or incident response tasks are better kept with humans.",
+  "rationale": [
+   "Incorrect: incident response is listed as a sensitive task that is better handled by a human, because it is production-critical and time-sensitive.",
+   "Incorrect: ambiguous work without clear requirements gives the agent no reliable definition of done, so it is better kept with a human.",
+   "Correct: Task3 has a clear goal, acceptance criteria, and target files, which is the kind of well-scoped issue that the cloud agent handles well.",
+   "Incorrect: changes that involve personal data and security are sensitive and are better kept with humans, even if the issue is well written."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "4.1.1-10",
+  "obj": "4.1.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. writes a task for an agent that runs integration tests against a partner API. The tests need an API token. The token must not appear in repository content, and only the component that calls the API may receive it.\n\nHow should you provide the token?",
+  "choices": [
+   "Add the token to .github/copilot-instructions.md",
+   "Inject it at runtime from a protected secret boundary",
+   "Write the token in plain text in the workflow YAML",
+   "Store it as a repository secret exposed to every job"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Secrets are operational constraints: they must stay out of instructions files, committed configuration, and workflow YAML. Inject them at runtime through protected secret boundaries, scoped to the components that need them.",
+  "rationale": [
+   "Incorrect: instructions files are repository content that every agent reads, so the token would be exposed to anyone with read access.",
+   "Correct: a protected secret boundary injects the token at runtime and can be scoped, for example by environment, so only the component that calls the API receives it.",
+   "Incorrect: workflow YAML is committed content, so a plain text token leaks to everyone who can read the repository.",
+   "Incorrect: a repository secret exposed to every job keeps the token out of repository content, but components that do not call the API also receive it, which breaks least privilege."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "4.1.2-01",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Contoso, Ltd. evaluates pull requests that the Copilot cloud agent opens. The team must pick the signal that answers each evaluation question.\n\nWhich signal should you use for each question? To answer, drag the appropriate signals to the correct questions. Each signal may be used once, more than once, or not at all.",
+  "choices": [
+   "Required status check results",
+   "Code review feedback",
+   "Dependency review",
+   "Session token usage and length",
+   "Secret scanning alerts"
+  ],
+  "answer": [
+   1,
+   2,
+   3,
+   0
+  ],
+  "explanation": "Evaluation combines quantitative signals, such as check results and usage numbers, with qualitative signals, such as reviewer judgment. Pick the signal that actually measures the question instead of relying on the agent's confidence.",
+  "rationale": [
+   "Question1 asks for a judgment about architecture fit, which only human code review feedback provides; check results cannot judge design intent.",
+   "Question2 is about a dependency added in a lock file, and dependency review reports changes to indirect dependencies along with known vulnerabilities.",
+   "Question3 asks for duration and tokens, which the agent session view reports as session length and token usage.",
+   "Question4 is answered by the required status checks for the build, test, and lint workflows, which give a pass or fail result per run."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/3-explain-agent-lifecycle-plan-act-evaluate",
+  "targets": [
+   "Question1: does the change follow the team's architecture expectations?",
+   "Question2: does a package version added in the lock file have a known vulnerability?",
+   "Question3: how long did the agent session run and how many tokens did it use?",
+   "Question4: do the build, test, and lint jobs pass?"
+  ],
+  "notes": [
+   "Pass or fail results of workflows such as build, test, and lint. A quantitative signal that answers whether automated checks succeed.",
+   "Requested changes and approvals from human reviewers. A qualitative signal for design, readability, and architecture fit that automation cannot judge.",
+   "Shows added, removed, and updated dependencies in a pull request, including indirect ones in lock files, with known vulnerability data.",
+   "The agent session view shows progress, token usage, and session length. Use it to measure the cost and duration of agent work.",
+   "Alerts for credentials found in the code. Use them to detect exposed secrets, not vulnerable packages or design problems."
+  ]
+ },
+ {
+  "id": "4.1.2-02",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. builds a dashboard that tracks the quality of agent work over time. The dashboard must show only quantitative signals.\n\nWhich two signals should you include? Each correct answer presents a complete solution.",
+  "choices": [
+   "The pass rate of an evaluation set across repeated runs",
+   "A reviewer comment that a function is hard to read",
+   "The number of required checks that failed on each agent pull request",
+   "A code owner's judgment that a design fits the architecture",
+   "The assumptions that the agent lists in its plan"
+  ],
+  "answer": [
+   0,
+   2
+  ],
+  "explanation": "Quantitative signals are measured values such as pass rates and counts of failed checks. Qualitative signals are judgments and narrative evidence such as review comments and plan assumptions, which matter but cannot be charted as numbers directly.",
+  "rationale": [
+   "Correct: a pass rate measured over repeated runs is a numeric signal, and repeated runs account for the probabilistic results of agents.",
+   "Incorrect: a comment about readability is a human judgment, which is a qualitative signal. It is valuable in review but is not a measured value.",
+   "Correct: the count of failed required checks is a numeric result of workflow runs and can be tracked over time.",
+   "Incorrect: an architecture judgment by a code owner is qualitative. It answers whether the change fits, not how much or how often.",
+   "Incorrect: plan assumptions are narrative evidence that reviewers read to judge intent. They are qualitative, not measured values."
+  ],
+  "ref": "https://learn.microsoft.com/agents/agent-evaluation/evaluation-checklist"
+ },
+ {
+  "id": "4.1.2-03",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys classifies the evaluation signals for agent pull requests.\n\nWhich signal should you classify as qualitative?",
+  "choices": [
+   "The number of failing unit tests",
+   "The count of open code scanning alerts",
+   "A reviewer's request for changes about the design",
+   "The length of the agent session in minutes"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Common evaluation signals in GitHub include workflow runs and status checks, code review feedback, and security signals. Review feedback is qualitative because it records human judgment, while counts and durations are quantitative.",
+  "rationale": [
+   "Incorrect: a count of failing tests is a measured value from a workflow run, so it is quantitative.",
+   "Incorrect: a count of alerts is a number from a scanning tool, so it is quantitative even though it measures security.",
+   "Correct: a request for changes captures a reviewer's judgment about the design, which is a qualitative signal.",
+   "Incorrect: session length is a measured duration that the session view reports, so it is quantitative."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/3-explain-agent-lifecycle-plan-act-evaluate"
+ },
+ {
+  "id": "4.1.2-04",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Litware, Inc., User1 must compare how many tokens and how much time different Copilot cloud agent sessions use.\n\nWhich location should User1 check for these values?",
+  "choices": [
+   "The session view of each agent session",
+   "The Dependabot alerts page of the repository",
+   "The code scanning tool status page",
+   "The organization audit log"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agent sessions report progress, token usage, and session length in the session view. These quantitative values help compare the cost and duration of agent work.",
+  "rationale": [
+   "Correct: the session view shows the progress of a session together with its token usage and session length.",
+   "Incorrect: Dependabot alerts list vulnerable dependencies. They contain no data about agent sessions.",
+   "Incorrect: the tool status page shows the health of code scanning tools. It is used to debug scanning setup, not agent sessions.",
+   "Incorrect: the audit log records events such as who did what and when. It is not where token usage and session length are reported."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "4.1.2-05",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud changes the custom instructions for an agent and runs its evaluation set once. The pass rate rises from 78% to 84%.\n\nWhat should you do before you conclude that the change improved the agent?",
+  "choices": [
+   "Accept the result, because one run is enough",
+   "Run the evaluation several times and compare to the baseline",
+   "Ask the agent to rate its own improvement",
+   "Remove the test cases that failed in the new run"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Agent results are probabilistic, so a single run can differ from the next. Compare repeated runs against a baseline pass rate before you treat a change as an improvement.",
+  "rationale": [
+   "Incorrect: a single run can vary by chance, so a six-point difference may not be a real improvement.",
+   "Correct: running the evaluation multiple times and comparing to the baseline shows whether the improvement holds beyond normal variation.",
+   "Incorrect: the agent's opinion of its own work is not an objective signal. Evaluation must rely on measured results.",
+   "Incorrect: removing failing cases inflates the pass rate and hides real gaps. It changes the test, not the agent."
+  ],
+  "ref": "https://learn.microsoft.com/agents/agent-evaluation/evaluation-checklist"
+ },
+ {
+  "id": "4.1.2-06",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank iterates on an agent until its evaluation results are good enough to release. The team needs a rule that decides when to stop iterating.\n\nWhich rule should you use?",
+  "choices": [
+   "Stop when one run scores above the threshold",
+   "Stop when the agent reports that every case passes",
+   "Stop after the hardest test cases are removed",
+   "Stop when runs stay above the threshold with little variation"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Stop iterating when evaluation sets are above their thresholds, remaining gaps are documented, and scores vary only a little between runs. A single good run or a trimmed test set does not show stable quality.",
+  "rationale": [
+   "Incorrect: one run can be above the threshold by chance. Stable results across runs are required before you stop.",
+   "Incorrect: the agent's own report is not a measured signal and can be wrong, so it cannot decide when quality is sufficient.",
+   "Incorrect: removing hard tests to reach a threshold is explicitly discouraged, because the score no longer reflects real performance.",
+   "Correct: results above the threshold with run-to-run variation under about 5%, plus documented gaps, show that further iteration is unlikely to change the outcome."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-pattern"
+ },
+ {
+  "id": "4.1.2-07",
+  "obj": "4.1.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A pull request from the Copilot cloud agent at Contoso, Ltd. ends with the sentence \"All requirements are met and the fix is complete.\"\n\nWhich evidence should you rely on to decide whether the fix is complete?",
+  "choices": [
+   "The agent's closing sentence in the pull request description",
+   "The number of commits that the agent pushed to the branch",
+   "Required checks and security signals on the pull request",
+   "The length of the pull request description"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Agent evaluation must be grounded in system signals such as workflow runs, status checks, review feedback, and security signals, not in the agent's confidence. A claim of completion is a statement to verify, not evidence.",
+  "rationale": [
+   "Incorrect: the agent's claim reflects its confidence, not objective evidence. It must be verified with system signals.",
+   "Incorrect: the number of commits says nothing about whether the requirements are met. A large or small history can hide failures.",
+   "Correct: required checks and security signals are objective evidence produced by the system, so they show whether the fix actually works.",
+   "Incorrect: a long description can look thorough without proving anything. Evidence comes from checks, reviews, and scans."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/3-explain-agent-lifecycle-plan-act-evaluate"
+ },
+ {
+  "id": "4.1.2-08",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "An agent pull request at Northwind Traders passes every required check. The plan in the description says that only src/api/orders will change, but the diff also changes files under infra/.\n\nWhich signal should you use to detect this kind of problem in future pull requests?",
+  "choices": [
+   "Rerunning the required checks on the pull request",
+   "Reviewing changed files against the scope of the plan",
+   "Checking the token usage of the agent session",
+   "Checking the secret scanning alerts for the pull request"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Passing checks validate only what they are designed to detect. Comparing the changed files with the plan's scope is a qualitative review signal that catches unexpected changes that CI cannot see.",
+  "rationale": [
+   "Incorrect: the checks already passed and test behavior, not scope. Rerunning them produces the same result.",
+   "Correct: the review rubric asks whether the changed files align with the plan, which exposes out-of-scope changes such as edits under infra/.",
+   "Incorrect: token usage measures cost and effort. It does not show which files the agent changed.",
+   "Incorrect: secret scanning finds exposed credentials. It does not compare a diff with the intended scope."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "4.1.2-09",
+  "obj": "4.1.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation uses GitHub Code Quality and uploads code coverage data. The company must block agent pull requests that lower line coverage by more than two percentage points compared to the default branch.\n\nWhich ruleset rule should you use?",
+  "choices": [
+   "Require code scanning results",
+   "Require code quality results",
+   "Restrict code coverage",
+   "Require status checks to pass"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Code coverage is a quantitative signal. The Restrict code coverage rule, which is in public preview, can block merges based on a minimum line coverage percentage or a maximum coverage drop relative to the default branch.",
+  "rationale": [
+   "Incorrect: this rule blocks merges based on code scanning alerts and tool status. It does not evaluate coverage data.",
+   "Incorrect: this rule blocks merges based on Code Quality findings and their severity. It does not compare line coverage to the default branch.",
+   "Correct: Restrict code coverage supports a maximum line coverage drop in percentage points relative to the default branch, which matches the requirement.",
+   "Incorrect: required status checks only enforce that named checks pass. They do not measure coverage drop unless you build that logic yourself."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "4.1.2-10",
+  "obj": "4.1.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Proseware, Inc. uses CODEOWNERS for its infra/ directory. A reviewer must confirm that the right people evaluated the infra/ changes in an agent pull request.\n\nWhich signal should the reviewer check?",
+  "choices": [
+   "The approval from the code owners of infra/",
+   "The approval from any user with write access",
+   "The result of the required build check",
+   "The approval from the user who assigned the issue"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The contributor model reviews agent work like any contribution. Ownership is a qualitative signal: the code owners of sensitive areas must review and approve the change.",
+  "rationale": [
+   "Correct: the review rubric asks whether code owners reviewed sensitive areas, and their approval on the pull request is the signal that they did.",
+   "Incorrect: an approval from any user with write access shows that someone reviewed the change, not that the owners of infra/ evaluated it.",
+   "Incorrect: a passing build shows that the code compiles and tests pass. It does not show that the owners of infra/ reviewed it.",
+   "Incorrect: the user who asked Copilot to create the pull request cannot provide a required approval for it, and that user is not necessarily an owner of infra/."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "4.1.3-01",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Litware, Inc. builds an evaluation test set for an HR policy agent. The agent instructions say that the agent must answer leave questions only from the policy knowledge article, cite the article, and send questions that the article does not cover to HR support. The acceptance criteria of each test case must match this intent.\n\nHow should you complete the test cases? To answer, select the appropriate options in the answer area.\n\n- Test case 1 asks \"How many vacation days do new employees get?\", which the article answers. Acceptance criteria: [[1]].\n- Test case 2 asks \"Can I carry over unused sick days?\", which the article does not cover. Acceptance criteria: [[2]].",
+  "answer": [
+   1,
+   0
+  ],
+  "explanation": "Test cases should come directly from the agent instruction requirements, and their acceptance criteria define what passes and what fails. Criteria that check grounding, citation, and routing for out-of-scope questions keep the evaluation aligned with what the team intends the agent to do.",
+  "ref": "https://learn.microsoft.com/en-us/agents/agent-evaluation/evaluation-checklist",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "The response is friendly and states a number of days",
+     "The response matches the article text and includes a citation",
+     "The response directs the user to HR support"
+    ],
+    "why": [
+     "Incorrect: a friendly answer with any number can pass even when the number is wrong or invented, so it does not test grounding in the article.",
+     "Correct: the intent is to answer from the policy article with a citation, so the criteria must check the article text and the citation.",
+     "Incorrect: the article covers this question, so routing it to HR would fail the intent that the agent answers covered questions itself."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "The response routes the user to HR support and invents no policy",
+     "The response quotes the closest related policy with a citation",
+     "The response states the carry-over rule that most companies use"
+    ],
+    "why": [
+     "Correct: the instructions require questions outside the article to go to HR, so the criteria must check the routing and that no policy is made up.",
+     "Incorrect: quoting a related policy can sound grounded but answers a question the article does not cover, which the instructions forbid.",
+     "Incorrect: a generic rule is not from the article, so a criterion that accepts it would reward the agent for answering beyond its knowledge."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "4.1.3-02",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. asks an agent to remediate a vulnerable package. The current success criterion is \"All tests pass.\"\n\nWhich success criterion should you use instead to match the intent of the task?",
+  "choices": [
+   "The agent reports that it updated the package to the latest version",
+   "The vulnerable version is no longer reachable, even transitively",
+   "The pull request has no merge conflicts with the default branch",
+   "The build finishes in under ten minutes"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "CI passing is necessary but not always sufficient. Success criteria should reflect the real intent of the task, such as the vulnerability being resolved, because an agent can update a direct dependency and leave the vulnerable version reachable through a transitive one.",
+  "rationale": [
+   "Incorrect: the agent's report is not evidence, and updating the direct package can still leave the vulnerable version in the dependency tree.",
+   "Correct: this criterion tests the actual intent, a resolved vulnerability, and closes the gap where a transitive dependency keeps the old version.",
+   "Incorrect: a clean merge says nothing about whether the vulnerability is fixed. It is a mechanical condition, not the task's goal.",
+   "Incorrect: build speed is unrelated to the vulnerability. Meeting it would not show that the security problem is resolved."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/3-inputs-outputs-success-criteria"
+ },
+ {
+  "id": "4.1.3-03",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. receives its first pull requests from an agent. Some reviewers want to reject them because an AI wrote them, and others want to approve them because automation produced them.\n\nHow should reviewers evaluate the agent's pull requests?",
+  "choices": [
+   "Reject them unless a human rewrites the code",
+   "Approve them when the agent says the work is complete",
+   "Apply the same review criteria as for any contribution",
+   "Approve them automatically when CI passes"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "The contributor model treats agent work as a contribution and judges it by the standards of the workflow: intent, scope, evidence, ownership, and policy. It avoids both excessive suspicion and excessive trust.",
+  "rationale": [
+   "Incorrect: rejecting work because AI wrote it is the excessive suspicion error. The change should be judged on its merits.",
+   "Incorrect: the agent's claim is not evidence, and approving on its word is the excessive trust error.",
+   "Correct: the contributor model evaluates agent pull requests with the same criteria as any contribution, not by the novelty of the author.",
+   "Incorrect: checks validate only what they are designed to detect, so automatic approval on CI alone is blind trust in automation."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "4.1.3-04",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys adds a CodeQL workflow that checks every pull request to main. Agent pull requests must not merge until this workflow passes.\n\nWhat should you configure?",
+  "choices": [
+   "The workflow as a required status check in a ruleset",
+   "A sentence in the issue that asks the agent to wait",
+   "A repository fact that says the workflow must pass",
+   "A label that marks agent pull requests as unsafe"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Success should be enforced by the system, not assumed by the agent. Configuring the workflow as a required check through a ruleset or branch protection blocks merging until it passes.",
+  "rationale": [
+   "Correct: a required status check, set through a ruleset or branch protection, prevents merging until the workflow passes.",
+   "Incorrect: a request in the issue informs the agent, but it does not stop anyone from merging the pull request early.",
+   "Incorrect: memories inform Copilot and can expire. They cannot block a merge.",
+   "Incorrect: a label documents a concern but does not enforce anything unless a rule acts on it."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/3-inputs-outputs-success-criteria"
+ },
+ {
+  "id": "4.1.3-05",
+  "obj": "4.1.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "An agent pull request at Relecloud updates a dependency and also changes two configuration files that the issue did not mention.\n\nWhich question should reviewers ask first?",
+  "choices": [
+   "Whether the extra changes are justified",
+   "Whether the agent used fewer tokens than last time",
+   "Whether the commit messages are short",
+   "Whether the branch name starts with copilot/"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Under the contributor model, reviewers ask whether extra changes are justified, whether checks cover the risk introduced, and whether the right owners reviewed the affected areas, not only whether the code compiles.",
+  "rationale": [
+   "Correct: unexpected changes must be justified against the intent of the task before reviewers rely on any other signal.",
+   "Incorrect: token usage measures cost, not whether the configuration changes match the intent of the task.",
+   "Incorrect: commit message length is a style detail. It does not tell reviewers whether the extra changes belong in the pull request.",
+   "Incorrect: the branch name shows that Copilot created the branch. It says nothing about whether the changes are appropriate."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
+ },
+ {
+  "id": "4.1.3-06",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank requires an 80% pass rate on an agent evaluation set before release. The agent scores 76%. A team member proposes deleting the six hardest test cases, which would raise the score to 82%.\n\nWhat should you do?",
+  "choices": [
+   "Delete the six hardest test cases and release the agent",
+   "Lower the threshold to 75% without recording the reason",
+   "Rerun the evaluation set until one run scores above 80%",
+   "Keep the cases, triage the failures, and fix or document gaps"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Evaluation criteria must keep measuring what the team intends the agent to do. Removing hard tests to meet a threshold hides real gaps; triage the failures, fix the agent, or document the remaining gaps instead.",
+  "rationale": [
+   "Incorrect: deleting hard tests to reach a threshold is explicitly discouraged, because the score no longer reflects how the agent performs.",
+   "Incorrect: quietly lowering the threshold changes the bar instead of the agent and leaves no record of the decision.",
+   "Incorrect: rerunning until one run passes exploits randomness. Stable results across runs are what show quality.",
+   "Correct: keeping the hard cases and triaging the failures preserves the intent of the evaluation, and documented gaps make any release decision explicit."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-pattern"
+ },
+ {
+  "id": "4.1.3-07",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Northwind Traders, agent pull requests that change infra/ must merge only after the same scrutiny as other high-risk work. Today, only unit tests are required for all paths.\n\nHow should you align the evaluation criteria with the risk of these changes?",
+  "choices": [
+   "Require unit tests only, because they already pass",
+   "Require CODEOWNERS, multiple reviews, and stricter rulesets",
+   "Enable automerge after the required checks pass",
+   "Ask the agent to review its own infra/ changes"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Checks and approvals should match the risk of the change. Paths such as infra/ and .github/workflows/ are high risk and call for CODEOWNERS, multiple reviews, and stricter rulesets, while low-risk paths can use lighter controls.",
+  "rationale": [
+   "Incorrect: unit tests do not cover infrastructure risk. Passing them says little about whether an infra/ change is safe.",
+   "Correct: the risk-based autonomy model assigns CODEOWNERS, multiple reviews, and stricter rulesets to high-risk paths such as infra/.",
+   "Incorrect: automerge after checks fits low-risk paths such as docs/. It removes human review from high-risk changes.",
+   "Incorrect: self-review by the agent is not independent evidence and does not add owner judgment."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/6-reliable-workflows"
+ },
+ {
+  "id": "4.1.3-08",
+  "obj": "4.1.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Adatum Corporation changed the format of order confirmations on purpose. An evaluation case for its support agent still expects the old format, and the agent now fails that case.\n\nWhat should you do?",
+  "choices": [
+   "Change the agent so that it returns the old format",
+   "Update the test case to expect the new format",
+   "Delete the agent's custom instructions",
+   "Remove the case from the set permanently"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "When a test fails, first decide whether the test case or the agent design is wrong. A test case that no longer matches the intended behavior must be updated so that the evaluation stays aligned with what the team wants.",
+  "rationale": [
+   "Incorrect: the format change was intentional, so changing the agent back would make it worse at the real goal just to satisfy an outdated test.",
+   "Correct: this is a test case issue, not an agent design issue. Updating the expected output realigns the evaluation with the intended behavior.",
+   "Incorrect: the instructions are not the cause of the failure. Removing them would degrade the agent without fixing the test.",
+   "Incorrect: the case still covers useful behavior. Removing it loses coverage instead of correcting the expectation."
+  ],
+  "ref": "https://learn.microsoft.com/agents/agent-evaluation/evaluation-checklist"
+ },
+ {
+  "id": "4.1.3-09",
+  "obj": "4.1.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. lets an agent revise its pull request branch when a required check fails. The same required integration check has now failed twice in a row.\n\nWhat should happen next?",
+  "choices": [
+   "Escalate to a human reviewer with what failed and what was tried",
+   "Let the agent keep retrying until the check passes",
+   "Disable the integration check for agent pull requests",
+   "Merge the change by using an administrator bypass"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A safe iteration policy allows bounded retries and then escalates. If the same required check fails twice, hand off to a human with what failed, what was attempted, the evidence, and a suggested next step.",
+  "rationale": [
+   "Correct: after two failures of the same check, the policy escalates to a human reviewer with a summary of the failure, the attempts, the evidence, and a suggested next step.",
+   "Incorrect: unbounded retries can loop forever and hide a problem that needs human judgment.",
+   "Incorrect: disabling the check removes the success criterion instead of meeting it, so the evaluation no longer reflects intent.",
+   "Incorrect: bypassing protections merges a change that failed its required evidence, which defeats the purpose of the check."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "4.1.4-01",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "You need to meet the technical requirements for checking the pull requests that the Copilot cloud agent opens in orders-service.\n\nWhich two features should you rely on? Each correct answer presents part of the solution.",
+  "choices": [
+   "Secret scanning that the cloud agent runs on its own changes",
+   "The cloud agent check of new dependencies against the GitHub Advisory Database",
+   "A new workflow that runs actions/dependency-review-action",
+   "A ruleset rule that requires code scanning results",
+   "A repository fact that tells Copilot to look for credentials"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "The Copilot cloud agent has built-in validation tools: CodeQL, a GitHub Advisory Database check of new dependencies, secret scanning, and Copilot code review. They run before the agent completes its pull request and need no GitHub Advanced Security, Code Security, or Secret Protection license.",
+  "rationale": [
+   "Correct: the built-in secret scanning checks the agent's changes for exposed credentials before it completes, without a Secret Protection license.",
+   "Correct: the built-in dependency check compares new dependencies with the GitHub Advisory Database for malware and High or Critical vulnerabilities, without extra licenses.",
+   "Incorrect: in a private repository the dependency review action needs GitHub Code Security or Advanced Security, and it adds a workflow that the platform team must maintain.",
+   "Incorrect: code scanning in a private repository needs a GitHub Code Security license, which the company must not buy during the pilot.",
+   "Incorrect: a memory only informs Copilot and is applied by judgment. It is not a scan and produces no evaluation signal."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations",
+  "case": "C-d"
+ },
+ {
+  "id": "4.1.4-02",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud uses the Copilot cloud agent in a private repository. Relecloud has no GitHub Advanced Security, GitHub Code Security, or GitHub Secret Protection licenses. You need to ensure that new dependencies that the agent adds are checked against the GitHub Advisory Database before the agent completes its pull request.\n\nSolution: You keep the default Validation tools settings of the Copilot cloud agent.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The cloud agent runs a GitHub Advisory Database check of new dependencies as one of its built-in validation tools. The tools are on by default and need no security license.",
+  "rationale": [
+   "Correct: with the default settings the agent checks new dependencies against the GitHub Advisory Database and tries to resolve findings before it completes the pull request, with no license needed.",
+   "Incorrect: the solution does meet the goal. No would be right only if an administrator had turned off the validation tools in the cloud agent settings."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations",
+  "series": "S-d"
+ },
+ {
+  "id": "4.1.4-03",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud uses the Copilot cloud agent in a private repository. Relecloud has no GitHub Advanced Security, GitHub Code Security, or GitHub Secret Protection licenses. You need to ensure that new dependencies that the agent adds are checked against the GitHub Advisory Database before the agent completes its pull request.\n\nSolution: You turn off the Validation tools in the Copilot cloud agent settings and enable Dependabot version updates.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Turning off the validation tools removes the built-in dependency check. Dependabot version updates propose newer versions on a schedule; they do not check the dependencies that the agent adds before it finishes.",
+  "rationale": [
+   "Incorrect: turning off the validation tools stops the very check that compares new dependencies with the GitHub Advisory Database before the agent completes.",
+   "Correct: the solution does not meet the goal. Turning the validation tools off is useful only when they conflict with another product or slow work down, not when you need the check."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/configuring-agent-settings",
+  "series": "S-d"
+ },
+ {
+  "id": "4.1.4-04",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud uses the Copilot cloud agent in a private repository. Relecloud has no GitHub Advanced Security, GitHub Code Security, or GitHub Secret Protection licenses. You need to ensure that new dependencies that the agent adds are checked against the GitHub Advisory Database before the agent completes its pull request.\n\nSolution: You add a workflow that runs actions/dependency-review-action on pull requests and make it a required check.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The dependency review action is available for public repositories and for private repositories with GitHub Code Security or Advanced Security. It also runs on pull request events, after the agent has pushed, so it does not check dependencies before the agent completes.",
+  "rationale": [
+   "Incorrect: in a private repository without Code Security or Advanced Security the action is not available, and a required check would block merges instead of checking before the agent completes.",
+   "Correct: the solution does not meet the goal. The dependency review action is the right choice for public repositories or licensed private repositories that need a merge gate."
+  ],
+  "ref": "https://docs.github.com/en/code-security/concepts/supply-chain-security/dependency-review",
+  "series": "S-d"
+ },
+ {
+  "id": "4.1.4-05",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys maintains a public repository. Pull requests from developers and from the Copilot cloud agent must fail a check when they add a dependency with a vulnerability of high severity or higher, and the check must block merging.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add a workflow file in .github/workflows that runs on: [pull_request].",
+   "Add an actions/checkout step to the dependency-review job.",
+   "Add an actions/dependency-review-action@v4 step with fail-on-severity: high.",
+   "Require the dependency-review check to pass in a ruleset or branch protection rule.",
+   "Add the dependency review step to .github/copilot/settings.json.",
+   "Add allow-ghsas with every advisory ID that the check reports."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The dependency review action scans dependency changes in pull requests and fails when it finds vulnerable versions. Requiring the check makes the failure block merging, which turns the scan into an enforced evaluation signal.",
+  "rationale": [
+   "Step 1: the action reports on dependency changes in pull requests, so the workflow must run on the pull_request event.",
+   "Step 2: the documented job checks out the repository before the dependency review step runs.",
+   "Step 3: fail-on-severity sets the severity level that makes the action fail, so high meets the requirement.",
+   "Step 4: a failed check blocks merging only when the repository requires the dependency review check to pass.",
+   "Incorrect: .github/copilot/settings.json configures plugins for Copilot. Workflow steps belong in .github/workflows.",
+   "Incorrect: allow-ghsas skips the listed advisories during detection, which would hide the vulnerabilities that the check must report."
+  ],
+  "ref": "https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/manage-your-dependency-security/configure-dependency-review-action"
+ },
+ {
+  "id": "4.1.4-06",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Contoso, Ltd. has GitHub Code Security licenses. Pull requests from the Copilot cloud agent to the default branch must not merge while CodeQL reports alerts of high severity or higher. The ruleset must never block a pull request because a required tool is not yet configured.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Configure code scanning with CodeQL for the repository.",
+   "Create a branch ruleset that targets the default branch.",
+   "Add the Require code scanning results rule with CodeQL and the high severity threshold.",
+   "Turn off the cloud agent Validation tools so that CodeQL runs only once.",
+   "Add the Require a pull request before merging rule with one required approval."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The Require code scanning results rule blocks merging when a required tool reports alerts at the configured severity, when analysis is in progress, or when the tool is not configured. Code scanning must therefore be set up before the rule is enforced.",
+  "rationale": [
+   "Step 1: the rule blocks merging if a required tool is not configured, so CodeQL code scanning must be set up first.",
+   "Step 2: rules are added to a ruleset, and the ruleset must target the default branch that receives agent pull requests.",
+   "Step 3: the rule names CodeQL as a required tool and sets the alert severity that blocks merging.",
+   "Incorrect: the built-in CodeQL run helps the agent fix issues before it finishes, but it does not block merges. Turning it off is unnecessary and removes an early signal.",
+   "Incorrect: a required approval adds human review before merge, but it does not evaluate CodeQL alerts or their severity."
+  ],
+  "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
+ },
+ {
+  "id": "4.1.4-07",
+  "obj": "4.1.4",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Wide World Importers runs the dependency review action in a public repository. The settings must be kept in a separate file. Pull requests must be blocked when they add a dependency under the LGPL-2.0 license, and vulnerabilities must block only when they are in runtime dependencies.\n\nHow should you complete the configuration? To answer, select the appropriate options in the answer area.\n\n```yaml\n# .github/workflows/dependency-review.yml (excerpt)\n      - name: Dependency Review\n        uses: actions/dependency-review-action@v4\n        with:\n          [[1]]: './.github/dependency-review-config.yml'\n```\n\n```yaml\n# .github/dependency-review-config.yml\nfail-on-severity: high\n[[2]]:\n  - LGPL-2.0\nfail-on-scopes:\n  - [[3]]\n```",
+  "answer": [
+   0,
+   1,
+   1
+  ],
+  "explanation": "The dependency review action can read its settings from a configuration file. In that file, deny-licenses blocks listed licenses and fail-on-scopes limits which dependency scopes can fail the check.",
+  "ref": "https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/manage-your-dependency-security/configure-dependency-review-action",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "config-file",
+     "external-repo-token",
+     "allow-ghsas"
+    ],
+    "why": [
+     "Correct: config-file points the action to a configuration file, which keeps the settings out of the workflow as required.",
+     "Incorrect: external-repo-token is used only when the configuration file is in a private external repository. It does not name the file.",
+     "Incorrect: allow-ghsas lists advisory IDs to skip. It is not a path to a configuration file."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "allow-licenses",
+     "deny-licenses",
+     "allow-ghsas"
+    ],
+    "why": [
+     "Incorrect: allow-licenses permits only the listed licenses, so listing LGPL-2.0 would allow it and block everything else.",
+     "Correct: deny-licenses blocks pull requests that add dependencies under the listed licenses, such as LGPL-2.0.",
+     "Incorrect: allow-ghsas skips advisories during detection. It has nothing to do with licenses."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "development",
+     "runtime",
+     "unknown"
+    ],
+    "why": [
+     "Incorrect: development would fail the check for vulnerabilities in development dependencies, which the requirement excludes.",
+     "Correct: fail-on-scopes set to runtime blocks only vulnerabilities in runtime dependencies.",
+     "Incorrect: unknown targets dependencies whose scope cannot be determined. It does not match the runtime-only requirement."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "4.1.4-08",
+  "obj": "4.1.4",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Northwind Traders reviews the built-in validation tools of the Copilot cloud agent in a private repository that has no security licenses.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The built-in validation tools need a GitHub Advanced Security license for the repository.",
+   "Details of the validation tool results are visible in the agent session log.",
+   "A repository administrator can turn off the validation tools in the Copilot cloud agent settings.",
+   "The secret scanning that the agent runs replaces push protection for developers' own pushes."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "The cloud agent runs CodeQL, a GitHub Advisory Database check, secret scanning, and Copilot code review on its own changes, without extra licenses. Results appear in the session log, and administrators can turn the tools off in the cloud agent settings.",
+  "rationale": [
+   "No: the validation tools run without a GitHub Advanced Security, Code Security, or Secret Protection license.",
+   "Yes: the session log shows the details of the validation tools, so reviewers can see what the scans found and how the agent responded.",
+   "Yes: repository administrators can toggle the tools in the Validation tools section of the cloud agent settings, for example to avoid conflicts with another product.",
+   "No: the agent scans its own changes. Push protection is a separate secret scanning feature that blocks pushes containing secrets before they reach the repository."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "4.1.4-09",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. wants to know which built-in validation tool of the Copilot cloud agent checks the packages that the agent adds to a project.\n\nWhich tool should you identify?",
+  "choices": [
+   "CodeQL code security analysis",
+   "The GitHub Advisory Database check",
+   "Secret scanning of the changes",
+   "Copilot code review second opinion"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Each built-in validation tool produces a different signal. CodeQL finds code security issues, the GitHub Advisory Database check examines new dependencies, secret scanning finds credentials, and Copilot code review gives a second opinion.",
+  "rationale": [
+   "Incorrect: CodeQL analyzes the code itself for security issues. It does not check newly added packages against known advisories.",
+   "Correct: the agent checks new dependencies against the GitHub Advisory Database for malware and High or Critical CVSS vulnerabilities.",
+   "Incorrect: secret scanning looks for credentials such as tokens and keys in the changes, not for vulnerable packages.",
+   "Incorrect: Copilot code review provides a second opinion on the change. It is not the tool that checks packages against advisories."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "4.1.4-10",
+  "obj": "4.1.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. uses a third-party static analysis tool that writes SARIF output. Findings for agent pull requests must appear as code scanning alerts in the repository.\n\nWhat should you do?",
+  "choices": [
+   "Upload the SARIF output to code scanning",
+   "Add the findings to copilot-instructions.md",
+   "Store the output as a workflow artifact only",
+   "Create Dependabot alerts from the output"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Code scanning works with CodeQL and with third-party tools that produce SARIF. Uploading SARIF turns their findings into code scanning alerts that act as evaluation signals for agent work.",
+  "rationale": [
+   "Correct: code scanning accepts SARIF from third-party tools, either from actions or an external CI system, and shows the findings as alerts.",
+   "Incorrect: instructions guide Copilot's behavior. Pasting findings there does not create alerts or track their resolution.",
+   "Incorrect: an artifact keeps the file for download but does not create code scanning alerts.",
+   "Incorrect: Dependabot alerts come from dependency data. They cannot import SARIF findings from a static analysis tool."
+  ],
+  "ref": "https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning"
+ }
+]

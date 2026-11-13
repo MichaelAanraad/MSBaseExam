@@ -1,0 +1,521 @@
+[
+ {
+  "id": "4.2.1-01",
+  "obj": "4.2.1",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "User3 investigates the problems with pull request 121.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "No workflow results appear because workflow runs for Copilot pushes wait until someone selects Approve and run workflows.",
+   "Copilot did not respond to the comment from User4 because User4 does not have write access to orders-service.",
+   "User3 can delete the agent session to remove its log from the pull request.",
+   "The session log is lost when the ephemeral GitHub Actions environment of the session is destroyed."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Several symptoms of agent pull requests are caused by documented safeguards rather than by the agent. Workflows wait for approval, Copilot ignores comments from users without write access, and session logs remain available after the environment is destroyed.",
+  "rationale": [
+   "Yes: by default, workflows do not run on Copilot pushes until a user with write access selects Approve and run workflows, so no results appear until then.",
+   "Yes: Copilot responds only to comments from users with write access, and User4 has only read access, so the comment is never shown to the agent.",
+   "No: cloud agent sessions can be archived but not deleted. The session log stays available as part of the audit trail.",
+   "No: the Actions environment is destroyed when the session ends, but the session log remains available for review."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent",
+  "case": "C-d"
+ },
+ {
+  "id": "4.2.1-02",
+  "obj": "4.2.1",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "At Fabrikam, Inc., User1 assigned an issue to the Copilot cloud agent. Copilot reacted with an eyes emoji and opened a draft pull request. User1 must watch what the agent is doing while it works.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Open the draft pull request that Copilot created for the issue.",
+   "Find the Copilot started work event in the pull request timeline.",
+   "Select View session on that event.",
+   "Review the reasoning and tool calls in the session log.",
+   "Open the Validation tools section of the cloud agent settings.",
+   "Search the organization audit log for the issue number."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The live session log is reached from the agent's draft pull request. A Copilot started work event in the timeline links to the session, where you can follow the agent's reasoning and the tools it uses.",
+  "rationale": [
+   "Step 1: after the eyes reaction, Copilot opens a draft pull request, which is the entry point to the session.",
+   "Step 2: the pull request timeline contains a Copilot started work event for the session.",
+   "Step 3: View session on that event opens the live session log.",
+   "Step 4: the session log shows Copilot's reasoning and the tools it used, which is what User1 needs to watch.",
+   "Incorrect: the Validation tools section turns the built-in scans on or off. It does not show what a session is doing.",
+   "Incorrect: the audit log records events for governance. It does not show the live reasoning and tool calls of a session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.1-03",
+  "obj": "4.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. finds that test failures on agent pull requests are hard to debug after job logs scroll away. Reviewers need durable test reports that they can open from the pull request.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add a workflow step that runs the tests and writes reports to results/.",
+   "Add an actions/upload-artifact@v4 step with name: test-results and path: results/.",
+   "Link the workflow run and the artifact in an Evidence section of the pull request.",
+   "Commit the results/ folder to the agent branch after each run.",
+   "Paste the test reports into .github/copilot-instructions.md."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Uploading workflow artifacts makes evidence durable and reviewable. Produce the reports, upload them where they are produced, and link the run and the artifact in the pull request so reviewers can find them.",
+  "rationale": [
+   "Step 1: the reports must exist before they can be uploaded, so the test step writes them to results/ first.",
+   "Step 2: upload-artifact stores the results/ folder as an artifact named test-results that stays available after the logs scroll away.",
+   "Step 3: an Evidence section with links to the run and artifact lets reviewers validate outcomes quickly from the pull request.",
+   "Incorrect: committing generated files clutters the history. Artifacts keep outputs inspectable without committing them back to the repository.",
+   "Incorrect: instructions files guide Copilot's behavior. Test reports there would become stale context and would not help reviewers."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "4.2.1-04",
+  "obj": "4.2.1",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "A change that the Copilot cloud agent made at Woodgrove Bank passed CI but later caused a regression. The team must be able to reconstruct what changed, who approved it, and what evidence existed.\n\nWhich three items should each agent pull request include? Each correct answer presents part of the solution.",
+  "choices": [
+   "An inspectable plan in the pull request description",
+   "Links to the workflow runs and uploaded artifacts",
+   "The review and approval from a human reviewer",
+   "The user-level memory preferences of the requester",
+   "A copy of the reviewer's local ~/.copilot/session-state folder"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A minimum audit trail for agent contributions contains a stated goal, an inspectable plan, a bounded changeset, automated evidence, human judgment, and a clear outcome. These artifacts make a failure understandable after the fact.",
+  "rationale": [
+   "Correct: an inspectable plan shows the intended scope and approach, so the team can see whether the regression came from the plan or the implementation.",
+   "Correct: workflow runs and artifacts are the automated evidence that shows what was checked and what passed at the time.",
+   "Correct: the review and approval record the human judgment that accepted the change, which answers who approved it.",
+   "Incorrect: user preferences describe how one person likes to work. They do not show what changed or why it was approved.",
+   "Incorrect: local session state belongs to one machine and is unrelated to the cloud agent session. It is not part of the pull request audit trail."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/5-identify-risks-traceability"
+ },
+ {
+  "id": "4.2.1-05",
+  "obj": "4.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A reviewer at Tailspin Toys wants to understand why the Copilot cloud agent changed a file and which tools it used before it pushed the change.\n\nWhich artifact should the reviewer examine?",
+  "choices": [
+   "The agent session log",
+   "The Dependabot alerts list",
+   "The final pull request diff",
+   "The repository traffic graph"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Session logs show Copilot's internal reasoning and the tools it used during the task. The diff shows only the outcome, not the decisions that led to it.",
+  "rationale": [
+   "Correct: the session log shows the agent's reasoning and tool calls, which explains why the file changed.",
+   "Incorrect: Dependabot alerts report vulnerable dependencies. They contain no information about the agent's decisions.",
+   "Incorrect: the diff shows what changed but not why or which tools were used. Exposing only the diff is the hidden reasoning anti-pattern.",
+   "Incorrect: the traffic graph shows repository views and clones. It is unrelated to agent activity."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "4.2.1-06",
+  "obj": "4.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Relecloud, a reviewer finds a commit authored by Copilot in a pull request and must trace it back to the agent session that produced it.\n\nWhat should the reviewer do to find the session?",
+  "choices": [
+   "Use the session log link that the commit provides",
+   "Search the organization audit log for the commit",
+   "Ask the requester for their local session store",
+   "Check the repository facts in Copilot Memory"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Commits from the Copilot cloud agent link to the session logs of the agent session that produced them. This makes each change traceable to the session that created it.",
+  "rationale": [
+   "Correct: each Copilot commit links to the session logs, so the reviewer can go directly from the commit to the session.",
+   "Incorrect: audit log events help with governance, but the direct link from a commit to its session is on the commit itself.",
+   "Incorrect: a cloud agent session does not run on the requester's machine, so a local session store would not contain it.",
+   "Incorrect: repository facts are short pieces of knowledge that Copilot captured. They do not record which session produced a commit."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "4.2.1-07",
+  "obj": "4.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Proseware, Inc., User1 assigned an issue to the Copilot cloud agent a few minutes ago. No pull request is linked to the issue yet, and User1 is unsure whether the agent received the task.\n\nWhich evidence should User1 look for first to confirm that Copilot picked up the issue?",
+  "choices": [
+   "An eyes reaction from Copilot on the issue",
+   "A firewall warning in the issue description",
+   "A new alert in the Dependabot alerts list",
+   "An Approve and run workflows button on the issue"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When you assign an issue to the cloud agent, Copilot first leaves an eyes reaction on the issue and shortly after opens a draft pull request that appears in the issue timeline. If neither appears after a wait and a refresh, the task has not started.",
+  "rationale": [
+   "Correct: Copilot leaves an eyes reaction on the issue when it picks up the task, before it opens the draft pull request.",
+   "Incorrect: firewall warnings are added to the pull request body or a comment after a blocked request, not to the issue description.",
+   "Incorrect: Dependabot alerts report vulnerable dependencies in the repository. They do not show whether the agent received a task.",
+   "Incorrect: the Approve and run workflows button appears in the merge box of a pull request after Copilot pushes, not on the issue."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.1-08",
+  "obj": "4.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Adatum Corporation, User2 attached a 4.5 MiB screenshot of a page mockup to an issue and assigned the issue to the Copilot cloud agent. The pull request ignores the layout in the mockup, and the session log never mentions the image.\n\nWhat should you identify as the cause?",
+  "choices": [
+   "The firewall blocked the download of the image",
+   "The image was over 3.00 MiB and was removed",
+   "The validation tools stripped the image as unsafe",
+   "The image was stored as a user-level preference"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "The troubleshooting guidance states that images larger than 3.00 MiB are removed from what the agent receives. Comparing the input artifacts with the session log shows that the agent never had the mockup.",
+  "rationale": [
+   "Incorrect: a firewall block would add a warning with the blocked address to the pull request. The image is part of the issue, not an internet download.",
+   "Correct: images larger than 3.00 MiB are removed, so the agent never received the mockup, which matches a session log with no mention of it.",
+   "Incorrect: the validation tools scan the agent's changes after it writes code. They do not filter images from the issue.",
+   "Incorrect: memories are text facts and preferences captured by Copilot. An attached image does not become a memory."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.1-09",
+  "obj": "4.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders uploads test reports from agent pull requests as artifacts named test-results. During an incident review, nobody can tell which run and which code state produced a specific report.\n\nWhat should you change?",
+  "choices": [
+   "Commit each report to the default branch after merge",
+   "Add the commit SHA to artifact names and link the run",
+   "Store the latest report as a repository fact",
+   "Upload every report under the fixed name latest"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Evidence should be traceable to a specific workflow run and a specific commit. Naming artifacts with the commit and linking the run in the pull request answers which run produced an artifact and against what code state.",
+  "rationale": [
+   "Incorrect: committing reports to the default branch separates them from the run that produced them and adds generated files to the history.",
+   "Correct: including the commit SHA in the artifact name and linking the run in an Evidence section ties each report to its run and code state.",
+   "Incorrect: a memory holds short facts for Copilot and can expire. It is not a durable, traceable store for evidence.",
+   "Incorrect: a fixed name makes every report look the same, which is exactly why the team cannot match reports to runs."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "4.2.1-10",
+  "obj": "4.2.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "At Litware, Inc., the Copilot cloud agent pushed a fix to its pull request, but the pull request shows no check results. The team must find which test the change breaks and whether the agent ran that test before it pushed.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Select Approve and run workflows in the merge box of the pull request.",
+   "Open the logs of the failed workflow run to find the failing test.",
+   "Open the session log and check whether the agent ran that test before it pushed.",
+   "Unassign Copilot from the issue and assign the issue to Copilot again.",
+   "Turn off the validation tools in the cloud agent settings."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Workflows do not run automatically on Copilot pushes, so no evidence exists until someone approves them. The run logs then identify the failing test, and the session log shows whether the agent validated its work in its own environment before it pushed.",
+  "rationale": [
+   "Step 1: workflows wait for a user with write access to select Approve and run workflows, so no check results exist until then.",
+   "Step 2: once the workflows run, the logs of the failed run show which test the change breaks.",
+   "Step 3: the session log shows the commands the agent ran, so you can see whether it ran the failing test in its environment before it pushed.",
+   "Incorrect: reassigning the issue is the retry for a stuck session. It starts new work instead of explaining why this push fails a test.",
+   "Incorrect: the validation tools are the built-in security and review checks of the agent. They do not control whether repository workflows run."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.2-01",
+  "obj": "4.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to classify the root cause of the failure in pull request 118 before you choose a fix.\n\nHow should you classify the root cause?",
+  "choices": [
+   "A reasoning error",
+   "Tool misuse",
+   "A context issue",
+   "An environment issue"
+  ],
+  "answer": [
+   3
+  ],
+  "explanation": "Classifying the root cause directs the fix. A firewall warning that lists a blocked address shows that the execution environment prevented the action, even though the agent's plan and tool choice were reasonable.",
+  "rationale": [
+   "Incorrect: the agent correctly tried to install a package that the task needed. Nothing in the evidence shows a flawed decision.",
+   "Incorrect: the install command was an appropriate tool call. The failure came from where the command ran, not from how it was used.",
+   "Incorrect: the agent had the right instructions and inputs. Missing or wrong context would show up as wrong decisions, not as a blocked request.",
+   "Correct: the firewall warning in the pull request body shows that the agent environment blocked access to packages.northwindtraders.com, which is an environment issue."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent",
+  "case": "C-d"
+ },
+ {
+  "id": "4.2.2-02",
+  "obj": "4.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Tailspin Toys, User2 has write access to a repository. User2 posts a comment that mentions @copilot on a pull request from the Copilot cloud agent after the pull request was closed. Copilot does not respond.\n\nWhat should you identify as the root cause?",
+  "choices": [
+   "User2 does not have write access to the repository",
+   "Copilot responds only to comments on open pull requests",
+   "The agent firewall blocked the comment from User2",
+   "Copilot Memory is turned off for the repository"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Before blaming the agent, check the documented conditions for a response. Copilot responds only to comments from users with write access, and only on open pull requests.",
+  "rationale": [
+   "Incorrect: the scenario states that User2 has write access, so permission is not the cause.",
+   "Correct: Copilot responds only on open pull requests, so a comment on a closed pull request does not start any work.",
+   "Incorrect: the firewall limits the agent's internet access during a session. It does not filter comments on GitHub.",
+   "Incorrect: memory affects what Copilot remembers, not whether it responds to a comment."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.2-03",
+  "obj": "4.2.2",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Wide World Importers reviews the session logs of four failed Copilot cloud agent sessions and must classify each root cause.\n\nWhich root cause should you assign to each failure? To answer, drag the appropriate root causes to the correct failures. Each root cause may be used once, more than once, or not at all.",
+  "choices": [
+   "Reasoning error",
+   "Tool misuse",
+   "Context issue",
+   "Environment issue",
+   "Evaluation setup issue"
+  ],
+  "answer": [
+   3,
+   2,
+   1,
+   3
+  ],
+  "explanation": "Classify a failure by where it originated: the agent's decisions, the way it used a tool, the context it received, or the environment it ran in. The session log shows the reasoning and tool calls that make this distinction possible.",
+  "rationale": [
+   "Failure1 originated in the execution environment: the firewall blocked network access, so the agent's choice to download the package was not at fault.",
+   "Failure2 came from stale context: the agent faithfully applied a memory that no longer matched the code, so the input was wrong, not the reasoning.",
+   "Failure3 is tool misuse: search was the right tool, but it was pointed at the wrong directory, and the empty result led to a wrong conclusion.",
+   "Failure4 is an environment issue: the runner was missing a runtime, which setup steps such as copilot-setup-steps.yml should preinstall."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-failure",
+  "targets": [
+   "Failure1: a package download was blocked by the agent firewall",
+   "Failure2: the agent followed a repository fact about a helper that was removed last month",
+   "Failure3: the agent searched the wrong directory and concluded that a function did not exist",
+   "Failure4: the runner lacked a required runtime because no setup steps installed it"
+  ],
+  "notes": [
+   "A flawed decision by the agent when its inputs, tools, and environment were all correct, such as misreading a clear requirement.",
+   "A correct tool used in the wrong way, such as wrong arguments or the wrong scope, which then leads to a wrong conclusion.",
+   "Missing, conflicting, or stale information that the agent received, such as outdated memories or contradictory instructions.",
+   "A problem with where the agent runs, such as network blocks, missing dependencies, or unsupported runners.",
+   "A problem with the test itself, such as a wrong expected answer. It applies to evaluation runs, not to these session failures."
+  ]
+ },
+ {
+  "id": "4.2.2-04",
+  "obj": "4.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Pushes from the Copilot cloud agent at Contoso, Ltd. often fail CI because the agent does not know how to build and test the project. You decide that the root cause is missing context.\n\nWhich file should you update?",
+  "choices": [
+   ".github/copilot-instructions.md",
+   ".github/pull_request_template.md",
+   ".github/dependabot.yml",
+   ".github/CODEOWNERS"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When the agent lacks project knowledge, the root cause is context, and the fix is to provide that context. The troubleshooting guidance recommends adding build and test instructions to .github/copilot-instructions.md.",
+  "rationale": [
+   "Correct: build and test instructions in .github/copilot-instructions.md give the agent the missing context on every task, which the troubleshooting guidance recommends for failing CI.",
+   "Incorrect: a pull request template structures pull request descriptions. It does not tell the agent how to build or test the project.",
+   "Incorrect: dependabot.yml configures dependency updates. It does not give the agent build or test steps.",
+   "Incorrect: CODEOWNERS assigns reviewers to paths. It does not change what the agent knows about building the project."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.2-05",
+  "obj": "4.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Session logs at Fabrikam, Inc. show the Copilot cloud agent spending much of each session trying different ways to install the project's toolchain on GitHub Actions, and some sessions fail.\n\nHow should you classify and fix the root cause?",
+  "choices": [
+   "Reasoning error; rewrite the issue text",
+   "Environment issue; preinstall in copilot-setup-steps.yml",
+   "Context issue; store the versions as a repository fact",
+   "Tool misuse; remove the edit tool from the agent"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "When the runner lacks dependencies, the agent falls back to slow and unreliable trial and error. That is an environment issue, and the fix is to preinstall the dependencies with copilot-setup-steps.yml.",
+  "rationale": [
+   "Incorrect: the agent's attempts are reasonable responses to a missing toolchain. Rewording the issue does not install anything.",
+   "Correct: copilot-setup-steps.yml preinstalls dependencies when the agent runs on GitHub Actions, removing the trial and error caused by the environment.",
+   "Incorrect: knowing the versions does not install them. The runner would still lack the toolchain.",
+   "Incorrect: the edit tool is not involved in installing the toolchain, and removing it would stop the agent from changing code."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results"
+ },
+ {
+  "id": "4.2.2-06",
+  "obj": "4.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Overnight, many test cases in the evaluation set of a Litware, Inc. agent fail. Nobody changed the agent's configuration.\n\nWhat should you do first?",
+  "choices": [
+   "Rewrite the agent instructions",
+   "Confirm that backends and tokens were healthy",
+   "Remove the failing test cases",
+   "Switch the agent to a different model"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Before diagnosing the agent, check that the infrastructure was healthy during the run: knowledge was indexed, API backends were not throttled or erroring, tokens were valid, and the environment matched the configuration.",
+  "rationale": [
+   "Incorrect: rewriting instructions assumes an agent problem before you have ruled out the environment that the run depended on.",
+   "Correct: a pre-triage check of backends, authentication tokens, indexing, and environment rules out infrastructure failures before you diagnose the agent.",
+   "Incorrect: removing failing cases hides the failures instead of explaining them.",
+   "Incorrect: changing the model is an agent change that is not justified until you know that the agent is the cause."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-failure"
+ },
+ {
+  "id": "4.2.2-07",
+  "obj": "4.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Woodgrove Bank, User5 signs in with a managed user account under Enterprise Managed Users. User5 assigns an issue in a personal repository to the Copilot cloud agent, and the agent never starts work.\n\nWhat should you identify as the root cause?",
+  "choices": [
+   "The agent misread the issue description",
+   "Personal repositories of managed users are not supported",
+   "The repository has conflicting custom instructions",
+   "The firewall blocked access to the issue"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Some failures come from the platform environment rather than from the agent. The cloud agent is not supported in personal repositories owned by managed user accounts because those repositories cannot use GitHub-hosted runners.",
+  "rationale": [
+   "Incorrect: a reasoning problem would still produce a session and a pull request. Here the agent never starts, which points to the environment.",
+   "Correct: personal repositories of Enterprise Managed Users are not supported because GitHub-hosted runners are not available, so the agent cannot run there.",
+   "Incorrect: conflicting instructions lead to inconsistent results in a running session, not to a session that never starts.",
+   "Incorrect: the firewall limits outbound internet access during a session. Issues are on GitHub and are not blocked by it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "4.2.2-08",
+  "obj": "4.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "In a Relecloud repository, the Copilot cloud agent keeps calling a retry helper that was removed last month. The session log shows that the agent applied a repository fact from Copilot Memory that describes the helper.\n\nHow should you classify the root cause?",
+  "choices": [
+   "A reasoning error",
+   "Tool misuse",
+   "A context issue",
+   "An environment issue"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "A context issue occurs when the agent receives missing, conflicting, or stale information. Here the agent reasoned correctly from a memory that no longer matched the code.",
+  "rationale": [
+   "Incorrect: the agent reasoned correctly from what it was told. The mistake was in the information, not in the reasoning.",
+   "Incorrect: no tool was used in the wrong way. The agent called the helper because the memory said to.",
+   "Correct: a stale repository fact gave the agent outdated context, so this is a context issue. Deleting the fact removes the cause.",
+   "Incorrect: the runner, network, and dependencies worked. Nothing in the environment caused the wrong call."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory"
+ },
+ {
+  "id": "4.2.2-09",
+  "obj": "4.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "An agent pull request at Proseware, Inc. omits a required CSV export. The issue lists the export as an acceptance criterion. The session log shows that every tool call succeeded and the right files were read, but the plan states that the export is optional.\n\nHow should you classify and address the root cause?",
+  "choices": [
+   "Reasoning error; clarify the criterion and request a new plan",
+   "Tool misuse; remove the search tool from the agent",
+   "Environment issue; add steps to copilot-setup-steps.yml",
+   "Context issue; delete all repository facts in memory"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When tools, context, and environment all worked, the failure lies in the agent's reasoning. The lifecycle then loops: make the requirement explicit, have the agent revise its plan, and reevaluate.",
+  "rationale": [
+   "Correct: the agent had the right inputs and working tools but misjudged a stated criterion, which is a reasoning error. Clarifying it and asking for a revised plan restarts the plan, act, evaluate loop.",
+   "Incorrect: the log shows that tool calls succeeded and found the right files, so tool use did not cause the omission.",
+   "Incorrect: nothing failed in the runner or network. Changing setup steps would not change how the agent read the criterion.",
+   "Incorrect: no stale memory is involved, and deleting every fact would remove useful context without addressing the misread criterion."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/3-explain-agent-lifecycle-plan-act-evaluate"
+ },
+ {
+  "id": "4.2.2-10",
+  "obj": "4.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "The evaluation pass rate of a Northwind Traders agent drops from 85% to 60% overnight. Nobody changed the agent or the test cases. The agent instructions are long, and several failing responses miss required facts. The logs of the failing cases show that the backend API that one tool calls returned throttling errors.\n\nHow should you classify the root cause?",
+  "choices": [
+   "A reasoning error",
+   "A context issue",
+   "An environment issue",
+   "An evaluation setup issue"
+  ],
+  "answer": [
+   2
+  ],
+  "explanation": "Verify that infrastructure was healthy before you diagnose an agent. Throttled or erroring backends produce failures that look like agent regressions but originate in the environment.",
+  "rationale": [
+   "Incorrect: a lower score alone does not show bad reasoning. The logs point to failing backend calls, not to wrong decisions.",
+   "Incorrect: nothing changed in the instructions, so their length cannot explain a sudden overnight drop.",
+   "Correct: throttling errors from the backend mean the environment failed during the run. Rerun after the backend is healthy before changing the agent.",
+   "Incorrect: the test cases did not change and passed before, so the evaluation setup is not the cause."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-failure"
+ }
+]

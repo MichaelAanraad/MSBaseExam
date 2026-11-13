@@ -37,7 +37,8 @@ as possible: easy / medium / hard about one third each.
 Load the Microsoft Learn tools with ToolSearch
 (`select:mcp__microsoft-learn__microsoft_docs_search,mcp__microsoft-learn__microsoft_docs_fetch,mcp__microsoft-learn__microsoft_code_sample_search`)
 and verify the correct answer of every question against Microsoft Learn before
-writing it. The `ref` field must be a learn.microsoft.com URL that you actually
+writing it. The `ref` field must be a learn.microsoft.com URL (or another site
+listed in `REF_PREFIXES` in `objectives.py`, as `AUDIENCE.md` explains) that you actually
 saw in a tool result; never invent one. If a fact (parameter name, API, limit,
 role name) cannot be verified on Learn, do not test it. Prefer concepts and
 design decisions that are stable over exact SDK signatures. Code snippets are
