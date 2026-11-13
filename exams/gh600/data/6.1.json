@@ -337,7 +337,7 @@
    "No: the agent can only push to a single branch, either the existing pull request branch or a new copilot/ branch, and it cannot run git push directly.",
    "Yes: GitHub Docs say that commits are authored by Copilot with the user who requested the work as co-author, which keeps a named person accountable.",
    "Yes: when a pull request is under the Copilot app identity and the repository requires at least one approval, one additional approval is required. This is on by default for rulesets.",
-   "No: GitHub Docs state that the GITHUB_TOKEN default permissions policy does not affect the token of the Copilot session, although it applies to copilot-setup-steps.yml."
+   "No: the GitHub Docs build-guardrails tutorial states that the GITHUB_TOKEN default permissions policy does not affect the token of the Copilot session, although it applies to copilot-setup-steps.yml."
   ],
   "ref": "https://docs.github.com/en/copilot/concepts/agents/cloud-agent/risks-and-mitigations"
  },

@@ -88,7 +88,7 @@
     ],
     "explanation": "Repository instructions work best when they are short, repository-wide, and free of conflicts. Removing task-specific notes and contradictions gives the agent a clear set of rules instead of noise.",
     "rationale": [
-      "Correct: GitHub Docs warns that conflicting instructions give unpredictable results, and its suggested prompt for generating the file keeps it to about two pages of guidance that is not task-specific.",
+      "Correct: GitHub Docs advises avoiding conflicting instructions, and its suggested prompt for generating the file keeps it to about two pages of guidance that is not task-specific.",
       "Incorrect: duplicating the content in AGENTS.md adds a second instruction source with the same contradictions. AGENTS.md is useful for agent instructions per folder, not for repeating an oversized file.",
       "Incorrect: user preferences follow one developer across repositories and are not shared with the repository. They suit personal style choices, not repository conventions that every agent must use.",
       "Incorrect: a custom agent prompt only applies when that agent runs, and moving the text keeps the conflicts. A custom agent is right for a specialist role, not for cleaning up repository guidance."
@@ -448,7 +448,7 @@
     ],
     "explanation": "/memory show displays the local memory setting, /memory off disables both memory types locally, and /memory on turns memory back on after the sensitive work.",
     "rationale": [
-      "Step 1: /memory show displays the current local memory setting and a link to manage memories on GitHub, so User1 checks the state before changing it.",
+      "Step 1: /memory show displays the current local memory setting, so User1 checks the state before changing it.",
       "Step 2: /memory off disables repository facts and user preferences locally, so the sensitive task does not use or store memories.",
       "Step 3: the sensitive task runs while memory is off, which is the purpose of turning it off first.",
       "Step 4: /memory on restores memory for the rest of the work after the sensitive task is complete.",
@@ -620,12 +620,12 @@
     "obj": "4.3.3",
     "difficulty": "medium",
     "type": "order",
-    "stem": "Fabrikam, Inc. wants Copilot cloud agent to use a Sentry MCP server in a repository. The server needs an access token, and only read-only tools must be enabled.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+    "stem": "Fabrikam, Inc. wants Copilot cloud agent to use a Sentry MCP server in a repository. The server needs an access token, and only read-only tools must be enabled. An Agents secret named COPILOT_MCP_SENTRY_ACCESS_TOKEN already exists. You must confirm that the server starts in an agent session.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
     "choices": [
       "In the repository settings, open Copilot and then MCP servers.",
-      "Enter a JSON configuration in which mcpServers lists the Sentry server and its read-only tools.",
+      "Enter a JSON configuration in which mcpServers lists the Sentry server, its read-only tools, and the COPILOT_MCP_SENTRY_ACCESS_TOKEN secret.",
       "Click Save MCP configuration.",
-      "Add an Agents secret named COPILOT_MCP_SENTRY_ACCESS_TOKEN.",
+      "Assign an issue to Copilot, and then check the Start MCP Servers step in the session logs.",
       "Add the server to the mcpServers section of .github/copilot-instructions.md.",
       "Add a repository Actions secret named SENTRY_ACCESS_TOKEN."
     ],
@@ -635,12 +635,12 @@
       2,
       3
     ],
-    "explanation": "Repository MCP servers are configured as JSON in the repository settings and saved there. Secrets for the configuration must be Agents secrets whose names start with COPILOT_MCP_.",
+    "explanation": "Repository MCP servers are configured as JSON in the repository settings and saved there, and the JSON references Agents secrets whose names start with COPILOT_MCP_. A test session confirms the server in the Start MCP Servers step of the session logs.",
     "rationale": [
       "Step 1: repository administrators configure MCP servers on the MCP servers page under Copilot in the repository settings.",
       "Step 2: the JSON configuration needs an mcpServers object; listing specific read-only tools is recommended because the agent uses them without asking for approval.",
       "Step 3: Save MCP configuration validates and stores the JSON for the cloud agent and Copilot code review.",
-      "Step 4: only Agents secrets and variables whose names start with COPILOT_MCP_ are available to the MCP configuration, so the token is added as one.",
+      "Step 4: a saved configuration is validated with Copilot cloud agent by assigning an issue and expanding the Start MCP Servers step in the session logs to confirm the server and its tools.",
       "Incorrect: custom instructions are natural-language guidance for the model. MCP server configuration is entered in the repository settings or in a custom agent profile.",
       "Incorrect: the MCP configuration can only reference Agents secrets and variables whose names start with COPILOT_MCP_. A repository Actions secret with another name is not available to it."
     ],

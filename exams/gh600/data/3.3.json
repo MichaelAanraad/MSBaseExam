@@ -4,7 +4,7 @@
   "obj": "3.3.1",
   "difficulty": "easy",
   "type": "single",
-  "stem": "Contoso, Ltd. uses Copilot Memory. While it works on an issue, the Copilot cloud agent learns that two configuration files in a repository must always be updated together. Other developers who work in the same repository must benefit from this knowledge.\n\nWhich type of Copilot Memory should hold this knowledge?",
+  "stem": "Contoso, Ltd. uses Copilot Memory. While it works on an issue, the Copilot cloud agent learns that two configuration files in a repository must always be updated together. Other developers who work in the same repository must benefit from this knowledge.\n\nWhich mechanism should hold this knowledge?",
   "choices": [
    "A user-level preference",
    "A repository-level fact",
@@ -103,7 +103,7 @@
   "stem": "Woodgrove Bank has two repositories named Repo1 and Repo2 in the same organization. In Repo1, Copilot Memory holds a validated repository fact that all currency values must use a shared Money type. The Copilot cloud agent must apply the same rule for every developer who assigns work in Repo2.\n\nWhat should you do?",
   "choices": [
    "Rely on the Repo1 fact, because facts are pooled across organization repositories",
-   "Fork Repo1 to create a copy of Repo2 so that the fact is copied",
+   "Fork Repo1 and use the fork in place of Repo2",
    "Ask User1 to store the rule as a user-level preference",
    "Add the rule to .github/copilot-instructions.md in Repo2"
   ],

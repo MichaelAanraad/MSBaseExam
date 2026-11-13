@@ -370,7 +370,7 @@
   "obj": "1.2.2",
   "difficulty": "hard",
   "type": "single",
-  "stem": "Fabrikam, Inc. defines an implementation-planner agent in its organization .github-private repository. One repository still uses an old profile with the same name in .github/agents, and planners in that repository produce outdated plans.\n\nWhat should Fabrikam do?",
+  "stem": "Fabrikam, Inc. defines an implementation-planner agent in its organization .github-private repository. One repository still uses an old profile with the same name in .github/agents, and planners in that repository produce outdated plans. Users must keep selecting the agent by its current name.\n\nWhat should you do?",
   "choices": [
    "Remove or rename the repository-level profile",
    "Rename the organization-level profile file",
@@ -383,7 +383,7 @@
   "explanation": "When agents share a name, the lowest level wins: a repository-level agent overrides an organization-level or enterprise-level agent with the same name.",
   "rationale": [
    "Correct: the repository-level agent overrides the organization agent with the same name, so removing or renaming the old repository profile lets the organization profile apply.",
-   "Incorrect: renaming the organization profile leaves the outdated repository agent under the original name, so users who select it still get old plans.",
+   "Incorrect: renaming the organization profile forces users to select the agent by a new name, which breaks the requirement to keep the current name.",
    "Incorrect: target controls where an agent is available. It does not change which profile wins when two agents share a name.",
    "Incorrect: user-invocable: false hides the organization agent from users, which makes the outdated repository agent the only choice."
   ],
@@ -795,7 +795,7 @@
   "obj": "1.2.4",
   "difficulty": "medium",
   "type": "order",
-  "stem": "Proseware, Inc. wants the platform-team to review every pull request that changes files in .github/workflows, including pull requests from Copilot cloud agent.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "stem": "Proseware, Inc. wants the platform-team to review every pull request that changes files in .github/workflows, including pull requests from Copilot cloud agent. The ruleset rule that requires code owner review must be turned on only after the CODEOWNERS file on the default branch names the platform-team.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
   "choices": [
    "Add /.github/workflows/ @proseware/platform-team to CODEOWNERS",
    "Merge the CODEOWNERS change into the default branch",

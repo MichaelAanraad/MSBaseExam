@@ -264,7 +264,7 @@
    "Add the token to .github/copilot-instructions.md",
    "Inject it at runtime from a protected secret boundary",
    "Write the token in plain text in the workflow YAML",
-   "Assume the agent inherits all repository CI secrets"
+   "Store it as a repository secret exposed to every job"
   ],
   "answer": [
    1
@@ -274,7 +274,7 @@
    "Incorrect: instructions files are repository content that every agent reads, so the token would be exposed to anyone with read access.",
    "Correct: a protected secret boundary injects the token at runtime and can be scoped, for example by environment, so only the component that calls the API receives it.",
    "Incorrect: workflow YAML is committed content, so a plain text token leaks to everyone who can read the repository.",
-   "Incorrect: the agent runtime has its own secret boundary and does not automatically inherit repository CI secrets, and broad inheritance would break least privilege anyway."
+   "Incorrect: a repository secret exposed to every job keeps the token out of repository content, but components that do not call the API also receive it, which breaks least privilege."
   ],
   "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
  },
@@ -522,9 +522,9 @@
   "stem": "Proseware, Inc. uses CODEOWNERS for its infra/ directory. A reviewer must confirm that the right people evaluated the infra/ changes in an agent pull request.\n\nWhich signal should the reviewer check?",
   "choices": [
    "The approval from the code owners of infra/",
-   "The duration of the agent session",
+   "The approval from any user with write access",
    "The result of the required build check",
-   "The branch name that the agent pushed to"
+   "The approval from the user who assigned the issue"
   ],
   "answer": [
    0
@@ -532,9 +532,9 @@
   "explanation": "The contributor model reviews agent work like any contribution. Ownership is a qualitative signal: the code owners of sensitive areas must review and approve the change.",
   "rationale": [
    "Correct: the review rubric asks whether code owners reviewed sensitive areas, and their approval on the pull request is the signal that they did.",
-   "Incorrect: session duration measures effort, not whether the right people evaluated the change.",
+   "Incorrect: an approval from any user with write access shows that someone reviewed the change, not that the owners of infra/ evaluated it.",
    "Incorrect: a passing build shows that the code compiles and tests pass. It does not show that the owners of infra/ reviewed it.",
-   "Incorrect: the branch name shows where commits were pushed. It carries no evidence about who reviewed the change."
+   "Incorrect: the user who asked Copilot to create the pull request cannot provide a required approval for it, and that user is not necessarily an owner of infra/."
   ],
   "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/6-apply-contributor-model-agent-generated-work"
  },
@@ -898,13 +898,13 @@
   "obj": "4.1.4",
   "difficulty": "hard",
   "type": "order",
-  "stem": "Contoso, Ltd. has GitHub Code Security licenses. Pull requests from the Copilot cloud agent to the default branch must not merge while CodeQL reports alerts of high severity or higher.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "stem": "Contoso, Ltd. has GitHub Code Security licenses. Pull requests from the Copilot cloud agent to the default branch must not merge while CodeQL reports alerts of high severity or higher. The ruleset must never block a pull request because a required tool is not yet configured.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
   "choices": [
    "Configure code scanning with CodeQL for the repository.",
    "Create a branch ruleset that targets the default branch.",
    "Add the Require code scanning results rule with CodeQL and the high severity threshold.",
    "Turn off the cloud agent Validation tools so that CodeQL runs only once.",
-   "Add the Require secret scanning alerts are resolved rule for CodeQL alerts."
+   "Add the Require a pull request before merging rule with one required approval."
   ],
   "answer": [
    0,
@@ -917,7 +917,7 @@
    "Step 2: rules are added to a ruleset, and the ruleset must target the default branch that receives agent pull requests.",
    "Step 3: the rule names CodeQL as a required tool and sets the alert severity that blocks merging.",
    "Incorrect: the built-in CodeQL run helps the agent fix issues before it finishes, but it does not block merges. Turning it off is unnecessary and removes an early signal.",
-   "Incorrect: the secret scanning rule blocks merges for open secret scanning alerts. It does not evaluate CodeQL results."
+   "Incorrect: a required approval adds human review before merge, but it does not evaluate CodeQL alerts or their severity."
   ],
   "ref": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets"
  },

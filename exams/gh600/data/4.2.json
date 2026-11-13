@@ -141,7 +141,7 @@
   "obj": "4.2.1",
   "difficulty": "easy",
   "type": "single",
-  "stem": "At Relecloud, a reviewer finds a commit authored by Copilot in a pull request and must trace it back to the agent session that produced it.\n\nHow should the reviewer find the session?",
+  "stem": "At Relecloud, a reviewer finds a commit authored by Copilot in a pull request and must trace it back to the agent session that produced it.\n\nWhat should the reviewer do to find the session?",
   "choices": [
    "Use the session log link that the commit provides",
    "Search the organization audit log for the commit",
@@ -216,7 +216,7 @@
   "stem": "Northwind Traders uploads test reports from agent pull requests as artifacts named test-results. During an incident review, nobody can tell which run and which code state produced a specific report.\n\nWhat should you change?",
   "choices": [
    "Commit each report to the default branch after merge",
-   "Name artifacts by commit SHA and link the run in the PR",
+   "Add the commit SHA to artifact names and link the run",
    "Store the latest report as a repository fact",
    "Upload every report under the fixed name latest"
   ],
@@ -335,7 +335,7 @@
    "Failure3 is tool misuse: search was the right tool, but it was pointed at the wrong directory, and the empty result led to a wrong conclusion.",
    "Failure4 is an environment issue: the runner was missing a runtime, which setup steps such as copilot-setup-steps.yml should preinstall."
   ],
-  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-log-template",
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/evaluation-triage-failure",
   "targets": [
    "Failure1: a package download was blocked by the agent firewall",
    "Failure2: the agent followed a repository fact about a helper that was removed last month",
@@ -499,12 +499,12 @@
   "obj": "4.2.2",
   "difficulty": "hard",
   "type": "single",
-  "stem": "The evaluation pass rate of a Northwind Traders agent drops from 85% to 60% overnight. Nobody changed the agent. The logs of the failing cases show that the backend API that one tool calls returned throttling errors.\n\nHow should you classify the root cause?",
+  "stem": "The evaluation pass rate of a Northwind Traders agent drops from 85% to 60% overnight. Nobody changed the agent or the test cases. The agent instructions are long, and several failing responses miss required facts. The logs of the failing cases show that the backend API that one tool calls returned throttling errors.\n\nHow should you classify the root cause?",
   "choices": [
-   "A reasoning error, because the scores dropped",
-   "A context issue, because the instructions are long",
-   "An environment issue, because the backend was throttled",
-   "An evaluation setup issue, because the cases are wrong"
+   "A reasoning error",
+   "A context issue",
+   "An environment issue",
+   "An evaluation setup issue"
   ],
   "answer": [
    2

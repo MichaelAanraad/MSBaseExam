@@ -519,12 +519,12 @@
   "obj": "6.2.3",
   "difficulty": "medium",
   "type": "order",
-  "stem": "Contoso, Ltd. has 40 repositories in one organization. An MCP server that Copilot cloud agent uses in Repo1 and Repo2 needs an API key. Only Repo1 and Repo2 may use the key, and only the MCP server may receive it.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "stem": "Contoso, Ltd. has 40 repositories in one organization. An MCP server that Copilot cloud agent uses in Repo1 and Repo2 needs an API key. Only Repo1 and Repo2 may use the key, and only the MCP server may receive it. The MCP server configuration in both repositories already references COPILOT_MCP_API_KEY.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
   "choices": [
    "In the organization settings, open Security > Secrets and variables > Agents.",
-   "Create a new organization secret named COPILOT_MCP_API_KEY with the key as its value.",
+   "Click New organization secret, and enter COPILOT_MCP_API_KEY as the name and the key as the value.",
    "Set the repository access of the secret to Selected repositories, and select Repo1 and Repo2.",
-   "Reference the secret in the MCP server configuration of Repo1 and Repo2.",
+   "Click Add secret.",
    "Create the secret under Secrets and variables > Actions instead of Agents.",
    "Set the repository access of the secret to All repositories."
   ],
@@ -539,7 +539,7 @@
    "Step 1: Agents secrets and variables are a dedicated category for Copilot, set at the organization or repository level under Security > Secrets and variables > Agents.",
    "Step 2: the COPILOT_MCP_ prefix means the value is passed only to MCP servers and is not exposed to the agent as a regular environment variable.",
    "Step 3: organization secrets can be limited to selected repositories, which keeps the key away from the other 38 repositories and applies least privilege.",
-   "Step 4: the MCP server gets the value only when its configuration in each repository references the secret by name.",
+   "Step 4: Add secret saves the secret with its repository access, and the existing MCP configuration in Repo1 and Repo2 can then receive the value.",
    "Incorrect: GitHub Actions secrets are not accessible to Copilot, so the MCP server would not receive the key. Use Actions secrets for regular workflows.",
    "Incorrect: All repositories would let every repository in the organization use the key, which breaks the requirement. It fits only keys that every repository legitimately needs."
   ],
@@ -690,7 +690,7 @@
   "stem": "User1 starts Copilot CLI in Repo1 to update the API documentation. Copilot must fetch reference pages from docs.contoso.com without a prompt. Copilot must never reach share.fabrikam.net, an external file-share host, and User1 must not be offered a prompt that could approve that access.\n\nWhich command should User1 run?",
   "choices": [
    "copilot --allow-url=docs.contoso.com --deny-url=share.fabrikam.net",
-   "copilot --allow-all-urls --deny-tool='shell(curl)'",
+   "copilot --allow-url=docs.contoso.com --deny-tool='shell(curl)'",
    "copilot --allow-url=docs.contoso.com",
    "copilot --excluded-tools='web_fetch'"
   ],
@@ -700,7 +700,7 @@
   "explanation": "--allow-url pre-approves only the documentation domain, and --deny-url blocks the file-share host outright. A deny rule takes precedence over allow rules, so no prompt for share.fabrikam.net can appear.",
   "rationale": [
    "Correct: --allow-url lets Copilot reach docs.contoso.com without a prompt, and --deny-url blocks share.fabrikam.net. --deny-url takes precedence over --allow-url, so the host stays blocked.",
-   "Incorrect: --allow-all-urls allows access to every URL without confirmation, so web_fetch could still reach the file share. Denying shell(curl) blocks only one shell command.",
+   "Incorrect: this pre-approves the documentation domain and blocks curl, but share.fabrikam.net has no deny rule, so a web fetch to it still triggers a prompt that User1 could approve.",
    "Incorrect: this allows the documentation domain, but a URL without an allow or deny rule still triggers a prompt, and User1 could approve access to the file share.",
    "Incorrect: --excluded-tools removes web_fetch from the model, which also stops Copilot from fetching the documentation, and URL access through shell commands is not denied."
   ],
@@ -728,7 +728,7 @@
    "Incorrect: copilot-setup-steps.yml applies only to sessions that run on GitHub Actions, not to sessions in a cloud sandbox. It fits when the session runs on Actions.",
    "Incorrect: the prefix controls whether a value is passed only to MCP servers. It does not change the fact that variables are not delivered to cloud sandbox sessions."
   ],
-  "ref": "https://docs.github.com/copilot/tutorials/cloud-agent/build-guardrails"
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables"
  },
  {
   "id": "6.2.4-01",
@@ -852,7 +852,7 @@
   "obj": "6.2.4",
   "difficulty": "easy",
   "type": "order",
-  "stem": "Repo1 has a job named deploy in the deploy.yml workflow that deploys to production with a credential. The job must wait for approval from Team1, and the credential must be available only to jobs that are approved for production. You must then confirm that the gate works.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "stem": "Repo1 has a job named deploy in the deploy.yml workflow that deploys to production with a credential. The job must wait for approval from Team1, and the credential must be available only to jobs that are approved for production. You must then confirm that the gate works. The workflow file must not reference the production environment until the credential is stored in it.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
   "choices": [
    "In Settings > Environments of Repo1, create an environment named production with Team1 as required reviewers.",
    "Add the deployment credential as an environment secret of the production environment.",

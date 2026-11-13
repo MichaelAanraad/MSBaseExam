@@ -597,7 +597,7 @@
   "obj": "2.2.4",
   "difficulty": "medium",
   "type": "order",
-  "stem": "Northwind Traders currently restricts MCP servers to a custom registry by using the Registry only policy. The company wants to replace this with an enterprise allowlist and keep a single source of truth. MCP servers in Copilot is enabled for the enterprise.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "stem": "Northwind Traders currently restricts MCP servers to a custom registry by using the Registry only policy. The company wants to replace this with an enterprise allowlist and keep a single source of truth.   MCP servers in Copilot is enabled for the enterprise. The registry restriction and the registry must be fully removed before you create the allowlist, and Registry only must never be active without a registry URL.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
   "choices": [
    "Create a managed-settings.json file in the .github-private repository.",
    "Set Restrict MCP access to registry servers to Allow all in the MCP section of the enterprise Copilot policies.",
