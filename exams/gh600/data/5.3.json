@@ -1,0 +1,574 @@
+[
+ {
+  "id": "5.3.1-01",
+  "obj": "5.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. assigns an issue to Copilot cloud agent. Copilot opens a draft pull request, and the timeline shows a \"Copilot started work\" event, but no commits appear for a long time. User1 must see what Copilot is doing right now.\n\nWhat should User1 do first?",
+  "choices": [
+   "Click View session on the timeline event to open the live session log.",
+   "Filter the organization audit log by actor:Copilot for the repository.",
+   "Run gh run rerun for the latest workflow run of the pull request.",
+   "Unassign Copilot from the issue and then assign the issue to Copilot again."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The session log streams live and shows the reasoning and tools that Copilot uses, so it is the first place to look when a pull request seems idle. Restarting or digging into other logs comes later, and only if the session log shows a real stall.",
+  "rationale": [
+   "Correct: GitHub Docs say that when a pull request shows a \"Copilot started work\" event but nothing seems to happen, you click View session to see the session logs, which stream live and show what Copilot is doing.",
+   "Incorrect: the audit log records events such as who started a session, but it does not stream the steps of a running session. Use it for governance reviews, not to watch progress in real time.",
+   "Incorrect: re-running a workflow repeats CI jobs and does not show the agent's work. The session may be busy and healthy, so a re-run adds noise without any diagnosis.",
+   "Incorrect: unassigning and reassigning restarts the work and throws away the chance to diagnose it. GitHub Docs suggest this only after a session stays stuck and times out."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "5.3.1-02",
+  "obj": "5.3.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "At Contoso, Ltd., User2 has write access to a repository. Yesterday, User2 merged a pull request that Copilot cloud agent created. Today, User2 adds a comment that mentions @copilot on the merged pull request and asks for a small follow-up change. Nothing happens, and no eyes reaction appears on the comment.\n\nWhich cause should User2 identify?",
+  "choices": [
+   "Copilot cloud agent responds only to mentions in open pull requests.",
+   "Only repository administrators can send comments to Copilot cloud agent.",
+   "The agent firewall blocked the comment because it contained a link.",
+   "Steering messages can be sent only from the prompt box of the agents panel."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent ignores new mentions and comments on pull requests that are merged or closed, so that it focuses on active work. A follow-up change needs a new task, for example a new issue assigned to Copilot.",
+  "rationale": [
+   "Correct: GitHub Docs state that Copilot only responds to mentions in open pull requests. After a pull request is merged or closed, the agent does not respond to new comments, so no eyes reaction appears.",
+   "Incorrect: the requirement is write access, not admin access. User2 has write access, so the permission level is not why the comment was ignored in this scenario.",
+   "Incorrect: the firewall limits outbound internet requests that the agent makes during a session. It does not filter comments, and a block would show as a warning with the blocked address.",
+   "Incorrect: you can steer a running session from the prompt box, but @copilot comments on an open pull request also reach the agent. The problem here is that the pull request is merged."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "5.3.1-03",
+  "obj": "5.3.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Copilot cloud agent pushes several commits to a pull request in a repository at Litware, Inc. The pull request shows no results for the required build and unit-tests checks, so the agent work looks only partly done. The repository uses the default Copilot cloud agent settings.\n\nWhat should a user who has write access do so that the checks run?",
+  "choices": [
+   "Click Approve and run workflows in the merge box of the pull request.",
+   "Run gh run rerun RUN_ID --failed for the last run of the build workflow.",
+   "Enable Agent Merge with Watch and fix on the pull request.",
+   "Add a workflow_dispatch trigger to the build and unit-tests workflows."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, GitHub Actions workflows do not run on pushes from Copilot until a user with write access approves them. The missing results are expected, and approving the run lets the required checks report.",
+  "rationale": [
+   "Correct: GitHub Docs say that workflows do not run automatically when Copilot pushes to a pull request, and that you click Approve and run workflows in the merge box to allow them to run.",
+   "Incorrect: gh run rerun needs an existing run to repeat. Here the workflows never started because they wait for approval, so there is no failed run to re-run.",
+   "Incorrect: Agent Merge fixes failed workflows and merge conflicts after they appear. It does not approve workflow runs, and the checks here have not started at all.",
+   "Incorrect: a manual trigger would run the workflow outside the pull request context and would not satisfy the required checks. The approval gate is the actual blocker."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "5.3.1-04",
+  "obj": "5.3.1",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Northwind Traders runs several agents. The operations team must pick the first source of evidence for each symptom.\n\nWhich source should you use for each symptom? To answer, drag the appropriate sources to the correct symptoms. Each source may be used once, more than once, or not at all.",
+  "choices": [
+   "The firewall warning in the pull request body",
+   "The subagent.failed event of the Copilot SDK session",
+   "The job logs of the workflow run in the Actions tab",
+   "The Copilot cloud agent session log",
+   "The organization audit log filtered by actor:Copilot"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Each symptom points to a different layer: the cloud agent firewall, the SDK runtime, GitHub Actions CI, or the agent's own reasoning. The audit log helps with governance questions, not with the root cause of a single run.",
+  "rationale": [
+   "A blocked request is reported as a firewall warning in the pull request body or comment, with the blocked address and the command that made the request.",
+   "In the Copilot SDK, a delegated sub-agent that errors emits subagent.failed with an error field, so the app can see why the parent never got a result.",
+   "A required check that fails at the same step is diagnosed in the job logs, where failed steps are expanded and you can link to the failing line.",
+   "The session log shows the reasoning and tools that Copilot used during the session, which is where you see which tools were called and why."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent",
+  "targets": [
+   "Copilot cloud agent PR: an install command failed because an external host could not be reached",
+   "Copilot SDK app: a delegated sub-agent stops and the parent agent never receives its output",
+   "Agent pull request: the required build check fails at the same step on every push",
+   "Copilot cloud agent PR: you must see which tools the agent called and why"
+  ],
+  "notes": [
+   "Shows the blocked address and the command that tried to reach it. Use it when a session cannot reach an external host because of the default firewall.",
+   "Raised by the Copilot SDK runtime when a sub-agent errors. It carries the error, and the docs suggest showing it, retrying, or falling back to the parent agent.",
+   "Holds per-step output for each job. Use it to find which step of a CI workflow failed and to share a permalink to the exact failing line.",
+   "Streams the agent's reasoning, tool calls, and progress for one session. Use it to understand what the agent did and in which order.",
+   "Records who did what and when across the organization. It is useful for governance and usage reviews, but it does not explain why one run failed."
+  ]
+ },
+ {
+  "id": "5.3.1-05",
+  "obj": "5.3.1",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "At Adatum Corporation, the required unit-tests check on a pull request from Copilot cloud agent failed. User1 must find the failing step and then re-run only the failed jobs with debug logging and follow the new attempt.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the repository, click Actions and open the run summary of the failed workflow run.",
+   "Under Jobs, select the failed job and review the failed step, which is expanded automatically.",
+   "Run gh run rerun RUN_ID --failed --debug.",
+   "Run gh run watch and select the workflow run.",
+   "Run gh workflow disable unit-tests.yml.",
+   "Run gh run rerun --job JOB_ID for each job that succeeded.",
+   "After the re-run, download the log archive to get the logs of every job in the run."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "You first locate the run and the failing step, then re-run only failed jobs with debug logging, and then watch the new attempt. Re-running succeeded jobs adds cost, and a disabled workflow cannot be re-run.",
+  "rationale": [
+   "Step 1: the run summary is where you start, because it lists the jobs and links to the logs of the failed run that the pull request check points to.",
+   "Step 2: failed steps are expanded automatically in the job log, so you can read the error before you decide to re-run anything.",
+   "Step 3: gh run rerun with --failed re-runs only failed jobs and the jobs that depend on them, and --debug enables runner diagnostic and step debug logging.",
+   "Step 4: gh run watch shows the progress of the new attempt so User1 can confirm whether the failure reproduces with the extra logging.",
+   "Incorrect: a disabled workflow cannot be re-run until it is enabled again, so disabling unit-tests.yml blocks the re-run that User1 needs.",
+   "Incorrect: jobs that succeeded keep their outputs, and the requirement is to re-run only failed jobs. Re-running them adds cost and noise.",
+   "Incorrect: a log archive for a partly re-run workflow only includes the jobs that were re-run, so it does not give the logs of every job."
+  ],
+  "ref": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs"
+ },
+ {
+  "id": "5.3.1-06",
+  "obj": "5.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Wingtip Toys has an app that uses the Copilot SDK. The main agent delegates work to custom agents. The app must raise an alert when a sub-agent starts but has produced neither a result nor an error 10 minutes later.\n\nWhich approach should you use?",
+  "choices": [
+   "Track subagent.started events by toolCallId and alert when no subagent.completed or subagent.failed event follows.",
+   "Read durationMs from each subagent.failed event and alert when the duration is longer than 10 minutes.",
+   "Alert on each subagent.deselected event that arrives more than 10 minutes after the session starts.",
+   "Set infer to false for each custom agent so that the main agent can no longer delegate work to it."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A stalled sub-agent is detected by the absence of an end event, so you correlate each start with a later completed or failed event. Events that only fire at the end, or fire for other reasons, cannot reveal a run that never ends.",
+  "rationale": [
+   "Correct: the SDK emits subagent.started, then subagent.completed or subagent.failed, and toolCallId links the events of one delegation, so a start without a matching end event within 10 minutes marks a stall.",
+   "Incorrect: subagent.failed only arrives when a sub-agent ends with an error, so its durationMs describes a run that already ended. A stalled sub-agent sends neither subagent.completed nor subagent.failed, so this never fires.",
+   "Incorrect: subagent.deselected fires when the runtime switches away from a sub-agent, not when a delegated run fails to finish. Its timing relative to the session start says nothing about a stalled run.",
+   "Incorrect: infer set to false stops automatic delegation to the agent. It changes behavior instead of detecting stalls, and it removes the delegation that the app depends on."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.3.1-07",
+  "obj": "5.3.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "You need to resolve Incident 1 so that work on issue 812 continues.\n\nWhat should User3 do?",
+  "choices": [
+   "Unassign issue 812 from Copilot and then assign it to Copilot again.",
+   "Add the original request to the pull request again as a new comment.",
+   "Click Approve and run workflows in the merge box of the draft pull request.",
+   "Run gh run rerun for the GitHub Actions run of the stalled agent session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A session on GitHub Actions that stays stuck times out after an hour. When the session was started by an issue assignment, GitHub Docs say to retry by unassigning and reassigning the issue.",
+  "rationale": [
+   "Correct: GitHub Docs say that a stuck session on GitHub Actions times out after an hour, and that you can retry by unassigning the issue and then assigning it to Copilot again, which is how issue 812 started.",
+   "Incorrect: adding the same comment again is the retry for a session that got stuck while responding to a pull request comment. Incident 1 started from an issue assignment, not a comment.",
+   "Incorrect: approving workflow runs lets CI checks run on Copilot pushes. It does not restart an agent session that has stopped making progress.",
+   "Incorrect: re-running the run repeats the same attempt with the same event data. The docs give unassign and reassign as the supported retry for an issue-based session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent",
+  "case": "C-f"
+ },
+ {
+  "id": "5.3.2-01",
+  "obj": "5.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Relecloud watches a running Copilot cloud agent session and sees that Copilot is changing the wrong module. User1 must correct the direction of the work without losing the progress of the session.\n\nWhat should User1 do?",
+  "choices": [
+   "Type a steering message in the prompt box below the session log.",
+   "Click Stop session and then assign a new issue that has the correction.",
+   "Edit the description of the original issue to describe the right module.",
+   "Archive the session and then start the same task from the agents panel."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Steering lets you redirect a running session. Copilot applies the message after the current tool call finishes, so the session keeps its context and work.",
+  "rationale": [
+   "Correct: GitHub Docs describe steering, where you type a follow-up in the prompt box below the session log and Copilot applies it after the current tool call, without restarting the session.",
+   "Incorrect: stopping ends the session, and a new task starts without the context of the current one. This loses progress that steering would keep.",
+   "Incorrect: a running session does not reread the issue description, so the edit does not reach the agent while it works on the wrong module.",
+   "Incorrect: you archive sessions that are already stopped. Starting again throws away the progress that the requirement says to keep."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "5.3.2-02",
+  "obj": "5.3.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Tailspin Toys assigns issues to Copilot cloud agent. The agent often pushes changes that then fail the required lint and unit-test checks. In every future session, the agent must run the same build, test, and lint commands as CI before it pushes, without a reviewer having to ask for it.\n\nWhat should you do?",
+  "choices": [
+   "Add the build, test, and lint commands to the .github/copilot-instructions.md file.",
+   "Mention @copilot on each pull request and ask it to run the tests before it pushes.",
+   "Turn off Require approval for workflow runs in the Copilot cloud agent settings.",
+   "Remove the lint check from the required status checks in the branch ruleset."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Repository custom instructions are read in every session. When they list the commands that CI uses, the agent validates its own work the same way before it pushes, so failures are caught earlier.",
+  "rationale": [
+   "Correct: GitHub Docs recommend adding custom instructions in .github/copilot-instructions.md that tell Copilot how to build, test, and lint the project, so it validates its changes before it pushes.",
+   "Incorrect: a comment works only for that pull request and needs a reviewer to ask each time, which breaks the requirement that no one has to ask.",
+   "Incorrect: this setting lets CI run automatically after Copilot pushes. Failures are still found after the push, and unreviewed code runs with workflow permissions.",
+   "Incorrect: removing a required check weakens the merge gate for everyone. It hides lint failures instead of making the agent validate its work."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "5.3.2-03",
+  "obj": "5.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Fabrikam, Inc. has an app that uses the Copilot SDK. The main agent delegates tasks to a custom agent named researcher. Sometimes researcher fails, and users then see no answer at all. The app must still return an answer when researcher fails.\n\nWhat should you do?",
+  "choices": [
+   "Handle subagent.failed events and let the main agent finish the task.",
+   "Set infer to false for researcher so that it is never selected.",
+   "Remove the description of researcher from the customAgents entry.",
+   "Add the tools of researcher to defaultAgent.excludedTools."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Failures of a sub-agent are reported as events, and the docs suggest showing the error, retrying, or falling back to the parent. Falling back keeps the user experience intact without disabling delegation.",
+  "rationale": [
+   "Correct: the Copilot SDK docs advise you to listen for subagent.failed and then show the error, retry, or fall back to the parent agent, so the user still gets an answer.",
+   "Incorrect: infer set to false stops automatic delegation entirely, so researcher is never used, even when it would succeed. This removes the agent instead of handling failures.",
+   "Incorrect: the runtime matches prompts to the description to pick a custom agent. Removing it hurts delegation and does nothing to handle failures.",
+   "Incorrect: defaultAgent.excludedTools hides tools from the main agent so that it must delegate. That makes the main agent depend more on researcher, which is the opposite of a fallback."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.3.2-04",
+  "obj": "5.3.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Woodgrove Bank has an app that uses the Copilot SDK with two custom agents. The description of one agent is \"Helps with code.\" and the description of the other is \"Helps with docs and code.\" Security review requests are often routed to the wrong agent.\n\nWhat should you change first?",
+  "choices": [
+   "Write a specific description for each agent that states which tasks it handles.",
+   "Give both agents the same model so that delegation decisions are consistent.",
+   "Rename the agents so that their names sort in the order you want them picked.",
+   "Add more tools to both agents so that either one can finish security reviews."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The runtime picks a custom agent by matching the prompt to its description. Vague, overlapping descriptions lead to poor delegation, so you fix the descriptions first.",
+  "rationale": [
+   "Correct: the SDK docs say the runtime selects a custom agent by matching the user prompt to its description, and that vague descriptions cause poor delegation. Specific, distinct descriptions fix the routing.",
+   "Incorrect: the model choice affects the quality of each agent's work, not how the runtime matches prompts to agent descriptions.",
+   "Incorrect: names identify agents, but selection is based on intent matched against the description, not on alphabetical order.",
+   "Incorrect: more tools widen the blast radius and still leave the routing ambiguous. Requests would still go to whichever agent the vague description matches."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.3.2-05",
+  "obj": "5.3.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Adatum Corporation, an orchestrator agent delegates data checks to a worker agent. The orchestrator marks a task complete as soon as the worker returns any response. In several runs, the worker returned a partial result and asked for more input, but the orchestrator reported success.\n\nWhat should you do?",
+  "choices": [
+   "Define a shared completion contract that states when a task is complete.",
+   "Increase how many times the orchestrator retries the worker on each task.",
+   "Run the orchestrator and the worker in parallel on separate parts of the data.",
+   "Give the orchestrator the tools of the worker so that it can finish tasks itself."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The two agents disagree about what complete means. A shared completion contract that both agents use aligns the criteria, so the orchestrator can tell a partial result from a finished one.",
+  "rationale": [
+   "Correct: Learn guidance on agentic loops describes misaligned completion criteria between a calling agent and a connected agent and recommends a shared completion contract that defines when work is done.",
+   "Incorrect: retries do not help, because the orchestrator already treats the partial result as success and never sees a reason to try again.",
+   "Incorrect: parallel work helps only with independent tasks. It does not change how the orchestrator decides that a delegated task is complete.",
+   "Incorrect: copying tools to the orchestrator widens its permissions and removes the separation of roles, and it still has no rule for when a task is complete."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/agentic-loops-in-practice"
+ },
+ {
+  "id": "5.3.2-06",
+  "obj": "5.3.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "At Contoso, Ltd., several agent pull requests merge into main within minutes of each other. Each merge starts the deploy-staging workflow, and overlapping runs deploy to staging at the same time and leave it in a broken state. Runs must deploy one at a time, in order, and no queued run may be canceled.\n\nWhich two changes should you make to the deploy-staging workflow? Each correct answer presents part of the solution.",
+  "choices": [
+   "Set concurrency.group to a fixed value such as staging-deploy.",
+   "Set concurrency.queue to max.",
+   "Set concurrency.cancel-in-progress to true.",
+   "Set concurrency.group to ${{ github.run_id }}.",
+   "Set concurrency.queue to max and concurrency.cancel-in-progress to true.",
+   "Add a wait timer of 10 minutes to the staging environment."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "A shared concurrency group allows only one run at a time. By default only one run can be pending and older pending runs are canceled, so queue: max is needed to keep every run waiting in order.",
+  "rationale": [
+   "Correct: a fixed group name puts every run of the workflow in the same concurrency group, so at most one deployment to staging runs at a time.",
+   "Correct: queue max lets up to 100 runs wait in the group instead of the default single pending run, so no queued deployment is canceled and runs proceed in order.",
+   "Incorrect: cancel-in-progress set to true cancels the deployment that is running when a new run starts, which breaks the requirement that no run is canceled.",
+   "Incorrect: the run ID is unique for each run, so every run gets its own group and runs still overlap. Use it only as a fallback when you want no serialization.",
+   "Incorrect: GitHub Docs state that queue max cannot be combined with cancel-in-progress true, and the workflow fails validation.",
+   "Incorrect: a wait timer only delays each job after it is triggered. Runs that start close together still overlap after the delay."
+  ],
+  "ref": "https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency"
+ },
+ {
+  "id": "5.3.2-07",
+  "obj": "5.3.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "At Northwind Traders, agent activity on issues triggers a workflow file named sync-tickets.yml. A bug makes the workflow send too many requests to an external ticket service. A run of the workflow is in progress, and a fix is ready in an approved pull request. No new run of the workflow may start before the fix is merged, the in-progress run must be stopped before the fix is merged, and the workflow must run normally after the fix.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run gh workflow disable sync-tickets.yml.",
+   "In the Actions tab, open the in-progress run and click Cancel workflow.",
+   "Merge the approved pull request that fixes sync-tickets.yml.",
+   "Run gh workflow enable sync-tickets.yml.",
+   "Run gh run rerun RUN_ID for the canceled run before you enable the workflow.",
+   "Delete sync-tickets.yml from the default branch.",
+   "Turn off Require approval for workflow runs in the Copilot cloud agent settings."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Disabling first stops new triggers, but it does not cancel runs that already started, so you cancel the active run next. After the fix is merged, you enable the workflow again.",
+  "rationale": [
+   "Step 1: disabling the workflow stops new runs from being triggered without deleting the file, so no new run starts while you work.",
+   "Step 2: disabling does not cancel existing runs, so you cancel the run that is still sending requests to the ticket service. Because the workflow is already disabled, no new run can replace it.",
+   "Step 3: with nothing running, you merge the fix so that the workflow file on the default branch no longer has the bug.",
+   "Step 4: enabling the workflow again lets it run normally with the fixed definition, which meets the last requirement.",
+   "Incorrect: you cannot re-run a run while its workflow is disabled, and re-running the old run would repeat the buggy behavior.",
+   "Incorrect: deleting the file removes the workflow for everyone, and the requirement is that it runs normally after the fix. Disabling is the temporary control.",
+   "Incorrect: this setting controls whether workflows on Copilot pushes need approval. It neither stops the current run nor prevents new runs triggered by issue activity."
+  ],
+  "ref": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/disable-and-enable-workflows"
+ },
+ {
+  "id": "5.3.3-01",
+  "obj": "5.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud merged a pull request that Copilot cloud agent created. After the merge, the checkout service fails in staging. You must undo the change on main. The rollback must go through a reviewed pull request, and the history of main must not be rewritten.\n\nSolution: On the merged pull request, you click Revert, and a reviewer approves the new pull request before it is merged.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The Revert button creates a new pull request that reverts the merge commit. That pull request goes through normal review and adds a new commit, so history is kept.",
+  "rationale": [
+   "Correct: GitHub Docs say that Revert on a merged pull request creates a new pull request that reverts the merge, which you then review and merge, so the rollback is reviewed and main keeps its history.",
+   "Incorrect: the solution does meet the goal. No would be right only if the revert had conflicts, in which case you revert individual commits with git revert on a new branch and open a pull request."
+  ],
+  "ref": "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/reverting-a-pull-request",
+  "series": "S-f"
+ },
+ {
+  "id": "5.3.3-02",
+  "obj": "5.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Relecloud merged a pull request that Copilot cloud agent created. After the merge, the checkout service fails in staging. You must undo the change on main. The rollback must go through a reviewed pull request, and the history of main must not be rewritten.\n\nSolution: You reset main to the commit before the merge and force-push main.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "A reset and force-push rewrites the history of main and bypasses pull request review, which breaks both requirements.",
+  "rationale": [
+   "Incorrect: a force-push removes commits from main, which rewrites history, and it happens outside any pull request, so nobody reviews the rollback.",
+   "Correct: the solution does not meet the goal. A revert pull request undoes the change with a new commit that is reviewed, which is the pattern that keeps history and adds a human check."
+  ],
+  "ref": "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/reverting-a-pull-request",
+  "series": "S-f"
+ },
+ {
+  "id": "5.3.3-03",
+  "obj": "5.3.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud merged a pull request that Copilot cloud agent created. After the merge, the checkout service fails in staging. You must undo the change on main. The rollback must go through a reviewed pull request, and the history of main must not be rewritten.\n\nSolution: You open the session log of the agent session that created the pull request and click Stop session.\n\nDoes this meet the goal?",
+  "choices": [
+   "Yes",
+   "No"
+  ],
+  "answer": [
+   1
+  ],
+  "explanation": "Stopping a session ends future work of that session and keeps commits it already pushed. It does not undo changes that are already merged into main.",
+  "rationale": [
+   "Incorrect: Stop session ends the agent run and preserves commits that were already pushed. The merged change stays on main, so the checkout service keeps failing.",
+   "Correct: the solution does not meet the goal. Stop session is the right control for a running session that makes bad changes, but a merged change is undone with a revert pull request."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents",
+  "series": "S-f"
+ },
+ {
+  "id": "5.3.3-04",
+  "obj": "5.3.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "At Litware, Inc., a pull request from Copilot cloud agent was merged and broke a feature. A second Copilot cloud agent session for a follow-up task is still running and pushing commits to its own branch. You must prevent any further agent commits first, and then undo the merged change through a reviewed pull request.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Open the session log of the running session and click Stop session.",
+   "On the merged pull request, click Revert.",
+   "Have a reviewer approve the revert pull request, and then merge it.",
+   "Archive the running session from the agents panel.",
+   "Delete the copilot/ branch of the merged pull request.",
+   "Reset main to the previous commit and force-push main."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "You contain the problem by stopping the running session, then create a revert pull request, and then merge it after review. Deleting branches or rewriting main does not give a reviewed rollback.",
+  "rationale": [
+   "Step 1: Stop session ends the run of the follow-up session, so the agent pushes no more commits while you roll back. Commits already pushed are kept for review.",
+   "Step 2: Revert creates a new pull request that reverts the merge commit, which is the reviewed rollback that the requirement asks for.",
+   "Step 3: the revert pull request follows the normal rules, so a reviewer approves it before you merge it and the broken change leaves main.",
+   "Incorrect: you can archive sessions that are stopped. Archiving is for tidying the session list, not for ending a session that is still pushing commits.",
+   "Incorrect: the merged change is already on main, so deleting the source branch does not remove it from main or produce a reviewed rollback.",
+   "Incorrect: a force-push rewrites the history of main and skips review, so it fails the requirement that the rollback goes through a reviewed pull request."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "5.3.3-05",
+  "obj": "5.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Fabrikam, Inc. assigned an issue to Copilot cloud agent. The repository requires one approving review. Copilot opens a pull request, and User1 approves it.\n\nWhat else should happen before the pull request can be merged?",
+  "choices": [
+   "An approval from a reviewer other than User1",
+   "An approval from an organization owner",
+   "A comment from User1 that mentions @copilot",
+   "A second approval from User1 after new commits"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The person who asked Copilot to create a pull request cannot be its only approver. This keeps an independent human in the loop for agent work.",
+  "rationale": [
+   "Correct: GitHub Docs state that if you asked Copilot to create a pull request, your approval does not count toward required approvals, so another reviewer must approve it.",
+   "Incorrect: the role of the second reviewer does not matter. Any eligible reviewer other than User1 meets the rule, so an organization owner is not required.",
+   "Incorrect: an @copilot mention asks Copilot for changes. It does not add an approval and does not satisfy the review requirement.",
+   "Incorrect: User1's approval never counts for this pull request, so approving again after new commits still leaves the requirement unmet."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "5.3.3-06",
+  "obj": "5.3.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Wingtip Toys lets agents prepare deployments. Operators must be able to roll back to the exact code that was running before a deployment.\n\nWhat should the deployment workflow deploy?",
+  "choices": [
+   "An explicit ref, such as a commit SHA or a tag",
+   "The latest commit on the main branch",
+   "The head of the agent's copilot/ branch",
+   "A build artifact that is named latest"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Rollback-safe deployments use explicit refs. If you know exactly which commit or tag was deployed, you can redeploy the previous one with confidence.",
+  "rationale": [
+   "Correct: the Learn module recommends deploying explicit refs, such as a commit or tag, instead of the latest commit on a branch, so that a rollback targets a known version.",
+   "Incorrect: the latest commit on main changes over time, so you cannot be sure which code ran before, and a rollback becomes guesswork.",
+   "Incorrect: an agent branch holds unmerged, unreviewed work. Deploying it skips review, and the branch head also moves when the agent pushes.",
+   "Incorrect: an artifact called latest is overwritten by each build, so you lose the link between a deployment and a specific version."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/design-agent-architecture-integration/7-agent-operations-controls"
+ },
+ {
+  "id": "5.3.3-07",
+  "obj": "5.3.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "At Adatum Corporation, User2 can start the deploy job for production after agent work is merged. Another person must approve each production deployment, User2 must not be able to approve deployments that User2 started, and the deployment secrets must stay unavailable until approval.\n\nWhat should you configure?",
+  "choices": [
+   "A production environment with required reviewers and Prevent self-review selected",
+   "Require approval for workflow runs in the Copilot cloud agent settings",
+   "A CODEOWNERS entry for the deploy workflow file with code owner review",
+   "A production environment that has a wait timer of 60 minutes"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Environment protection rules gate the job itself. Required reviewers add the human approval, prevent self-review blocks the initiator from approving, and environment secrets stay locked until approval.",
+  "rationale": [
+   "Correct: a job that references an environment with required reviewers waits for approval and cannot read environment secrets until then, and Prevent self-review stops the user who started it from approving.",
+   "Incorrect: this setting gates GitHub Actions runs on Copilot pushes to a pull request. It does not gate production deployments that User2 starts after the merge.",
+   "Incorrect: code owner review protects changes to the workflow file. It does not require an approval each time the deploy job runs.",
+   "Incorrect: a wait timer only delays the job. Nobody approves it, so the deployment proceeds after the delay without a human decision."
+  ],
+  "ref": "https://docs.github.com/en/actions/reference/workflows-and-actions/deployments-and-environments"
+ },
+ {
+  "id": "5.3.3-08",
+  "obj": "5.3.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to respond to Incident 2 and meet the rollback requirement.\n\nWhich two actions should you perform? Each correct answer presents part of the solution.",
+  "choices": [
+   "Click Stop session in the session log of the follow-up session.",
+   "Click Revert on the merged pull request for issue 790, and merge the new pull request after review.",
+   "Reset main to the commit before the merge and force-push main.",
+   "Archive the follow-up session without stopping it.",
+   "Delete the copilot/ branch of the pull request for issue 790.",
+   "Click Approve and run workflows on the follow-up pull request."
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Recovery contains the active session and rolls back the merged change through review. Stopping keeps the commits already pushed, and the revert pull request leaves the history of main intact.",
+  "rationale": [
+   "Correct: Stop session ends the follow-up session so that it pushes no more commits while you recover, and the commits it already pushed are kept for review.",
+   "Correct: Revert creates a new pull request that reverts the merge commit. It is reviewed like any other change, which meets the Fabrikam, Inc. requirement to never rewrite main.",
+   "Incorrect: a reset and force-push rewrites the history of main and skips review, which the Fabrikam, Inc. requirements forbid.",
+   "Incorrect: archiving is for sessions that are stopped. It does not end a running session or prevent more commits from the follow-up work.",
+   "Incorrect: the change for issue 790 is already merged, so deleting its source branch does not remove the change from main.",
+   "Incorrect: approving workflow runs lets CI checks run on the follow-up pull request. It neither contains the session nor rolls back the merged change."
+  ],
+  "ref": "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/reverting-a-pull-request",
+  "case": "C-f"
+ }
+]

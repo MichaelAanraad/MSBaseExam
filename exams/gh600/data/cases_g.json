@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-g",
+  "title": "Trey Research",
+  "sections": [
+   [
+    "Overview",
+    "Trey Research is a contract research organization that runs clinical sample analysis for pharmaceutical customers. The company has 1,200 employees, offices in Basel and Boston, and a software engineering group of 90 developers. Trey Research must pass customer audits that check how code changes reach production and who approved them. Last year, the company moved its builds from Jenkins to GitHub Actions and now plans to expand the use of Copilot cloud agent."
+   ],
+   [
+    "Existing environment",
+    "Trey Research uses GitHub Enterprise Cloud with one organization named trey-research. All developers have Copilot Enterprise licenses. GitHub Advanced Security is not licensed. The organization contains the following repositories:\n- LabPortal: the customer-facing web app. It contains the folders src/auth/ (sign-in and token validation), src/ui/, tests/, and data/samples/. The data/samples/ folder holds anonymized patient sample files that are used by integration tests.\n- LabDocs: the public documentation site. Every pull request runs a static site build. The repository has no secrets and no deployment credentials.\n- LabInfra: Terraform files for the Azure resources that host LabPortal.\nThe organization has the following teams: SecTeam (security engineers), PlatformTeam (build and infrastructure), ReleaseTeam (release managers), and DocsTeam (technical writers).\nThe main branch of LabPortal has a branch protection rule that requires one approval before merging. LabPortal has a workflow named deploy.yml that deploys main to production by using a job that references an environment named production. The production environment currently has no protection rules, and the deployment credential is stored as a repository secret.\nDevelopers assign issues in LabPortal and LabDocs to Copilot cloud agent. The repository settings for Copilot cloud agent are unchanged from the defaults. LabPortal uses an MCP server named TrackerMCP that reads tickets from the company issue tracker. TrackerMCP needs an API token. A developer stored the token as a GitHub Actions repository secret named TRACKER_TOKEN, and TrackerMCP fails to authenticate during Copilot sessions.\nThe engineering group uses Microsoft Teams for chat and holds a weekly change advisory meeting on Tuesdays."
+   ],
+   [
+    "Business requirements",
+    "Trey Research identifies the following business requirements:\n- Changes to authentication code or to workflow definitions must be decided on by a member of SecTeam before they are merged.\n- A deployment to production must be approved by a member of ReleaseTeam. The person who starts a deployment must not be able to approve it.\n- Copilot must not use the contents of the anonymized patient sample files when it generates code, answers questions, or reviews pull requests.\n- Documentation changes in LabDocs must be merged as quickly as possible. Technical writers complain that pull requests from Copilot wait for hours before any checks run.\n- Auditors must be able to see who requested each change that Copilot makes."
+   ],
+   [
+    "Technical requirements",
+    "Trey Research identifies the following technical requirements:\n- TrackerMCP must receive its API token during Copilot sessions. The token must not be exposed to the agent's shell commands as a regular environment variable.\n- Secrets that are used by Copilot must not be readable by other GitHub Actions workflows in the repository.\n- Approvals that do not reduce risk must be avoided, but every control that protects LabPortal must remain in place.\n- The built-in security validation that Copilot cloud agent runs on its own changes must stay enabled for LabPortal."
+   ],
+   [
+    "Constraints",
+    "Trey Research has the following constraints:\n- Administrative effort must be minimized. Prefer built-in GitHub and Copilot settings over custom scripts.\n- Copilot cloud agent must keep running on GitHub-hosted runners. Self-hosted runners are not allowed.\n- The company does not plan to buy GitHub Advanced Security this year.\n- The office network team will replace the Boston VPN appliances next quarter, which does not affect GitHub-hosted services."
+   ]
+  ]
+ }
+]

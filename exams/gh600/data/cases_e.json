@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-e",
+  "title": "Tailspin Toys",
+  "sections": [
+   [
+    "Overview",
+    "Tailspin Toys is an online toy retailer that has 120 developers in offices in Seattle and Dublin. The company uses GitHub Enterprise Cloud, and all developers are assigned GitHub Copilot Business licenses.\n\nThe main repository is named storefront. It contains a TypeScript web front end in the web folder, an order service in the services/orders folder, and Terraform files in the infra folder. The marketing website is hosted separately on a third-party content management system and is out of scope.\n\nThe engineering leads want to use several Copilot agents in parallel to deliver a new checkout experience before the holiday season, without losing control over quality, security, and traceability."
+   ],
+   [
+    "Existing environment",
+    "**Copilot configuration**\n\n- Copilot cloud agent is enabled for the storefront repository.\n- The repository contains a .github/copilot-instructions.md file that describes build and test commands for the whole repository. Copilot code review uses this file.\n- Copilot Memory is enabled for the organization. Developers use Copilot CLI for local work.\n\n**Custom agents**\n\nThe .github/agents folder contains three custom agent profiles:\n\n- planner.agent.md: breaks a feature into tasks and delegates work to other custom agents.\n- test-writer.agent.md: writes and runs unit tests. The profile does not set any invocation properties.\n- security-reviewer.agent.md: reviews changes for insecure patterns. The profile does not set any invocation properties.\n\n**Branch rules**\n\nA ruleset on the main branch requires one approval and a passing build check before merging."
+   ],
+   [
+    "Problem statements",
+    "- In March, the storefront repository moved its unit tests from Jest to Vitest. Copilot cloud agent still adds Jest configuration to new pull requests, and its session logs show that it relies on a stored repository memory which states that the project uses Jest.\n- During a recent Copilot CLI /fleet run, two subagents edited web/src/checkout/cart.ts at the same time, and the second change overwrote the first. Two other subagents wrote the same test file for the discount module.\n- The main agent in the CLI sometimes selects the test-writer agent on its own when a developer asks a general question, which starts long test runs that nobody requested.\n- Developers sometimes select the security-reviewer agent directly from the agent picker and skip the planner, so its findings are not added to the plan."
+   ],
+   [
+    "Requirements",
+    "**Agent configuration**\n\n- The test-writer agent must run only when a developer selects it manually.\n- The security-reviewer agent must be invoked only by the planner agent. Developers must not be able to select it manually.\n\n**Instructions and memory**\n\n- Agents must stop using the outdated Jest information, and the rule to use Vitest must be applied as consistently as possible.\n- Terraform rules must be provided to Copilot cloud agent only when it works on files in the infra folder and its subfolders.\n- Copilot code review must continue to use the repository-wide instructions, but it must not receive the Terraform rules.\n\n**Parallel work**\n\n- Parallel runs must avoid overlapping edits and duplicated work.\n- The parent agent must confirm that the combined result of all subagents builds and passes tests before a run is complete."
+   ],
+   [
+    "Audit and review",
+    "- Every change made by an agent must be reviewed by a human before it is merged to main.\n- Each month, the compliance team, whose members are enterprise owners, must review agent activity across the enterprise. For each event, they must identify the agent session that produced it and the developer who started the work.\n- The compliance team must not require developers to install additional tools or change their local configuration to support the review.\n- The solution must minimize administrative effort."
+   ]
+  ]
+ }
+]

@@ -1,0 +1,585 @@
+[
+ {
+  "id": "5.2.1-01",
+  "obj": "5.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "You need to meet the requirement for the monthly compliance review.\n\nWhat should you do?",
+  "choices": [
+   "Filter the enterprise audit log by actor:Copilot, and read the agent_session_id and user fields.",
+   "Ask each developer to run /chronicle standup every month and to send the report to compliance.",
+   "Review the All sessions view on the Agents tab of each repository in the enterprise every month.",
+   "Ask each compliance team member to query their own session history in natural language on GitHub."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The enterprise audit log shows agentic activity when filtered by actor:Copilot. Each event links to the agent session through agent_session_id and names the person who started it in the user field.",
+  "rationale": [
+   "Correct: enterprise owners can filter the audit log by actor:Copilot across the enterprise, and agent_session_id and user identify the session and the developer without any developer action.",
+   "Incorrect: /chronicle standup summarizes one developer's own CLI sessions. It requires every developer to act and does not cover cloud agent activity in a consistent way.",
+   "Incorrect: the All sessions view shows shared cloud sessions per repository. Reviewing every repository is high effort, and local sessions are unshared by default.",
+   "Incorrect: session history queries only cover sessions that the person asking started. Compliance team members did not start the developers' sessions."
+  ],
+  "case": "C-e",
+  "ref": "https://docs.github.com/en/copilot/reference/enterprise-administrators/agentic-audit-log-events"
+ },
+ {
+  "id": "5.2.1-02",
+  "obj": "5.2.1",
+  "difficulty": "hard",
+  "type": "dropdown",
+  "stem": "Fabrikam, Inc. must archive a report of every Copilot CLI session in a repository when the session finishes. You create the following file in the .github/hooks folder.\n\n```json\n{\n  \"version\": [[1]],\n  \"hooks\": {\n    \"[[2]]\": [\n      {\n        \"type\": \"[[3]]\",\n        \"bash\": \"./scripts/archive-report.sh\",\n        \"timeoutSec\": 60\n      }\n    ]\n  }\n}\n```\n\nHow should you complete the configuration? To answer, select the appropriate options in the answer area.",
+  "answer": [
+   0,
+   0,
+   0
+  ],
+  "explanation": "A hooks file needs version 1 and a hooks object. sessionEnd runs when a session completes or is terminated, and each hook definition has type command.",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "1",
+     "2",
+     "\"latest\""
+    ],
+    "why": [
+     "Correct: the hooks configuration must contain a version field with the value 1.",
+     "Incorrect: the documented format requires version 1. Another number does not match the documented hook configuration format.",
+     "Incorrect: version is a number with the value 1, not a label such as latest. Use the documented value so the file is recognized."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "sessionEnd",
+     "sessionStart",
+     "postToolUse",
+     "userPromptSubmitted"
+    ],
+    "why": [
+     "Correct: sessionEnd runs when the agent session completes or is terminated, and GitHub Docs lists archiving session reports and logs as a use for it.",
+     "Incorrect: sessionStart runs when a session begins or resumes, before there is anything to report. Use it to initialize environments or log session starts.",
+     "Incorrect: postToolUse runs after every tool call, so the script would run many times per session. Use it for an audit trail of tool results.",
+     "Incorrect: userPromptSubmitted runs when the user submits a prompt. Use it to log requests, not to produce an end-of-session report."
+    ]
+   },
+   {
+    "label": "Box 3",
+    "options": [
+     "command",
+     "script",
+     "shell"
+    ],
+    "why": [
+     "Correct: the type property of each hook definition must be command.",
+     "Incorrect: script is not an accepted value for type. The script path goes in the bash or powershell property instead.",
+     "Incorrect: shell is not an accepted value for type. The shell is chosen by using the bash or powershell property."
+    ]
+   }
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/customizations/hooks"
+ },
+ {
+  "id": "5.2.1-03",
+  "obj": "5.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A reviewer at Contoso, Ltd. must understand why Copilot cloud agent made a change in a specific commit of a pull request.\n\nWhat should the reviewer use?",
+  "choices": [
+   "The link to the session logs in the commit message",
+   "The verified signature badge on the commit",
+   "The /chronicle standup report of the requester",
+   "The repository fact list in Copilot Memory"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Every commit that Copilot cloud agent authors includes a link to the agent session logs. The session log shows the agent's reasoning and the tools it used.",
+  "rationale": [
+   "Correct: each agent-authored commit message links to the session logs, which show the reasoning and tool use behind the change for review and audit.",
+   "Incorrect: the Verified badge proves that Copilot made the commit and that it was not altered. It does not explain why the change was made.",
+   "Incorrect: /chronicle standup summarizes a user's own Copilot CLI sessions. It is not a record of the cloud agent's reasoning for a commit.",
+   "Incorrect: repository facts are details that Copilot remembers about the code. They do not record the reasoning behind individual commits."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.2.1-04",
+  "obj": "5.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Litware, Inc. must keep a JSON Lines record of the result of every tool call that Copilot CLI makes in a repository, including failed calls, for a compliance audit.\n\nWhich hook should you configure?",
+  "choices": [
+   "postToolUse",
+   "preToolUse",
+   "userPromptSubmitted",
+   "errorOccurred"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "postToolUse runs after a tool completes, whether it succeeded or failed, so it can append each result to a log. GitHub Docs lists audit trails as a use for this hook.",
+  "rationale": [
+   "Correct: postToolUse runs after every tool execution, successful or failed, and receives the result, which is what an audit trail of tool results needs.",
+   "Incorrect: preToolUse runs before a tool runs, so the result does not exist yet. Use it to approve or deny tool executions.",
+   "Incorrect: userPromptSubmitted runs when a user submits a prompt. It records requests, not tool results.",
+   "Incorrect: errorOccurred runs when an error occurs during agent execution. It misses successful tool calls, so the record would be incomplete."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/customizations/hooks"
+ },
+ {
+  "id": "5.2.1-05",
+  "obj": "5.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank requires that no GitHub Actions workflow runs on a pull request from Copilot cloud agent until a person with write access has reviewed the code. The repository uses the default Copilot settings.\n\nWhat should you do?",
+  "choices": [
+   "Keep the default setting, which requires Approve and run workflows.",
+   "Configure Copilot to allow workflows to run on its pull requests.",
+   "Add a required status check for every workflow to the ruleset.",
+   "Add a preToolUse hook that blocks workflow runs in the repository."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, workflows do not run on Copilot cloud agent pull requests until a user with write access reviews the code and clicks Approve and run workflows. The default already meets the requirement.",
+  "rationale": [
+   "Correct: by default, workflows wait until a user with write access reviews the code and clicks Approve and run workflows, so no change is needed.",
+   "Incorrect: this optional setting lets workflows run automatically on Copilot pull requests, which removes the review gate that the bank requires.",
+   "Incorrect: a required status check blocks merging until the check passes. It does not stop the workflow from running before review.",
+   "Incorrect: preToolUse controls the tools that an agent uses during a session. It does not control GitHub Actions runs that a pull request triggers."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.2.1-06",
+  "obj": "5.2.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud must be able to tell from the Git history which developer started each task that Copilot cloud agent performed.\n\nWhich commit information should you use?",
+  "choices": [
+   "The co-author of each commit authored by Copilot",
+   "The Verified signature on each commit by Copilot",
+   "The author of each commit authored by Copilot",
+   "The branch name prefix of each commit by Copilot"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot is the author of its commits, and the developer who assigned the issue or requested the change is the co-author. The co-author therefore identifies who started the task.",
+  "rationale": [
+   "Correct: commits are authored by Copilot with the developer who assigned the issue or requested the change as co-author, which identifies who started the task.",
+   "Incorrect: the signature proves that the commit was made by Copilot and was not altered. It does not identify the developer who started the task.",
+   "Incorrect: the author of agent commits is Copilot itself, which identifies agent-generated code but not the person who started it.",
+   "Incorrect: the copilot/ prefix shows that Copilot created the branch for a task. It does not name the developer who requested the work."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.2.1-07",
+  "obj": "5.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 asks Copilot cloud agent in a pull request comment to approve and merge its own pull request after the checks pass.\n\nWhat should User1 expect?",
+  "choices": [
+   "Copilot cannot approve or merge, so a person must review and merge.",
+   "Copilot approves the pull request but cannot merge it into main.",
+   "Copilot merges after a person clicks Approve and run workflows.",
+   "Copilot marks the pull request Ready for review and then merges it."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Draft pull requests from Copilot cloud agent must be reviewed and merged by a human. Copilot cannot mark them Ready for review, approve, or merge them.",
+  "rationale": [
+   "Correct: Copilot cloud agent cannot approve or merge a pull request, so the human review step is preserved for audit and control.",
+   "Incorrect: Copilot cannot approve pull requests at all, and the user who asked Copilot to create the pull request cannot approve it either.",
+   "Incorrect: Approve and run workflows only lets GitHub Actions workflows run. It does not give Copilot permission to merge.",
+   "Incorrect: Copilot cannot mark its pull requests as Ready for review. A person must do that after reviewing the draft."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "5.2.2-01",
+  "obj": "5.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User1 must use Copilot CLI to agree on an approach for a feature, hand the implementation to Copilot cloud agent, and keep a record of the decision and the outcome.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run /plan with a description of the feature.",
+   "Review the plan, and approve it.",
+   "Run /delegate to hand the work to Copilot cloud agent.",
+   "Review the pull request and its session logs.",
+   "Run /session delete to remove the local record of the session.",
+   "Run /compact to copy the plan into the pull request."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "/plan saves a plan.md file that records the agreed approach and waits for approval. /delegate hands the work to Copilot cloud agent, which creates a pull request whose commits link to the session logs.",
+  "rationale": [
+   "Step 1: /plan makes Copilot create a plan, which it saves as plan.md in the session folder as a record of the approach.",
+   "Step 2: Copilot waits for approval, so User1 reviews and approves the plan before any implementation starts.",
+   "Step 3: /delegate hands the approved work to Copilot cloud agent, which works on GitHub and creates a pull request.",
+   "Step 4: the pull request and its session logs document what the agent did, which completes the record of the outcome.",
+   "Incorrect: /session delete removes the session, including the plan and history that User1 must keep as a record of the decision.",
+   "Incorrect: /compact summarizes the conversation to free context window space. It does not copy anything into a pull request."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "5.2.2-02",
+  "obj": "5.2.2",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Contoso, Ltd. runs fleet mode with the GitHub Copilot SDK. The parent agent must be able to document the outcome of each worker and decide what to do next.\n\nWhich three items should each worker report when it finishes? Each correct answer presents part of the solution.",
+  "choices": [
+   "What it changed",
+   "How it validated the change",
+   "What is blocked",
+   "The full contents of its context window",
+   "The changes that the other workers made",
+   "The token count of every tool call it made"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Fleet mode best practices ask each worker to report what it changed, how it validated the work, and what is blocked. The parent then verifies the combined result.",
+  "rationale": [
+   "Correct: a summary of the changes tells the parent which files and behavior the worker affected, which the parent needs to combine results.",
+   "Correct: reporting how the change was validated shows which tests or checks support the result and where the parent must verify more.",
+   "Correct: reporting what is blocked lets the parent reassign, add context, or record the blocker instead of assuming the work is complete.",
+   "Incorrect: the full context is large and mostly noise for the parent. A worker should return a concise result, not its whole context.",
+   "Incorrect: each worker owns its own todo and does not track other workers. The parent combines the reports from all workers.",
+   "Incorrect: token usage per call is a cost detail, not an outcome. Use session usage views or cost tools when you analyze spending."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.2.2-03",
+  "obj": "5.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. runs fleet mode with the GitHub Copilot SDK. A worker cannot finish its todo because a required API key is missing. The parent agent must know why the todo stopped.\n\nWhat should the worker do?",
+  "choices": [
+   "Set the todo status to blocked, and record the reason.",
+   "Set the todo status to done, and add a short comment.",
+   "Leave the todo status set to in_progress, and exit.",
+   "Delete the todo so that no other worker claims it."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The todo status is shared coordination state. blocked with a reason documents the problem so the parent can act on it.",
+  "rationale": [
+   "Correct: fleet mode uses the blocked status with a reason for todos that cannot proceed, which documents the problem for the parent and other workers.",
+   "Incorrect: done tells the parent and dependent todos that the work is complete, which is false and hides the missing API key.",
+   "Incorrect: in_progress tells other workers that someone owns the todo, so it stays stuck without an explanation.",
+   "Incorrect: deleting the todo removes the record of the work and of the blocker. Use blocked so that the parent can resolve it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.2.2-04",
+  "obj": "5.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Tailspin Toys runs fleet mode with the GitHub Copilot SDK. The orchestrator names todos t1, t2, and t3 and renumbers them when it changes the plan. Worker reports and dependencies then point to the wrong todos.\n\nWhat should you change?",
+  "choices": [
+   "Use descriptive todo IDs that do not change during the run.",
+   "Renumber all todos and dependencies after each plan change.",
+   "Keep the todo status in the parent context instead of SQL.",
+   "Remove the todo_deps rows, and let workers pick any todo."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Fleet mode best practices recommend durable todo IDs. Stable, descriptive IDs keep dependencies and worker reports pointing at the right work across plan changes.",
+  "rationale": [
+   "Correct: durable, descriptive IDs stay valid when the plan changes, so dependencies, status updates, and handoff reports still refer to the right todo.",
+   "Incorrect: renumbering is the cause of the problem; reports that workers already returned keep the old numbers and become ambiguous.",
+   "Incorrect: the SQL todos table is the shared coordination state that workers read. Keeping status only in the parent hides it from workers.",
+   "Incorrect: todo_deps prevents todos from starting before their dependencies are done. Removing it lets work start in the wrong order."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/fleet-mode"
+ },
+ {
+  "id": "5.2.2-05",
+  "obj": "5.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User1 used /plan in a Copilot CLI session and approved the plan. A teammate on the same computer must read the approved plan to understand the decisions before taking over the work.\n\nWhich file should the teammate open?",
+  "choices": [
+   "plan.md in the session folder under ~/.copilot/session-state",
+   "workspace.yaml in the session folder under ~/.copilot/session-state",
+   ".github/copilot-instructions.md in the repository root folder",
+   "copilot-session-SESSIONID.md in the current working directory"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot CLI stores session data under ~/.copilot/session-state/ID. /plan saves the approved plan as plan.md in that session folder.",
+  "rationale": [
+   "Correct: /plan saves the plan to plan.md in the session folder under ~/.copilot/session-state, which is the record of the approved approach.",
+   "Incorrect: workspace.yaml stores session workspace metadata in the same folder. It does not contain the plan text.",
+   "Incorrect: copilot-instructions.md holds repository-wide custom instructions. /plan does not write the plan into it.",
+   "Incorrect: this file exists only after someone runs /share file without a path. Use it to export a conversation, not to find the plan."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "5.2.2-06",
+  "obj": "5.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Enterprise Managed Users. User1 must let a teammate who has access to the repository view the decisions in a local Copilot CLI session. The teammate must not be able to change the session.\n\nWhich command should User1 run?",
+  "choices": [
+   "/share link",
+   "/share gist",
+   "/delegate",
+   "/session checkpoints"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "/share link shares the session to GitHub and prints a link. Shared local sessions are view-only for recipients, and gists are not available to Enterprise Managed Users.",
+  "rationale": [
+   "Correct: /share link shares the session on GitHub.com with a link, and people with access to the repository get view-only access.",
+   "Incorrect: /share gist creates a private gist, but gists are not available to Enterprise Managed Users. Use it for accounts that can create gists.",
+   "Incorrect: /delegate hands the work to Copilot cloud agent, which creates a pull request. It does not share the local session for viewing.",
+   "Incorrect: /session checkpoints lists the checkpoints of the session for User1. It does not share anything with the teammate."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/chronicle"
+ },
+ {
+  "id": "5.2.2-07",
+  "obj": "5.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 has a long Copilot CLI session and must review the checkpoints that record the compaction history of the session before handing the session to a teammate.\n\nWhich command should User1 run?",
+  "choices": [
+   "/session checkpoints",
+   "/context",
+   "/compact",
+   "/tasks"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot CLI keeps checkpoints in the session folder, and /session checkpoints lists them. The other commands manage context or background tasks.",
+  "rationale": [
+   "Correct: /session checkpoints shows the checkpoints of the current session, which record the compaction history of the work.",
+   "Incorrect: /context shows how the context window is used. It does not list earlier checkpoints of the work.",
+   "Incorrect: /compact creates a summary to free context window space. It changes the context instead of showing past checkpoints.",
+   "Incorrect: /tasks lists background subagent tasks. It does not show the checkpoints of the session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "5.2.3-01",
+  "obj": "5.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User1 notices that Copilot CLI agents in a repository repeatedly use the wrong test framework and need corrections. User1 wants Copilot to analyze past sessions in the repository and update the custom instructions.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Start Copilot CLI in the folder of the repository.",
+   "Run /chronicle improve.",
+   "Deselect the recommendations that User1 does not want.",
+   "Press Enter to apply the selected recommendations.",
+   "Run /chronicle reindex to apply the recommendations.",
+   "Run /chronicle standup to choose the recommendations."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "/chronicle improve analyzes friction in the session history of the current repository and suggests instructions. User1 deselects unwanted suggestions and presses Enter, and Copilot updates .github/copilot-instructions.md.",
+  "rationale": [
+   "Step 1: the improve subcommand is limited to data for the current repository or working directory, so User1 starts the CLI in the repository folder.",
+   "Step 2: /chronicle improve looks for friction signals such as corrections and repeated failures, then presents 3 to 5 recommendations.",
+   "Step 3: all recommendations are selected by default, so User1 uses the arrow keys and space bar to deselect the unwanted ones.",
+   "Step 4: Enter applies the selection, and Copilot creates or updates the .github/copilot-instructions.md file.",
+   "Incorrect: /chronicle reindex rebuilds the local session store and syncs session data. It does not apply recommendations.",
+   "Incorrect: /chronicle standup creates a report of recent work. It does not offer recommendations for the instructions file."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/chronicle"
+ },
+ {
+  "id": "5.2.3-02",
+  "obj": "5.2.3",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "User1 analyzes past Copilot CLI sessions with the /chronicle slash command. User1 must choose the subcommand for each analysis goal.\n\nWhich subcommand should User1 use for each goal? To answer, drag the appropriate subcommands to the correct goals. Each subcommand may be used once, more than once, or not at all.",
+  "choices": [
+   "standup",
+   "tips",
+   "cost-tips",
+   "search",
+   "improve",
+   "reindex"
+  ],
+  "answer": [
+   2,
+   1,
+   5,
+   0
+  ],
+  "explanation": "Each /chronicle subcommand targets one kind of insight: cost-tips for token spend, tips for usage recommendations, reindex to rebuild the session store, and standup for a summary of recent work.",
+  "rationale": [
+   "Goal1 is about token spend and cost reduction, which cost-tips analyzes.",
+   "Goal2 asks for recommendations based on how User1 works, which tips provides.",
+   "Goal3 requires the local session store to be rebuilt from session files on disk, which reindex does.",
+   "Goal4 is a summary of recent work grouped by status, which standup produces."
+  ],
+  "targets": [
+   "Goal1: find where tokens were spent and how to reduce costs",
+   "Goal2: get personalized recommendations based on usage patterns",
+   "Goal3: populate the session store from session files restored from a backup",
+   "Goal4: summarize the work of the last 24 hours by completion status"
+  ],
+  "notes": [
+   "Generates a short report of recent work, by default the last 24 hours, grouped by completion status.",
+   "Gives 3 to 5 personalized tips based on the prompts, tools, and features that the user uses.",
+   "Analyzes token usage across recent sessions and suggests ways to reduce costs.",
+   "Searches the full session content for exact keywords or topics. Use it when you know the term you are looking for.",
+   "Finds friction in sessions of the current repository and suggests changes to the custom instructions file.",
+   "Rebuilds the local session store from the session history and syncs session data to the account."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/chronicle"
+ },
+ {
+  "id": "5.2.3-03",
+  "obj": "5.2.3",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Relecloud builds an app with the GitHub Copilot SDK in which a main agent delegates work to several sub-agents. After a failed run, you must analyze which sub-agent did what and where the run failed.\n\nWhich three actions should you take? Each correct answer presents part of the solution.",
+  "choices": [
+   "Group events by the agentId field on the event envelope.",
+   "Use toolCallId to rebuild the execution tree of the run.",
+   "Filter the events for subagent.failed events.",
+   "Use the agentId field on root-agent events to find the main agent.",
+   "Read the parent's context window to see the sub-agents' reasoning.",
+   "Filter the events for subagent.selected events to find failures."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Sub-agent events carry an agentId on the envelope and a toolCallId that links them to the tool call that started them. subagent.failed marks sub-agent runs that ended in an error.",
+  "rationale": [
+   "Correct: agentId on the envelope identifies which sub-agent emitted an event, so grouping by it separates the activity of each sub-agent.",
+   "Correct: toolCallId links lifecycle events to the tool call that started the sub-agent, so you can rebuild the execution tree of the run.",
+   "Correct: subagent.failed is emitted when a sub-agent run fails, so filtering for it shows where the run broke.",
+   "Incorrect: agentId is omitted for events from the root agent. Identify root events by the missing agentId instead.",
+   "Incorrect: sub-agents run in an isolated context, so their work is not in the parent's context window. Use the streamed events.",
+   "Incorrect: subagent.selected shows that the runtime chose a sub-agent for a request. It does not tell you whether the run failed."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents"
+ },
+ {
+  "id": "5.2.3-04",
+  "obj": "5.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 must analyze everything that happened in a Copilot CLI session on a local computer, including each prompt, response, and tool call.\n\nWhich file in the session folder should User1 analyze?",
+  "choices": [
+   "events.jsonl",
+   "plan.md",
+   "workspace.yaml",
+   "copilot-instructions.md"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot CLI stores each session under ~/.copilot/session-state/ID. events.jsonl contains the full history of the session, which makes it the source for post-hoc analysis.",
+  "rationale": [
+   "Correct: events.jsonl holds the full event history of the session, including prompts, responses, and tool calls.",
+   "Incorrect: plan.md contains the plan that /plan created. It records the approach, not every event in the session.",
+   "Incorrect: workspace.yaml holds metadata about the session workspace. It does not contain the conversation or tool calls.",
+   "Incorrect: copilot-instructions.md is a repository file with custom instructions. It is input for agents, not a record of the session."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/cli-best-practices"
+ },
+ {
+  "id": "5.2.3-05",
+  "obj": "5.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User1 must find every past Copilot CLI session in which the exact error code ERR_CART_409 appeared, including sessions where it does not appear in the summary.\n\nWhich command should User1 run?",
+  "choices": [
+   "/chronicle search ERR_CART_409",
+   "/chronicle standup ERR_CART_409",
+   "/chronicle tips ERR_CART_409",
+   "/chronicle improve ERR_CART_409"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "/chronicle search runs a direct content search across all session content, not only summaries. It is the right choice when you know the exact term.",
+  "rationale": [
+   "Correct: /chronicle search searches all session content, not just summaries, and is designed for exact terms such as an error code.",
+   "Incorrect: standup summarizes recent work, by default from the last 24 hours. Extra text customizes the report but does not run a full-content search.",
+   "Incorrect: tips gives personalized recommendations on how to use the CLI. It does not list the sessions that contain a term.",
+   "Incorrect: improve suggests changes to the custom instructions for the current repository. It does not search all sessions for a term."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/chronicle"
+ },
+ {
+  "id": "5.2.3-06",
+  "obj": "5.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User1 runs a long /fleet session in Copilot CLI. The computer loses power during the session. After a restart, /chronicle standup and history queries miss part of that session, but its files still exist under ~/.copilot/session-state/.\n\nWhat should User1 do?",
+  "choices": [
+   "Run /chronicle reindex in an interactive CLI session.",
+   "Run /session cleanup in an interactive CLI session.",
+   "Run /chronicle standup for the last 2 days.",
+   "Run /share file in a new interactive CLI session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "After a crash or power loss, data that was written to the session files might be missing from the session store. /chronicle reindex rebuilds the session store from the files on disk and syncs the data to the account.",
+  "rationale": [
+   "Correct: reindexing rebuilds the session store from the session files on disk, which can recover data that was written before an unexpected termination.",
+   "Incorrect: /session cleanup shows a storage summary and suggests delete commands. It does not delete sessions or rebuild the session store.",
+   "Incorrect: standup reads the session store, which still lacks the missing data, so a longer time range returns the same gap.",
+   "Incorrect: /share file exports the conversation of the current session to Markdown. It does not add the earlier session to the store."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/chronicle"
+ },
+ {
+  "id": "5.2.3-07",
+  "obj": "5.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A lead at Litware, Inc. must find out why one Copilot cloud agent session took much longer and used more AI credits than similar sessions.\n\nWhat should the lead review?",
+  "choices": [
+   "The session log and overview of the session in the agents panel",
+   "The Copilot Memory repository facts list of the repository",
+   "The /chronicle standup report of the lead for the last 24 hours",
+   "The ruleset history of the default branch of the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The agents panel shows the session log with the agent's reasoning and tools, and an overview with progress, token usage, and session length. Together they explain where the time and credits went.",
+  "rationale": [
+   "Correct: the overview shows token usage and session length, and the session log shows the reasoning and tool calls that explain them.",
+   "Incorrect: repository facts are stored details about the code. They do not show how long a session ran or how many tokens it used.",
+   "Incorrect: standup summarizes the lead's own CLI work. It does not cover a cloud agent session that someone else may have started.",
+   "Incorrect: ruleset history shows changes to branch rules. It does not record agent activity or usage."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ }
+]

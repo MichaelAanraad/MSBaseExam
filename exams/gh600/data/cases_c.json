@@ -1,0 +1,24 @@
+[
+ {
+  "id": "C-c",
+  "title": "Proseware, Inc.",
+  "sections": [
+   [
+    "Overview",
+    "Proseware, Inc. is a software company that builds a claims-processing platform for insurance customers. The company has 140 developers in three teams: Platform, Claims, and Security.\n\nProseware uses GitHub Enterprise Cloud. All developers are assigned Copilot Business licenses through the Proseware organization. The engineering leadership wants to delegate more routine work to Copilot agents while keeping every agent action reviewable, reversible, and accountable to a named person."
+   ],
+   [
+    "Existing environment",
+    "**Repositories**\n\n- Repo1 contains the claims API, which is written in Python. Repo1 stores database migration files in the db/migrations folder.\n- Repo2 contains infrastructure templates and GitHub Actions workflows in YAML.\n- Repo3 contains a partner portal. External contractors have write access to Repo3.\n- A ruleset on the main branch of each repository requires one approving review and passing status checks before a pull request can be merged.\n\n**Copilot configuration**\n\n- Copilot cloud agent is enabled for Repo1 and Repo2. Developers assign issues to Copilot and review the draft pull requests that it opens.\n- Repo1 contains a .github/copilot-instructions.md file that lists the build commands. The file contains no other instructions.\n- Copilot Memory is in use. The organization owners left the Repository access setting for repository-level facts at its default value. Nobody has configured the policy for user-level preferences.\n- Developers use Copilot CLI on their workstations for long-running local tasks.\n\n**Users**\n\n- User1 is a developer on the Platform team. User1 is leading a multi-day migration of the Repo1 data-access layer by using Copilot CLI.\n- User2 is a developer on the Claims team.\n- User3 is a member of the Security team and handles production incidents."
+   ],
+   [
+    "Requirements",
+    "**Escalation requirements**\n\n- Production incidents and any change that touches customer personal data must be handled by members of the Security team. This work must not be delegated to Copilot cloud agent.\n\n**Traceability requirements**\n\n- For every commit that Copilot authors, auditors must be able to determine which developer requested the work and review how Copilot arrived at the change.\n\n**Memory requirements**\n\n- Every database migration file in Repo1 must be reviewed by a database administrator. All Copilot agents that work in Repo1 must apply this rule consistently.\n- Repository-level facts must not be stored or used for Repo3.\n- Developers want Copilot to remember their personal working preferences across all the repositories that they work in.\n\n**State requirements**\n\n- User1 must be able to stop the migration at the end of each day and continue it the next morning in Copilot CLI without repeating completed steps and without losing decisions that were made earlier in the migration."
+   ],
+   [
+    "Problem statements",
+    "- Last week, Copilot cloud agent pushed several commits to a pull request in Repo1 that failed the integration tests in CI. Copilot did not know how to run the integration tests before it pushed.\n- User2 added a clarifying comment to an issue after the issue was assigned to Copilot. Copilot did not act on the comment.\n- After a long Copilot CLI session, User1 noticed that Copilot proposed a change that contradicted an early decision to keep the existing table names."
+   ]
+  ]
+ }
+]

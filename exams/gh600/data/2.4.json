@@ -1,0 +1,793 @@
+[
+ {
+  "id": "2.4.1-01",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. assigns issues in a Python repository to Copilot cloud agent. Copilot repeatedly pushes commits that fail the unit tests in CI, because it does not know how the test suite is started in this repository.\n\nWhat should you do to reduce the number of failing pushes?",
+  "choices": [
+   "Add the build and test commands to the .github/copilot-instructions.md file.",
+   "Re-run the failed workflow jobs with debug logging enabled after each push.",
+   "Ask Copilot to store a user-level preference that contains the test command.",
+   "Set the tool permissions for the session to Always ask before each tool call."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot cloud agent reads repository custom instructions before it works. When the build and test steps are documented there, Copilot can run the tests in its environment and fix failures before it pushes.",
+  "rationale": [
+   "Correct: GitHub recommends documenting how to build and test the project in .github/copilot-instructions.md so that Copilot can validate its changes before it pushes them, which prevents pushes that fail CI.",
+   "Incorrect: debug logging adds detail to the logs of a failed run, but it only helps you diagnose a failure after the push. It does not teach Copilot how to run the tests before the next push.",
+   "Incorrect: a user-level preference follows one user and is applied at the judgment of the model. A repository-wide build rule belongs in custom instructions, which are loaded for every session in the repository.",
+   "Incorrect: Always ask makes Copilot request approval for tool calls, which slows the session down. It does not give Copilot the missing knowledge about how to start the test suite."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "2.4.1-02",
+  "obj": "2.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. uses Copilot cloud agent with the default firewall. During a session, Copilot fails to download a package from an internal package registry, and the session finishes without the dependency.\n\nWhat should you check first to find out which address was blocked?",
+  "choices": [
+   "The warning that Copilot adds to the pull request body or to its comment",
+   "The secret scanning alerts on the Security tab of the repository",
+   "The repository-level facts in the Copilot Memory settings of the repository",
+   "The Actions usage report for the organization in the billing settings"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When the firewall blocks a request, Copilot adds a warning to the pull request body or to the comment it posts. The warning lists the blocked address and the command that tried to reach it, which tells you what to allow.",
+  "rationale": [
+   "Correct: a firewall block adds a warning to the pull request description or to Copilot's comment, and the warning shows the blocked address and the command that made the request.",
+   "Incorrect: secret scanning alerts report credentials that were committed to the repository. They do not record outbound network requests that the agent firewall blocked during a session.",
+   "Incorrect: repository-level facts are conventions that Copilot learned about the code. Firewall decisions are not stored as memories, so the settings page does not show blocked addresses.",
+   "Incorrect: the usage report shows how many Actions minutes were consumed. It contains no information about individual network requests made by the agent inside its environment."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "2.4.1-03",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "multi",
+  "stem": "Tailspin Toys builds tools for an agent that updates customer records in batches. When a tool fails, the agent must be able to decide on its own whether to try again or to continue with the remaining work.\n\nWhich two pieces of information should each tool result include? Each correct answer presents part of the solution. Choose two.",
+  "choices": [
+   "Whether it is safe to retry the operation",
+   "Which records were completed before the failure",
+   "The full stack trace and internal host names",
+   "Only a generic message that says the tool failed",
+   "The list of every tool that is available to the agent"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "An agent can only recover well when the tool result tells it what happened. A retry-safety signal and a report of partial completion let the agent avoid duplicate writes and continue from the right place.",
+  "rationale": [
+   "Correct: telling the agent whether a retry is safe prevents it from repeating a non-idempotent write, such as updating the same record twice, after a failure.",
+   "Correct: reporting partial completion lets the agent continue with the records that were not processed instead of starting the batch again from the beginning.",
+   "Incorrect: a stack trace with internal host names adds noise to the context and can expose internal details. The agent needs a clear status, not raw diagnostics meant for engineers.",
+   "Incorrect: a generic failure message gives the agent nothing to reason about, so it cannot tell a transient error from a permanent one and may retry blindly or stop too early.",
+   "Incorrect: the agent already receives the tool definitions. Repeating the tool list in every result consumes context and does not help the agent recover from the specific failure."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-copilot-studio/guidance/agentic-loops-in-practice"
+ },
+ {
+  "id": "2.4.1-04",
+  "obj": "2.4.1",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. tests an agent that calls an external pricing tool. In some test runs the tool never responds, and the agent waits until the user cancels the conversation.\n\nWhat should you implement to handle this failure mode?",
+  "choices": [
+   "Set a timeout on each tool call and return the timeout to the model as a clear result.",
+   "Increase the maximum number of turns that the agent can take in one conversation.",
+   "Retry the tool call in a loop until the pricing tool returns a successful response.",
+   "Suppress tool errors so that the model receives an empty result when a call fails."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A hanging tool is handled with a per-call timeout. Returning the timeout as a clear tool result lets the model explain the problem or choose another path instead of waiting forever.",
+  "rationale": [
+   "Correct: a timeout on each tool call stops the hang, and returning the failure as a clear result lets the model react, for example by telling the user that pricing is unavailable.",
+   "Incorrect: a larger turn budget lets a looping agent run longer. It does not stop a single tool call that never returns, so the conversation still hangs.",
+   "Incorrect: retrying without a limit turns a hang into an endless loop. Retries need a cap and a backoff, and they do not help when the first call never completes.",
+   "Incorrect: hiding errors leads the model to cover up the failure, for example by inventing a price. Failures must reach the model as clear, readable results."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures"
+ },
+ {
+  "id": "2.4.1-05",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Proseware, Inc. runs an MCP server that exposes a search_orders tool to an agent. The order API behind the tool rejects date ranges longer than 90 days and returns an error. The model must be able to read the failure and call the tool again with a shorter date range.\n\nHow should the server report this failure?",
+  "choices": [
+   "As a tool execution error inside the tool result that is returned to the model",
+   "As a protocol error in the JSON-RPC response that the client handles itself",
+   "By closing the connection so that the client restarts the MCP server process",
+   "As a successful result with empty content so that the model tries a new query"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "MCP separates protocol errors, such as an unknown tool or invalid arguments, from tool execution errors, such as an API failure. Execution errors are returned in the tool result with isError set to true, so the model can see what went wrong and try again.",
+  "rationale": [
+   "Correct: a tool execution error is returned in the tool result with isError set to true, so the model reads it and can shorten the date range on its next call. This is the path for API failures that the model can recover from.",
+   "Incorrect: protocol errors cover problems such as an unknown tool or invalid arguments, and the client handles them, so the model might never see the API message. This path would fit if the agent called a tool that the server does not expose.",
+   "Incorrect: dropping the connection turns one rejected request into an outage for every tool on the server, and the model still does not learn why the request failed. It would fit only if the server process itself were broken.",
+   "Incorrect: an empty success hides the failure. The model may conclude that no orders exist and give the user a wrong answer. An empty result is right only when the search succeeds and finds no orders."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures"
+ },
+ {
+  "id": "2.4.1-06",
+  "obj": "2.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud tests an agent against a simulated outage of a dependent API. The agent keeps calling the same failing tool over and over, and each conversation consumes far more tokens than expected before the user gives up.\n\nWhat should you add to the agent to contain this failure mode?",
+  "choices": [
+   "A cap on the number of tool calls per turn that stops and tells the user when reached",
+   "A longer timeout for each call to the failing tool so that it has time to recover",
+   "A cache that stores the last successful tool result and returns it on every call",
+   "A larger context window so that the agent can keep the whole loop in its history"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A looping agent needs a hard stop. Cap the number of tool calls per turn, and after a set number of failures, stop and tell the user instead of burning tokens on the same failing call.",
+  "rationale": [
+   "Correct: a cap on the number of tool calls per turn stops the loop. After a set number of failures, the agent stops and tells the user, which contains the token cost of a failing dependency.",
+   "Incorrect: a longer timeout makes each failing call take more time. The agent still loops, so the conversation becomes slower and more expensive, not shorter.",
+   "Incorrect: returning stale data on every call hides the outage and can give users wrong answers. It also does not stop the agent from repeating the call.",
+   "Incorrect: a larger context window lets the loop run even longer before anything stops it. The problem is the missing stop condition, not the size of the history."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures"
+ },
+ {
+  "id": "2.4.2-01",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Northwind Traders wants to re-run a failed GitHub Actions workflow run on a pull request that Copilot cloud agent opened. The Re-run jobs option is not available because a maintainer disabled the workflow earlier in the week.\n\nWhat should you do first?",
+  "choices": [
+   "Enable the workflow again in the Actions tab of the repository.",
+   "Ask Copilot to push an empty commit to the pull request branch.",
+   "Run gh run rerun with the --debug option for the failed run.",
+   "Close the pull request and ask Copilot to open a new one."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A run of a disabled workflow cannot be re-run. Enabling the workflow again makes the re-run options available for runs that are still inside the 30-day re-run window.",
+  "rationale": [
+   "Correct: GitHub does not allow re-running a workflow that is disabled. After you enable the workflow, you can re-run the failed run or its failed jobs.",
+   "Incorrect: a new commit would trigger fresh runs only if the workflow were enabled. Pushing commits does not lift the restriction on a disabled workflow.",
+   "Incorrect: the --debug option only adds debug logging to a re-run. The re-run itself is still blocked while the workflow is disabled.",
+   "Incorrect: recreating the pull request discards the review context and still does not run a disabled workflow. The workflow state is the blocking setting."
+  ],
+  "ref": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs"
+ },
+ {
+  "id": "2.4.2-02",
+  "obj": "2.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 has write access to a repository at Adventure Works. User1 mentions @copilot in a comment on an open pull request that Copilot created, but Copilot does not respond, and the comment appears to be stuck.\n\nWhat should User1 do to retry the request?",
+  "choices": [
+   "Add the same comment to the pull request again.",
+   "Unassign and reassign the original issue to Copilot.",
+   "Approve and run the pending workflows on the pull request.",
+   "Convert the draft pull request to Ready for review."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For a stuck comment on a pull request, GitHub recommends simply posting the same comment again. Reassigning an issue is the retry path for a stuck issue assignment, not for a comment.",
+  "rationale": [
+   "Correct: when Copilot appears stuck on a comment, the troubleshooting guidance is to add the same comment again, which triggers Copilot to pick up the request.",
+   "Incorrect: unassigning and reassigning is the retry for a session that started from an issue assignment and got stuck. It would start new work rather than answer the comment.",
+   "Incorrect: approving workflows lets CI run on Copilot's commits. It has no effect on whether Copilot picks up a comment that mentions it.",
+   "Incorrect: marking the pull request ready for review changes its state for reviewers. Copilot responds to comments on open pull requests whether or not they are drafts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "2.4.2-03",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Woodgrove Bank builds an agent tool that calls a rate-limited internal API. The API returns HTTP 429 or 503 with a Retry-After header during peak hours. The agent must stay responsive, and the API must not be flooded.\n\nHow should you implement retries?",
+  "choices": [
+   "In the tool code, honor Retry-After and cap the number of attempts, then return a clear failure.",
+   "In the system prompt, tell the model to call the tool again whenever it receives an error.",
+   "In the tool code, retry immediately and without a limit until the API returns a success.",
+   "In the tool code, return a success with cached data whenever the API returns an error."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Transient errors such as 429 and 503 are best retried in code, where you can respect Retry-After and cap attempts. If the retries are exhausted, the model gets a clear failure it can explain.",
+  "rationale": [
+   "Correct: retrying 429 and 503 in the tool code while honoring Retry-After and a capped number of attempts protects the API, and a clear failure after the cap keeps the agent responsive.",
+   "Incorrect: leaving retries to the model is unpredictable and costs a turn for each attempt. The model also cannot reliably wait for the interval in the Retry-After header.",
+   "Incorrect: immediate, unlimited retries flood an API that is already rate limiting you and can make the agent hang. Retries need a delay and a cap.",
+   "Incorrect: returning cached data as a success hides the failure from the model, which may present stale values as current. Failures must be reported as failures."
+  ],
+  "ref": "https://learn.microsoft.com/microsoft-cloud/dev/dev-proxy/concepts/test-ai-agent-tool-failures"
+ },
+ {
+  "id": "2.4.2-04",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Fabrikam, Inc. has a workflow run with the ID 4321 on a Copilot pull request. Two jobs failed because of a transient network error. You must re-run only the failed jobs and then follow the progress of the run in the terminal.\n\nHow should you complete the commands? To answer, select the appropriate options in the answer area.\n\n```shell\ngh run rerun 4321 [[1]]\ngh run [[2]]\n```",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "--failed",
+     "--debug",
+     "--job"
+    ],
+    "why": [
+     "Correct: the --failed option re-runs only the failed jobs of the run, plus any jobs that depend on them. Jobs that succeeded keep their earlier results.",
+     "Incorrect: --debug enables debug logging for the re-run. Without --failed, the command re-runs every job in the run, not only the failed ones.",
+     "Incorrect: --job expects a job ID, not a run ID, and re-runs one specific job. It is the option for re-running a single job rather than all failed jobs."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "watch",
+     "list",
+     "view"
+    ],
+    "why": [
+     "Correct: gh run watch follows a run in progress and updates the terminal until the run completes, which is what you need after starting the re-run.",
+     "Incorrect: gh run list prints recent runs once and exits. It shows the status at that moment but does not follow the re-run as it progresses.",
+     "Incorrect: gh run view shows a summary of a run at that moment and exits. Use it to inspect a run, and use watch to follow one that is still in progress."
+    ]
+   }
+  ],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "gh run rerun with --failed re-runs only the failed jobs and their dependent jobs. gh run watch then follows the run until it finishes.",
+  "ref": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs"
+ },
+ {
+  "id": "2.4.2-05",
+  "obj": "2.4.2",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "Tailspin Toys requires approval before workflows run on pull requests from Copilot cloud agent. Copilot opened a pull request that also changes a workflow file. After the checks start, one job fails because of a transient error. You must run the checks safely and retry only what failed.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Review the changes to the files in the .github/workflows folder of the pull request.",
+   "Select Approve and run workflows on the pull request.",
+   "Run gh run rerun RUN_ID --failed for the run that contains the failed job.",
+   "Run gh run watch to follow the re-run until it completes.",
+   "Mark the draft pull request as Ready for review to trigger the workflows.",
+   "Unassign and reassign the issue to Copilot to restart the workflows."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Workflows on Copilot pull requests wait for approval, so you first inspect workflow changes and then approve the run. After the transient failure, you re-run only the failed jobs and follow the re-run.",
+  "rationale": [
+   "Step 1: GitHub advises inspecting changes to files in the .github/workflows folder before you approve workflow runs on a Copilot pull request, because a changed workflow decides what runs in CI.",
+   "Step 2: by default, workflows do not run automatically for Copilot pull requests. Approve and run workflows starts the checks after your review.",
+   "Step 3: the --failed option re-runs only the failed jobs and the jobs that depend on them, which is the right scope for a transient error.",
+   "Step 4: gh run watch follows the re-run in the terminal so that you can confirm that the transient error does not recur.",
+   "Incorrect: Copilot cannot mark its pull request as ready, but you can. Doing so changes the review state; it does not approve the pending workflow runs.",
+   "Incorrect: reassigning the issue starts a new Copilot session and new work. It is the retry for a stuck session, not for a failed CI job."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "2.4.2-06",
+  "obj": "2.4.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Contoso, Ltd. assigned an issue to Copilot cloud agent two hours ago. Copilot opened a draft pull request, but the session shows no progress and no new commits. You must confirm the problem and retry the work.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Select View session on the Copilot started work event to open the session log.",
+   "Confirm in the session log that the session stopped making progress and timed out.",
+   "Unassign Copilot from the issue.",
+   "Assign the issue to Copilot again.",
+   "Add a comment to the issue that asks Copilot to continue the work.",
+   "Re-run the failed jobs of the workflow from the Actions tab."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "First you open the session log from the pull request timeline to see what happened. A stuck session times out after one hour, and the documented retry is to unassign and then reassign the issue.",
+  "rationale": [
+   "Step 1: the Copilot started work event on the pull request has a View session button that opens the live session log, which is where you check what the agent did.",
+   "Step 2: a session on GitHub Actions that gets stuck times out after one hour. Confirming this in the log tells you that a retry is needed, not a code fix.",
+   "Step 3: to retry a stuck session, GitHub documents unassigning the issue from Copilot first.",
+   "Step 4: assigning the issue to Copilot again starts a new session that picks up the work.",
+   "Incorrect: Copilot does not see comments that are added to an issue after it was assigned, so a new issue comment does not restart the work.",
+   "Incorrect: re-running workflow jobs repeats CI checks. It does not restart the agent session that is responsible for the work."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent/troubleshoot-cloud-agent"
+ },
+ {
+  "id": "2.4.3-01",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adventure Works merged a pull request that Copilot cloud agent created. The change introduced a regression in production. You have write permissions to the repository and must undo the merged change by using GitHub.\n\nWhat should you do?",
+  "choices": [
+   "Select Revert on the merged pull request, and then merge the new pull request.",
+   "Delete the copilot branch that the pull request was created from.",
+   "Select Stop session on the Copilot session that created the change.",
+   "Re-run the workflow jobs that ran on the merge commit of the change."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Reverting a merged pull request on GitHub creates a new pull request that reverts the merge commit. Merging that pull request rolls the change back while keeping a reviewable history.",
+  "rationale": [
+   "Correct: the Revert button on a merged pull request creates a new pull request that reverts the original merge commit, and merging it removes the change through the normal review path.",
+   "Incorrect: deleting the source branch after a merge does not change the default branch. The merged commits stay in place, so the regression remains.",
+   "Incorrect: Stop session ends a running agent session. The pull request is already merged, so stopping a session cannot remove changes from the default branch.",
+   "Incorrect: re-running workflows repeats the checks on the same commit. It produces new results but does not remove the change that caused the regression."
+  ],
+  "ref": "https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/reverting-a-pull-request"
+ },
+ {
+  "id": "2.4.3-02",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Proseware, Inc. must roll back a change that Copilot pushed. The change reached the default branch through a pull request that was merged outside GitHub, and the Revert option on GitHub cannot be used for it.\n\nWhat should you do to roll back the change?",
+  "choices": [
+   "Revert the individual commits by using git revert, and then open a pull request.",
+   "Select Stop session on the Copilot session to discard the commits it pushed.",
+   "Ask Copilot to forget the change by deleting its repository-level facts.",
+   "Re-run the workflow for the merge commit with debug logging enabled."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When reverting a pull request on GitHub is not possible, for example because the pull request was not merged on GitHub or the revert causes conflicts, you revert the individual commits with git revert.",
+  "rationale": [
+   "Correct: GitHub documents that you may need to revert individual commits when the original pull request was not merged on GitHub or when reverting it causes merge conflicts. git revert creates new commits that undo the change.",
+   "Incorrect: Stop session ends a running session and preserves the commits that were already pushed. It never removes commits, especially ones that are already merged.",
+   "Incorrect: repository-level facts are memories that guide future work. Deleting them has no effect on code that is already in the default branch.",
+   "Incorrect: a re-run with debug logging repeats checks on the same commit to give more diagnostics. It does not change the code on the default branch."
+  ],
+  "ref": "https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/reverting-a-pull-request"
+ },
+ {
+  "id": "2.4.3-03",
+  "obj": "2.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Litware, Inc. watches a Copilot cloud agent session and sees that Copilot is rewriting a module that is out of scope. Copilot already pushed three commits to the pull request branch. User1 selects Stop session.\n\nWhat should User1 expect after the session stops?",
+  "choices": [
+   "The run ends, and the three commits remain on the pull request branch.",
+   "The run ends, and the three commits are removed from the pull request branch.",
+   "The run pauses, and Copilot continues automatically when User1 reopens it.",
+   "The run ends, and the pull request is closed together with its branch."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Stopping a session ends the GitHub Actions run but preserves the commits that were already pushed. Rolling back those commits is a separate step, for example by pushing a revert or asking Copilot for a fix.",
+  "rationale": [
+   "Correct: Stop session ends the underlying GitHub Actions run, and the commits that Copilot already pushed stay on the branch, so you can review or revert them yourself.",
+   "Incorrect: stopping a session does not rewrite branch history. Any commits that you want to undo must be reverted or replaced with new commits.",
+   "Incorrect: Stop session ends the session rather than pausing it. Further work requires a new request, such as an @copilot comment on the pull request.",
+   "Incorrect: the pull request and its branch stay open after a stopped session. You can archive the stopped session, but the pull request is not closed for you."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "2.4.3-04",
+  "obj": "2.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "User2 at Fabrikam, Inc. works in Copilot CLI in a folder that is not a Git repository. Copilot edited several files during the last two turns, and the result is wrong. User2 must restore the files and the conversation to the state before those turns.\n\nWhat should User2 do?",
+  "choices": [
+   "Run /undo and select Conversation + files for the earlier turn.",
+   "Run /undo and select Conversation only for the earlier turn.",
+   "Run /compact so that the last two turns are summarized away.",
+   "Run /clear so that the session starts with an empty conversation."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The rewind picker opened by /undo or /rewind can roll back both the conversation and the files that Copilot changed. File changes are tracked per turn, so Git is not required.",
+  "rationale": [
+   "Correct: Conversation + files rolls the session back to the chosen turn and restores the files that Copilot changed in that turn and in later discarded turns. It works without Git because changes are tracked per turn.",
+   "Incorrect: Conversation only rolls back the conversation and leaves the files as they are, so the wrong edits remain on disk.",
+   "Incorrect: /compact summarizes the history to save context. It changes no files, and the summary still includes what Copilot did in those turns.",
+   "Incorrect: /clear starts a new conversation. The edited files keep their wrong content, and the context of the earlier work is lost as well."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "2.4.3-05",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "In Copilot CLI, Copilot changed File1 and File2 during a turn. After that turn, User3 manually edited File2. User3 then opens the rewind picker, selects the turn, and chooses Conversation + files.\n\nWhat should User3 expect?",
+  "choices": [
+   "File1 returns to its earlier content, and File2 keeps the edits by User3.",
+   "File1 and File2 both return to the content they had before the turn.",
+   "File1 and File2 both keep their current content, and only the chat changes.",
+   "The rewind is blocked until User3 commits the manual edit to File2."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Conversation + files restores the files that Copilot changed to their pre-change contents, but it skips files that you edited yourself afterwards. A rewind also removes the later turns permanently.",
+  "rationale": [
+   "Correct: the rewind restores files that Copilot changed but skips any that you have since edited yourself, so File1 is restored and File2 keeps the manual edits by User3.",
+   "Incorrect: files that the user edited after Copilot changed them are skipped, so File2 is not overwritten. Only File1 is restored.",
+   "Incorrect: that describes the Conversation only option. Conversation + files does restore the files that Copilot changed and that nobody edited later.",
+   "Incorrect: file changes are tracked per turn, and Git is not required. The picker does not wait for a commit before it can roll back."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "2.4.3-06",
+  "obj": "2.4.3",
+  "difficulty": "hard",
+  "type": "order",
+  "stem": "User1 at Relecloud is in a Copilot CLI session in which the last three turns produced changes that User1 wants to discard. User1 must first see what changed, must keep a copy of the current session in case the changes are needed later, and must then roll back both the conversation and the files.\n\nWhich four actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Run /diff to review the changes that Copilot made.",
+   "Run /fork to keep a copy of the current session.",
+   "Run /undo to open the rewind picker.",
+   "Select the earlier turn, and then select Conversation + files.",
+   "Run /compact to remove the last three turns from the context.",
+   "Run /clear to start a new conversation without the changes."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Review first, then fork, because a rewind cannot be undone and removes the later turns. After the fork, /undo opens the picker, where Conversation + files restores the files that Copilot changed.",
+  "rationale": [
+   "Step 1: /diff opens the diff view of the changes, so User1 can confirm exactly what will be discarded before rolling anything back.",
+   "Step 2: a rewind cannot be undone because later turns are removed from the session. /fork first keeps a copy that User1 can return to.",
+   "Step 3: /undo, also available as /rewind, opens the rewind picker that lists earlier user turns.",
+   "Step 4: choosing the turn and Conversation + files rolls back the conversation and restores the files that Copilot changed in that turn and in later turns.",
+   "Incorrect: /compact summarizes the conversation to free context. It keeps a summary of the turns and changes no files on disk.",
+   "Incorrect: /clear starts a new conversation and leaves the changed files as they are, so the unwanted changes remain."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference"
+ },
+ {
+  "id": "2.4.4-01",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. requires one approving review on the main branch. User1 assigned an issue to Copilot cloud agent, and Copilot opened a pull request. User1 reviewed the changes and wants the pull request merged.\n\nWhich person should approve the pull request?",
+  "choices": [
+   "Another developer who has write access to the repository",
+   "User1, because User1 reviewed all the changes from Copilot",
+   "Copilot cloud agent, after it marks the pull request as ready",
+   "Copilot code review, after it leaves review comments on the pull request"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The developer who asked Copilot to create a pull request cannot approve it, so another person must review and approve. This keeps an independent human in the loop for agent work.",
+  "rationale": [
+   "Correct: the requester cannot approve a pull request that Copilot created for them, so an independent reviewer with write access provides the required approval.",
+   "Incorrect: User1 requested the work. The approval of the requester does not count toward the required approvals for a Copilot pull request.",
+   "Incorrect: Copilot cannot mark its own pull request as ready for review, and it cannot approve or merge pull requests.",
+   "Incorrect: Copilot code review leaves comments to help reviewers. It is not a human approval and does not satisfy a rule that requires an approving review."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "2.4.4-02",
+  "obj": "2.4.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A pull request from Copilot cloud agent at Northwind Traders shows that its workflows are waiting and have not run. The repository uses the default settings for Copilot cloud agent.\n\nWhat should a reviewer do before the workflows run?",
+  "choices": [
+   "Inspect the changes to workflow files, and then select Approve and run workflows.",
+   "Ask Copilot in a comment to approve and run the workflows for the pull request.",
+   "Re-run the most recent workflow run for the default branch from the Actions tab.",
+   "Wait for the workflows to start automatically after Copilot finishes the session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "By default, GitHub Actions workflows do not run automatically on Copilot pull requests. A human reviews the changes, especially to .github/workflows, and then approves the runs.",
+  "rationale": [
+   "Correct: the documented step is to check the pull request for changes to workflow files and then select Approve and run workflows, which escalates the decision to a human.",
+   "Incorrect: Copilot cannot approve its own workflow runs. The approval is a deliberate human checkpoint before code from the agent runs in CI.",
+   "Incorrect: re-running a run on the default branch tests different code. The pending runs for the pull request still wait for approval.",
+   "Incorrect: with the default setting, the workflows wait for approval and do not start on their own when the session ends."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/review-copilot-output"
+ },
+ {
+  "id": "2.4.4-03",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "User2 at Woodgrove Bank starts Autopilot mode in Copilot CLI and selects Use Manual Approval for this session when prompted. During the task, Copilot needs a shell command that requires approval.\n\nWhat should User2 expect?",
+  "choices": [
+   "Copilot automatically denies the tool request, which can prevent the task from finishing.",
+   "Copilot pauses the task and waits for User2 to approve the request in the terminal.",
+   "Copilot runs the command, because Autopilot mode grants all permissions automatically.",
+   "Copilot switches the session from Autopilot mode back to Interactive mode for approval."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With manual approval in Autopilot mode, Copilot automatically denies tool requests that need approval. Granting all permissions with /allow-all is a separate, deliberate choice.",
+  "rationale": [
+   "Correct: when manual approval is chosen, Copilot automatically denies any tool request that requires approval, which may stop it from completing parts of the task.",
+   "Incorrect: Autopilot mode does not wait for input after each step. Requests that need approval are denied rather than held for a decision.",
+   "Incorrect: Autopilot mode controls continuation, not approvals. Approvals are granted only by enabling all permissions, for example with /allow-all.",
+   "Incorrect: the mode stays Autopilot until the user changes it with Shift+Tab. A denied tool request does not switch the mode."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/use-autopilot-mode"
+ },
+ {
+  "id": "2.4.4-04",
+  "obj": "2.4.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Tailspin Toys has a public repository. An external contributor who has read access comments @copilot on a pull request that Copilot created and asks for a change. Copilot does not act on the comment. The change is valid.\n\nWhat should happen next for the change to be made?",
+  "choices": [
+   "A maintainer who has write access asks Copilot for the change in a new comment.",
+   "The contributor mentions @copilot again in a second comment on the pull request.",
+   "The contributor assigns the original issue to Copilot to start a new session.",
+   "A maintainer re-runs the workflows on the pull request to retrigger Copilot."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot responds only to users who have write access, and comments from other users are not passed to the agent. A maintainer with write access must take over the request.",
+  "rationale": [
+   "Correct: only users with write access can trigger Copilot cloud agent. Escalating the request to a maintainer with write access is the path for input from other users.",
+   "Incorrect: comments from users without write access are not passed to Copilot, so repeating the comment from the same account has no effect.",
+   "Incorrect: only users with write access can assign issues to Copilot, and a read-only contributor cannot start a session.",
+   "Incorrect: re-running workflows repeats CI checks. It does not forward the comment from the contributor to Copilot."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.4.4-05",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "User3 at Proseware, Inc. runs a task in Autopilot mode in Copilot CLI. User3 notices that Copilot is about to start changes that need a human decision. User3 must stop the work, make sure the next prompt does not run autonomously, and check the work before anything is committed.\n\nWhich four actions should User3 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Press Esc twice to interrupt the running turn.",
+   "Press Shift+Tab to select a mode other than Autopilot.",
+   "Run /diff to review the files that Copilot changed.",
+   "Run the relevant tests and linters before committing the changes.",
+   "Run /allow-all to let Copilot continue without asking for approval.",
+   "Run /clear to remove the task from the conversation."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "The documented stop-and-review steps are: interrupt the turn, leave Autopilot mode, review the diff, and validate with tests before committing. This hands control back to the human.",
+  "rationale": [
+   "Step 1: pressing Esc twice interrupts the running turn so that Copilot stops before it makes the change that needs a decision.",
+   "Step 2: Autopilot mode is sticky by default, so selecting another mode with Shift+Tab prevents the next prompt from running autonomously.",
+   "Step 3: /diff shows what the agent changed so far, so User3 can decide what to keep.",
+   "Step 4: running tests, linters, and security checks before a commit is the final human check on autonomous work.",
+   "Incorrect: /allow-all grants all permissions, which removes approval checkpoints. That is the opposite of escalating a decision to a human.",
+   "Incorrect: /clear starts a new conversation and discards the context. The changes stay on disk without being reviewed."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/use-autopilot-mode"
+ },
+ {
+  "id": "2.4.4-06",
+  "obj": "2.4.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Your team receives a ticket about a production outage in Repo1.\n\nWhat should you do with the ticket?",
+  "choices": [
+   "Assign the ticket to User3 and keep Copilot cloud agent out of the incident.",
+   "Assign the ticket to Copilot cloud agent and require approval for workflow runs.",
+   "Assign the ticket to Copilot cloud agent with tool permissions set to Always ask.",
+   "Assign the ticket to Copilot cloud agent and ask User3 to steer the session."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The escalation requirement sends incidents to the Security team, and GitHub also advises against giving Copilot incident response work. The ticket goes to User3 directly.",
+  "rationale": [
+   "Correct: production incidents must be handled by the Security team, and User3 is the Security team member who handles incidents. GitHub also lists incident response as work to keep with people rather than Copilot.",
+   "Incorrect: workflow approval adds a checkpoint before CI runs, but the incident is still delegated to Copilot, which violates the escalation requirement.",
+   "Incorrect: Always ask adds approvals for tool calls, but Copilot still performs the incident work. The requirement forbids delegating incidents to Copilot at all.",
+   "Incorrect: steering lets User3 redirect the session, but Copilot remains the one doing the incident work. The requirement says incidents must not be delegated."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/get-the-best-results",
+  "case": "C-c"
+ },
+ {
+  "id": "2.4.5-01",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A team lead at Litware, Inc. wants to understand why Copilot cloud agent made a specific change in a pull request. The team lead wants to see the reasoning of the agent and the tools that it used.\n\nWhat should the team lead open?",
+  "choices": [
+   "The session log of the Copilot session",
+   "The repository-level facts in Copilot Memory",
+   "The commit list of the pull request branch",
+   "The Actions usage report of the organization"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The session log records what Copilot did in a session, including its reasoning, the tools it called, and token usage. It is the primary record for understanding how an agent reached a change.",
+  "rationale": [
+   "Correct: the session log, available from the Agents panel or View session, shows the reasoning of the agent, the tools it used, token usage, and session length.",
+   "Incorrect: repository-level facts are conventions that Copilot learned. They do not record the steps or reasoning of a specific session.",
+   "Incorrect: the commit list shows what changed and who authored it, but not the reasoning or tool calls behind each change.",
+   "Incorrect: the usage report shows consumption of Actions minutes. It does not describe what the agent did or why it made a change."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "2.4.5-02",
+  "obj": "2.4.5",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. creates two automations that post comments on issues. Automation1 is a shared automation, and Automation2 is a personal automation that User1 created.\n\nHow should you expect the comments from each automation to be attributed?",
+  "choices": [
+   "Automation1 comments are attributed to Copilot, and Automation2 comments to User1.",
+   "Automation1 comments are attributed to User1, and Automation2 comments to Copilot.",
+   "Comments from both automations are attributed to Copilot.",
+   "Comments from both automations are attributed to User1."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Actions taken by shared automations are attributed to Copilot, and actions taken by personal automations are attributed to the user who created them. This tells reviewers who is accountable for each action.",
+  "rationale": [
+   "Correct: shared automation actions are attributed to Copilot, while personal automation actions are attributed to the person who created the automation, here User1.",
+   "Incorrect: this reverses the rule. A personal automation acts on behalf of its creator, so its actions carry the identity of User1.",
+   "Incorrect: only shared automations are attributed to Copilot. Personal automations are attributed to their creator for accountability.",
+   "Incorrect: only personal automations are attributed to their creator. A shared automation is not tied to one user, so its actions are attributed to Copilot."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.4.5-03",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Developers at Contoso, Ltd. use Copilot Business. User1 wants to ask natural-language questions about past Copilot CLI sessions from a second workstation, but only sessions from the current workstation are found. The remoteExport setting is not configured.\n\nWhat should you do?",
+  "choices": [
+   "Set the Store local sessions in the Cloud policy to at least View from cloud.",
+   "Set remoteExport to false in the configuration of Copilot CLI on each workstation.",
+   "Share each local session with User1 as a link so that it appears in the history.",
+   "Enable user-level preferences in Copilot Memory for the organization."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For Copilot Business and Enterprise, local sessions sync to the account only when the Store local sessions in the Cloud policy is at least View from cloud. Otherwise sessions stay local.",
+  "rationale": [
+   "Correct: when the Store local sessions in the Cloud policy is disabled or not configured, sessions are stored locally only. Setting it to at least View from cloud lets sessions sync so that User1 can query them.",
+   "Incorrect: remoteExport set to false turns syncing off. It would keep sessions local, which is the opposite of what User1 needs.",
+   "Incorrect: shared sessions are view-only copies for other people, and they are not included in queries of the session history of the recipient.",
+   "Incorrect: user-level preferences store how User1 likes to work. They do not sync session records or make past sessions searchable."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/session-data"
+ },
+ {
+  "id": "2.4.5-04",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "dragdrop",
+  "stem": "Woodgrove Bank must answer audit questions about work by Copilot cloud agent. You must identify the record that answers each question.\n\nWhich record should you use for each question? To answer, drag the appropriate records to the correct questions. Each record may be used once, more than once, or not at all.",
+  "choices": [
+   "The Co-authored-by trailer on the commit",
+   "The session log",
+   "The Verified signature on the commit",
+   "The audit log",
+   "Copilot Memory repository-level facts"
+  ],
+  "targets": [
+   "Question1: Which developer requested the work that produced a commit by Copilot?",
+   "Question2: Which tools did the agent call while it worked on the change?",
+   "Question3: Was the commit created by Copilot and not altered afterwards?",
+   "Question4: Which agent events occurred across the organization last month?"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Copilot commits are authored by Copilot with the requester as co-author and are signed. Session logs show what the agent did, and the audit log records agent events for administrators.",
+  "rationale": [
+   "Question1: Copilot authors the commit and adds the developer who requested the work as a co-author, so the trailer names the accountable person.",
+   "Question2: the session log records the reasoning of the agent and the tools it called, which is the record for how the change was made.",
+   "Question3: commits by Copilot are signed and show as Verified, which confirms they came from Copilot and were not changed.",
+   "Question4: administrators can review audit log events for agent activity, which covers the organization rather than one session."
+  ],
+  "notes": [
+   "The trailer added to commits by Copilot that names the person who requested the work. Use it to link a commit to an accountable human.",
+   "The record of one session, with reasoning, tool calls, and token usage. Use it to see how the agent arrived at a change.",
+   "The signature status of a commit. Copilot signs its commits so that they show as Verified, which proves their origin.",
+   "The organization or enterprise record of events, including agent events. Use it for oversight across many sessions.",
+   "Learned conventions about a repository that guide future work. They are not an audit record of what an agent did in the past."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.4.5-05",
+  "obj": "2.4.5",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Relecloud reviews the safeguards that make Copilot cloud agent actions traceable and accountable.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The commit message of a commit by Copilot links to the session logs for that work.",
+   "Copilot can approve and merge the pull requests that it creates.",
+   "Comments on a pull request from users without write access are passed to Copilot.",
+   "Copilot pushes only to a single branch, such as a branch that starts with copilot/."
+  ],
+  "answer": [
+   0,
+   3
+  ],
+  "explanation": "Copilot commits link to the session logs, and Copilot pushes to a single branch. It cannot approve or merge, and comments from users without write access are not passed to it.",
+  "rationale": [
+   "Yes: each commit message links to the session logs, so a reviewer can go from any commit to the record of how it was produced.",
+   "No: Copilot opens draft pull requests and cannot approve or merge them. A human must review, approve, and merge the work.",
+   "No: only users with write access can trigger Copilot, and comments from users without write access are not passed to the agent.",
+   "Yes: Copilot pushes to one branch, either the branch of an existing pull request or a new branch that starts with copilot/, which keeps its changes contained."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations"
+ },
+ {
+  "id": "2.4.5-06",
+  "obj": "2.4.5",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "You need to meet the traceability requirements.\n\nWhich two sources should the auditors use? Each correct answer presents part of the solution. Choose two.",
+  "choices": [
+   "The co-author information on each commit by Copilot",
+   "The session log linked from the commit message",
+   "The repository-level facts stored for Repo1",
+   "The thumbs up and thumbs down feedback on each session",
+   "The re-run history of the workflows on each pull request"
+  ],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Auditors must know who requested each commit and how Copilot arrived at it. The co-author records the requester, and the session log linked from the commit message shows the work.",
+  "rationale": [
+   "Correct: Copilot authors each commit and adds the developer who requested the work as a co-author, which answers who requested the work.",
+   "Correct: the commit message links to the session logs, which show the reasoning and tool calls that led to the change.",
+   "Incorrect: repository-level facts describe conventions that Copilot learned about Repo1. They do not record who requested a commit or how it was made.",
+   "Incorrect: feedback ratings tell GitHub whether a result was useful. They do not identify the requester or document the steps of the agent.",
+   "Incorrect: re-run history shows how often CI checks ran. It does not connect a commit to the requesting developer or to the agent reasoning."
+  ],
+  "ref": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/risks-and-mitigations",
+  "case": "C-c"
+ }
+]

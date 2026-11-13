@@ -1,0 +1,606 @@
+[
+ {
+  "id": "5.4.1-01",
+  "obj": "5.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. has a GitHub organization named contoso. The platform team has finished testing a new custom agent profile. The agent must be available to all members of the organization for Copilot cloud agent tasks.\n\nWhich location should the team use for the released profile?",
+  "choices": [
+   "In the agents folder of the contoso/.github-private repository",
+   "In the .github/agents folder of each repository that uses the agent",
+   "In the .github/copilot/settings.json file of the contoso/.github repository",
+   "In the .github/workflows folder of the contoso/.github-private repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Organization custom agents live in the agents folder of the organization's .github or .github-private repository and are then available to all members. Repository folders only scope an agent to one repository.",
+  "rationale": [
+   "Correct: GitHub Docs say that organization custom agents are stored in the agents folder of the organization's .github or .github-private repository and are available to all members of the organization.",
+   "Incorrect: profiles in .github/agents of a repository are repository-level agents. Copying them to every repository creates many versions that drift apart.",
+   "Incorrect: settings.json in .github/copilot configures items such as plugins for a repository. It is not where custom agent profiles are stored.",
+   "Incorrect: .github/workflows holds GitHub Actions workflow files. A custom agent profile is a Markdown file, not a workflow."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/prepare-for-custom-agents"
+ },
+ {
+  "id": "5.4.1-02",
+  "obj": "5.4.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "User1 at Tailspin Toys adds a new custom agent profile to a repository that already has two custom agents. The profile has YAML frontmatter that sets only name and tools.\n\nWhich frontmatter property should User1 add, because it is required?",
+  "choices": [
+   "description",
+   "model",
+   "target",
+   "mcp-servers"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "description is the only required frontmatter property. It explains what the agent does, which also helps Copilot choose the right agent among several.",
+  "rationale": [
+   "Correct: the custom agents configuration reference lists description as required. It states the purpose and capabilities of the agent, which matters when the agent joins existing agents.",
+   "Incorrect: model is optional. When it is not set, the agent uses the default model, so the profile is valid without it.",
+   "Incorrect: target is optional and limits the environments where the agent is available. Without it, the agent is available in all supported environments.",
+   "Incorrect: mcp-servers is optional and only needed when the agent uses extra MCP servers. Many agents use only built-in tools."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.1-03",
+  "obj": "5.4.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Relecloud adds a custom agent named test-writer to an existing multi-agent workflow. test-writer must be able to read, search, and edit files, and it must not run shell commands. It must be available only on GitHub.com for Copilot cloud agent tasks.\n\n```yaml\n---\nname: test-writer\ndescription: Writes unit tests for changed Python modules. Use for test coverage tasks only.\ntools: [[1]]\ntarget: [[2]]\n---\n```\n\nHow should you complete the profile? To answer, select the appropriate options in the answer area.",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "A list in tools allows only those tool aliases, so read, search, and edit without execute meets the requirement. target github-copilot limits the agent to GitHub.com.",
+  "rationale": [
+   "Box 1: an explicit list of tool aliases is an allowlist, so only read, search, and edit are available and the shell tool is not.",
+   "Box 2: github-copilot limits the agent to Copilot cloud agent on GitHub.com, so it is not offered in other environments."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "[\"read\", \"search\", \"edit\"]",
+     "[\"*\"]",
+     "[]",
+     "[\"read\", \"search\", \"edit\", \"execute\"]"
+    ],
+    "why": [
+     "Correct: an explicit list allows only the named tools, so test-writer can read, search, and edit, while execute, the shell alias, stays unavailable.",
+     "Incorrect: an asterisk enables all available tools, including execute, so the agent could run shell commands, which breaks the requirement.",
+     "Incorrect: an empty list disables all tools, so test-writer could not even read or edit files and would be unable to write tests.",
+     "Incorrect: execute is the alias for the shell tool. Including it allows shell commands, which the requirement forbids."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "github-copilot",
+     "vscode"
+    ],
+    "why": [
+     "Correct: target set to github-copilot makes the agent available for Copilot cloud agent on GitHub.com only, which matches the requirement.",
+     "Incorrect: target set to vscode limits the agent to the IDE, so it would not be available for cloud agent tasks on GitHub.com."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "5.4.1-04",
+  "obj": "5.4.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Woodgrove Bank has a GitHub organization named woodgrove. The platform team must add a new custom agent named release-notes to the organization. First, only members who can access the woodgrove/.github-private repository may try the agent. After the trial, the agent must be available to all members, and the team must be able to monitor its use.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Add the profile to the .github/agents folder of the .github-private repository and merge it to the default branch.",
+   "On github.com/copilot/agents, select the .github-private repository and release-notes, start a task, and review Recent sessions.",
+   "Move the profile from .github/agents to the agents folder and merge the change to the default branch.",
+   "Filter the organization audit log by actor:Copilot.",
+   "Add the agent to the .github/copilot/settings.json file of every repository.",
+   "Turn on release-notes in the Validation tools section of the Copilot cloud agent settings."
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "A profile in .github/agents of .github-private is a test release that only people with access to that repository can use. Moving it to agents releases it to the organization, and the audit log shows its use.",
+  "rationale": [
+   "Step 1: in .github/agents of .github-private, the agent is available only to members with access to that repository and only for tasks started there, which is the trial scope.",
+   "Step 2: the team tests from the agents page by selecting the repository and the agent, then checks Recent sessions to see how the tasks went.",
+   "Step 3: moving the profile to the agents folder and merging it to the default branch releases the agent to all members of the organization.",
+   "Step 4: filtering the organization audit log by actor:Copilot lets the team monitor how the released agent is used.",
+   "Incorrect: settings.json in .github/copilot is used for plugins, not for publishing custom agents. Organization agents are released through the .github-private repository.",
+   "Incorrect: Validation tools switch built-in checks such as CodeQL and secret scanning. They do not publish or enable custom agents."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/test-custom-agents"
+ },
+ {
+  "id": "5.4.1-05",
+  "obj": "5.4.1",
+  "difficulty": "hard",
+  "type": "dragdrop",
+  "stem": "Litware, Inc. adds custom agents to an app that uses the Copilot SDK. Each requirement must be met by using one setting.\n\nWhich setting should you use for each requirement? To answer, drag the appropriate settings to the correct requirements. Each setting may be used once, more than once, or not at all.",
+  "choices": [
+   "infer: false on the custom agent",
+   "defaultAgent.excludedTools",
+   "A tools list on the custom agent",
+   "The agent property of the session configuration",
+   "mcpServers on the custom agent",
+   "displayName on the custom agent"
+  ],
+  "answer": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "explanation": "Each SDK setting controls a different layer: automatic selection, what the main agent may do itself, what one sub-agent may use, and which agent a session starts with.",
+  "rationale": [
+   "infer set to false stops the runtime from selecting the agent automatically, so a cleanup agent runs only when a user explicitly asks for it.",
+   "defaultAgent.excludedTools hides tools from the main agent, so it cannot edit files itself and must delegate that work to a custom agent.",
+   "A tools list on a custom agent limits that agent to the listed tools, so a researcher can be read-only while other agents keep edit tools.",
+   "The agent property in the session configuration pre-selects a custom agent, so sessions for the release team start with the release agent active."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-sdk/features/custom-agents",
+  "targets": [
+   "A new cleanup agent must run only when a user explicitly requests it.",
+   "The main agent must delegate all file edits instead of editing files itself.",
+   "A new researcher agent must have read-only access.",
+   "Sessions for the release team must start with the release agent selected."
+  ],
+  "notes": [
+   "Turns off automatic selection for one custom agent. The docs use it for a dangerous-cleanup agent that runs only on explicit request.",
+   "Removes tools from the main agent only, which forces delegation to custom agents that still have those tools.",
+   "Scopes the tools of one custom agent. Use it to make planning or research agents read-only while other agents keep broader tools.",
+   "Chooses which custom agent is active when the session starts, so users do not need to select it themselves.",
+   "Adds MCP servers that only this custom agent can use. It adds capabilities and does not restrict or route work.",
+   "Sets the name that users see for the agent. It changes the label only and has no effect on routing or permissions."
+  ]
+ },
+ {
+  "id": "5.4.1-06",
+  "obj": "5.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation has an organization custom agent with the file name reviewer.agent.md. A team adds its own profile named reviewer.agent.md to the .github/agents folder of its repository, with different instructions.\n\nWhich profile should the team expect Copilot to use for tasks in that repository?",
+  "choices": [
+   "The repository profile, because the lowest level wins a naming conflict",
+   "The organization profile, because it was configured before the other one",
+   "Both profiles, because Copilot merges the instructions of the two files",
+   "Neither profile, because the duplicate name is a configuration error"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Agents are deduplicated by file name, and in a naming conflict the agent at the lowest level wins. A repository profile therefore overrides an organization profile with the same name in that repository.",
+  "rationale": [
+   "Correct: the configuration reference says that when names conflict, the lowest level configuration wins, so a repository agent overrides an organization or enterprise agent with the same file name.",
+   "Incorrect: the order in which profiles were created does not matter. The level of the configuration decides which profile wins a conflict.",
+   "Incorrect: Copilot does not merge two profiles that share a name. It uses one of them, chosen by the level of the configuration.",
+   "Incorrect: a duplicate name is expected and resolved by precedence. This lets a repository customize an agent that the organization provides."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.1-07",
+  "obj": "5.4.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders adds a custom agent that uses an extra MCP server. The MCP server needs an API key. The key must be available to the MCP server when Copilot cloud agent runs the agent, and it must not appear in any file in the repository.\n\nWhich location should you use for the API key?",
+  "choices": [
+   "As an Agents secret that the MCP configuration references",
+   "As a GitHub Actions secret in the repository settings",
+   "In the prompt of the agent profile, inside a code block",
+   "In the custom instructions file of the repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "MCP configuration for Copilot reads secrets from Agents secrets and variables. Actions secrets are not available to Copilot, and anything in a profile or instructions file is plain text in the repository.",
+  "rationale": [
+   "Correct: GitHub Docs state that MCP servers used by Copilot read secrets from Agents secrets and variables, which you reference from the MCP configuration so the key is never stored in the repository.",
+   "Incorrect: GitHub Docs note that GitHub Actions secrets are not accessible to Copilot, so the MCP server would not receive the key.",
+   "Incorrect: the profile is a file in the repository, so the key would be visible to everyone who can read it and to the agent itself.",
+   "Incorrect: the instructions file is also committed to the repository, and secrets must stay out of instructions and configuration files."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/build-guardrails"
+ },
+ {
+  "id": "5.4.2-01",
+  "obj": "5.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Fabrikam, Inc., a custom agent opened pull request 42. While Copilot is still iterating on pull request 42, the platform team merges an update to the agent profile on the default branch. User1 then adds an @copilot comment to pull request 42.\n\nWhich version of the profile should User1 expect Copilot to use?",
+  "choices": [
+   "The version that created pull request 42",
+   "The latest version on the default branch",
+   "The version on the head branch of pull request 42",
+   "The version that the latest session in the repository used"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom agent versions are based on the Git commit SHA of the profile. After an agent creates a pull request, later work on that pull request keeps the same version for consistency.",
+  "rationale": [
+   "Correct: the configuration reference says that when a custom agent creates a pull request, interactions within that pull request use the same agent version, so an update does not change work already in progress.",
+   "Incorrect: new tasks use the latest profile on the repository and branch, but a pull request that the agent already created keeps the version that created it.",
+   "Incorrect: the head branch of the pull request does not decide the version. The version is the one that created the pull request.",
+   "Incorrect: versions are not shared across sessions. Each pull request keeps the version that created it, whatever other sessions do."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.2-02",
+  "obj": "5.4.2",
+  "difficulty": "easy",
+  "type": "order",
+  "stem": "Tailspin Toys has an organization custom agent stored as agents/implementer.md in its .github-private repository. User1 must test changes to implementer with a small group first. Members must keep using the current version until the test succeeds.\n\nWhich three actions should User1 perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Copy the profile to .github/agents/implementer-next.md in .github-private, edit the copy, and merge it to the default branch.",
+   "On github.com/copilot/agents, select .github-private and implementer-next, start a task, and review Recent sessions.",
+   "Apply the tested changes to agents/implementer.md and merge them to the default branch.",
+   "Edit agents/implementer.md directly and merge the change to the default branch.",
+   "Delete agents/implementer.md so that members cannot use the old version during the test.",
+   "Turn on implementer-next in the Validation tools section of the Copilot cloud agent settings."
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "A duplicate in .github/agents of .github-private is a test copy that only members with access to that repository can use. After testing, you apply the changes to the released profile, so members switch only once the update is proven.",
+  "rationale": [
+   "Step 1: GitHub Docs say you can duplicate an existing profile to test updates. In .github/agents of .github-private, the copy is available only to members with access to that repository.",
+   "Step 2: testing from the agents page with the .github-private repository and the copy selected, then checking Recent sessions, shows whether the update works.",
+   "Step 3: only after the test succeeds do you change the released profile in the agents folder, so new tasks for all members use the tested version.",
+   "Incorrect: editing the released profile first changes the agent for every member before anyone has tested it, which breaks the requirement.",
+   "Incorrect: deleting the released profile removes the agent that members depend on, which disrupts their work during the test.",
+   "Incorrect: Validation tools switch built-in checks such as CodeQL and secret scanning. They do not enable or test custom agents."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/test-custom-agents"
+ },
+ {
+  "id": "5.4.2-03",
+  "obj": "5.4.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. maintains a custom agent profile in a repository. Teams must keep using the stable version while the platform team works on a major update over several weeks.\n\nWhat should the platform team do?",
+  "choices": [
+   "Develop the update on a separate branch and merge it to the default branch when it is ready.",
+   "Edit the profile on the default branch and add a note to the prompt that it is in progress.",
+   "Remove the profile from the default branch until the update is finished and tested.",
+   "Add a model property to the profile that points to the stable version of the agent."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Custom agent versions follow Git, and a task uses the latest profile on the repository and branch. Working on a separate branch keeps the default branch, and therefore the stable version, unchanged.",
+  "rationale": [
+   "Correct: GitHub Docs say versioning is based on Git commit SHAs and that you can use branches or tags for versions, so work on a branch does not change the profile on the default branch.",
+   "Incorrect: tasks pick up the latest profile on the default branch, so every in-progress edit reaches users immediately. A note in the prompt does not prevent that.",
+   "Incorrect: removing the profile makes the agent unavailable for weeks, which disrupts every team that depends on it.",
+   "Incorrect: model chooses the AI model for the agent. It does not select a version of the profile."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.2-04",
+  "obj": "5.4.2",
+  "difficulty": "medium",
+  "type": "yesno",
+  "stem": "Wingtip Toys updates the profile of a custom agent named builder on the default branch of a repository. The update changes the tools list and adds a handoffs property. builder has already opened pull request 18.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "New tasks that start on the default branch use the updated tools list.",
+   "New @copilot comments on pull request 18 are handled by the updated version.",
+   "The handoffs property changes how builder behaves in Copilot cloud agent on GitHub.com.",
+   "Copilot identifies each version of the profile by a Git commit SHA."
+  ],
+  "answer": [
+   0,
+   3
+  ],
+  "explanation": "Tasks use the latest profile on the branch, but pull requests that the agent already created keep their version. handoffs is ignored on GitHub.com, and versions follow Git commit SHAs.",
+  "rationale": [
+   "Yes: a task uses the latest version of the profile on the repository and branch where it starts, so new tasks on the default branch pick up the new tools list.",
+   "No: interactions within a pull request that the agent created keep using the agent version that created it, so pull request 18 is not affected by the update.",
+   "No: the configuration reference states that handoffs is ignored on GitHub.com, so the property has no effect on Copilot cloud agent, although other environments may use it.",
+   "Yes: custom agent versioning is based on the Git commit SHAs of the profile file, which is why you can also use branches or tags for versions."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.2-05",
+  "obj": "5.4.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "At Relecloud, any change to custom agent profiles or MCP configuration must be reviewed by the platform team before it can merge. Developers, and agents acting for them, can open pull requests that touch these files.\n\nWhat should you configure?",
+  "choices": [
+   "A CODEOWNERS entry for the files and the Require review from Code Owners rule",
+   "A line in each agent profile that tells agents not to edit configuration files",
+   "Require approval for workflow runs in the Copilot cloud agent settings",
+   "Audit log streaming for the organization to an external system"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Tool and MCP changes widen what agents can do, so they are governance-sensitive. CODEOWNERS plus required code owner review enforces that the platform team approves them.",
+  "rationale": [
+   "Correct: GitHub Docs recommend protecting Copilot and MCP configuration files with CODEOWNERS and the Require review from Code Owners rule, so these changes cannot merge without the platform team.",
+   "Incorrect: instructions are guidance that an agent may not follow, and they do nothing against a developer. Enforcement must come from rules and gates.",
+   "Incorrect: this setting gates GitHub Actions runs on Copilot pushes. It does not require any reviewer for changes to agent profiles.",
+   "Incorrect: streaming records events after they happen. It helps with detection but does not stop an unreviewed change from merging."
+  ],
+  "ref": "https://docs.github.com/en/copilot/tutorials/cloud-agent/build-guardrails"
+ },
+ {
+  "id": "5.4.2-06",
+  "obj": "5.4.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation must replace an organization custom agent named Agent1 with a new agent named Agent2. About 40 repositories use Agent1. Teams must not lose a working agent at any point, and the platform team wants to limit the impact if Agent2 behaves badly.\n\nWhat should the platform team do first?",
+  "choices": [
+   "Test Agent2 from the .github/agents folder of .github-private while Agent1 stays released.",
+   "Overwrite the profile of Agent1 with the profile of Agent2 and merge it to the default branch.",
+   "Remove the profile of Agent1 and then release Agent2 in the agents folder of .github-private.",
+   "Add a profile named Agent1 to every repository that contains the instructions of Agent2."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A side-by-side test keeps the current agent available while a small group tries the replacement. Only after the test do you release Agent2 and retire Agent1.",
+  "rationale": [
+   "Correct: a profile in .github/agents of .github-private is available only to members with access to that repository, so Agent2 can be tested while all teams keep using Agent1.",
+   "Incorrect: overwriting Agent1 changes it for all 40 repositories at once, so a bad version reaches every team before anyone has tested it.",
+   "Incorrect: removing Agent1 before Agent2 is proven leaves teams without a working agent if Agent2 fails, which breaks the continuity requirement.",
+   "Incorrect: repository profiles override the organization profile by name, so this replaces Agent1 everywhere, untested and in 40 places that then drift apart."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/test-custom-agents"
+ },
+ {
+  "id": "5.4.2-07",
+  "obj": "5.4.2",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "The platform team plans to update the implementer profile. The update adds a tools list that contains read, search, edit, and execute.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The update gives implementer access to more tools than its current profile allows.",
+   "Pull requests that implementer opened before the update keep using the previous version.",
+   "If the update is merged on a branch other than the default branch, tasks that start on the default branch still use the current profile."
+  ],
+  "answer": [
+   1,
+   2
+  ],
+  "explanation": "The current implementer profile omits tools, which means all tools. A list narrows that. Versions follow Git, so open pull requests keep their version and tasks on the default branch keep the profile that is there.",
+  "rationale": [
+   "No: implementer omits the tools property today, which enables all available tools. A list of four aliases is an allowlist that narrows the tools, so the agent gets fewer tools, not more.",
+   "Yes: interactions within a pull request that a custom agent created keep using the agent version that created it, which meets the Fabrikam, Inc. requirement for open pull requests.",
+   "Yes: a task uses the latest profile on the repository and branch where it runs, so a change merged on another branch does not affect tasks on the default branch."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "case": "C-f"
+ },
+ {
+  "id": "5.4.3-01",
+  "obj": "5.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. retires a custom agent. The agents panel still lists many stopped cloud sessions from that agent. The team wants these sessions out of the active list, and auditors must still be able to read them later.\n\nWhat should the team do with the sessions?",
+  "choices": [
+   "Archive the sessions.",
+   "Delete the sessions.",
+   "Steer the sessions to stop.",
+   "Resume the sessions with /resume."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Archiving removes stopped sessions from the active view while keeping them. Cloud sessions cannot be deleted, so the history stays available.",
+  "rationale": [
+   "Correct: GitHub Docs say you can archive stopped sessions, and that cloud sessions can be archived but not deleted, so the sessions leave the active list and remain available for review.",
+   "Incorrect: cloud sessions can be archived but not deleted, and deletion would also destroy the audit trail that the auditors need.",
+   "Incorrect: steering sends guidance to a running session. These sessions are already stopped, so steering has no effect on the list.",
+   "Incorrect: /resume in Copilot CLI continues a session, which starts work again instead of removing the session from the active list."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents"
+ },
+ {
+  "id": "5.4.3-02",
+  "obj": "5.4.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Woodgrove Bank plans to retire an organization custom agent next month. Before that, the platform team wants evidence of how often members still use agents in the organization.\n\nWhat should the platform team use?",
+  "choices": [
+   "The organization audit log, filtered by actor:Copilot",
+   "The Recent sessions list of one test repository",
+   "The commit history of the agents folder of .github-private",
+   "The workflow run logs of the copilot-setup-steps.yml file"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Filtering the organization audit log by actor:Copilot shows agent activity across the organization, which is the evidence you need before you retire an agent.",
+  "rationale": [
+   "Correct: GitHub Docs recommend monitoring the usage of released custom agents by filtering the organization audit log by actor:Copilot.",
+   "Incorrect: Recent sessions in one repository shows only tasks started there, so it misses use in the rest of the organization.",
+   "Incorrect: the commit history shows who changed profiles and when. It says nothing about how often members use the agents.",
+   "Incorrect: setup steps prepare the environment of some sessions. Their logs do not give a usage view of agents across the organization."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/test-custom-agents"
+ },
+ {
+  "id": "5.4.3-03",
+  "obj": "5.4.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Contoso, Ltd. is retiring a custom agent named legacy-migrator. The profile must stay in the repository for audit purposes. Users must no longer be able to select the agent, and if it is ever invoked, it must not be able to use any tools.\n\n```yaml\n---\nname: legacy-migrator\ndescription: RETIRED. Kept for audit purposes only.\nuser-invocable: [[1]]\ntools: [[2]]\n---\n```\n\nHow should you complete the profile? To answer, select the appropriate options in the answer area.",
+  "choices": [],
+  "answer": [
+   1,
+   0
+  ],
+  "explanation": "user-invocable false removes the agent from the list that users pick from. An empty tools list disables every tool, so the retained profile can do no harm.",
+  "rationale": [
+   "Box 1: user-invocable set to false means users cannot select the agent, while the profile stays in the repository for audits.",
+   "Box 2: an empty list disables all tools, so the agent cannot read, edit, or run anything if something invokes it."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "true",
+     "false"
+    ],
+    "why": [
+     "Incorrect: true is the default and keeps the agent in the list that users choose from, so users could still select the retired agent.",
+     "Correct: false makes the agent unavailable for users to select, so it can only be invoked programmatically while the profile is kept for audits."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "[]",
+     "[\"*\"]",
+     "[\"read\"]"
+    ],
+    "why": [
+     "Correct: an empty tools list disables all tools, so the retired agent cannot use any tool even if another component invokes it.",
+     "Incorrect: an asterisk enables all available tools, which gives the retired agent the widest possible access instead of none.",
+     "Incorrect: read still lets the agent read files. The requirement is that the agent cannot use any tools at all."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "5.4.3-04",
+  "obj": "5.4.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud must retire an organization custom agent named Agent1 that is stored in the agents folder of its .github-private repository. Auditors must be able to see who removed Agent1, when, and why.\n\nWhat should the platform team do?",
+  "choices": [
+   "Remove the profile in a pull request that states the reason, and merge it after review.",
+   "Delete the .github-private repository, which removes Agent1 for all members.",
+   "Change the description of Agent1 to RETIRED and leave all other settings unchanged.",
+   "Remove the profile in a commit, and then force-push to rewrite the default branch."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A reviewed pull request is the system of record: it shows who made the change, when, who approved it, and the reason. The Git history keeps the old profile for later audits.",
+  "rationale": [
+   "Correct: removing the profile through a reviewed pull request records the author, approver, time, and reason, and the earlier versions remain in the Git history for audits.",
+   "Incorrect: deleting the repository removes every organization agent and its history, which destroys the audit trail and breaks other agents.",
+   "Incorrect: a new description does not retire the agent. Members could still select and use it, and nothing records why it should not be used.",
+   "Incorrect: a force-push rewrites history and can remove the record of the profile, which defeats the auditability requirement."
+  ],
+  "ref": "https://learn.microsoft.com/en-us/training/modules/foundations-agentic-ai/5-identify-risks-traceability"
+ },
+ {
+  "id": "5.4.3-05",
+  "obj": "5.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Northwind Traders uses GitHub Enterprise Cloud. Before it retires an agent, the compliance team must review agent session activity across the enterprise for the past 90 days.\n\nWhich source should the compliance team use?",
+  "choices": [
+   "The audit log of the enterprise",
+   "The Agent sessions view on the AI controls page",
+   "The agents panel of each compliance team member",
+   "The session logs of the most recent cloud session"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The AI controls page gives a quick view of recent agent sessions, but View all covers only the last 24 hours. A 90-day review needs the audit log.",
+  "rationale": [
+   "Correct: GitHub Docs list the audit log as a source for monitoring agent activity in an enterprise, and it covers far more than the last 24 hours, which suits a 90-day review.",
+   "Incorrect: the Agent sessions section of the AI controls page shows recent sessions, and View all covers only the last 24 hours, so it cannot show 90 days.",
+   "Incorrect: the agents panel is a working view for tracking and steering sessions. It is not an enterprise-wide record that covers 90 days of activity.",
+   "Incorrect: one session log explains a single run. It does not give activity across the enterprise or over 90 days."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/manage-agents/monitor-agentic-activity"
+ },
+ {
+  "id": "5.4.3-06",
+  "obj": "5.4.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Litware, Inc. has a custom agent named orchestrator that delegates documentation tasks to a custom agent named docs-bot. docs-bot will be retired and replaced by a new agent named docs-writer. Documentation tasks must keep working during the change.\n\nWhat should the platform team do first?",
+  "choices": [
+   "Release docs-writer and update orchestrator so that it delegates to docs-writer.",
+   "Delete docs-bot and let orchestrator choose another agent by itself.",
+   "Remove the agent tool alias from the tools list of orchestrator.",
+   "Set disable-model-invocation to true in the profile of orchestrator."
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For continuity you add the replacement and move the delegation before you remove the old agent. Removing first leaves a gap in the workflow.",
+  "rationale": [
+   "Correct: the agent tool alias lets an agent invoke another custom agent, so releasing docs-writer and pointing orchestrator at it keeps documentation tasks working before docs-bot goes.",
+   "Incorrect: deleting docs-bot first leaves orchestrator without a documentation agent until a replacement exists, which breaks the continuity requirement.",
+   "Incorrect: the agent alias is what lets orchestrator invoke another custom agent. Removing it stops all delegation, including documentation tasks.",
+   "Incorrect: disable-model-invocation means orchestrator must be selected manually. It does not change which agent orchestrator delegates to."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "5.4.3-07",
+  "obj": "5.4.3",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "You need to complete the docs-bot profile to meet the retirement requirements for the transition period. The platform team has already added user-invocable: false so that developers can no longer select docs-bot.\n\n```yaml\n---\nname: docs-bot\ndescription: Updates product documentation. Being retired.\nuser-invocable: false\n[[1]]\ntools: [[2]]\n---\n```\n\nHow should you complete the profile? To answer, select the appropriate options in the answer area.",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "With user-invocable false, docs-bot can only be invoked programmatically, so model invocation must stay enabled for implementer to delegate to it. read and search let it handle delegated requests without changing files.",
+  "rationale": [
+   "Box 1: disable-model-invocation false keeps automatic invocation by other agents, which is the only way left to reach docs-bot after user-invocable is set to false.",
+   "Box 2: read and search are read-only aliases, so docs-bot can still look up documentation but cannot edit files, which the transition requires."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration",
+  "case": "C-f",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "disable-model-invocation: false",
+     "disable-model-invocation: true",
+     "target: vscode"
+    ],
+    "why": [
+     "Correct: false leaves automatic invocation enabled, so implementer can still delegate documentation tasks to docs-bot during the transition.",
+     "Incorrect: true means the agent must be selected manually. With user-invocable false, nobody could select it, so implementer could no longer reach docs-bot.",
+     "Incorrect: target vscode limits the agent to the IDE, which removes it from Copilot cloud agent on GitHub.com, where implementer runs and delegates."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "[\"read\", \"search\"]",
+     "[\"*\"]",
+     "[\"edit\"]",
+     "[\"read\", \"execute\"]"
+    ],
+    "why": [
+     "Correct: read and search let docs-bot look up existing documentation for delegated requests, and without edit or execute it cannot change any files.",
+     "Incorrect: an asterisk enables all tools, including edit and execute, so docs-bot could change files during the transition.",
+     "Incorrect: edit is exactly the capability that must be removed during the transition period, so this option breaks the requirement.",
+     "Incorrect: execute gives docs-bot a shell, and shell commands can create, change, or delete files, so the requirement is not met."
+    ]
+   }
+  ]
+ }
+]

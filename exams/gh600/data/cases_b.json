@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-b",
+  "title": "Relecloud",
+  "sections": [
+   [
+    "Overview",
+    "Relecloud is a travel booking company that has 340 employees and offices in Seattle, Lisbon, and Singapore. The engineering department has 60 developers who work in three product teams. Relecloud uses GitHub Enterprise Cloud with one enterprise account and one organization named relecloud. All developers are assigned Copilot Enterprise licenses by the organization. The marketing department tracks campaigns in Jira and does not use GitHub."
+   ],
+   [
+    "Existing environment",
+    "The relecloud organization contains the following repositories:\n\n- web-portal: the public booking site. It is built with Node.js and runs integration tests against a local web server.\n- billing-api: the payment service. Its build and test toolchain runs only on Windows, and the first restore of its dependencies takes about 25 minutes.\n- data-pipeline: Python jobs that load booking data into a reporting warehouse every night.\n- .github-private: a private repository that stores organization-wide configuration.\n\nProduction errors from web-portal are reported to a hosted Sentry project at https://relecloud.sentry.io. The Sentry access token is currently stored as a GitHub Actions secret named SENTRY_TOKEN, which a deployment workflow uses. Developers use Visual Studio Code and Copilot CLI on company-managed laptops. The team chat runs in Slack, and on-call schedules are managed in a separate tool."
+   ],
+   [
+    "Current configuration",
+    "Copilot cloud agent is enabled for all repositories in the organization, and no MCP servers are configured in any repository. The organization uses the default firewall settings for Copilot in the cloud. Last quarter, an administrator configured a custom MCP registry and set the registry policy to Registry only. During a review, the security team found that developers could still start an unapproved server by renaming it in a local configuration file so that its name matched an approved registry entry."
+   ],
+   [
+    "Problem statements",
+    "Developers on the web-portal team spend a lot of time copying Sentry stack traces into issues before they assign the issues to Copilot. When Copilot works on a web-portal issue, it often needs to read related issues and pull requests in billing-api, but the agent reports that it cannot access that repository. Sessions that run for billing-api fail because the agent cannot build the solution in the default environment."
+   ],
+   [
+    "Requirements",
+    "Relecloud identifies the following requirements:\n\n- Copilot cloud agent must read Sentry errors when it works on web-portal issues. The Sentry token must never be exposed to GitHub Actions workflows or to session logs.\n- When Copilot cloud agent works on web-portal, it must be able to read issues and pull requests in billing-api. It must not be able to change anything in billing-api.\n- Sessions for billing-api must build and test the code on Windows and must start with the dependencies already restored.\n- Outbound network traffic from billing-api sessions must be restricted to approved destinations.\n- In Visual Studio Code and Copilot CLI, developers must be able to use only MCP servers that the security team approves. Approval must be enforced by server URL or launch command, not only by server name, and developers must not be able to override it by editing local files.\n- Administrative effort must be minimized, and existing GitHub Actions deployment workflows must not change."
+   ]
+  ]
+ }
+]

@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-f",
+  "title": "Fabrikam, Inc.",
+  "sections": [
+   [
+    "Overview",
+    "Fabrikam, Inc. is an online retailer of toys and games. The company has a GitHub Enterprise Cloud organization named fabrikam with about 120 repositories and 300 developers. Over the last year, Fabrikam, Inc. moved much of its routine engineering work to agents. Developers assign issues to Copilot cloud agent, and the platform team publishes organization custom agents that developers select when they start a task. The engineering director wants to keep delivery fast while the security and compliance teams keep a clear record of what every agent did and who approved it."
+   ],
+   [
+    "Existing environment",
+    "The main storefront code is in a repository named shop-web. The default branch is main. A ruleset on main requires a pull request with one approval and requires the status checks named build and unit-tests to pass. Copilot cloud agent sessions for shop-web run on GitHub Actions. The repository has two GitHub Actions environments named staging and production. A workflow named deploy.yml deploys main to staging automatically. The deploy job for production references the production environment, which has no protection rules yet. Organization custom agents are stored in the agents folder of the fabrikam/.github-private repository. The platform team members are User1 and User2. User3 is a developer on the storefront team, and User4 is a compliance analyst who reviews agent activity every quarter."
+   ],
+   [
+    "Agent inventory",
+    "The platform team maintains the following organization custom agents:\n\n- planner: produces an implementation plan as a pull request comment. Its profile lists the tools read and search.\n- implementer: makes code changes and runs tests. Its profile omits the tools property.\n- security-reviewer: reviews pull requests for risky changes. Its profile lists the tools read and search.\n- docs-bot: updates product documentation. It was the first agent that Fabrikam, Inc. built, and it is still used by several teams.\n\nThe platform team also publishes a new agent named test-writer. During its trial, the profile for test-writer is stored in the .github/agents folder of the .github-private repository. Each profile is a Markdown file with YAML frontmatter, and every change to a profile is merged through a pull request."
+   ],
+   [
+    "Recent incidents",
+    "Incident 1: User3 assigned issue 812 to Copilot. Copilot opened a draft pull request, and the session log has shown no new activity for more than an hour.\n\nIncident 2: A pull request that Copilot cloud agent created for issue 790 was approved and merged into main. After the merge, checkout requests in staging started to fail. At the same time, a second Copilot session that User3 started for a follow-up issue is still running and pushing commits to its own copilot/ branch.\n\nIncident 3: User4 found that implementer changed a file in .github/workflows in a pull request that only one developer reviewed. Nobody from the platform team saw the change before it was merged."
+   ],
+   [
+    "Requirements",
+    "Fabrikam, Inc. identifies the following requirements:\n\n- Any rollback of agent work on main must go through a reviewed pull request, and the history of main must never be rewritten.\n- Every agent must keep producing work that can be traced back to a session log after the agent is changed or retired.\n- Changes to the implementer profile must not change the behavior of pull requests that implementer already opened.\n- docs-bot must be retired. During a transition period, developers must no longer be able to select docs-bot, but the implementer agent must still be able to delegate documentation tasks to it. docs-bot must not be able to change any files during the transition period.\n- Changes to documentation and tests are low risk and must be delivered with as little process as possible.\n- Changes to workflow files, infrastructure, and authentication code are high risk. A reviewer must approve the plan before any code is written, and a member of the platform team must review the change.\n- Deployments to production must be approved by someone other than the person who started the deployment."
+   ]
+  ]
+ }
+]

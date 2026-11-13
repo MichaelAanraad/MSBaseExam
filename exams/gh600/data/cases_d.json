@@ -1,0 +1,28 @@
+[
+ {
+  "id": "C-d",
+  "title": "Northwind Traders",
+  "sections": [
+   [
+    "Overview",
+    "Northwind Traders is a food distribution company with offices in Chicago and Lisbon. Its engineering department has 60 developers in eight teams. The company uses GitHub Enterprise Cloud with Copilot Business licenses for all developers, and recently started to delegate routine work to the Copilot cloud agent.\n\nThe engineering director wants agent work to be predictable, reviewable, and easy to troubleshoot before the company expands agent use to more teams next quarter."
+   ],
+   [
+    "Existing environment",
+    "**Repositories**\n\n- A private repository named orders-service contains a TypeScript API under src/api and a React web client under src/web.\n- A private repository named warehouse-tools contains internal command-line tools. It is not in scope for the agent pilot.\n- The company has no GitHub Advanced Security, GitHub Code Security, or GitHub Secret Protection licenses.\n\n**Copilot configuration in orders-service**\n\n- The Copilot cloud agent is enabled. The Validation tools settings use the default values.\n- The file .github/copilot-instructions.md states: \"Build and test with npm.\"\n- The file src/web/AGENTS.md, which the web team added last month, states: \"Always use pnpm for installs and scripts.\"\n- Copilot Memory is enabled for the repository.\n- Workflow runs that are triggered by Copilot pushes use the default approval setting.\n\n**People**\n\n- User1 is the engineering director.\n- User2 is a web developer with write access to orders-service.\n- User3 is a platform engineer with admin access to orders-service.\n- User4 is a contractor with read access to orders-service."
+   ],
+   [
+    "Agent pilot",
+    "During the pilot, developers assign issues in orders-service to Copilot. Each issue uses a template with sections named Problem, Acceptance criteria, and Files in scope.\n\nThe web team plans a custom agent that writes an implementation plan before any code is changed. The plan must state what done looks like, and the custom agent must be available to every developer who works in the repository.\n\nDevelopers communicate in Microsoft Teams. Weekly pilot reviews take place every Friday in Lisbon."
+   ],
+   [
+    "Problems observed",
+    "- In pull requests for src/web, the agent sometimes runs npm and sometimes runs pnpm, and some runs fail with lockfile errors.\n- Pull request 118 failed to install a package from the internal registry packages.northwindtraders.com. The pull request body contains a warning that lists the blocked address and the command that tried to reach it.\n- Pull request 121 shows no workflow results for the commits that Copilot pushed.\n- User4 posted a comment that mentions @copilot on pull request 121, and Copilot did not respond."
+   ],
+   [
+    "Requirements",
+    "**Business requirements**\n\n- Reviewers must be able to see why the agent made a change and which tools it used.\n- Root causes of failed agent sessions must be classified before a fix is chosen.\n\n**Technical requirements**\n\n- Agent pull requests must be checked for exposed credentials and for newly added dependencies that have known vulnerabilities before the agent completes its work.\n- The company must not purchase additional security licenses during the pilot.\n- Guidance that the agent receives for src/web must not contradict guidance elsewhere in the repository.\n- Minimize the number of new workflows that the platform team must maintain."
+   ]
+  ]
+ }
+]

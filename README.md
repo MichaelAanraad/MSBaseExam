@@ -8,7 +8,7 @@ difficulty levels. Original questions, not exam dumps.
 |---|---|---|
 | AI-500 | Designing and Implementing Multi-Agent AI Solutions | `docs/ai500/` |
 | AB-650 | Administering Microsoft 365 and AI Services | `docs/ab650/` |
-| GH-600 | Developing in Agentic AI Systems | setup only, no questions yet |
+| GH-600 | Developing in Agentic AI Systems | `docs/gh600/` |
 
 Open `docs/index.html` in a browser, or host it on GitHub Pages:
 

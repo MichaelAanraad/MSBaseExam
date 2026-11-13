@@ -1,0 +1,705 @@
+[
+ {
+  "id": "2.2.1-01",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. wants Copilot cloud agent to use a Notion MCP server when it works on issues in a repository named docs-site. You are a repository administrator.\n\nWhich location should you use for the MCP server configuration?",
+  "choices": [
+   "In the MCP configuration section under Settings > Copilot > MCP servers",
+   "In a .vscode/mcp.json file that is committed to the default branch",
+   "In the steps of the copilot-setup-steps.yml workflow file",
+   "In the Agents secrets page under Settings > Secrets and variables"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Repository administrators enter a JSON configuration with an mcpServers object directly in the repository settings on GitHub. This configuration is shared by Copilot cloud agent and Copilot code review.",
+  "rationale": [
+   "Correct: the MCP configuration section in the repository Copilot settings holds the JSON that defines MCP servers for Copilot cloud agent.",
+   "Incorrect: .vscode/mcp.json configures MCP servers for VS Code on a developer machine. Copilot cloud agent reads the configuration from the repository settings.",
+   "Incorrect: copilot-setup-steps.yml installs tools and dependencies before the agent starts. Use it when an MCP server needs extra dependencies, not to define the server.",
+   "Incorrect: the Agents secrets page stores secrets that an MCP configuration can reference. It does not define which MCP servers the agent can use."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.2.1-02",
+  "obj": "2.2.1",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Fabrikam, Inc. adds the following MCP server to the repository MCP configuration for Copilot cloud agent:\n\n```json\n{\n  \"mcpServers\": {\n    \"inventory\": {\n      \"type\": \"local\",\n      \"command\": \"npx\",\n      \"args\": [\"@fabrikam/inventory-mcp\"]\n    }\n  }\n}\n```\n\nThe configuration is rejected because a required key is missing.\n\nWhich key should you add?",
+  "choices": [
+   "tools",
+   "env",
+   "headers",
+   "url"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The tools and type keys are required for both local and remote MCP servers. Local servers also require command and args, which are already present.",
+  "rationale": [
+   "Correct: tools is required for every MCP server. It lists the tools to enable, and GitHub recommends specific read-only tools rather than an asterisk.",
+   "Incorrect: env is optional. Add it only when the server needs environment variables, such as a token that comes from a COPILOT_MCP_ secret.",
+   "Incorrect: headers is an optional key for remote servers. This server is local, so it starts from a command rather than a URL.",
+   "Incorrect: url is required only for remote servers of type http or sse. A local server is started with command and args."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.2.1-03",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Tailspin Toys wants Copilot cloud agent to read exceptions from a hosted Sentry instance at https://tailspin.sentry.io. The Sentry access token is stored as an Agents secret named COPILOT_MCP_SENTRY_ACCESS_TOKEN.\n\nHow should you complete the repository MCP configuration? To answer, select the appropriate options in the answer area.\n\n```json\n{\n  \"mcpServers\": {\n    \"sentry\": {\n      \"type\": [[1]],\n      \"command\": \"npx\",\n      \"args\": [\"@sentry/mcp-server@latest\", \"--host=$SENTRY_HOST\"],\n      \"tools\": [\"*\"],\n      \"env\": {\n        \"SENTRY_HOST\": \"https://tailspin.sentry.io\",\n        \"SENTRY_ACCESS_TOKEN\": [[2]]\n      }\n    }\n  }\n}\n```",
+  "choices": [],
+  "answer": [
+   0,
+   0
+  ],
+  "explanation": "A server that starts from a command is a local server, so the type is local (stdio is also accepted). Values in env can reference secrets only by names that start with COPILOT_MCP_, by using the $NAME or ${NAME} syntax.",
+  "rationale": [],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "\"local\"",
+     "\"http\"",
+     "\"sse\""
+    ],
+    "why": [
+     "Correct: the server is launched with command and args, which makes it a local server. Copilot cloud agent accepts local or stdio for this case.",
+     "Incorrect: http is for remote servers that are reached through a url key. This server is started on the runner with npx.",
+     "Incorrect: sse is also a remote server type that needs a url. It does not match a server that is launched from a command."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"$COPILOT_MCP_SENTRY_ACCESS_TOKEN\"",
+     "\"$SENTRY_ACCESS_TOKEN\"",
+     "\"${{ secrets.SENTRY_ACCESS_TOKEN }}\""
+    ],
+    "why": [
+     "Correct: $COPILOT_MCP_SENTRY_ACCESS_TOKEN substitutes the value of the Agents secret, and the name starts with COPILOT_MCP_ as required.",
+     "Incorrect: substitution references must use names that start with COPILOT_MCP_. A reference to SENTRY_ACCESS_TOKEN does not resolve to the secret.",
+     "Incorrect: the ${{ secrets.NAME }} syntax is supported only in custom agent profiles, and the name still must start with COPILOT_MCP_."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.2.1-04",
+  "obj": "2.2.1",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Wingtip Toys saves a new MCP configuration for Copilot cloud agent in a repository. You must confirm that the MCP servers start and that their tools are available to the agent.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Click View session to open the Copilot cloud agent logs.",
+   "Create an issue in the repository and assign it to Copilot.",
+   "Expand the Start MCP Servers step and check that the tools of each server are listed.",
+   "Open the pull request that Copilot creates and wait for the Copilot started work event.",
+   "Run MCP: List Servers from the command palette in VS Code.",
+   "Request a review from Copilot on the default branch."
+  ],
+  "answer": [
+   1,
+   3,
+   0,
+   2
+  ],
+  "explanation": "You validate the configuration by giving Copilot a task, opening the session logs from the pull request, and checking the Start MCP Servers step. If the servers started, their tools are listed at the bottom of that step.",
+  "rationale": [
+   "Step 3: View session opens the session logs, where you open the Copilot section from the ellipsis menu of the log viewer.",
+   "Step 1: assigning an issue starts a Copilot cloud agent session, which loads the repository MCP configuration.",
+   "Step 4: the Start MCP Servers step shows the startup logs, and the tools of each server that started successfully are listed at the bottom.",
+   "Step 2: Copilot creates a pull request that appears in the issue timeline. The session is running when the Copilot started work event appears.",
+   "Incorrect: MCP: List Servers shows servers that are configured in VS Code on your machine. It does not test the repository configuration that the cloud agent uses.",
+   "Incorrect: Copilot code review is requested on a pull request, not on a branch, and its logs show a Setting up environment section rather than the cloud agent startup."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.2.1-05",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud must allow Copilot cloud agent to read Sentry errors for web-portal and meet the token requirements.\n\nWhat should you do with the Sentry access token?",
+  "choices": [
+   "Store it as an Agents secret named COPILOT_MCP_SENTRY_TOKEN, and reference $COPILOT_MCP_SENTRY_TOKEN in the server env",
+   "Reference the existing Actions secret SENTRY_TOKEN from the env key of the Sentry server in the MCP configuration",
+   "Store it as a Codespaces secret named SENTRY_TOKEN, and reference $SENTRY_TOKEN in the env key of the server",
+   "Store it as an Agents variable named GITHUB_SENTRY_TOKEN, and pass it to the server from copilot-setup-steps.yml"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Secrets with the COPILOT_MCP_ prefix are available only to MCP servers, so they are not exposed to Actions workflows or to the agent shell. The MCP configuration can only reference names that start with COPILOT_MCP_.",
+  "rationale": [
+   "Correct: an Agents secret with the COPILOT_MCP_ prefix is passed only to the MCP server. It is not visible to Actions workflows, and the deployment workflow keeps its own secret.",
+   "Incorrect: the MCP configuration cannot reference Actions secrets, and references must start with COPILOT_MCP_. Actions secrets are used by Actions workflows.",
+   "Incorrect: Codespaces secrets are for codespaces, and the name lacks the COPILOT_MCP_ prefix, so the reference does not resolve for Copilot cloud agent.",
+   "Incorrect: variables are not secret, Agents secret and variable names cannot start with GITHUB_, and setup steps would expose the value to a workflow."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/configure-secrets-and-variables",
+  "case": "C-b"
+ },
+ {
+  "id": "2.2.1-06",
+  "obj": "2.2.1",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation moves the MCP server definition from a custom agent profile into the repository MCP configuration. The agent profile used the following entry:\n\n```yaml\nenv:\n  JIRA_TOKEN: ${{ secrets.COPILOT_MCP_JIRA_TOKEN }}\n```\n\nThe Agents secret COPILOT_MCP_JIRA_TOKEN exists. The JSON configuration must resolve the same secret.\n\nWhich value should you use for JIRA_TOKEN in the JSON configuration?",
+  "choices": [
+   "\"$COPILOT_MCP_JIRA_TOKEN\"",
+   "\"${{ secrets.COPILOT_MCP_JIRA_TOKEN }}\"",
+   "\"${{ vars.COPILOT_MCP_JIRA_TOKEN }}\"",
+   "\"$JIRA_TOKEN\""
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Repository JSON configurations and agent profiles both support $NAME, ${NAME}, and ${NAME:-default}. The ${{ secrets.NAME }} and ${{ vars.NAME }} forms are additional patterns that only the custom agent YAML configuration supports.",
+  "rationale": [
+   "Correct: $COPILOT_MCP_JIRA_TOKEN is a substitution pattern that the repository JSON configuration supports, and it resolves the Agents secret.",
+   "Incorrect: the ${{ secrets.NAME }} form works only in custom agent profiles. In the repository JSON configuration it is not a supported substitution pattern.",
+   "Incorrect: ${{ vars.NAME }} also works only in agent profiles, and it refers to a variable rather than the secret that stores the token.",
+   "Incorrect: substitution references must use names that start with COPILOT_MCP_. JIRA_TOKEN is the name the server sees, not the name of the secret."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/custom-agents-configuration"
+ },
+ {
+  "id": "2.2.2-01",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Litware, Inc. wants to use the remote GitHub MCP server in Visual Studio Code. The developer wants the setup that GitHub recommends for most users and does not want to edit configuration files.\n\nWhat should the developer do first?",
+  "choices": [
+   "Search for @mcp github in the extensions panel and install the GitHub MCP server",
+   "Run the local GitHub MCP server in Docker and add it to the user settings file",
+   "Install the GitHub Pull Requests extension from the Visual Studio Marketplace",
+   "Run copilot mcp add github in a terminal and restart Visual Studio Code"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The extensions panel in VS Code includes an MCP Registry view that is backed by the GitHub MCP Registry. Searching @mcp github and clicking Install sets up the remote server, which is recommended for most users.",
+  "rationale": [
+   "Correct: the @mcp github search shows the GitHub MCP server in the MCP server gallery. After you install and trust it, MCP: List Servers shows it as configured.",
+   "Incorrect: the local server is for users who want to customize their setup or have specific security needs. It also requires manual configuration.",
+   "Incorrect: the GitHub Pull Requests extension is a separate extension for working with pull requests. It does not install the GitHub MCP server.",
+   "Incorrect: copilot mcp add configures servers for Copilot CLI in the CLI user configuration. It does not configure Visual Studio Code."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/set-up-the-github-mcp-server"
+ },
+ {
+  "id": "2.2.2-02",
+  "obj": "2.2.2",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "A developer at Northwind Traders uses the GitHub MCP server. The developer wants the actions toolset in addition to the toolsets that are enabled by default, and wants to avoid enabling every toolset.\n\nWhich toolset value should the developer configure?",
+  "choices": [
+   "default,actions",
+   "all",
+   "actions",
+   "repos,actions"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The default toolsets are repos, issues, and pull_requests. The default keyword includes that standard set alongside any other toolsets you name, while all enables every toolset.",
+  "rationale": [
+   "Correct: default,actions keeps repos, issues, and pull_requests and adds the actions toolset, which matches the requirement.",
+   "Incorrect: all enables every available toolset. Fewer toolsets improve tool selection and save context, so enable only what you need.",
+   "Incorrect: naming only actions replaces the default set, so the developer would lose the issues and pull request tools.",
+   "Incorrect: this keeps repos and adds actions, but it drops the issues and pull_requests toolsets that are part of the default set."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/configure-toolsets"
+ },
+ {
+  "id": "2.2.2-03",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "A developer at Woodgrove Bank uses Visual Studio 2022 version 17.14. The developer must connect Copilot Chat to the remote GitHub MCP server by using a personal access token (PAT) instead of OAuth. The PAT is already created.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Configure MCP server window, enter github as the server ID, select HTTP/SSE, and enter https://api.githubcopilot.com/mcp/ as the URL.",
+   "Click View > GitHub Copilot Chat, and select Agent from the mode dropdown.",
+   "Add an Authorization header with the value Bearer followed by the PAT, and click Save.",
+   "Click the tools icon, and then click the plus icon in the tool picker.",
+   "Click Auth from the CodeLens above the server in the mcp.json file.",
+   "Search for @mcp github in the Extensions panel, and click Install."
+  ],
+  "answer": [
+   1,
+   3,
+   0,
+   2
+  ],
+  "explanation": "In Visual Studio you add the server from the tool picker in agent mode. For PAT authentication you add an Authorization header with Bearer and the PAT, which is saved under requestInit headers in mcp.json.",
+  "rationale": [
+   "Step 3: the server ID, the HTTP/SSE type, and the remote URL define the connection to the hosted GitHub MCP server.",
+   "Step 1: MCP tools are used in agent mode, so you open Copilot Chat and switch the mode to Agent first.",
+   "Step 4: the Authorization header carries the PAT. After you save, mcp.json contains the header under requestInit.",
+   "Step 2: the plus icon in the tool picker opens the Configure MCP server window, where you define a new server.",
+   "Incorrect: the Auth CodeLens starts the OAuth sign-in, which is the default method. The developer must use the PAT instead.",
+   "Incorrect: the @mcp github search in the extensions panel is the Visual Studio Code setup flow, not the Visual Studio flow."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/set-up-the-github-mcp-server"
+ },
+ {
+  "id": "2.2.2-04",
+  "obj": "2.2.2",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Contoso, Ltd. configures the remote GitHub MCP server for Copilot cloud agent with a fine-grained personal access token. The url is https://api.githubcopilot.com/mcp/readonly. The agent must also read workflow runs and code scanning alerts, so you need the actions and code_security toolsets in addition to repos, issues, and pull_requests.\n\nWhat should you add to the server configuration?",
+  "choices": [
+   "An X-MCP-Toolsets header that lists the five toolsets",
+   "A GITHUB_TOOLSETS entry in the env key of the server",
+   "The five toolset names in the tools key of the server",
+   "The path /actions,code_security appended to the url"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For the remote server, you enable multiple toolsets with an HTTP header and a single toolset with a URL path. GitHub Docs shows the X-MCP-Toolsets header in the cloud agent configuration example.",
+  "rationale": [
+   "Correct: the X-MCP-Toolsets header lists the toolsets to include for the remote server, such as repos,issues,pull_requests,actions,code_security.",
+   "Incorrect: GITHUB_TOOLSETS is an environment variable for the local server that runs in Docker. A remote http server does not use env.",
+   "Incorrect: the tools key selects individual tools from the enabled toolsets. It does not enable additional toolsets.",
+   "Incorrect: a URL path selects a single toolset. Use a header when you need multiple toolsets."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.2.2-05",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Fabrikam, Inc. replaces the built-in GitHub MCP server for Copilot cloud agent with a local GitHub MCP server that authenticates as a GitHub App. The server runs from the ghcr.io/github/github-mcp-server Docker image. The agent must have read-only access and only the repos and pull_requests toolsets. The App private key is stored as an Agents secret named COPILOT_MCP_GITHUB_APP_PRIVATE_KEY.\n\nWhich three values should you include in the server configuration? Each correct answer presents part of the solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "\"GITHUB_READ_ONLY\": \"true\" in the env key",
+   "\"GITHUB_TOOLSETS\": \"repos,pull_requests\" in the env key",
+   "\"GITHUB_APP_PRIVATE_KEY\": \"$COPILOT_MCP_GITHUB_APP_PRIVATE_KEY\" in the env key",
+   "\"X-MCP-Toolsets\": \"repos,pull_requests\" in the headers key",
+   "\"url\": \"https://api.githubcopilot.com/mcp/readonly\"",
+   "\"GITHUB_APP_PRIVATE_KEY\": \"${{ secrets.GITHUB_APP_PRIVATE_KEY }}\" in the env key"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "The GitHub App example runs the server with docker as a stdio server and passes GITHUB_READ_ONLY, GITHUB_TOOLSETS, and the App credentials as environment variables. Secrets are referenced with COPILOT_MCP_ names.",
+  "rationale": [
+   "Correct: GITHUB_READ_ONLY set to true makes the local server expose read-only tools, which meets the read-only requirement.",
+   "Correct: the local server reads its toolsets from the GITHUB_TOOLSETS environment variable, so this limits it to repos and pull_requests.",
+   "Correct: the private key is passed from the Agents secret by a COPILOT_MCP_ substitution reference, so the key is not stored in the configuration.",
+   "Incorrect: X-MCP-Toolsets is an HTTP header for the remote server. A stdio server that runs in Docker reads the GITHUB_TOOLSETS environment variable instead.",
+   "Incorrect: url is used by the remote http server with a PAT. The requirement is a local server in Docker that authenticates as a GitHub App.",
+   "Incorrect: references must use names that start with COPILOT_MCP_, and the ${{ secrets.NAME }} form is supported only in custom agent profiles."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers"
+ },
+ {
+  "id": "2.2.2-06",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Adatum Corporation uses Enterprise Managed Users. The enterprise administrator has not enabled personal access tokens, and the organization has OAuth access policy restrictions. Developers use Visual Studio and JetBrains IDEs. Developers who use JetBrains IDEs cannot authenticate to the remote GitHub MCP server, but developers who use Visual Studio can.\n\nWhat should you do to resolve the issue for JetBrains users?",
+  "choices": [
+   "Enable the OAuth app of the JetBrains client under the OAuth access policy",
+   "Ask JetBrains users to authenticate with a classic personal access token",
+   "Enable the OAuth app of the Visual Studio client under the access policy",
+   "Change the server URL to https://api.githubcopilot.com/mcp/readonly"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "With OAuth access policy restrictions, the OAuth app of each MCP host application must be enabled, except for Visual Studio Code and Visual Studio. PATs are disabled for Enterprise Managed Users unless an enterprise administrator enables them.",
+  "rationale": [
+   "Correct: JetBrains is not exempt from the OAuth access policy, so its OAuth app must be enabled before users can sign in to the remote server.",
+   "Incorrect: PATs are disabled by default for Enterprise Managed Users, and the administrator has not enabled them, so PAT authentication is not available.",
+   "Incorrect: Visual Studio is exempt from the OAuth app requirement, which is why those users can already sign in. Enabling it does not help JetBrains users.",
+   "Incorrect: the readonly URL limits the server to read-only tools. It does not change how the client authenticates, so sign-in still fails."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-in-your-ide/customize-copilot/extend-copilot-with-tools-and-context/set-up-the-github-mcp-server"
+ },
+ {
+  "id": "2.2.2-07",
+  "obj": "2.2.2",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Relecloud must meet the requirement for access to billing-api when Copilot cloud agent works on web-portal.\n\nWhat should you configure in the web-portal repository?",
+  "choices": [
+   "A github-mcp-server of type http with the /mcp/readonly URL, and a fine-grained PAT in COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN",
+   "A github-mcp-server of type http with the /mcp/ URL, and a classic PAT with the repo scope in COPILOT_MCP_GITHUB_PERSONAL_ACCESS_TOKEN",
+   "A Repository access setting for Copilot in the cloud that adds billing-api to the selected repositories",
+   "A read-only GitHub MCP server in the custom firewall allowlist, and the GITHUB_TOKEN of the session"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "The built-in GitHub MCP server can only read the current repository. To read other repositories, you configure the server with a PAT or GitHub App, and the readonly URL plus a fine-grained PAT keeps access read-only and limited to billing-api.",
+  "rationale": [
+   "Correct: the readonly URL exposes only read tools, and a fine-grained PAT can be limited to read-only access on billing-api, so the agent cannot change it.",
+   "Incorrect: without /readonly the server exposes write tools, and a classic PAT with the repo scope grants write access to every repository the user can reach.",
+   "Incorrect: Repository access controls where Copilot in the cloud can be used. It does not let a session in web-portal read data from billing-api.",
+   "Incorrect: the firewall controls outbound traffic from the Bash tool, not MCP authentication. The built-in token can only read the current repository."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/configure-mcp-servers",
+  "case": "C-b"
+ },
+ {
+  "id": "2.2.3-01",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Litware, Inc. self-hosts a custom MCP registry for Copilot. The registry must be reachable by GitHub Copilot and must follow the supported specification.\n\nWhich endpoint should the registry expose to return the list of all included MCP servers?",
+  "choices": [
+   "GET /v0.1/servers",
+   "GET /v0/servers",
+   "GET /.well-known/mcp.json",
+   "GET /api/mcp/registry"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "A valid registry follows the v0.1 MCP registry specification and supports GET /v0.1/servers plus the versions endpoints for each server. The earlier v0 specification is unstable and should not be implemented.",
+  "rationale": [
+   "Correct: GET /v0.1/servers returns all servers in the registry, as required by the v0.1 specification.",
+   "Incorrect: the registry launched with the v0 specification, but that version is now unstable and should not be implemented.",
+   "Incorrect: the registry is defined by the v0.1 HTTPS endpoints, not by a well-known file.",
+   "Incorrect: this path is not part of the MCP registry specification, so Copilot cannot use it to list servers."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-mcp-registry"
+ },
+ {
+  "id": "2.2.3-02",
+  "obj": "2.2.3",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. uses Azure API Center as an MCP registry. The API Center service is named contoso-apic, is in the East US region, and uses the workspace named default. You configure the MCP Registry URL in the Copilot policies of the organization.\n\nWhich URL should you enter?",
+  "choices": [
+   "https://contoso-apic.data.eastus.azure-apicenter.ms/workspaces/default",
+   "https://contoso-apic.data.eastus.azure-apicenter.ms/workspaces/default/v0.1/servers",
+   "https://contoso-apic.data.eastus.azure-apicenter.ms/v0.1/servers",
+   "https://contoso-apic.data.eastus.azure-apicenter.ms"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "For Azure API Center you enter the base URL including the workspace path. GitHub Copilot appends the v0.1 path automatically, so adding /v0.1/servers causes the registry to error out.",
+  "rationale": [
+   "Correct: the base URL with the workspace path is the documented format, and Copilot adds the v0.1 route itself.",
+   "Incorrect: including /v0.1/servers causes an error, because Copilot appends the v0.1 path to the URL you enter.",
+   "Incorrect: this adds the v0.1 route and also leaves out the workspace path that the URL must include.",
+   "Incorrect: the URL must include the workspace path, such as /workspaces/default, in addition to the service host name."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/restrict-based-on-registry"
+ },
+ {
+  "id": "2.2.3-03",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Tailspin Toys wants developers in its organization to discover and use only approved MCP servers in Visual Studio Code. You decide to use Azure API Center as the MCP registry. Anonymous access is already allowed in the visibility settings of the API Center. MCP servers in Copilot is enabled in the Copilot policies of the organization. At no point may developers see an empty registry or be blocked from using the approved servers.\n\nWhich three actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "In the Copilot policies of the organization, enter the API Center base URL in the MCP Registry URL field.",
+   "Register the approved remote and local MCP servers in API Center by using the correct server IDs.",
+   "Set Restrict MCP access to registry servers to Registry only.",
+   "Add CORS headers to a reverse proxy in front of the API Center endpoint.",
+   "Add the approved server names to the MCP configuration of each repository."
+  ],
+  "answer": [
+   1,
+   0,
+   2
+  ],
+  "explanation": "You populate the registry first so that developers never see an empty registry, then point the organization policy at it, and finally restrict access to registry servers. Restricting before the URL is set would block the approved servers. API Center configures CORS automatically.",
+  "rationale": [
+   "Step 2: the MCP Registry URL field makes the registry available to developers. Enter the base URL with the workspace path.",
+   "Step 1: the registry must list the approved servers before developers can see it. Local servers need the correct server ID so that they match the installed server.",
+   "Step 3: Registry only allows only servers from the registry to run. Setting it last ensures that the approved servers are already available.",
+   "Incorrect: Azure API Center provides automatic CORS configuration. You add CORS headers yourself only for a self-hosted registry.",
+   "Incorrect: repository MCP configuration defines servers for Copilot cloud agent. It does not publish servers to a registry for IDEs."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-mcp-registry"
+ },
+ {
+  "id": "2.2.3-04",
+  "obj": "2.2.3",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Northwind Traders self-hosts an MCP registry behind a reverse proxy. The registry implements the v0.1 endpoints, and the registry URL is saved in the Copilot policies. Visual Studio Code fails when it tries to fetch the registry because of cross-origin request errors.\n\nWhat should you configure?",
+  "choices": [
+   "Access-Control-Allow-Origin, Allow-Methods, and Allow-Headers on all /v0.1/servers endpoints",
+   "A Content-Security-Policy header that allows api.githubcopilot.com on the registry endpoints",
+   "An Authorization header that contains a GitHub token in the MCP Registry URL setting",
+   "A redirect from the /v0.1/servers endpoints to the older /v0/servers endpoints"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot makes cross-origin requests when it fetches the registry. The registry or reverse proxy must add Access-Control-Allow-Origin: *, Access-Control-Allow-Methods: GET, OPTIONS, and Access-Control-Allow-Headers: Authorization, Content-Type to all /v0.1/servers endpoints.",
+  "rationale": [
+   "Correct: the documented CORS headers on all /v0.1/servers endpoints let Copilot make the cross-origin requests that fetch the registry.",
+   "Incorrect: Content-Security-Policy controls what a page may load. It does not grant cross-origin access to the registry responses.",
+   "Incorrect: the MCP Registry URL setting takes a URL only. The failure is caused by missing CORS headers, not by authentication.",
+   "Incorrect: v0 is unstable and should not be implemented, and a redirect does not add the missing CORS headers."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-mcp-registry"
+ },
+ {
+  "id": "2.2.3-05",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "yesno",
+  "stem": "Woodgrove Bank configures a custom MCP registry and sets Restrict MCP access to registry servers to Registry only at the enterprise level.\n\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.",
+  "choices": [
+   "The policy is enforced for Copilot cloud agent sessions that run in the cloud.",
+   "A local MCP server can run only if the registry lists it with a server ID that exactly matches the installed server ID.",
+   "Developers can still use Copilot connectors while the policy is set to Registry only.",
+   "Enforcement matches servers by name or ID only, so it can be bypassed by editing configuration files."
+  ],
+  "answer": [
+   1,
+   3
+  ],
+  "explanation": "Registry enforcement is supported in IDEs and Copilot CLI but not in Copilot in the cloud. Local servers need an exactly matching server ID, Registry only blocks connectors, and name-based matching can be bypassed.",
+  "rationale": [
+   "No: the supported surfaces table shows that registry display and allowlist enforcement are not supported for Copilot in the cloud.",
+   "Yes: with Registry only, local servers must be included in the registry with a server ID that exactly matches the installed server ID.",
+   "No: Registry only allows only registry servers to run, so users cannot use Copilot connectors. Select Allow all to allow connectors.",
+   "Yes: enforcement is based only on server name or ID matching, which can be bypassed. Use managed-settings.json for stricter URL-based enforcement."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/enterprise-administrators/mcp-private-registry-enforcement"
+ },
+ {
+  "id": "2.2.3-06",
+  "obj": "2.2.3",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "A developer at Fabrikam, Inc. receives Copilot seats from two organizations that belong to different enterprises. Neither enterprise sets an MCP registry policy. Organization A sets an MCP registry and Allow all. Organization B sets a different MCP registry and Registry only. Organization A uploaded its registry most recently.\n\nWhich policy should you expect to apply to the developer?",
+  "choices": [
+   "Registry only with the registry of organization B",
+   "Allow all with the registry of organization A",
+   "Registry only with the registry of organization A",
+   "Allow all, because the two policies cancel out"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "When a user has multiple seats, GitHub applies one policy. Enterprise policies override organization policies, then the stricter Registry only wins over Allow all, and recency is used only when scope and strictness are the same.",
+  "rationale": [
+   "Correct: both policies have the same organization scope, so the stricter Registry only policy from organization B wins together with its registry.",
+   "Incorrect: Allow all is less restrictive than Registry only, and strictness is evaluated before the recency of the registry upload.",
+   "Incorrect: the registry is not mixed between policies. The policy that wins, from organization B, applies with its own registry.",
+   "Incorrect: conflicting policies do not cancel out. GitHub resolves them to a single active policy and registry."
+  ],
+  "ref": "https://docs.github.com/en/copilot/reference/enterprise-administrators/mcp-private-registry-enforcement"
+ },
+ {
+  "id": "2.2.4-01",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Adatum Corporation wants to define which MCP servers users in its enterprise can run in Copilot clients. The method must be generally available and must not require a private registry.\n\nWhich location should you use to define the allowlist?",
+  "choices": [
+   "In a managed-settings.json file stored in the .github-private repository",
+   "In the MCP Registry URL field of the enterprise Copilot policies",
+   "In the MCP configuration section of each repository settings page",
+   "In a .vscode/mcp.json file that is committed to every repository"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "allowedMcpServers and deniedMcpServers are defined in the enterprise managed-settings.json file, which most enterprises store in a .github-private repository. It is the generally available method and does not need a registry.",
+  "rationale": [
+   "Correct: managed-settings.json defines the enterprise allowlist and denylist, and most enterprises store it in a .github-private repository.",
+   "Incorrect: the MCP Registry URL points clients to a private registry, which is in public preview and is not the recommended method.",
+   "Incorrect: the repository MCP configuration adds servers for Copilot cloud agent. It does not restrict which servers users can run.",
+   "Incorrect: .vscode/mcp.json adds servers in VS Code, and users can edit it. It cannot enforce an enterprise allowlist."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist"
+ },
+ {
+  "id": "2.2.4-02",
+  "obj": "2.2.4",
+  "difficulty": "easy",
+  "type": "single",
+  "stem": "Contoso, Ltd. defines allowedMcpServers in its enterprise managed-settings.json file. After the change, developers can no longer use the Slack Copilot connector, which the security team approved.\n\nWhat should you add to allowedMcpServers?",
+  "choices": [
+   "A serverUrl entry with the MCP server URL of the Slack connector",
+   "A name entry that matches slack in the connector settings",
+   "A serverCommand entry that starts the Slack connector locally",
+   "A deniedMcpServers entry with the Slack connector URL"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Copilot connectors are remote MCP servers, so you allow them with serverUrl entries. When allowedMcpServers is defined, connectors are blocked unless their URLs match an entry.",
+  "rationale": [
+   "Correct: a serverUrl entry with the Slack connector URL allows that connector while the rest of the allowlist stays in force.",
+   "Incorrect: connectors are allowed or blocked by URL. The allowlist page uses serverUrl entries for connectors, not names.",
+   "Incorrect: connectors are remote servers that GitHub runs, so there is no local command to match with serverCommand.",
+   "Incorrect: deniedMcpServers blocks servers, and deny rules take precedence. This would block the connector permanently."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist"
+ },
+ {
+  "id": "2.2.4-03",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "dropdown",
+  "stem": "Tailspin Toys writes an enterprise managed-settings.json file. Users must be able to run any GitHub MCP server that is hosted at api.githubcopilot.com. The filesystem MCP server must always be blocked when it is configured to access the root of the file system.\n\nHow should you complete the file? To answer, select the appropriate options in the answer area.\n\n```json\n{\n  \"allowedMcpServers\": [\n    [[1]]\n  ],\n  [[2]]: [\n    { \"serverCommand\": [\"npx\", \"-y\", \"@modelcontextprotocol/server-filesystem\", \"/\"] }\n  ]\n}\n```",
+  "choices": [],
+  "answer": [
+   0,
+   1
+  ],
+  "explanation": "Remote servers are matched by serverUrl, which supports a wildcard such as https://api.githubcopilot.com/*. A server is always blocked when it matches an entry in deniedMcpServers, even if it also matches an allowlist entry.",
+  "rationale": [],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist",
+  "targets": [
+   {
+    "label": "Box 1",
+    "options": [
+     "{ \"serverUrl\": \"https://api.githubcopilot.com/*\" }",
+     "{ \"serverCommand\": [\"https://api.githubcopilot.com/*\"] }",
+     "{ \"name\": \"github\" }"
+    ],
+    "why": [
+     "Correct: a serverUrl entry with a wildcard matches every remote server whose URL starts with https://api.githubcopilot.com/.",
+     "Incorrect: serverCommand matches the command that starts a local server, such as npx with its arguments. It does not match a remote URL.",
+     "Incorrect: matching by name allows only servers configured with that name, and it does not cover every server at the URL."
+    ]
+   },
+   {
+    "label": "Box 2",
+    "options": [
+     "\"blockedMcpServers\"",
+     "\"deniedMcpServers\"",
+     "\"excludedMcpServers\""
+    ],
+    "why": [
+     "Incorrect: blockedMcpServers is not a documented managed setting. The denylist key is deniedMcpServers.",
+     "Correct: deniedMcpServers blocks matching servers, and deny rules take precedence over allowlist entries.",
+     "Incorrect: excludedMcpServers is not a documented managed setting. Use deniedMcpServers to block a server."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "2.2.4-04",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "order",
+  "stem": "Northwind Traders currently restricts MCP servers to a custom registry by using the Registry only policy. The company wants to replace this with an enterprise allowlist and keep a single source of truth. MCP servers in Copilot is enabled for the enterprise.\n\nWhich four actions should you perform in sequence? To answer, move the appropriate actions from the list of actions to the answer area and arrange them in the correct order.",
+  "choices": [
+   "Create a managed-settings.json file in the .github-private repository.",
+   "Set Restrict MCP access to registry servers to Allow all in the MCP section of the enterprise Copilot policies.",
+   "Clear the MCP Registry URL value.",
+   "Add allowedMcpServers and deniedMcpServers entries to the managed-settings.json file.",
+   "Add the approved servers to the repository MCP configuration of each repository.",
+   "Upload a new registry to Azure API Center with the approved server names."
+  ],
+  "answer": [
+   1,
+   2,
+   0,
+   3
+  ],
+  "explanation": "To avoid conflicts with the new allowlist, you first turn off the registry restriction by setting Allow all, and then clear the registry URL so that the registry is no longer a second source of truth. You then create managed-settings.json, usually in .github-private, and define the lists.",
+  "rationale": [
+   "Step 3: most enterprises store managed-settings.json in a .github-private repository.",
+   "Step 1: GitHub recommends turning off the registry restriction to avoid conflicts with the new allowlist, which means setting Allow all.",
+   "Step 2: clearing the MCP Registry URL removes the registry as a second source of truth. You do it after setting Allow all so that Registry only is never left without a registry.",
+   "Step 4: the allowlist and denylist entries can match servers by name, server URL, or command.",
+   "Incorrect: repository MCP configuration adds servers for Copilot cloud agent. It does not restrict which servers developers can run.",
+   "Incorrect: the goal is to replace the registry with an allowlist. Keeping two sources of truth can cause conflicts."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist"
+ },
+ {
+  "id": "2.2.4-05",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "multi",
+  "stem": "Woodgrove Bank deploys the following enterprise managed-settings.json file:\n\n```json\n{\n  \"allowedMcpServers\": [\n    { \"serverUrl\": \"https://api.githubcopilot.com/*\" },\n    { \"serverCommand\": [\"npx\", \"@playwright/mcp@latest\"] }\n  ],\n  \"deniedMcpServers\": [\n    { \"serverUrl\": \"https://api.githubcopilot.com/mcp/x/actions\" }\n  ]\n}\n```\n\nThe file is valid JSON, and no other managed settings apply.\n\nWhich three MCP servers should you expect Copilot clients to block? Each correct answer presents a complete solution.\n\nNOTE: Each correct selection is worth one point.",
+  "choices": [
+   "A remote server at https://api.githubcopilot.com/mcp/x/actions",
+   "A remote server at https://${MCP_HOST}/mcp",
+   "A local server started with uvx markitdown-mcp",
+   "The built-in default GitHub MCP server",
+   "A remote server at https://api.githubcopilot.com/mcp/readonly",
+   "A local server started with npx @playwright/mcp@latest"
+  ],
+  "answer": [
+   0,
+   1,
+   2
+  ],
+  "explanation": "Clients always allow built-in default servers, then block servers that match a deny entry, then block servers that do not match the allowlist, and block servers whose URL or command contains an unresolved variable.",
+  "rationale": [
+   "Correct: the server matches the allowlist wildcard, but it also matches a deniedMcpServers entry, and deny rules take precedence.",
+   "Correct: the URL contains an unresolved variable, so the client cannot verify the server and blocks it.",
+   "Correct: an allowlist is present, and the uvx command does not match any entry, so the server is blocked.",
+   "Incorrect: built-in default servers, such as the built-in GitHub MCP server, are always allowed and are evaluated first.",
+   "Incorrect: the URL matches the https://api.githubcopilot.com/* entry and does not match the denylist, so the server is allowed.",
+   "Incorrect: the command matches the serverCommand entry in the allowlist, so the server is allowed."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist"
+ },
+ {
+  "id": "2.2.4-06",
+  "obj": "2.2.4",
+  "difficulty": "hard",
+  "type": "single",
+  "stem": "Fabrikam, Inc. defines an enterprise allowlist in managed-settings.json. A security review finds that Copilot cloud agent still starts an unapproved MCP server that is defined in a repository custom agent profile.\n\nWhat should you do to prevent the agent from using this server?",
+  "choices": [
+   "Ensure the custom firewall does not allow the domains the server needs to start",
+   "Add the server to deniedMcpServers in the managed-settings.json file",
+   "Set Restrict MCP access to registry servers to Registry only",
+   "Remove the server from the repository MCP configuration"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "allowedMcpServers and deniedMcpServers do not apply to MCP servers defined in repository custom agent profiles. You can prevent their use by making sure the domains required to start them are not allowed by the organization or repository custom firewall.",
+  "rationale": [
+   "Correct: if the custom firewall does not allow the domains that the server needs, the server cannot start in the cloud agent environment.",
+   "Incorrect: the allowlist and denylist apply to user and repository settings, but not to servers defined in custom agent profiles.",
+   "Incorrect: registry enforcement is not supported for Copilot in the cloud, and it matches only names, so it would not stop this server.",
+   "Incorrect: the server is defined in the agent profile, not in the repository MCP configuration, so this change has no effect."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist"
+ },
+ {
+  "id": "2.2.4-07",
+  "obj": "2.2.4",
+  "difficulty": "medium",
+  "type": "single",
+  "stem": "Relecloud must meet the MCP approval requirement for Visual Studio Code and Copilot CLI.\n\nWhat should you do?",
+  "choices": [
+   "Define allowedMcpServers entries by serverUrl and serverCommand in a managed-settings.json file in .github-private",
+   "Add the approved servers to the custom registry with exact server IDs, and keep the Registry only policy",
+   "Add the approved servers to a .github/mcp.json file in each repository, and commit the file to the default branch",
+   "Disable the MCP servers in Copilot policy for the organization, and enable it again for each approved developer"
+  ],
+  "answer": [
+   0
+  ],
+  "explanation": "Registry enforcement matches only server names, which developers can bypass by editing configuration files. An enterprise allowlist in managed-settings.json can match by server URL or command, and users cannot override it locally.",
+  "rationale": [
+   "Correct: allowedMcpServers entries that match by serverUrl and serverCommand enforce approval by URL or launch command, and the settings come from the enterprise.",
+   "Incorrect: registry enforcement matches by name or ID only, which is the bypass the security team already found. Exact IDs do not change that.",
+   "Incorrect: .github/mcp.json adds shared servers for Copilot CLI. It does not stop developers from adding other servers in local files.",
+   "Incorrect: the MCP servers in Copilot policy turns MCP use on or off. It cannot approve specific servers by URL or launch command."
+  ],
+  "ref": "https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist",
+  "case": "C-b"
+ }
+]
